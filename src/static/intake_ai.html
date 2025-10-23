@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Intake - Turbo Response AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Google reCAPTCHA v3 -->
+    <script src="https://www.google.com/recaptcha/api.js?render=YOUR_RECAPTCHA_SITE_KEY"></script>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            --accent-cyan: #06b6d4;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-yellow: #eab308;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --glow-cyan: 0 0 20px rgba(6, 182, 212, 0.3);
+            --glow-blue: 0 0 20px rgba(59, 130, 246, 0.3);
+            --card-bg: rgba(15, 23, 42, 0.8);
+            --border-glow: rgba(6, 182, 212, 0.2);
+            --input-bg: rgba(30, 41, 59, 0.5);
+            --input-border: rgba(6, 182, 212, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--primary-gradient);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .bg-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Header */
+        .header {
+            padding: 20px 0;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-glow);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            margin-right: 12px;
+            background: linear-gradient(135deg, var(--accent-yellow) 0%, var(--accent-cyan) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--glow-cyan);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .intake-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .intake-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-cyan) 50%, var(--accent-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .intake-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-cyan) 0%, var(--accent-blue) 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: var(--glow-cyan);
+        }
+
+        /* Form Styles */
+        .intake-form {
+            background: var(--card-bg);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-icon {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-label.required::after {
+            content: " *";
+            color: #ef4444;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 15px 20px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .file-upload {
+            position: relative;
+            display: block;
+            width: 100%;
+            padding: 30px;
+            background: var(--input-bg);
+            border: 2px dashed var(--input-border);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-upload-icon {
+            font-size: 2rem;
+            color: var(--accent-cyan);
+            margin-bottom: 10px;
+        }
+
+        .file-upload-text {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .file-list {
+            margin-top: 15px;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid var(--accent-cyan);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .file-name {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .file-remove {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .category-option {
+            padding: 20px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .category-option:hover,
+        .category-option.selected {
+            border-color: var(--accent-cyan);
+            background: rgba(6, 182, 212, 0.1);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .category-icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .category-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-blue) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--glow-blue);
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.4);
+        }
+
+        .submit-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid var(--accent-purple);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--accent-purple);
+            margin-left: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .intake-title {
+                font-size: 2rem;
+            }
+            
+            .intake-form {
+                padding: 30px 20px;
+            }
+            
+            .category-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="bg-grid"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <div class="logo-icon">⚡</div>
+                TURBO RESPONSE
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="intake-header">
+            <h1 class="intake-title">AI Case Analysis</h1>
+            <p class="intake-subtitle">
+                Our AI will analyze your situation and generate the perfect legal response
+            </p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <form class="intake-form" id="intakeForm">
+            <!-- Contact Information -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span class="section-icon">👤</span>
+                    Contact Information
+                    <span class="ai-badge">🤖 AI Secure</span>
+                </h2>
+                
+                <div class="form-group">
+                    <label class="form-label required" for="email">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-input" required 
+                           placeholder="your.email@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required" for="fullName">Full Name</label>
+                    <input type="text" id="fullName" name="fullName" class="form-input" required 
+                           placeholder="John Doe">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required" for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" class="form-input" required 
+                           placeholder="(555) 123-4567">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required" for="address">Address</label>
+                    <input type="text" id="address" name="address" class="form-input" required 
+                           placeholder="123 Main St, City, State 12345">
+                </div>
+            </div>
+
+            <!-- Case Category -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span class="section-icon">🎯</span>
+                    Case Category
+                    <span class="ai-badge">🤖 AI Powered</span>
+                </h2>
+                
+                <div class="category-grid">
+                    <div class="category-option" data-category="eviction">
+                        <span class="category-icon">🏠</span>
+                        <div class="category-name">Eviction & Housing</div>
+                    </div>
+                    <div class="category-option" data-category="debt">
+                        <span class="category-icon">💳</span>
+                        <div class="category-name">Debt Collection</div>
+                    </div>
+                    <div class="category-option" data-category="irs">
+                        <span class="category-icon">📋</span>
+                        <div class="category-name">IRS & Tax Issues</div>
+                    </div>
+                    <div class="category-option" data-category="wage">
+                        <span class="category-icon">💰</span>
+                        <div class="category-name">Wage Garnishment</div>
+                    </div>
+                    <div class="category-option" data-category="medical">
+                        <span class="category-icon">🏥</span>
+                        <div class="category-name">Medical Bills</div>
+                    </div>
+                    <div class="category-option" data-category="benefits">
+                        <span class="category-icon">🛡️</span>
+                        <div class="category-name">Benefits Denial</div>
+                    </div>
+                    <div class="category-option" data-category="auto">
+                        <span class="category-icon">🚗</span>
+                        <div class="category-name">Auto Repossession</div>
+                    </div>
+                    <div class="category-option" data-category="consumer">
+                        <span class="category-icon">⚖️</span>
+                        <div class="category-name">Consumer Rights</div>
+                    </div>
+                </div>
+                <input type="hidden" id="category" name="category" required>
+            </div>
+
+            <!-- Case Details -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span class="section-icon">📝</span>
+                    Case Details
+                    <span class="ai-badge">🤖 AI Analysis</span>
+                </h2>
+                
+                <div class="form-group">
+                    <label class="form-label required" for="caseDescription">Describe Your Situation</label>
+                    <textarea id="caseDescription" name="caseDescription" class="form-textarea" required 
+                              placeholder="Please describe what happened, when you received the notice, and what action is being threatened..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="amount">Amount Involved (if applicable)</label>
+                    <input type="number" id="amount" name="amount" class="form-input" 
+                           placeholder="1500" step="0.01">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="deadline">Response Deadline (if any)</label>
+                    <input type="date" id="deadline" name="deadline" class="form-input">
+                </div>
+            </div>
+
+            <!-- Document Upload -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span class="section-icon">📎</span>
+                    Upload Documents
+                    <span class="ai-badge">🤖 AI Scan</span>
+                </h2>
+                
+                <div class="form-group">
+                    <label class="file-upload" for="documents">
+                        <input type="file" id="documents" name="documents" multiple 
+                               accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                        <div class="file-upload-icon">📄</div>
+                        <div class="file-upload-text">
+                            Click to upload or drag and drop<br>
+                            <small>PDF, Images, Word documents</small>
+                        </div>
+                    </label>
+                    <div class="file-list" id="fileList"></div>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-button" id="submitButton" disabled>
+                🚀 Submit for AI Analysis
+            </button>
+        </form>
+    </div>
+
+    <script>
+        let selectedCategory = null;
+        let uploadedFiles = [];
+
+        // Progress tracking
+        function updateProgress() {
+            const form = document.getElementById('intakeForm');
+            const formData = new FormData(form);
+            let filledFields = 0;
+            let totalFields = 0;
+
+            // Count required fields
+            const requiredInputs = form.querySelectorAll('input[required], textarea[required]');
+            totalFields = requiredInputs.length + 1; // +1 for category
+
+            requiredInputs.forEach(input => {
+                if (input.value.trim() !== '') filledFields++;
+            });
+
+            if (selectedCategory) filledFields++;
+
+            const progress = (filledFields / totalFields) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            // Enable submit button when form is complete
+            const submitButton = document.getElementById('submitButton');
+            if (progress === 100) {
+                submitButton.disabled = false;
+                submitButton.textContent = '🚀 Submit for AI Analysis';
+            } else {
+                submitButton.disabled = true;
+                submitButton.textContent = `🚀 Complete Form (${Math.round(progress)}%)`;
+            }
+        }
+
+        // Category selection
+        document.querySelectorAll('.category-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.category-option').forEach(opt => 
+                    opt.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedCategory = this.dataset.category;
+                document.getElementById('category').value = selectedCategory;
+                updateProgress();
+            });
+        });
+
+        // File upload handling
+        document.getElementById('documents').addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            files.forEach(file => {
+                if (!uploadedFiles.find(f => f.name === file.name)) {
+                    uploadedFiles.push(file);
+                }
+            });
+            updateFileList();
+        });
+
+        function updateFileList() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            
+            uploadedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <span class="file-name">📄 ${file.name}</span>
+                    <button type="button" class="file-remove" onclick="removeFile(${index})">×</button>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            updateFileList();
+        }
+
+        // Form validation and progress updates
+        document.querySelectorAll('input, textarea').forEach(input => {
+            input.addEventListener('input', updateProgress);
+            input.addEventListener('change', updateProgress);
+        });
+
+        // Form submission
+        document.getElementById('intakeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitButton = document.getElementById('submitButton');
+            submitButton.textContent = '🤖 AI Analyzing...';
+            submitButton.disabled = true;
+
+            // Collect form data
+            const formData = new FormData(this);
+            
+            // Convert FormData to JSON object
+            const formDataObj = {};
+            formData.forEach((value, key) => {
+                formDataObj[key] = value;
+            });
+            
+            // Add uploaded files info
+            formDataObj.documents = uploadedFiles.map(f => f.name);
+            formDataObj.file_count = uploadedFiles.length;
+
+            try {
+                // Get reCAPTCHA token
+                const recaptchaToken = await grecaptcha.execute('YOUR_RECAPTCHA_SITE_KEY', {action: 'submit'});
+                formDataObj.recaptcha_token = recaptchaToken;
+                
+                // Submit to automation backend
+                const response = await fetch('/api/form-submission', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formDataObj)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Store case ID for confirmation page
+                    sessionStorage.setItem('case_id', result.case_id);
+                    sessionStorage.setItem('client_name', formDataObj.fullName);
+                    sessionStorage.setItem('client_email', formDataObj.email);
+                    
+                    // Redirect to confirmation page
+                    window.location.href = '/confirmation.html';
+                } else {
+                    throw new Error(result.message || 'Submission failed');
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                alert('❌ Submission failed. Please try again or contact support.');
+                submitButton.textContent = '🚀 SUBMIT CASE';
+                submitButton.disabled = false;
+            }
+        });
+
+        // Initialize progress
+        updateProgress();
+
+        // Auto-fill email from URL params if available
+        const urlParams = new URLSearchParams(window.location.search);
+        const emailParam = urlParams.get('email');
+        if (emailParam) {
+            document.getElementById('email').value = emailParam;
+            updateProgress();
+        }
+    </script>
+
+    <!-- Turbo AI Chatbot -->
+    <script src="chatbot.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: turbo-response-web
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - DATABASE_URL=postgresql://turbo:turbo_password@db:5432/turbo_response
+    env_file:
+      - .env
+    volumes:
+      - ./src/database:/app/src/database
+      - turbo_data:/var/turbo_response_data
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - turbo-network
+
+  db:
+    image: postgres:15-alpine
+    container_name: turbo-response-db
+    environment:
+      - POSTGRES_USER=turbo
+      - POSTGRES_PASSWORD=turbo_password
+      - POSTGRES_DB=turbo_response
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - turbo-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: turbo-response-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - web
+    restart: unless-stopped
+    networks:
+      - turbo-network
+
+volumes:
+  postgres_data:
+  turbo_data:
+
+networks:
+  turbo-network:
+    driver: bridge
+
