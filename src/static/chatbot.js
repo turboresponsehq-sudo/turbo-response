@@ -1,4 +1,5 @@
 // Turbo AI Chatbot - AI-Powered Consumer Defense Assistant
+// Enhanced with Chief Strategist Knowledge Base
 class TurboAI {
     constructor() {
         this.isOpen = false;
@@ -40,7 +41,7 @@ class TurboAI {
             <div class="chat-messages" id="chat-messages">
                 <div class="message ai-message">
                     <div class="message-content">
-                        Hey 👋 I'm Turbo AI — your assistant. Tell me what kind of notice you received and I'll point you in the right direction.
+                        Hey 👋 I'm Turbo AI — your AI-powered consumer defense assistant. Tell me what kind of notice or issue you're facing, and I'll help you fight back against unfair practices.
                     </div>
                 </div>
             </div>
@@ -180,6 +181,7 @@ class TurboAI {
                 border-radius: 15px 15px 15px 5px;
                 max-width: 80%;
                 align-self: flex-start;
+                line-height: 1.4;
             }
 
             .user-message .message-content {
@@ -276,31 +278,186 @@ class TurboAI {
 
     loadKnowledgeBase() {
         this.knowledgeBase = {
-            faqs: {
-                "Do I have a case?": "If you've received a notice for eviction, debt collection, IRS issues, repossession, or benefits denial, you likely have grounds for a legal response. I can help you determine the best approach based on your specific situation.",
-                
-                "Is this service free?": "Turbo Response offers professional legal game plans starting at $35 for a single case, $99 for a 3-case bundle, or starting at $149 for complex cases. This is much more affordable than hiring a lawyer who typically charges $250-$500 per letter.",
-                
-                "How long does it take?": "Most game plans are generated within 24-48 hours. Our AI analyzes your case instantly, and our expert team reviews everything to ensure maximum effectiveness before delivery.",
-                
-                "What types of cases do you handle?": "We handle 10 major categories: Evictions & Housing, Debt Collection, IRS & Tax Issues, Wage Garnishment, Medical Bills, Government Benefits, Car Repossession, Consumer Complaints, Family Rights, and Small Business disputes.",
-                
-                "Is this legal?": "Yes! We create formal legal response letters based on actual consumer protection laws like the FDCPA, FCRA, and state-specific regulations. Every game plan cites the exact laws that protect your rights.",
-                
-                "What if my case is complex?": "Every case is personally reviewed by our consumer rights specialists. Complex cases receive multi-step game plans with pricing based on complexity, ensuring you get the comprehensive strategy you need."
+            // Company Overview & Mission
+            companyInfo: {
+                mission: "Turbo Response exists to help everyday consumers fight back against unfair financial, legal, and collection practices. Our mission is simple: make professional consumer defense fast, affordable, and accessible to everyone through the power of AI and automation.",
+                problemSolved: "Millions of Americans face wrongful debt collections, IRS threats, garnishments, repossessions, and denials — but can't afford a lawyer or don't understand their rights. Turbo Response fills that gap by using AI-powered legal intelligence to create precise, compliant responses and deliver case strategies within 24–48 hours.",
+                differences: "We combine AI-powered defense with real human oversight, offer flat-rate pricing with no retainers or hidden fees, deliver case responses in hours instead of weeks, and are built for individuals — not corporations.",
+                vision: "To become the leading AI-driven consumer protection platform in America — helping millions defend their rights, rebuild their credit, and stand up against predatory financial systems."
             },
-            
+
+            // Pricing Tiers
+            pricing: {
+                "Case Starter Plan": {
+                    price: "$149",
+                    bestFor: "Individuals facing a single issue or notice",
+                    includes: [
+                        "1 case review with AI-assisted analysis",
+                        "Professionally written response letter",
+                        "One follow-up or revision",
+                        "24–48-hour turnaround"
+                    ],
+                    why: "Affordable starting point for small or first-time disputes"
+                },
+                "Standard Defense Plan": {
+                    price: "$349",
+                    bestFor: "People dealing with multiple notices or complex disputes",
+                    popular: true,
+                    includes: [
+                        "Full AI + expert-reviewed case defense",
+                        "30-day support window for resubmissions or follow-ups",
+                        "Personalized dispute letters and appeal templates",
+                        "Real-time progress tracking"
+                    ],
+                    why: "Offers more coverage and ongoing support for recurring disputes"
+                },
+                "Comprehensive Case Management": {
+                    price: "Starting at $699",
+                    bestFor: "High-stakes or ongoing cases (IRS, wage garnishment, repossessions, etc.)",
+                    includes: [
+                        "End-to-end case oversight",
+                        "Multiple dispute stages and escalation letters",
+                        "AI + human monitoring for success tracking",
+                        "Priority support and dedicated review"
+                    ],
+                    why: "Designed for serious, complex, or high-value cases requiring deep analysis"
+                }
+            },
+
+            // Case Categories
             categories: {
-                "eviction": "Housing & Eviction Defense - We help with security deposit disputes, illegal eviction notices, habitability issues, and landlord violations.",
-                "debt": "Debt Collection Defense - Challenge invalid debts, request validation, stop harassment, and protect your credit score.",
-                "irs": "IRS & Tax Defense - Respond to tax notices, penalty abatement requests, payment plan negotiations, and audit responses.",
-                "repossession": "Vehicle Repossession Defense - Challenge illegal repo, demand proper notices, and protect your transportation.",
-                "wages": "Wage Garnishment Defense - Stop wage garnishments, challenge calculations, and protect your income.",
-                "medical": "Medical Bill Disputes - Challenge incorrect charges, negotiate payment plans, and dispute insurance denials.",
-                "benefits": "Government Benefits Appeals - Appeal denied benefits, challenge reductions, and restore your assistance.",
-                "consumer": "Consumer Protection - Fight scams, warranty issues, and unfair business practices.",
-                "family": "Family Rights Defense - Child support modifications, custody issues, and family court matters.",
-                "business": "Small Business Defense - Contract disputes, vendor issues, and business protection matters."
+                "debt collection": {
+                    name: "Debt Collection",
+                    issues: "Harassment, invalid debts, unfair reporting",
+                    outcome: "Cease and desist + debt validation",
+                    description: "We help you challenge invalid debts, request validation, stop harassment, and protect your credit score."
+                },
+                "credit bureau": {
+                    name: "Credit Bureau Errors",
+                    issues: "Inaccurate credit reports, duplicate accounts",
+                    outcome: "Correction or deletion of inaccurate items",
+                    description: "We dispute inaccurate data with bureaus and creditors; final removal depends on agency verification."
+                },
+                "irs": {
+                    name: "IRS & Tax Issues",
+                    issues: "CP2000 notices, levy threats, audits, back taxes",
+                    outcome: "Dispute or resolution plan submission",
+                    description: "We help you respond to tax notices, penalty abatement requests, payment plan negotiations, and audit responses."
+                },
+                "wage garnishment": {
+                    name: "Wage Garnishment",
+                    issues: "Employer withholding, judgment errors",
+                    outcome: "Reduction or release of garnishment",
+                    description: "We help stop wage garnishments, challenge calculations, and protect your income."
+                },
+                "eviction": {
+                    name: "Eviction & Housing",
+                    issues: "Illegal evictions, notice disputes, habitability issues",
+                    outcome: "Temporary relief or legal correspondence",
+                    description: "We help with security deposit disputes, illegal eviction notices, habitability issues, and landlord violations."
+                },
+                "repossession": {
+                    name: "Auto Repossession",
+                    issues: "Improper notice or recovery",
+                    outcome: "Documentation for reclaim or settlement",
+                    description: "We challenge illegal repo, demand proper notices, and protect your transportation."
+                },
+                "medical bills": {
+                    name: "Medical Bills",
+                    issues: "Overcharges, denied claims",
+                    outcome: "Adjusted billing or dispute submission",
+                    description: "We challenge incorrect charges, negotiate payment plans, and dispute insurance denials."
+                },
+                "benefits": {
+                    name: "Benefit Denials",
+                    issues: "Government or employer benefits denied",
+                    outcome: "Reinstatement or appeal documentation",
+                    description: "We appeal denied benefits, challenge reductions, and restore your assistance."
+                },
+                "consumer fraud": {
+                    name: "Consumer Fraud",
+                    issues: "Identity theft, scams, unauthorized charges",
+                    outcome: "Reporting and reversal letters",
+                    description: "We help fight scams, warranty issues, and unfair business practices."
+                },
+                "bank disputes": {
+                    name: "Bank & Loan Disputes",
+                    issues: "Unauthorized charges, closure disputes",
+                    outcome: "Account review or claim reversal",
+                    description: "We help with unauthorized charges, account closure disputes, and loan issues."
+                }
+            },
+
+            // Customer Journey
+            process: {
+                step1: "Visit the Website - You land on our homepage and learn about Turbo Response's services and mission.",
+                step2: "Chat with Turbo AI - Our chatbot greets you, answers basic questions, and directs you to the intake form.",
+                step3: "Case Submission - You fill in personal info, describe your issue, and upload any documents or notices.",
+                step4: "AI Case Analysis (24–48 Hours) - Turbo AI scans, categorizes, and drafts a defense plan. Human experts review and finalize it.",
+                step5: "Case Response Delivery - You receive your personalized case plan and letter via secure email.",
+                step6: "Support & Follow-Up - Depending on your plan tier, you receive updates, revisions, or additional support.",
+                step7: "Resolution - You use Turbo Response's materials to file disputes, respond to agencies, or defend against collections.",
+                tracking: "You receive a Case ID via email. Updates and notifications are sent automatically through the dashboard or email."
+            },
+
+            // AI Methodology
+            aiMethodology: {
+                how: "Our AI uses Natural Language Processing (NLP) to read notices, identify key legal terms, dates, and threats, and match issue types to specific statutes (e.g., FDCPA, FCRA).",
+                patterns: "We identify illegal wording by debt collectors, missed due process in repossession or eviction, and violations of credit reporting time limits.",
+                generation: "AI prepares personalized legal language that is reviewed by human experts before delivery, tested for tone, compliance, and clarity.",
+                effectiveness: "Our approach is fast, consistent, and statute-based. We remove emotion and focus on law and facts, producing strong, compliant responses."
+            },
+
+            // Support
+            support: {
+                contact: "Email: TurboResponseHQ@gmail.com | Chat: Turbo AI Assistant (24/7) | Phone: Available by request (business hours only)",
+                hours: "Monday–Friday: 9 AM to 7 PM EST | Weekend: Email + Chat support only",
+                response: "Typically within 4–6 hours on weekdays. Urgent case escalations handled first.",
+                includes: "Case status inquiries, revisions or clarifications, and upgrade assistance to higher plans"
+            },
+
+            // Competitive Advantages
+            advantages: {
+                speed: "AI delivers results in 24–48 hours vs. weeks with traditional law firms",
+                affordability: "Flat pricing ($149-$699) vs. $200–$400/hr attorney fees with retainers",
+                precision: "AI trained on real consumer protection laws with human expert verification",
+                empowerment: "Customers learn their rights along the way",
+                outcomes: "Clients stop collection calls within days, credit reports corrected within 30–45 days, garnishments reduced or reversed"
+            },
+
+            // FAQs - Comprehensive
+            faqs: {
+                "How fast will I get my response?": "Typically within 24–48 hours after submitting your documents.",
+                
+                "Are you a law firm?": "No. We are a consumer rights defense platform powered by AI and human expertise. We provide educational and informational case defense support, not legal representation.",
+                
+                "What's your pricing?": "We offer three plans: Case Starter Plan ($149), Standard Defense Plan ($349 - most popular), and Comprehensive Case Management (starting at $699). Each includes different levels of support and follow-ups.",
+                
+                "Can you remove negative items from my credit report?": "We dispute inaccurate data with bureaus and creditors; final removal depends on agency verification.",
+                
+                "What if I have multiple cases?": "Choose the Standard ($349) or Comprehensive ($699) plan for multi-issue coverage and ongoing support.",
+                
+                "Do you guarantee results?": "We guarantee compliance, speed, and expert quality — not external agency decisions. Results depend on third-party agencies, not solely our actions.",
+                
+                "How do I upload documents?": "Via the intake form. Supported formats: PDF, DOC, JPG, PNG.",
+                
+                "Can I upgrade plans later?": "Yes. You can upgrade at any time by contacting support.",
+                
+                "Is my data safe?": "Yes. Turbo Response uses bank-level SSL encryption and never shares data with third parties.",
+                
+                "Can I get a refund?": "Refunds are available if no work has started. Once the AI begins analysis, refunds aren't possible.",
+                
+                "How do I know my case is being worked on?": "You'll receive a confirmation email and updates through your assigned Case ID.",
+                
+                "Can I talk to a person?": "Yes. You can request human review or callback for complex situations.",
+                
+                "What if my case is rejected?": "We'll explain why and suggest next steps or credit your payment toward another case.",
+                
+                "Do you handle IRS letters?": "Yes — including audits, levy threats, and back-tax disputes.",
+                
+                "Can you contact creditors directly?": "Yes, with your written authorization.",
+                
+                "Do you offer phone consultations?": "Yes, for Comprehensive plan clients or by request."
             }
         };
     }
@@ -378,18 +535,51 @@ class TurboAI {
     generateResponse(message) {
         const lowerMessage = message.toLowerCase();
         
-        // Check for FAQ matches
+        // Check for FAQ matches first (highest priority)
         for (const [question, answer] of Object.entries(this.knowledgeBase.faqs)) {
             if (this.matchesQuery(lowerMessage, question)) {
                 return { text: answer };
             }
         }
         
+        // Check for pricing questions
+        if (this.matchesQuery(lowerMessage, "price pricing cost plans tiers")) {
+            return {
+                text: "We offer three flexible plans:\n\n💰 Case Starter Plan: $149 - Perfect for single issues\n\n💰 Standard Defense Plan: $349 (Most Popular!) - Great for multiple cases with 30-day support\n\n💰 Comprehensive Case Management: Starting at $699 - For complex, high-stakes cases\n\nEach plan includes AI analysis + expert review. Would you like details on any plan?",
+                quickActions: [
+                    { text: "Tell me more about $349 plan", action: "pricing_standard" },
+                    { text: "Start My Case", action: "start_case" }
+                ]
+            };
+        }
+        
+        // Check for company info questions
+        if (this.matchesQuery(lowerMessage, "about mission company who are you")) {
+            return {
+                text: this.knowledgeBase.companyInfo.mission + "\n\n" + this.knowledgeBase.companyInfo.differences,
+                quickActions: [
+                    { text: "See Our Advantages", action: "advantages" },
+                    { text: "Start My Case", action: "start_case" }
+                ]
+            };
+        }
+        
+        // Check for process/timeline questions
+        if (this.matchesQuery(lowerMessage, "process how does it work timeline steps")) {
+            return {
+                text: "Here's how Turbo Response works:\n\n1️⃣ Submit your case via our intake form\n2️⃣ Our AI analyzes your situation (24-48 hours)\n3️⃣ Human experts review and finalize your strategy\n4️⃣ You receive your personalized case plan & response letters\n5️⃣ You use these to defend yourself or file disputes\n\nYou get a Case ID to track progress every step of the way!",
+                quickActions: [
+                    { text: "Start My Case", action: "start_case" },
+                    { text: "Learn More", action: "learn_more" }
+                ]
+            };
+        }
+        
         // Check for category matches
-        for (const [category, description] of Object.entries(this.knowledgeBase.categories)) {
-            if (lowerMessage.includes(category) || this.matchesCategoryKeywords(lowerMessage, category)) {
+        for (const [categoryKey, categoryData] of Object.entries(this.knowledgeBase.categories)) {
+            if (lowerMessage.includes(categoryKey) || this.matchesCategoryKeywords(lowerMessage, categoryKey)) {
                 return {
-                    text: `Great! I can help with ${description}`,
+                    text: `Great! I can help with ${categoryData.name}. ${categoryData.description}`,
                     quickActions: [
                         { text: "Start My Case", action: "start_case" },
                         { text: "Learn More", action: "learn_more" },
@@ -399,21 +589,42 @@ class TurboAI {
             }
         }
         
+        // Check for support/contact questions
+        if (this.matchesQuery(lowerMessage, "contact support help email phone")) {
+            return {
+                text: `📧 Email: TurboResponseHQ@gmail.com\n💬 Chat: Available 24/7\n📞 Phone: Available by request (business hours)\n\nResponse time: Usually 4-6 hours on weekdays. Urgent cases handled first!`,
+                quickActions: [
+                    { text: "Start My Case", action: "start_case" },
+                    { text: "Speak to Agent", action: "escalate" }
+                ]
+            };
+        }
+        
+        // Check for guarantee/results questions
+        if (this.matchesQuery(lowerMessage, "guarantee results success outcome promise")) {
+            return {
+                text: "We guarantee professional quality, compliance, and speed — not external agency outcomes. Results depend on third-party agencies (creditors, IRS, courts), not solely our actions. However, our clients typically see: collection calls stop within days, credit reports corrected within 30-45 days, and garnishments reduced or reversed.",
+                quickActions: [
+                    { text: "Start My Case", action: "start_case" }
+                ]
+            };
+        }
+        
         // Default response with lead capture
         if (!this.leadCaptured) {
             return {
-                text: "I'd love to help you with your situation! To give you the best guidance, could you tell me: What type of notice or issue are you dealing with? (eviction, debt collection, IRS, etc.)",
+                text: "I'd love to help you! To give you the best guidance, could you tell me: What type of notice or issue are you dealing with? (eviction, debt collection, IRS, wage garnishment, medical bills, etc.)",
                 quickActions: [
-                    { text: "Eviction Notice", action: "category_eviction" },
                     { text: "Debt Collection", action: "category_debt" },
                     { text: "IRS/Tax Issue", action: "category_irs" },
+                    { text: "Eviction", action: "category_eviction" },
                     { text: "Other Issue", action: "capture_lead" }
                 ]
             };
         }
         
         return {
-            text: "Based on what you've shared, I recommend starting with our intake form where you can upload your documents and get a personalized game plan. Would you like me to direct you there?",
+            text: "Based on what you've shared, I recommend starting with our intake form where you can upload your documents and get a personalized case plan. Would you like me to direct you there?",
             quickActions: [
                 { text: "Start My Case", action: "start_case" },
                 { text: "Speak to Agent", action: "escalate" }
@@ -428,16 +639,16 @@ class TurboAI {
 
     matchesCategoryKeywords(message, category) {
         const categoryKeywords = {
-            eviction: ['evict', 'landlord', 'rent', 'lease', 'housing', 'apartment'],
-            debt: ['debt', 'collector', 'collection', 'credit', 'bill', 'owe'],
-            irs: ['irs', 'tax', 'taxes', 'audit', 'refund', 'penalty'],
-            repossession: ['repo', 'car', 'vehicle', 'tow', 'repossess'],
-            wages: ['wage', 'garnish', 'paycheck', 'salary', 'income'],
-            medical: ['medical', 'hospital', 'doctor', 'insurance', 'health'],
-            benefits: ['benefits', 'food stamps', 'welfare', 'disability', 'social security'],
-            consumer: ['scam', 'fraud', 'warranty', 'refund', 'business'],
-            family: ['child support', 'custody', 'divorce', 'family court'],
-            business: ['business', 'contract', 'vendor', 'commercial']
+            "debt collection": ['debt', 'collector', 'collection', 'credit', 'bill', 'owe', 'collection agency'],
+            "credit bureau": ['credit', 'report', 'bureau', 'equifax', 'experian', 'transunion'],
+            "irs": ['irs', 'tax', 'taxes', 'audit', 'refund', 'penalty', 'cp2000', 'levy'],
+            "wage garnishment": ['wage', 'garnish', 'paycheck', 'salary', 'income', 'withhold'],
+            "eviction": ['evict', 'landlord', 'rent', 'lease', 'housing', 'apartment', 'notice'],
+            "repossession": ['repo', 'car', 'vehicle', 'tow', 'repossess', 'auto'],
+            "medical bills": ['medical', 'hospital', 'doctor', 'insurance', 'health', 'bill'],
+            "benefits": ['benefits', 'food stamps', 'welfare', 'disability', 'social security', 'unemployment'],
+            "consumer fraud": ['scam', 'fraud', 'warranty', 'refund', 'unauthorized', 'identity theft'],
+            "bank disputes": ['bank', 'account', 'loan', 'charge', 'unauthorized']
         };
         
         const keywords = categoryKeywords[category] || [];
@@ -449,10 +660,27 @@ class TurboAI {
             case 'start_case':
                 window.location.href = '/intake';
                 break;
+            case 'pricing_standard':
+                this.addMessage("Our Standard Defense Plan ($349) is our most popular option! It includes:\n\n✅ Full AI + expert-reviewed case defense\n✅ 30-day support window for follow-ups\n✅ Personalized dispute letters & templates\n✅ Real-time progress tracking\n\nPerfect for people dealing with multiple notices or complex disputes.", 'ai');
+                setTimeout(() => {
+                    this.addQuickActions([
+                        { text: "Start My Case", action: "start_case" },
+                        { text: "See All Plans", action: "pricing_all" }
+                    ]);
+                }, 1000);
+                break;
+            case 'advantages':
+                this.addMessage("Here's why customers choose Turbo Response:\n\n⚡ Speed: AI delivers results in 24-48 hours (vs. weeks with lawyers)\n💰 Affordability: Flat pricing with no retainers (vs. $200-400/hr)\n🎯 Precision: AI trained on consumer protection laws + human verification\n📚 Empowerment: Learn your rights along the way\n✅ Results: Clients stop collection calls within days, credit corrected in 30-45 days", 'ai');
+                setTimeout(() => {
+                    this.addQuickActions([
+                        { text: "Start My Case", action: "start_case" }
+                    ]);
+                }, 1000);
+                break;
             case 'category_eviction':
                 this.addMessage("Perfect! I can help with eviction and housing issues.", 'ai');
                 setTimeout(() => {
-                    this.addMessage("Upload your eviction notice or lease documents, and we'll create a defense strategy that cites your tenant rights and local housing laws.", 'ai');
+                    this.addMessage("We handle security deposit disputes, illegal eviction notices, habitability issues, and landlord violations. Upload your eviction notice or lease documents, and we'll create a defense strategy that cites your tenant rights and local housing laws.", 'ai');
                     this.addQuickActions([
                         { text: "Upload Documents", action: "start_case" },
                         { text: "Learn About Rights", action: "learn_more" }
@@ -462,7 +690,7 @@ class TurboAI {
             case 'category_debt':
                 this.addMessage("I can definitely help with debt collection issues!", 'ai');
                 setTimeout(() => {
-                    this.addMessage("We'll create a response that demands validation, challenges incorrect amounts, and cites the Fair Debt Collection Practices Act to protect your rights.", 'ai');
+                    this.addMessage("We'll create a response that demands validation, challenges incorrect amounts, and cites the Fair Debt Collection Practices Act (FDCPA) to protect your rights. Stop harassment and defend your credit.", 'ai');
                     this.addQuickActions([
                         { text: "Upload Notice", action: "start_case" },
                         { text: "Know Your Rights", action: "learn_more" }
@@ -472,7 +700,7 @@ class TurboAI {
             case 'category_irs':
                 this.addMessage("IRS issues can be stressful, but you have rights!", 'ai');
                 setTimeout(() => {
-                    this.addMessage("We'll help you respond with the proper tax code citations, request penalty abatement if applicable, and ensure you're protected under taxpayer rights.", 'ai');
+                    this.addMessage("We'll help you respond with the proper tax code citations, request penalty abatement if applicable, and ensure you're protected under taxpayer rights. We handle CP2000 notices, levy threats, audits, and back-tax disputes.", 'ai');
                     this.addQuickActions([
                         { text: "Upload IRS Notice", action: "start_case" },
                         { text: "Taxpayer Rights", action: "learn_more" }
