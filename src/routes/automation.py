@@ -5,66 +5,114 @@ from datetime import datetime
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
+import mimetypes
 
 automation_bp = Blueprint('automation', __name__)
 
-# Automation configuration
+# ============================================================================
+# AUTOMATION CONFIGURATION
+# ============================================================================
+
 AUTOMATION_CONFIG = {
     'notification_email': 'TurboResponseHQ@gmail.com',
     'data_storage_path': '/tmp/turbo_response_data',
+    'document_storage_path': '/tmp/turbo_response_documents',
     'enable_notifications': True,
-    'enable_data_logging': True
+    'enable_data_logging': True,
+    'enable_email_sending': True,  # Set to True when SMTP is configured
+    'smtp_server': os.getenv('SMTP_SERVER', 'smtp.gmail.com'),
+    'smtp_port': int(os.getenv('SMTP_PORT', 587)),
+    'smtp_username': os.getenv('SMTP_USERNAME', ''),
+    'smtp_password': os.getenv('SMTP_PASSWORD', ''),
+    'sender_email': os.getenv('SENDER_EMAIL', 'TurboResponseHQ@gmail.com'),
 }
 
-# Ensure data directory exists
+# Ensure directories exist
 os.makedirs(AUTOMATION_CONFIG['data_storage_path'], exist_ok=True)
+os.makedirs(AUTOMATION_CONFIG['document_storage_path'], exist_ok=True)
+
+# ============================================================================
+# FORM SUBMISSION HANDLER
+# ============================================================================
 
 @automation_bp.route('/api/form-submission', methods=['POST'])
 def handle_form_submission():
-    """Handle intake form submissions with automation triggers"""
+    """
+    Handle intake form submissions with full automation:
+    1. Store in database
+    2. Send admin notification
+    3. Send client confirmation
+    4. Handle document uploads
+    5. Log for external integrations
+    """
     try:
         data = request.get_json()
         
-        # Add timestamp and generate case ID
+        # Generate case ID
+        case_id = f"TURBO-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+        
+        # Create submission record
         submission_data = {
-            'case_id': f"TURBO-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+            'case_id': case_id,
             'timestamp': datetime.now().isoformat(),
-            'client_data': data,
+            'client_data': {
+                'email': data.get('email'),
+                'fullName': data.get('fullName'),
+                'phone': data.get('phone'),
+                'address': data.get('address'),
+                'category': data.get('category'),
+                'caseDescription': data.get('caseDescription'),
+                'amount': data.get('amount'),
+                'deadline': data.get('deadline'),
+                'documents': data.get('documents', [])
+            },
             'status': 'submitted',
             'automation_triggers': []
         }
         
-        # Trigger 1: Store in local database/file system
+        # Trigger 1: Store submission in database
         if AUTOMATION_CONFIG['enable_data_logging']:
             store_submission_data(submission_data)
             submission_data['automation_triggers'].append('data_stored')
         
-        # Trigger 2: Send notification email
+        # Trigger 2: Handle document uploads
+        if data.get('documents'):
+            handle_document_uploads(case_id, data.get('documents'))
+            submission_data['automation_triggers'].append('documents_stored')
+        
+        # Trigger 3: Send admin notification email
         if AUTOMATION_CONFIG['enable_notifications']:
-            send_notification_email(submission_data)
-            submission_data['automation_triggers'].append('notification_sent')
+            send_admin_notification(submission_data)
+            submission_data['automation_triggers'].append('admin_notified')
         
-        # Trigger 3: Log for external integrations (Zapier/Notion ready)
-        log_for_external_integration(submission_data)
-        submission_data['automation_triggers'].append('external_logged')
-        
-        # Trigger 4: Send auto-reply to client
+        # Trigger 4: Send client confirmation email
         send_client_confirmation(submission_data)
         submission_data['automation_triggers'].append('client_confirmed')
         
+        # Trigger 5: Log for external integrations (Zapier/Notion ready)
+        log_for_external_integration(submission_data)
+        submission_data['automation_triggers'].append('external_logged')
+        
         return jsonify({
             'success': True,
-            'case_id': submission_data['case_id'],
+            'case_id': case_id,
             'message': 'Case submitted successfully. You will receive confirmation within 24-48 hours.',
             'automation_status': submission_data['automation_triggers']
         }), 200
         
     except Exception as e:
+        print(f"Form submission error: {e}")
         return jsonify({
             'success': False,
             'error': str(e),
             'message': 'Submission failed. Please try again.'
         }), 500
+
+# ============================================================================
+# CHATBOT LEAD HANDLER
+# ============================================================================
 
 @automation_bp.route('/api/chatbot-lead', methods=['POST'])
 def handle_chatbot_lead():
@@ -97,14 +145,23 @@ def handle_chatbot_lead():
         }), 200
         
     except Exception as e:
+        print(f"Chatbot lead error: {e}")
         return jsonify({
             'success': False,
             'error': str(e)
         }), 500
 
+# ============================================================================
+# WEBHOOK ENDPOINT FOR ZAPIER
+# ============================================================================
+
 @automation_bp.route('/api/webhook/zapier', methods=['POST'])
 def zapier_webhook():
-    """Webhook endpoint for Zapier integrations"""
+    """
+    Webhook endpoint for Zapier integrations
+    
+    Accepts POST requests with form field data and triggers automations
+    """
     try:
         data = request.get_json()
         
@@ -125,27 +182,35 @@ def zapier_webhook():
         }), 200
         
     except Exception as e:
+        print(f"Zapier webhook error: {e}")
         return jsonify({
             'success': False,
             'error': str(e)
         }), 500
 
+# ============================================================================
+# DATA STORAGE FUNCTIONS
+# ============================================================================
+
 def store_submission_data(submission_data):
-    """Store form submission data locally"""
+    """Store form submission data to local filesystem and database"""
     try:
+        # Store individual case file
         filename = f"{submission_data['case_id']}_submission.json"
         filepath = os.path.join(AUTOMATION_CONFIG['data_storage_path'], filename)
         
         with open(filepath, 'w') as f:
             json.dump(submission_data, f, indent=2)
-            
-        # Also append to master log
+        
+        # Append to master log
         log_filepath = os.path.join(AUTOMATION_CONFIG['data_storage_path'], 'submissions_log.jsonl')
         with open(log_filepath, 'a') as f:
             f.write(json.dumps(submission_data) + '\n')
-            
+        
+        print(f"✓ Submission stored: {submission_data['case_id']}")
+        
     except Exception as e:
-        print(f"Error storing submission data: {e}")
+        print(f"✗ Error storing submission data: {e}")
 
 def store_lead_data(lead_record):
     """Store chatbot lead data"""
@@ -155,14 +220,16 @@ def store_lead_data(lead_record):
         
         with open(filepath, 'w') as f:
             json.dump(lead_record, f, indent=2)
-            
+        
         # Append to leads log
         log_filepath = os.path.join(AUTOMATION_CONFIG['data_storage_path'], 'leads_log.jsonl')
         with open(log_filepath, 'a') as f:
             f.write(json.dumps(lead_record) + '\n')
-            
+        
+        print(f"✓ Lead stored: {lead_record['lead_id']}")
+        
     except Exception as e:
-        print(f"Error storing lead data: {e}")
+        print(f"✗ Error storing lead data: {e}")
 
 def store_webhook_data(webhook_record):
     """Store webhook data"""
@@ -172,169 +239,344 @@ def store_webhook_data(webhook_record):
         
         with open(filepath, 'w') as f:
             json.dump(webhook_record, f, indent=2)
-            
+        
+        print(f"✓ Webhook stored: {webhook_record['webhook_id']}")
+        
     except Exception as e:
-        print(f"Error storing webhook data: {e}")
+        print(f"✗ Error storing webhook data: {e}")
 
-def send_notification_email(submission_data):
-    """Send notification email to TurboResponseHQ@gmail.com"""
+# ============================================================================
+# DOCUMENT UPLOAD HANDLER
+# ============================================================================
+
+def handle_document_uploads(case_id, documents):
+    """
+    Handle document uploads and storage
+    
+    Documents can be:
+    - Base64 encoded files from form
+    - File paths for server-side processing
+    """
+    try:
+        case_folder = os.path.join(AUTOMATION_CONFIG['document_storage_path'], case_id)
+        os.makedirs(case_folder, exist_ok=True)
+        
+        for idx, doc in enumerate(documents):
+            if isinstance(doc, dict):
+                # Handle base64 encoded files
+                if 'data' in doc and 'filename' in doc:
+                    import base64
+                    file_data = base64.b64decode(doc['data'])
+                    file_path = os.path.join(case_folder, doc['filename'])
+                    
+                    with open(file_path, 'wb') as f:
+                        f.write(file_data)
+                    
+                    print(f"✓ Document stored: {case_id}/{doc['filename']}")
+        
+        return True
+        
+    except Exception as e:
+        print(f"✗ Error handling document uploads: {e}")
+        return False
+
+# ============================================================================
+# EMAIL SENDING FUNCTIONS
+# ============================================================================
+
+def send_admin_notification(submission_data):
+    """
+    Send notification email to admin (TurboResponseHQ@gmail.com)
+    
+    Contains full case details for review
+    """
     try:
         client_data = submission_data['client_data']
         
-        # Create notification email content
-        subject = f"New Turbo Response Case: {submission_data['case_id']}"
+        subject = f"🔔 New Case: {submission_data['case_id']} - {client_data.get('fullName', 'Unknown')}"
         
-        body = f"""
-New case submission received:
-
-Case ID: {submission_data['case_id']}
-Timestamp: {submission_data['timestamp']}
-
-Client Information:
-- Name: {client_data.get('name', 'Not provided')}
-- Email: {client_data.get('email', 'Not provided')}
-- Phone: {client_data.get('phone', 'Not provided')}
-- Category: {client_data.get('category', 'Not specified')}
-
-Case Details:
-- Issue Description: {client_data.get('issue_description', 'Not provided')}
-- Urgency: {client_data.get('urgency', 'Not specified')}
-- Documents: {len(client_data.get('documents', []))} files uploaded
-
-Review this case in your admin dashboard:
-https://turbo-response-platform.com/admin
-
----
-Turbo Response Automation System
+        # Create HTML email body
+        html_body = f"""
+        <html>
+            <body style="font-family: Arial, sans-serif; color: #333;">
+                <h2 style="color: #06b6d4;">New Case Submission</h2>
+                
+                <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <p><strong>Case ID:</strong> {submission_data['case_id']}</p>
+                    <p><strong>Submitted:</strong> {datetime.fromisoformat(submission_data['timestamp']).strftime('%B %d, %Y at %I:%M %p')}</p>
+                </div>
+                
+                <h3>Client Information</h3>
+                <ul>
+                    <li><strong>Name:</strong> {client_data.get('fullName', 'Not provided')}</li>
+                    <li><strong>Email:</strong> {client_data.get('email', 'Not provided')}</li>
+                    <li><strong>Phone:</strong> {client_data.get('phone', 'Not provided')}</li>
+                    <li><strong>Address:</strong> {client_data.get('address', 'Not provided')}</li>
+                </ul>
+                
+                <h3>Case Details</h3>
+                <ul>
+                    <li><strong>Category:</strong> {client_data.get('category', 'Not specified')}</li>
+                    <li><strong>Amount:</strong> ${client_data.get('amount', 'Not specified')}</li>
+                    <li><strong>Deadline:</strong> {client_data.get('deadline', 'Not specified')}</li>
+                    <li><strong>Documents:</strong> {len(client_data.get('documents', []))} files</li>
+                </ul>
+                
+                <h3>Issue Description</h3>
+                <p style="background: #f9f9f9; padding: 10px; border-left: 4px solid #06b6d4;">
+                    {client_data.get('caseDescription', 'No description provided')}
+                </p>
+                
+                <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
+                
+                <p>
+                    <a href="https://turboresponsehq.onrender.com/admin" 
+                       style="background: #06b6d4; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                        Review in Admin Dashboard
+                    </a>
+                </p>
+                
+                <p style="color: #999; font-size: 12px; margin-top: 30px;">
+                    This is an automated notification from Turbo Response
+                </p>
+            </body>
+        </html>
         """
         
-        # Log notification (actual email sending would require SMTP configuration)
-        notification_log = {
-            'type': 'email_notification',
+        # Log notification
+        log_email_notification({
+            'type': 'admin_notification',
             'to': AUTOMATION_CONFIG['notification_email'],
             'subject': subject,
-            'body': body,
-            'timestamp': datetime.now().isoformat(),
-            'case_id': submission_data['case_id']
-        }
+            'case_id': submission_data['case_id'],
+            'status': 'logged'
+        })
         
-        log_filepath = os.path.join(AUTOMATION_CONFIG['data_storage_path'], 'notifications_log.jsonl')
-        with open(log_filepath, 'a') as f:
-            f.write(json.dumps(notification_log) + '\n')
-            
+        # Send actual email if SMTP is configured
+        if AUTOMATION_CONFIG['enable_email_sending'] and AUTOMATION_CONFIG['smtp_username']:
+            send_email(
+                to_email=AUTOMATION_CONFIG['notification_email'],
+                subject=subject,
+                html_body=html_body,
+                case_id=submission_data['case_id']
+            )
+        
     except Exception as e:
-        print(f"Error sending notification email: {e}")
-
-def send_lead_notification(lead_record):
-    """Send lead notification email"""
-    try:
-        lead_data = lead_record['lead_data']
-        
-        subject = f"New Turbo AI Lead: {lead_record['lead_id']}"
-        
-        body = f"""
-New lead captured via Turbo AI Chatbot:
-
-Lead ID: {lead_record['lead_id']}
-Timestamp: {lead_record['timestamp']}
-
-Lead Information:
-- Name: {lead_data.get('name', 'Not provided')}
-- Email: {lead_data.get('email', 'Not provided')}
-- Question: {lead_data.get('question', 'Not provided')}
-
-Follow up with this lead within 24 hours for best conversion rates.
-
----
-Turbo Response AI System
-        """
-        
-        # Log lead notification
-        notification_log = {
-            'type': 'lead_notification',
-            'to': AUTOMATION_CONFIG['notification_email'],
-            'subject': subject,
-            'body': body,
-            'timestamp': datetime.now().isoformat(),
-            'lead_id': lead_record['lead_id']
-        }
-        
-        log_filepath = os.path.join(AUTOMATION_CONFIG['data_storage_path'], 'lead_notifications_log.jsonl')
-        with open(log_filepath, 'a') as f:
-            f.write(json.dumps(notification_log) + '\n')
-            
-    except Exception as e:
-        print(f"Error sending lead notification: {e}")
+        print(f"✗ Error sending admin notification: {e}")
 
 def send_client_confirmation(submission_data):
-    """Send auto-reply confirmation to client"""
+    """
+    Send auto-reply confirmation email to client
+    
+    Provides case ID and next steps
+    """
     try:
         client_data = submission_data['client_data']
         client_email = client_data.get('email')
         
         if not client_email:
+            print("⚠ No client email provided")
             return
-            
-        subject = f"Case Received: {submission_data['case_id']} - Turbo Response"
         
-        body = f"""
-Dear {client_data.get('name', 'Valued Client')},
-
-✅ Thank you — your case has been received. Our AI system is analyzing your information.
-
-Case Details:
-- Case ID: {submission_data['case_id']}
-- Category: {client_data.get('category', 'Consumer Defense')}
-- Submitted: {datetime.now().strftime('%B %d, %Y at %I:%M %p')}
-
-What Happens Next:
-1. Our AI analyzes your documents and case details
-2. Our expert team reviews your situation
-3. We create your personalized game plan
-4. You receive your defense strategy within 24-48 hours
-
-You'll receive an update within 24–48 hours with your customized legal response strategy.
-
-Questions? Reply to this email or visit our website.
-
-Best regards,
-The Turbo Response Team
-AI-Powered Consumer Defense
-
----
-This is an automated confirmation. Please do not reply to this email.
+        subject = f"✅ Case Received: {submission_data['case_id']} - Turbo Response"
+        
+        html_body = f"""
+        <html>
+            <body style="font-family: Arial, sans-serif; color: #333;">
+                <h2 style="color: #06b6d4;">✅ Your Case Has Been Received</h2>
+                
+                <p>Dear {client_data.get('fullName', 'Valued Client')},</p>
+                
+                <p>Thank you for submitting your case to Turbo Response. Our AI system is analyzing your information right now.</p>
+                
+                <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #06b6d4;">
+                    <p><strong>Your Case ID:</strong> <span style="font-size: 18px; color: #06b6d4;">{submission_data['case_id']}</span></p>
+                    <p><strong>Category:</strong> {client_data.get('category', 'Consumer Defense')}</p>
+                    <p><strong>Submitted:</strong> {datetime.fromisoformat(submission_data['timestamp']).strftime('%B %d, %Y at %I:%M %p')}</p>
+                </div>
+                
+                <h3>What Happens Next</h3>
+                <ol>
+                    <li><strong>AI Analysis</strong> - Our AI system analyzes your documents and case details</li>
+                    <li><strong>Expert Review</strong> - Our consumer rights specialists review your situation</li>
+                    <li><strong>Game Plan Creation</strong> - We create your personalized defense strategy</li>
+                    <li><strong>Delivery</strong> - You receive your response within 24-48 hours</li>
+                </ol>
+                
+                <h3>Keep Your Case ID Safe</h3>
+                <p>You'll need your case ID to check on your case status. Save this email for your records.</p>
+                
+                <h3>Questions?</h3>
+                <p>Reply to this email or visit our website at <a href="https://turboresponsehq.onrender.com">turboresponsehq.onrender.com</a></p>
+                
+                <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
+                
+                <p style="color: #666;">
+                    Best regards,<br>
+                    <strong>The Turbo Response Team</strong><br>
+                    AI-Powered Consumer Defense
+                </p>
+                
+                <p style="color: #999; font-size: 12px;">
+                    This is an automated confirmation. Please do not reply to this email.
+                </p>
+            </body>
+        </html>
         """
         
         # Log client confirmation
-        confirmation_log = {
+        log_email_notification({
             'type': 'client_confirmation',
             'to': client_email,
             'subject': subject,
-            'body': body,
-            'timestamp': datetime.now().isoformat(),
-            'case_id': submission_data['case_id']
-        }
+            'case_id': submission_data['case_id'],
+            'status': 'logged'
+        })
         
-        log_filepath = os.path.join(AUTOMATION_CONFIG['data_storage_path'], 'client_confirmations_log.jsonl')
-        with open(log_filepath, 'a') as f:
-            f.write(json.dumps(confirmation_log) + '\n')
-            
+        # Send actual email if SMTP is configured
+        if AUTOMATION_CONFIG['enable_email_sending'] and AUTOMATION_CONFIG['smtp_username']:
+            send_email(
+                to_email=client_email,
+                subject=subject,
+                html_body=html_body,
+                case_id=submission_data['case_id']
+            )
+        
+        print(f"✓ Client confirmation logged: {client_email}")
+        
     except Exception as e:
-        print(f"Error sending client confirmation: {e}")
+        print(f"✗ Error sending client confirmation: {e}")
+
+def send_lead_notification(lead_record):
+    """Send lead notification email to admin"""
+    try:
+        lead_data = lead_record['lead_data']
+        
+        subject = f"💬 New Chatbot Lead: {lead_record['lead_id']}"
+        
+        html_body = f"""
+        <html>
+            <body style="font-family: Arial, sans-serif; color: #333;">
+                <h2 style="color: #06b6d4;">New Lead from Turbo AI Chatbot</h2>
+                
+                <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <p><strong>Lead ID:</strong> {lead_record['lead_id']}</p>
+                    <p><strong>Captured:</strong> {datetime.fromisoformat(lead_record['timestamp']).strftime('%B %d, %Y at %I:%M %p')}</p>
+                </div>
+                
+                <h3>Lead Information</h3>
+                <ul>
+                    <li><strong>Name:</strong> {lead_data.get('name', 'Not provided')}</li>
+                    <li><strong>Email:</strong> {lead_data.get('email', 'Not provided')}</li>
+                    <li><strong>Question:</strong> {lead_data.get('question', 'Not provided')}</li>
+                </ul>
+                
+                <p style="color: #d97706; font-weight: bold;">⏰ Follow up within 24 hours for best conversion rates</p>
+                
+                <p style="color: #999; font-size: 12px; margin-top: 30px;">
+                    This is an automated notification from Turbo Response
+                </p>
+            </body>
+        </html>
+        """
+        
+        # Log lead notification
+        log_email_notification({
+            'type': 'lead_notification',
+            'to': AUTOMATION_CONFIG['notification_email'],
+            'subject': subject,
+            'lead_id': lead_record['lead_id'],
+            'status': 'logged'
+        })
+        
+        # Send actual email if SMTP is configured
+        if AUTOMATION_CONFIG['enable_email_sending'] and AUTOMATION_CONFIG['smtp_username']:
+            send_email(
+                to_email=AUTOMATION_CONFIG['notification_email'],
+                subject=subject,
+                html_body=html_body
+            )
+        
+    except Exception as e:
+        print(f"✗ Error sending lead notification: {e}")
+
+def send_email(to_email, subject, html_body, case_id=None):
+    """
+    Send email via SMTP
+    
+    Requires environment variables:
+    - SMTP_SERVER (default: smtp.gmail.com)
+    - SMTP_PORT (default: 587)
+    - SMTP_USERNAME (your email)
+    - SMTP_PASSWORD (app password)
+    - SENDER_EMAIL (from address)
+    """
+    try:
+        if not AUTOMATION_CONFIG['smtp_username'] or not AUTOMATION_CONFIG['smtp_password']:
+            print("⚠ SMTP credentials not configured. Email not sent.")
+            return False
+        
+        # Create message
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = subject
+        msg['From'] = AUTOMATION_CONFIG['sender_email']
+        msg['To'] = to_email
+        
+        # Attach HTML body
+        part = MIMEText(html_body, 'html')
+        msg.attach(part)
+        
+        # Send email
+        with smtplib.SMTP(AUTOMATION_CONFIG['smtp_server'], AUTOMATION_CONFIG['smtp_port']) as server:
+            server.starttls()
+            server.login(AUTOMATION_CONFIG['smtp_username'], AUTOMATION_CONFIG['smtp_password'])
+            server.send_message(msg)
+        
+        print(f"✓ Email sent to {to_email}")
+        return True
+        
+    except Exception as e:
+        print(f"✗ Error sending email: {e}")
+        return False
+
+# ============================================================================
+# LOGGING FUNCTIONS
+# ============================================================================
+
+def log_email_notification(notification):
+    """Log email notification attempt"""
+    try:
+        log_filepath = os.path.join(AUTOMATION_CONFIG['data_storage_path'], 'email_notifications_log.jsonl')
+        notification['timestamp'] = datetime.now().isoformat()
+        
+        with open(log_filepath, 'a') as f:
+            f.write(json.dumps(notification) + '\n')
+        
+    except Exception as e:
+        print(f"✗ Error logging email notification: {e}")
 
 def log_for_external_integration(submission_data):
-    """Log data in format ready for external integrations (Zapier, Notion, etc.)"""
+    """
+    Log data in format ready for external integrations (Zapier, Notion, etc.)
+    
+    This creates a standardized format that can be easily consumed by:
+    - Zapier webhooks
+    - Notion API
+    - Google Sheets
+    - Custom integrations
+    """
     try:
-        # Format data for external systems
         external_data = {
             'case_id': submission_data['case_id'],
             'timestamp': submission_data['timestamp'],
-            'client_name': submission_data['client_data'].get('name', ''),
+            'client_name': submission_data['client_data'].get('fullName', ''),
             'client_email': submission_data['client_data'].get('email', ''),
             'client_phone': submission_data['client_data'].get('phone', ''),
+            'client_address': submission_data['client_data'].get('address', ''),
             'category': submission_data['client_data'].get('category', ''),
-            'issue_description': submission_data['client_data'].get('issue_description', ''),
-            'urgency': submission_data['client_data'].get('urgency', ''),
+            'issue_description': submission_data['client_data'].get('caseDescription', ''),
+            'amount': submission_data['client_data'].get('amount', ''),
+            'deadline': submission_data['client_data'].get('deadline', ''),
             'document_count': len(submission_data['client_data'].get('documents', [])),
             'status': 'new_submission',
             'integration_ready': True
@@ -344,9 +586,11 @@ def log_for_external_integration(submission_data):
         log_filepath = os.path.join(AUTOMATION_CONFIG['data_storage_path'], 'external_integrations_log.jsonl')
         with open(log_filepath, 'a') as f:
             f.write(json.dumps(external_data) + '\n')
-            
+        
+        print(f"✓ External integration data logged: {submission_data['case_id']}")
+        
     except Exception as e:
-        print(f"Error logging for external integration: {e}")
+        print(f"✗ Error logging for external integration: {e}")
 
 def log_lead_for_crm(lead_record):
     """Log lead data for CRM integration"""
@@ -367,25 +611,32 @@ def log_lead_for_crm(lead_record):
         log_filepath = os.path.join(AUTOMATION_CONFIG['data_storage_path'], 'crm_leads_log.jsonl')
         with open(log_filepath, 'a') as f:
             f.write(json.dumps(crm_data) + '\n')
-            
+        
     except Exception as e:
-        print(f"Error logging lead for CRM: {e}")
+        print(f"✗ Error logging lead for CRM: {e}")
+
+# ============================================================================
+# STATUS & MONITORING
+# ============================================================================
 
 @automation_bp.route('/api/automation-status', methods=['GET'])
 def get_automation_status():
-    """Get automation system status"""
+    """Get automation system status and recent activity"""
     try:
-        # Count recent submissions and leads
         submissions_count = count_recent_files('submissions_log.jsonl')
         leads_count = count_recent_files('leads_log.jsonl')
+        emails_logged = count_recent_files('email_notifications_log.jsonl')
         
         status = {
             'system_status': 'operational',
             'recent_submissions': submissions_count,
             'recent_leads': leads_count,
+            'emails_logged': emails_logged,
             'automation_config': {
                 'notifications_enabled': AUTOMATION_CONFIG['enable_notifications'],
-                'data_logging_enabled': AUTOMATION_CONFIG['enable_data_logging']
+                'data_logging_enabled': AUTOMATION_CONFIG['enable_data_logging'],
+                'email_sending_enabled': AUTOMATION_CONFIG['enable_email_sending'],
+                'smtp_configured': bool(AUTOMATION_CONFIG['smtp_username'])
             },
             'timestamp': datetime.now().isoformat()
         }
@@ -404,11 +655,11 @@ def count_recent_files(filename):
         filepath = os.path.join(AUTOMATION_CONFIG['data_storage_path'], filename)
         if not os.path.exists(filepath):
             return 0
-            
+        
         with open(filepath, 'r') as f:
             lines = f.readlines()
             return len(lines)
-            
+        
     except Exception:
         return 0
 
