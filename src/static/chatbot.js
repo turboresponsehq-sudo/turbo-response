@@ -634,7 +634,13 @@ class TurboAI {
 
     matchesQuery(message, question) {
         const keywords = question.toLowerCase().split(' ');
-        return keywords.some(keyword => message.includes(keyword));
+        // Remove punctuation from keywords for better matching
+        const cleanKeywords = keywords.map(k => k.replace(/[^a-z0-9]/g, ''));
+        // Also check if the message contains key words (ignoring punctuation)
+        return cleanKeywords.some(keyword => {
+            if (!keyword) return false; // Skip empty keywords
+            return message.includes(keyword);
+        });
     }
 
     matchesCategoryKeywords(message, category) {
