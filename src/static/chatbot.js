@@ -535,7 +535,18 @@ class TurboAI {
     generateResponse(message) {
         const lowerMessage = message.toLowerCase();
         
-        // Check for FAQ matches first (highest priority)
+        // EXPLICIT pricing check FIRST (before FAQ matching)
+        if (lowerMessage.includes('pric') || lowerMessage.includes('cost') || lowerMessage.includes('plan') || lowerMessage.includes('tier')) {
+            return {
+                text: "We offer three flexible plans:\n\n💰 **Case Starter Plan: $149**\nPerfect for single issues or first-time disputes\n• 1 case review with AI analysis\n• Professional response letter\n• One follow-up or revision\n• 24-48 hour turnaround\n\n💰 **Standard Defense Plan: $349** (Most Popular!)\nGreat for multiple cases with ongoing support\n• Full AI + expert-reviewed defense\n• 30-day support window\n• Personalized dispute letters\n• Real-time progress tracking\n\n💰 **Comprehensive Case Management: Starting at $699**\nFor complex, high-stakes cases\n• End-to-end case oversight\n• Multiple dispute stages\n• AI + human monitoring\n• Priority support\n\nWhich plan interests you?",
+                quickActions: [
+                    { text: "Tell me more about $349 plan", action: "pricing_standard" },
+                    { text: "Start My Case", action: "start_case" }
+                ]
+            };
+        }
+        
+        // Check for FAQ matches
         for (const [question, answer] of Object.entries(this.knowledgeBase.faqs)) {
             if (this.matchesFAQ(lowerMessage, question)) {
                 return { text: answer };
