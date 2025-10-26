@@ -9,6 +9,7 @@
 - [x] reCAPTCHA configuration error preventing form submissions (fixed - made optional)
 - [x] Admin dashboard not displaying submitted cases (fixed - added API endpoints and fixed field mappings)
 - [x] Switch from /tmp/ to /data persistent disk storage (fixed - using Render persistent disk)
+- [x] JavaScript syntax error in admin dashboard line 593 (fixed - added missing backtick)
 
 ## Features to Add (Next Session)
 - [ ] Two-portal system: Public intake form (no uploads) + Secure document portal (paid customers only)
