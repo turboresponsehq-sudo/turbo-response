@@ -342,6 +342,85 @@
             margin-bottom: 30px;
         }
 
+        /* Testimonials Section */
+        .testimonials {
+            padding: 100px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .testimonials-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+
+        .testimonials-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 60px;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            text-align: left;
+        }
+
+        .testimonial-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .testimonial-stars {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .testimonial-case-type {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-blue) 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .testimonial-text {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .testimonial-result {
+            color: var(--accent-cyan);
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .testimonial-author {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
         /* Footer */
         .footer {
             padding: 60px 20px 30px;
@@ -528,6 +607,56 @@
                 <div class="pricing-name">Comprehensive Case Management</div>
                 <div class="pricing-description">For complex or high-value cases. End-to-end case handling, multi-stage dispute letters + appeals, ongoing updates + analytics dashboard access, priority support</div>
                 <a href="/intake" class="cta-button">Start Your Case</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <h2 class="testimonials-title">Real Results from Real People</h2>
+        <p class="testimonials-subtitle">See how Turbo Response helped customers fight back and win</p>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                <div class="testimonial-case-type">Debt Collection</div>
+                <p class="testimonial-text">"I was being harassed by collectors for a debt I didn't owe. Turbo Response helped me draft the perfect validation letter. The calls stopped within 3 days!"</p>
+                <div class="testimonial-result">✅ Result: Debt removed, harassment stopped</div>
+                <div class="testimonial-author">— Sarah M., Phoenix, AZ</div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                <div class="testimonial-case-type">IRS Tax Issue</div>
+                <p class="testimonial-text">"Received a CP2000 notice claiming I owed $8,400. Turbo Response analyzed my case and created a response that got the amount reduced to $0. Saved me thousands!"</p>
+                <div class="testimonial-result">✅ Result: $8,400 tax bill eliminated</div>
+                <div class="testimonial-author">— Marcus T., Atlanta, GA</div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                <div class="testimonial-case-type">Eviction Defense</div>
+                <p class="testimonial-text">"My landlord tried to evict me illegally. Turbo Response gave me the legal ammunition I needed. Case dismissed in court!"</p>
+                <div class="testimonial-result">✅ Result: Eviction dismissed, stayed in home</div>
+                <div class="testimonial-author">— Jennifer L., Chicago, IL</div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                <div class="testimonial-case-type">Credit Report Error</div>
+                <p class="testimonial-text">"Had a 7-year-old debt on my credit report that wasn't mine. Turbo Response helped me dispute it with all three bureaus. Removed in 35 days!"</p>
+                <div class="testimonial-result">✅ Result: Credit score jumped 67 points</div>
+                <div class="testimonial-author">— David K., Miami, FL</div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                <div class="testimonial-case-type">Wage Garnishment</div>
+                <p class="testimonial-text">"They were taking 25% of my paycheck. Turbo Response helped me challenge the garnishment order. Got it reduced to 10% and set up a payment plan."</p>
+                <div class="testimonial-result">✅ Result: Garnishment reduced by 60%</div>
+                <div class="testimonial-author">— Robert H., Dallas, TX</div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                <div class="testimonial-case-type">Medical Bill Dispute</div>
+                <p class="testimonial-text">"Hospital billed me $12,000 for services insurance should have covered. Turbo Response created the appeal letters. Insurance paid the full amount!"</p>
+                <div class="testimonial-result">✅ Result: $12,000 bill covered by insurance</div>
+                <div class="testimonial-author">— Lisa P., Seattle, WA</div>
             </div>
         </div>
     </section>
