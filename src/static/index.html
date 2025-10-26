@@ -421,6 +421,67 @@
             font-weight: 500;
         }
 
+        /* Payment Section */
+        .payment-section {
+            padding: 80px 20px;
+            text-align: center;
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        .payment-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 50px;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 900px;
+            margin: 0 auto 40px;
+        }
+
+        .payment-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            padding: 40px 30px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .payment-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .payment-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .payment-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        .payment-handle {
+            font-size: 1.1rem;
+            color: var(--accent-cyan);
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+
+        .payment-note {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
         /* Footer */
         .footer {
             padding: 60px 20px 30px;
@@ -658,6 +719,32 @@
                 <div class="testimonial-result">✅ Result: $12,000 bill covered by insurance</div>
                 <div class="testimonial-author">— Lisa P., Seattle, WA</div>
             </div>
+        </div>
+    </section>
+
+    <!-- Payment Methods Section -->
+    <section class="payment-section">
+        <div class="container">
+            <h2 class="section-title">💳 Payment Methods</h2>
+            <p class="payment-subtitle">We accept multiple payment options for your convenience</p>
+            <div class="payment-methods">
+                <div class="payment-card">
+                    <div class="payment-icon">💵</div>
+                    <h3>Cash App</h3>
+                    <p class="payment-handle">$turboresponsehq</p>
+                </div>
+                <div class="payment-card">
+                    <div class="payment-icon">💚</div>
+                    <h3>Venmo</h3>
+                    <p class="payment-handle">@Moneybossesapparel</p>
+                </div>
+                <div class="payment-card">
+                    <div class="payment-icon">💙</div>
+                    <h3>PayPal</h3>
+                    <p class="payment-handle">Money Bosses Association</p>
+                </div>
+            </div>
+            <p class="payment-note">📧 Payment instructions will be provided after case review</p>
         </div>
     </section>
 

@@ -277,6 +277,68 @@
             color: white;
         }
 
+        /* Payment Info Section */
+        .payment-info-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-glow);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+        }
+
+        .payment-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .payment-info-card {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .payment-info-card:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
+            transform: translateY(-2px);
+        }
+
+        .payment-info-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .payment-info-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .payment-info-handle {
+            font-size: 1rem;
+            color: var(--accent-cyan);
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 15px;
+        }
+
+        .btn-secondary {
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--accent-cyan);
+            border: 1px solid var(--accent-cyan);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(6, 182, 212, 0.2);
+            transform: translateY(-1px);
+        }
+
         /* Cases Table */
         .cases-section {
             background: var(--card-bg);
@@ -487,6 +549,37 @@
                 <button class="btn btn-primary" onclick="approveClient()">
                     ✅ Approve Client
                 </button>
+            </div>
+        </div>
+
+        <!-- Payment Information Section -->
+        <div class="payment-info-section">
+            <h2 class="section-title">
+                <span class="section-icon">💳</span>
+                Payment Information
+            </h2>
+            <p style="color: var(--text-secondary); margin-bottom: 30px;">
+                Share these payment details with approved clients
+            </p>
+            <div class="payment-info-grid">
+                <div class="payment-info-card">
+                    <div class="payment-info-icon">💵</div>
+                    <h3>Cash App</h3>
+                    <p class="payment-info-handle">$turboresponsehq</p>
+                    <button class="btn btn-secondary btn-sm" onclick="copyToClipboard('$turboresponsehq')">📋 Copy</button>
+                </div>
+                <div class="payment-info-card">
+                    <div class="payment-info-icon">💚</div>
+                    <h3>Venmo</h3>
+                    <p class="payment-info-handle">@Moneybossesapparel</p>
+                    <button class="btn btn-secondary btn-sm" onclick="copyToClipboard('@Moneybossesapparel')">📋 Copy</button>
+                </div>
+                <div class="payment-info-card">
+                    <div class="payment-info-icon">💙</div>
+                    <h3>PayPal</h3>
+                    <p class="payment-info-handle">Money Bosses Association</p>
+                    <button class="btn btn-secondary btn-sm" onclick="copyToClipboard('Money Bosses Association')">📋 Copy</button>
+                </div>
             </div>
         </div>
 
@@ -741,8 +834,15 @@
                 alert('❌ Error loading documents: ' + error.message);
             }
         }
+        // Copy to clipboard function
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                alert('✅ Copied to clipboard: ' + text);
+            }).catch(function(err) {
+                alert('❌ Failed to copy: ' + err);
+            });
+        }
     </script>
-
     <!-- Turbo AI Chatbot -->
     <script src="chatbot.js"></script>
 </body>
