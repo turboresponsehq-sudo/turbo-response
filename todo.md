@@ -7,11 +7,14 @@
 
 ## Bugs to Fix
 - [x] reCAPTCHA configuration error preventing form submissions (fixed - made optional)
+- [x] Admin dashboard not displaying submitted cases (fixing - added API endpoints)
 
 ## Features to Add (Next Session)
-- [ ] Payment processing integration (PayPal + Cash App)
-- [ ] Admin dashboard verification and testing
-- [ ] Document upload system repair and testing
+- [ ] Two-portal system: Public intake form (no uploads) + Secure document portal (paid customers only)
+- [ ] Generate unique upload links for paid customers
+- [ ] Payment processing integration (PayPal + Cash App invoicing workflow)
+- [ ] Admin dashboard: ability to create/manage customer upload access
+- [ ] Email integration: send upload links to customers after payment
 
 ## Completed
 - [x] Shorten chatbot pricing responses

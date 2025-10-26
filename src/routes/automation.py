@@ -663,3 +663,183 @@ def count_recent_files(filename):
     except Exception:
         return 0
 
+
+
+
+# ============================================================================
+# ADMIN API ENDPOINTS
+# ============================================================================
+
+@automation_bp.route('/api/admin/cases', methods=['GET'])
+def get_all_cases():
+    """Get all submitted cases for admin dashboard"""
+    try:
+        cases = []
+        data_path = AUTOMATION_CONFIG['data_storage_path']
+        
+        # Read all case files
+        if os.path.exists(data_path):
+            for filename in os.listdir(data_path):
+                if filename.endswith('_submission.json'):
+                    filepath = os.path.join(data_path, filename)
+                    try:
+                        with open(filepath, 'r') as f:
+                            case_data = json.load(f)
+                            cases.append(case_data)
+                    except Exception as e:
+                        print(f"Error reading case file {filename}: {e}")
+        
+        # Sort by submission date (newest first)
+        cases.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
+        
+        return jsonify({
+            'success': True,
+            'cases': cases,
+            'total': len(cases)
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@automation_bp.route('/api/admin/case/<case_id>', methods=['GET'])
+def get_case_details(case_id):
+    """Get details of a specific case"""
+    try:
+        data_path = AUTOMATION_CONFIG['data_storage_path']
+        filepath = os.path.join(data_path, f"{case_id}_submission.json")
+        
+        if not os.path.exists(filepath):
+            return jsonify({
+                'success': False,
+                'error': 'Case not found'
+            }), 404
+        
+        with open(filepath, 'r') as f:
+            case_data = json.load(f)
+        
+        return jsonify({
+            'success': True,
+            'case': case_data
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@automation_bp.route('/api/admin/document/<case_id>/<filename>', methods=['GET'])
+def download_document(case_id, filename):
+    """Download a document for a specific case"""
+    try:
+        doc_path = AUTOMATION_CONFIG['document_storage_path']
+        case_doc_path = os.path.join(doc_path, case_id)
+        filepath = os.path.join(case_doc_path, filename)
+        
+        if not os.path.exists(filepath):
+            return jsonify({
+                'success': False,
+                'error': 'Document not found'
+            }), 404
+        
+        # Determine MIME type
+        mime_type, _ = mimetypes.guess_type(filename)
+        if not mime_type:
+            mime_type = 'application/octet-stream'
+        
+        from flask import send_file
+        return send_file(filepath, mimetype=mime_type, as_attachment=True, download_name=filename)
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@automation_bp.route('/api/admin/case/<case_id>/approve', methods=['POST'])
+def approve_case_payment(case_id):
+    """Mark a case payment as approved"""
+    try:
+        data_path = AUTOMATION_CONFIG['data_storage_path']
+        filepath = os.path.join(data_path, f"{case_id}_submission.json")
+        
+        if not os.path.exists(filepath):
+            return jsonify({
+                'success': False,
+                'error': 'Case not found'
+            }), 404
+        
+        # Read case data
+        with open(filepath, 'r') as f:
+            case_data = json.load(f)
+        
+        # Update payment status
+        case_data['payment_status'] = 'approved'
+        case_data['payment_approved_at'] = datetime.now().isoformat()
+        
+        # Save updated data
+        with open(filepath, 'w') as f:
+            json.dump(case_data, f, indent=2)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Payment approved',
+            'case_id': case_id
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@automation_bp.route('/api/admin/case/<case_id>/status', methods=['POST'])
+def update_case_status(case_id):
+    """Update case status"""
+    try:
+        data = request.get_json()
+        new_status = data.get('status')
+        
+        if not new_status:
+            return jsonify({
+                'success': False,
+                'error': 'Status is required'
+            }), 400
+        
+        data_path = AUTOMATION_CONFIG['data_storage_path']
+        filepath = os.path.join(data_path, f"{case_id}_submission.json")
+        
+        if not os.path.exists(filepath):
+            return jsonify({
+                'success': False,
+                'error': 'Case not found'
+            }), 404
+        
+        # Read case data
+        with open(filepath, 'r') as f:
+            case_data = json.load(f)
+        
+        # Update status
+        case_data['case_status'] = new_status
+        case_data['status_updated_at'] = datetime.now().isoformat()
+        
+        # Save updated data
+        with open(filepath, 'w') as f:
+            json.dump(case_data, f, indent=2)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Status updated',
+            'case_id': case_id,
+            'new_status': new_status
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
