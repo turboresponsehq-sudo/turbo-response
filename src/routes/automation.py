@@ -17,8 +17,8 @@ automation_bp = Blueprint('automation', __name__)
 
 AUTOMATION_CONFIG = {
     'notification_email': 'TurboResponseHQ@gmail.com',
-    'data_storage_path': '/tmp/turbo_response_data',
-    'document_storage_path': '/tmp/turbo_response_documents',
+    'data_storage_path': '/data/turbo_response_data',
+    'document_storage_path': '/data/turbo_response_documents',
     'enable_notifications': True,
     'enable_data_logging': True,
     'enable_email_sending': True,  # Set to True when SMTP is configured
