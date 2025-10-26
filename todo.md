@@ -15,10 +15,10 @@
 - [x] Add Venmo (@Moneybossesapparel) to payment options (already exists)
 - [x] Display payment info on website and admin dashboard (Venmo: @Moneybossesapparel, PayPal: Money Bosses Association, Cash App: $turboresponsehq)
 - [x] Add admin dashboard login/password protection (implementing simple username/password authentication)
-- [ ] Create service agreement/terms of service page with "No Refunds" policy
-- [ ] Create client contract that must be signed before work begins
-- [ ] Add contract acceptance checkbox to intake form
-- [ ] Store contract acceptance with case data
+- [x] Create service agreement/terms of service page with "No Refunds" policy
+- [x] Create client contract that must be signed before work begins
+- [x] Add contract acceptance checkbox to intake form
+- [x] Store contract acceptance with case data
 - [ ] Set up custom domain (optional)
 
 ## Features to Add (Next Session)
@@ -34,4 +34,7 @@
 - [x] Add rush fee and final pricing disclaimers
 - [x] Add customer testimonials section to homepage
 - [x] File upload functionality works (tested successfully)
+
+
+- [ ] Add PayPal Pay in 4 (Buy Now, Pay Later) information to website
 
