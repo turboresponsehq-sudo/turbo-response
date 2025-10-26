@@ -576,25 +576,25 @@
 
             tbody.innerHTML = cases.map(case_ => `
                 <tr>
-                    <td><strong>${case_.id.substring(0, 8)}</strong></td>
-                    <td>${case_.email || 'N/A'}</td>
-                    <td><span class="category-badge">${case_.category || 'N/A'}</span></td>
-                    <td>${case_.description || 'N/A'}</td>
-                    <td><span class="status-badge status-${case_.payment_status || 'unknown'}">${case_.payment_status || 'Unknown'}</span></td>
-                    <td><span class="status-badge status-${case_.status || 'unknown'}">${case_.status || 'Unknown'}</span></td>
-                    <td>${new Date(case_.created_at).toLocaleDateString()}</td>
+                    <td><strong>${case_.case_id ? case_.case_id.substring(0, 8) : 'N/A'}</strong></td>
+                    <td>${case_.contact_info?.email || 'N/A'}</td>
+                    <td><span class="category-badge">${case_.case_details?.category || 'N/A'}</span></td>
+                    <td>${case_.case_details?.description ? case_.case_details.description.substring(0, 50) + '...' : 'N/A'}</td>
+                    <td><span class="status-badge status-${case_.payment_status || 'pending'}">${case_.payment_status || 'Pending'}</span></td>
+                    <td><span class="status-badge status-${case_.status || 'submitted'}">${case_.status || 'Submitted'}</span></td>
+                    <td>${case_.timestamp ? new Date(case_.timestamp).toLocaleDateString() : 'N/A'}</td>
                     <td>
                         <div class="action-buttons">
                             ${case_.payment_status !== 'paid' ? 
-                                `<button class="btn btn-success btn-sm" onclick="markPaid('${case_.id}')">Mark Paid</button>` : 
+                                `<button class="btn btn-success btn-sm" onclick="markPaid('${case_.case_id}')">Mark Paid</button>` : 
                                 ''
                             }
                             ${case_.status === 'submitted' && case_.payment_status === 'paid' ? 
-                                `<button class="btn btn-primary btn-sm" onclick="approveCase('${case_.id}')">Approve</button>` : 
+                               <button class="btn btn-primary btn-sm" onclick="viewCase('${case_.case_id}')">View Details</button>` : 
                                 ''
                             }
                             ${case_.document_path ? 
-                                `<a href="/download/${case_.id}" class="btn btn-primary btn-sm">Download</a>` : 
+                                `<button class="btn btn-info btn-sm" onclick="viewDocuments('${case_.case_id}')">View Docs</button>` : 
                                 ''
                             }
                         </div>
@@ -693,6 +693,52 @@
                 }
             } catch (error) {
                 alert('❌ Error approving case: ' + error.message);
+            }
+        }
+
+        // View case details
+        async function viewCase(caseId) {
+            try {
+                const response = await fetch(`/api/admin/case/${caseId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const case_ = data.case;
+                    alert(`Case Details:\n\nCase ID: ${case_.case_id}\nClient: ${case_.contact_info?.fullName}\nEmail: ${case_.contact_info?.email}\nPhone: ${case_.contact_info?.phone}\nCategory: ${case_.case_details?.category}\nDescription: ${case_.case_details?.description}\nAmount: $${case_.case_details?.amount || 'N/A'}\nStatus: ${case_.status}\nPayment: ${case_.payment_status}`);
+                } else {
+                    alert('❌ Error loading case: ' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        // View documents for a case
+        async function viewDocuments(caseId) {
+            try {
+                const response = await fetch(`/api/admin/case/${caseId}`);
+                const data = await response.json();
+                
+                if (data.success && data.case.documents && data.case.documents.length > 0) {
+                    let docList = 'Documents:\n\n';
+                    data.case.documents.forEach((doc, idx) => {
+                        docList += `${idx + 1}. ${doc.filename} (${Math.round(doc.size / 1024)}KB)\n`;
+                    });
+                    docList += '\nClick OK to download the first document.';
+                    
+                    if (confirm(docList)) {
+                        // Download first document
+                        const firstDoc = data.case.documents[0];
+                        const link = document.createElement('a');
+                        link.href = `data:${firstDoc.type};base64,${firstDoc.data}`;
+                        link.download = firstDoc.filename;
+                        link.click();
+                    }
+                } else {
+                    alert('No documents found for this case.');
+                }
+            } catch (error) {
+                alert('❌ Error loading documents: ' + error.message);
             }
         }
     </script>

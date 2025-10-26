@@ -7,7 +7,7 @@
 
 ## Bugs to Fix
 - [x] reCAPTCHA configuration error preventing form submissions (fixed - made optional)
-- [x] Admin dashboard not displaying submitted cases (fixing - added API endpoints)
+- [x] Admin dashboard not displaying submitted cases (fixed - added API endpoints and fixed field mappings)
 
 ## Features to Add (Next Session)
 - [ ] Two-portal system: Public intake form (no uploads) + Secure document portal (paid customers only)
