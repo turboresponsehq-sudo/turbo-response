@@ -537,7 +537,7 @@ class TurboAI {
         
         // Check for FAQ matches first (highest priority)
         for (const [question, answer] of Object.entries(this.knowledgeBase.faqs)) {
-            if (this.matchesQuery(lowerMessage, question)) {
+            if (this.matchesFAQ(lowerMessage, question)) {
                 return { text: answer };
             }
         }
@@ -630,6 +630,22 @@ class TurboAI {
                 { text: "Speak to Agent", action: "escalate" }
             ]
         };
+    }
+
+    matchesFAQ(message, question) {
+        const keywords = question.toLowerCase().split(' ');
+        // Remove punctuation and filter out common words
+        const stopWords = ['how', 'what', 'when', 'where', 'why', 'who', 'is', 'are', 'the', 'a', 'an', 'i', 'you', 'your', 'my', 'will', 'do', 'does', 'can', 'to', 'get'];
+        const cleanKeywords = keywords
+            .map(k => k.replace(/[^a-z0-9]/g, ''))
+            .filter(k => k.length > 2 && !stopWords.includes(k)); // Only keep significant words
+        
+        // Count how many significant keywords match
+        const matchCount = cleanKeywords.filter(keyword => message.includes(keyword)).length;
+        
+        // Require at least 2 significant keywords to match, or 1 if there's only 1 significant keyword
+        const requiredMatches = Math.min(cleanKeywords.length, 2);
+        return matchCount >= requiredMatches;
     }
 
     matchesQuery(message, question) {
