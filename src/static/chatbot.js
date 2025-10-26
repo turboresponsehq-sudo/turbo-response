@@ -281,7 +281,7 @@ class TurboAI {
             // Company Overview & Mission
             companyInfo: {
                 mission: "Turbo Response exists to help everyday consumers fight back against unfair financial, legal, and collection practices. Our mission is simple: make professional consumer defense fast, affordable, and accessible to everyone through the power of AI and automation.",
-                problemSolved: "Millions of Americans face wrongful debt collections, IRS threats, garnishments, repossessions, and denials — but can't afford a lawyer or don't understand their rights. Turbo Response fills that gap by using AI-powered legal intelligence to create precise, compliant responses and deliver case strategies within 24–48 hours.",
+                problemSolved: "Millions of Americans face wrongful debt collections, IRS threats, garnishments, repossessions, and denials — but can't afford a lawyer or don't understand their rights. Turbo Response fills that gap by using AI-powered legal intelligence to create precise, compliant responses and deliver case strategies within 7 days.",
                 differences: "We combine AI-powered defense with real human oversight, offer flat-rate pricing with no retainers or hidden fees, deliver case responses in hours instead of weeks, and are built for individuals — not corporations.",
                 vision: "To become the leading AI-driven consumer protection platform in America — helping millions defend their rights, rebuild their credit, and stand up against predatory financial systems."
             },
@@ -295,7 +295,7 @@ class TurboAI {
                         "1 case review with AI-assisted analysis",
                         "Professionally written response letter",
                         "One follow-up or revision",
-                        "24–48-hour turnaround"
+                        "Fast turnaround (typically within 7 days)"
                     ],
                     why: "Affordable starting point for small or first-time disputes"
                 },
@@ -393,7 +393,7 @@ class TurboAI {
                 step1: "Visit the Website - You land on our homepage and learn about Turbo Response's services and mission.",
                 step2: "Chat with Turbo AI - Our chatbot greets you, answers basic questions, and directs you to the intake form.",
                 step3: "Case Submission - You fill in personal info, describe your issue, and upload any documents or notices.",
-                step4: "AI Case Analysis (24–48 Hours) - Turbo AI scans, categorizes, and drafts a defense plan. Human experts review and finalize it.",
+                step4: "AI Case Analysis (Up to 7 Days) - Turbo AI scans, categorizes, and drafts a defense plan. Human experts review and finalize it.",
                 step5: "Case Response Delivery - You receive your personalized case plan and letter via secure email.",
                 step6: "Support & Follow-Up - Depending on your plan tier, you receive updates, revisions, or additional support.",
                 step7: "Resolution - You use Turbo Response's materials to file disputes, respond to agencies, or defend against collections.",
@@ -418,7 +418,7 @@ class TurboAI {
 
             // Competitive Advantages
             advantages: {
-                speed: "AI delivers results in 24–48 hours vs. weeks with traditional law firms",
+                speed: "AI delivers results within 7 days vs. weeks with traditional law firms",
                 affordability: "Flat pricing ($149-$699) vs. $200–$400/hr attorney fees with retainers",
                 precision: "AI trained on real consumer protection laws with human expert verification",
                 empowerment: "Customers learn their rights along the way",
@@ -427,11 +427,11 @@ class TurboAI {
 
             // FAQs - Comprehensive
             faqs: {
-                "How fast will I get my response?": "Typically within 24–48 hours after submitting your documents.",
+                "How fast will I get my response?": "Typically within 7 days after submitting your documents. Simple cases may be faster, complex cases ensure thorough review.",
                 
                 "Are you a law firm?": "No. We are a consumer rights defense platform powered by AI and human expertise. We provide educational and informational case defense support, not legal representation.",
                 
-                "What's your pricing?": "We offer three plans: Case Starter Plan ($149), Standard Defense Plan ($349 - most popular), and Comprehensive Case Management (starting at $699). Each includes different levels of support and follow-ups.",
+                "What's your pricing?": "💰 Case Starter: $149 | Standard Defense: $349 (most popular) | Comprehensive: $699+. Rush services may have additional fees. Final pricing discussed after case review.",
                 
                 "Can you remove negative items from my credit report?": "We dispute inaccurate data with bureaus and creditors; final removal depends on agency verification.",
                 
@@ -538,7 +538,7 @@ class TurboAI {
         // EXPLICIT pricing check FIRST (before FAQ matching)
         if (lowerMessage.includes('pric') || lowerMessage.includes('cost') || lowerMessage.includes('plan') || lowerMessage.includes('tier')) {
             return {
-                text: "We offer three flexible plans:\n\n💰 **Case Starter Plan: $149**\nPerfect for single issues or first-time disputes\n• 1 case review with AI analysis\n• Professional response letter\n• One follow-up or revision\n• 24-48 hour turnaround\n\n💰 **Standard Defense Plan: $349** (Most Popular!)\nGreat for multiple cases with ongoing support\n• Full AI + expert-reviewed defense\n• 30-day support window\n• Personalized dispute letters\n• Real-time progress tracking\n\n💰 **Comprehensive Case Management: Starting at $699**\nFor complex, high-stakes cases\n• End-to-end case oversight\n• Multiple dispute stages\n• AI + human monitoring\n• Priority support\n\nWhich plan interests you?",
+                text: "We offer three flexible plans:\n\n💰 **Case Starter Plan - $149**\nSingle issue defense with AI analysis & professional response letter\n\n💰 **Standard Defense Plan - $349** (Most Popular)\nMultiple cases with 30-day support & ongoing assistance\n\n💰 **Comprehensive Case Management - Starting at $699**\nComplex cases with end-to-end oversight & priority support\n\nWhich plan would you like to know more about?",
                 quickActions: [
                     { text: "Tell me more about $349 plan", action: "pricing_standard" },
                     { text: "Start My Case", action: "start_case" }
@@ -578,7 +578,7 @@ class TurboAI {
         // Check for process/timeline questions
         if (this.matchesQuery(lowerMessage, "process how does it work timeline steps")) {
             return {
-                text: "Here's how Turbo Response works:\n\n1️⃣ Submit your case via our intake form\n2️⃣ Our AI analyzes your situation (24-48 hours)\n3️⃣ Human experts review and finalize your strategy\n4️⃣ You receive your personalized case plan & response letters\n5️⃣ You use these to defend yourself or file disputes\n\nYou get a Case ID to track progress every step of the way!",
+                text: "Here's how Turbo Response works:\n\n1️⃣ Submit your case via our intake form\n2️⃣ Our AI analyzes your situation (up to 7 days)\n3️⃣ Human experts review and finalize your strategy\n4️⃣ You receive your personalized case plan & response letters\n5️⃣ You use these to defend yourself or file disputes\n\nYou get a Case ID to track progress every step of the way!",
                 quickActions: [
                     { text: "Start My Case", action: "start_case" },
                     { text: "Learn More", action: "learn_more" }
@@ -703,7 +703,7 @@ class TurboAI {
                 }, 1000);
                 break;
             case 'advantages':
-                this.addMessage("Here's why customers choose Turbo Response:\n\n⚡ Speed: AI delivers results in 24-48 hours (vs. weeks with lawyers)\n💰 Affordability: Flat pricing with no retainers (vs. $200-400/hr)\n🎯 Precision: AI trained on consumer protection laws + human verification\n📚 Empowerment: Learn your rights along the way\n✅ Results: Clients stop collection calls within days, credit corrected in 30-45 days", 'ai');
+                this.addMessage("Here's why customers choose Turbo Response:\n\n⚡ Speed: AI delivers results within 7 days (vs. weeks with lawyers)\n💰 Affordability: Flat pricing with no retainers (vs. $200-400/hr)\n🎯 Precision: AI trained on consumer protection laws + human verification\n📚 Empowerment: Learn your rights along the way\n✅ Results: Clients stop collection calls within days, credit corrected in 30-45 days", 'ai');
                 setTimeout(() => {
                     this.addQuickActions([
                         { text: "Start My Case", action: "start_case" }
