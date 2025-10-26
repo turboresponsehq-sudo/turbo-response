@@ -838,9 +838,16 @@
                     });
                 }
                 formDataObj.documents = filesData;
-                // Get reCAPTCHA token
-                const recaptchaToken = await grecaptcha.execute('YOUR_RECAPTCHA_SITE_KEY', {action: 'submit'});
-                formDataObj.recaptcha_token = recaptchaToken;
+                // Get reCAPTCHA token (optional - skip if not configured)
+                try {
+                    if (typeof grecaptcha !== 'undefined') {
+                        const recaptchaToken = await grecaptcha.execute('YOUR_RECAPTCHA_SITE_KEY', {action: 'submit'});
+                        formDataObj.recaptcha_token = recaptchaToken;
+                    }
+                } catch (e) {
+                    console.log('reCAPTCHA not configured, skipping...');
+                    formDataObj.recaptcha_token = 'not_configured';
+                }
                 
                 // Submit to automation backend
                 const response = await fetch('/api/form-submission', {
