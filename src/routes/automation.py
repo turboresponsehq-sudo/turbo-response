@@ -977,3 +977,127 @@ def admin_logout():
             'error': str(e)
         }), 500
 
+
+
+
+# ============================================================================
+# PAYMENT LINK SYSTEM
+# ============================================================================
+
+# Store payment links in memory (in production, use database)
+payment_links = {}
+
+@automation_bp.route('/api/generate-payment-link', methods=['POST'])
+def generate_payment_link():
+    """Generate unique payment link for a case"""
+    try:
+        data = request.get_json()
+        case_id = data.get('case_id')
+        price = data.get('price')
+        
+        if not case_id or not price:
+            return jsonify({'success': False, 'error': 'Missing case_id or price'}), 400
+        
+        # Load case data
+        case_file = os.path.join(AUTOMATION_CONFIG['data_storage_path'], f"{case_id}.json")
+        if not os.path.exists(case_file):
+            return jsonify({'success': False, 'error': 'Case not found'}), 404
+        
+        with open(case_file, 'r') as f:
+            case_data = json.load(f)
+        
+        # Generate unique token
+        import secrets
+        payment_token = secrets.token_urlsafe(32)
+        
+        # Store payment link data
+        payment_links[payment_token] = {
+            'case_id': case_id,
+            'price': price,
+            'created_at': datetime.now().isoformat(),
+            'status': 'pending',
+            'case_data': case_data
+        }
+        
+        # Update case with payment link
+        case_data['payment_link'] = {
+            'token': payment_token,
+            'price': price,
+            'created_at': datetime.now().isoformat(),
+            'status': 'pending'
+        }
+        
+        with open(case_file, 'w') as f:
+            json.dump(case_data, f, indent=2)
+        
+        # Generate payment URL
+        payment_url = f"/payment.html?token={payment_token}"
+        
+        return jsonify({
+            'success': True,
+            'payment_url': payment_url,
+            'payment_token': payment_token,
+            'full_url': f"https://turboresponsehq.onrender.com{payment_url}"
+        }), 200
+        
+    except Exception as e:
+        print(f"Error generating payment link: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@automation_bp.route('/api/payment-link/<token>', methods=['GET'])
+def get_payment_link_data(token):
+    """Get case data for payment link"""
+    try:
+        if token not in payment_links:
+            return jsonify({'success': False, 'error': 'Invalid or expired link'}), 404
+        
+        payment_data = payment_links[token]
+        
+        return jsonify({
+            'success': True,
+            'case': payment_data['case_data'],
+            'price': payment_data['price'],
+            'status': payment_data['status']
+        }), 200
+        
+    except Exception as e:
+        print(f"Error retrieving payment link: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@automation_bp.route('/api/payment-confirm/<token>', methods=['POST'])
+def confirm_payment(token):
+    """Confirm payment completion"""
+    try:
+        if token not in payment_links:
+            return jsonify({'success': False, 'error': 'Invalid or expired link'}), 404
+        
+        payment_data = payment_links[token]
+        case_id = payment_data['case_id']
+        
+        # Update payment link status
+        payment_links[token]['status'] = 'paid'
+        payment_links[token]['paid_at'] = datetime.now().isoformat()
+        
+        # Update case file
+        case_file = os.path.join(AUTOMATION_CONFIG['data_storage_path'], f"{case_id}.json")
+        with open(case_file, 'r') as f:
+            case_data = json.load(f)
+        
+        case_data['payment_status'] = 'approved'
+        case_data['payment_approved_at'] = datetime.now().isoformat()
+        case_data['payment_link']['status'] = 'paid'
+        case_data['payment_link']['paid_at'] = datetime.now().isoformat()
+        
+        with open(case_file, 'w') as f:
+            json.dump(case_data, f, indent=2)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Payment confirmed',
+            'case_id': case_id
+        }), 200
+        
+    except Exception as e:
+        print(f"Error confirming payment: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+

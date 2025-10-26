@@ -721,6 +721,14 @@
                     <td>${case_.timestamp ? new Date(case_.timestamp).toLocaleDateString() : 'N/A'}</td>
                     <td>
                         <div class="action-buttons">
+                            ${case_.payment_status !== 'paid' && !case_.payment_link ? 
+                                `<button class="btn btn-primary btn-sm" onclick="generatePaymentLink('${case_.case_id}')">💳 Generate Payment Link</button>` : 
+                                ''
+                            }
+                            ${case_.payment_link && case_.payment_link.status === 'pending' ? 
+                                `<button class="btn btn-secondary btn-sm" onclick="copyPaymentLink('${case_.payment_link.token}')">📋 Copy Payment Link</button>` : 
+                                ''
+                            }
                             ${case_.payment_status !== 'paid' ? 
                                 `<button class="btn btn-success btn-sm" onclick="markPaid('${case_.case_id}')">Mark Paid</button>` : 
                                 ''
@@ -896,6 +904,51 @@
             
             localStorage.removeItem('admin_session');
             window.location.href = '/admin_login.html';
+        }
+
+        // Generate payment link for case
+        async function generatePaymentLink(caseId) {
+            const price = prompt('💵 Enter the price for this case (e.g., 149, 349, 699):');
+            
+            if (!price || isNaN(price)) {
+                alert('❌ Invalid price');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/generate-payment-link', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        case_id: caseId,
+                        price: parseFloat(price)
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`✅ Payment link generated!\n\nFull URL:\n${data.full_url}\n\nLink copied to clipboard!`);
+                    navigator.clipboard.writeText(data.full_url);
+                    loadCases(); // Reload cases to show new button
+                } else {
+                    alert('❌ Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Error generating payment link: ' + error.message);
+            }
+        }
+        
+        // Copy payment link to clipboard
+        function copyPaymentLink(token) {
+            const paymentUrl = `https://turboresponsehq.onrender.com/payment.html?token=${token}`;
+            navigator.clipboard.writeText(paymentUrl).then(function() {
+                alert('✅ Payment link copied to clipboard!\n\n' + paymentUrl);
+            }).catch(function(err) {
+                alert('❌ Failed to copy: ' + err);
+            });
         }
 
         // Copy to clipboard function

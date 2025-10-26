@@ -36,5 +36,12 @@
 - [x] File upload functionality works (tested successfully)
 
 
-- [ ] Add PayPal Pay in 4 (Buy Now, Pay Later) information to website
+- [x] Add PayPal Pay in 4 (Buy Now, Pay Later) information to website
+
+
+- [ ] Create unique payment link generation system in admin dashboard
+- [ ] Build custom payment page showing case details and signed contract
+- [ ] Add PayPal payment button integration to payment page
+- [ ] Auto-approve cases when payment is received
+- [ ] Track payment link status (sent, pending, paid) in admin dashboard
 

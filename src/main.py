@@ -71,6 +71,11 @@ def client_contract():
     """Client service contract page"""
     return send_from_directory(app.static_folder, 'client_contract.html')
 
+@app.route('/payment.html')
+def payment():
+    """Payment page for unique payment links"""
+    return send_from_directory(app.static_folder, 'payment.html')
+
 @app.route('/privacy-policy')
 def privacy_policy():
     """Privacy policy page"""
