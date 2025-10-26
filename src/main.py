@@ -43,7 +43,17 @@ def intake():
 
 @app.route('/admin')
 def admin():
-    """Admin dashboard for case management"""
+    """Admin dashboard for case management (redirects to login)"""
+    return send_from_directory(app.static_folder, 'admin_login.html')
+
+@app.route('/admin_login.html')
+def admin_login():
+    """Admin login page"""
+    return send_from_directory(app.static_folder, 'admin_login.html')
+
+@app.route('/admin_ai.html')
+def admin_dashboard():
+    """Admin dashboard (requires authentication)"""
     return send_from_directory(app.static_folder, 'admin_ai.html')
 
 @app.route('/confirmation')

@@ -843,3 +843,130 @@ def update_case_status(case_id):
             'error': str(e)
         }), 500
 
+
+
+# ============================================================================
+# ADMIN AUTHENTICATION
+# ============================================================================
+
+import secrets
+import hashlib
+from functools import wraps
+
+# Simple in-memory session storage (for production, use Redis or database)
+admin_sessions = {}
+
+# Admin credentials (in production, store hashed passwords in database)
+ADMIN_CREDENTIALS = {
+    'username': os.getenv('ADMIN_USERNAME', 'admin'),
+    'password_hash': hashlib.sha256(os.getenv('ADMIN_PASSWORD', 'TurboAdmin2025!').encode()).hexdigest()
+}
+
+def verify_admin_session(f):
+    """Decorator to verify admin session token"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        auth_header = request.headers.get('Authorization')
+        
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return jsonify({
+                'success': False,
+                'error': 'Unauthorized - No token provided'
+            }), 401
+        
+        token = auth_header.split(' ')[1]
+        
+        if token not in admin_sessions:
+            return jsonify({
+                'success': False,
+                'error': 'Unauthorized - Invalid or expired session'
+            }), 401
+        
+        # Check if session is still valid (24 hour expiry)
+        session_data = admin_sessions[token]
+        session_age = (datetime.now() - session_data['created_at']).total_seconds()
+        
+        if session_age > 86400:  # 24 hours
+            del admin_sessions[token]
+            return jsonify({
+                'success': False,
+                'error': 'Unauthorized - Session expired'
+            }), 401
+        
+        return f(*args, **kwargs)
+    
+    return decorated_function
+
+@automation_bp.route('/api/admin/login', methods=['POST'])
+def admin_login():
+    """Admin login endpoint"""
+    try:
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+        
+        if not username or not password:
+            return jsonify({
+                'success': False,
+                'error': 'Username and password are required'
+            }), 400
+        
+        # Verify credentials
+        password_hash = hashlib.sha256(password.encode()).hexdigest()
+        
+        if username != ADMIN_CREDENTIALS['username'] or password_hash != ADMIN_CREDENTIALS['password_hash']:
+            return jsonify({
+                'success': False,
+                'error': 'Invalid username or password'
+            }), 401
+        
+        # Generate session token
+        token = secrets.token_urlsafe(32)
+        admin_sessions[token] = {
+            'username': username,
+            'created_at': datetime.now()
+        }
+        
+        return jsonify({
+            'success': True,
+            'token': token,
+            'message': 'Login successful'
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@automation_bp.route('/api/admin/verify', methods=['GET'])
+@verify_admin_session
+def verify_session():
+    """Verify if admin session is still valid"""
+    return jsonify({
+        'success': True,
+        'message': 'Session is valid'
+    }), 200
+
+@automation_bp.route('/api/admin/logout', methods=['POST'])
+def admin_logout():
+    """Admin logout endpoint"""
+    try:
+        auth_header = request.headers.get('Authorization')
+        
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+            if token in admin_sessions:
+                del admin_sessions[token]
+        
+        return jsonify({
+            'success': True,
+            'message': 'Logged out successfully'
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+

@@ -484,6 +484,9 @@
             </a>
             <div class="admin-badge">
                 🤖 Admin Dashboard
+                <button class="btn btn-secondary btn-sm" onclick="logout()" style="margin-left: 15px;">
+                    🔒 Logout
+                </button>
             </div>
         </div>
     </header>
@@ -621,11 +624,45 @@
         // Global variables
         let cases = [];
 
-        // Initialize dashboard
+        // Check authentication before loading dashboard
         document.addEventListener('DOMContentLoaded', function() {
-            loadCases();
-            setInterval(loadCases, 30000); // Refresh every 30 seconds
+            verifySession();
         });
+
+        // Verify admin session
+        async function verifySession() {
+            const session = localStorage.getItem('admin_session');
+            
+            if (!session) {
+                window.location.href = '/admin_login.html';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/verify', {
+                    headers: {
+                        'Authorization': 'Bearer ' + session
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    localStorage.removeItem('admin_session');
+                    window.location.href = '/admin_login.html';
+                    return;
+                }
+                
+                // Session valid, load dashboard
+                loadCases();
+                setInterval(loadCases, 30000); // Refresh every 30 seconds
+                
+            } catch (error) {
+                console.error('Session verification failed:', error);
+                localStorage.removeItem('admin_session');
+                window.location.href = '/admin_login.html';
+            }
+        }
 
         // Load cases from API
         async function loadCases() {
@@ -834,6 +871,27 @@
                 alert('❌ Error loading documents: ' + error.message);
             }
         }
+        // Logout function
+        async function logout() {
+            const session = localStorage.getItem('admin_session');
+            
+            if (session) {
+                try {
+                    await fetch('/api/admin/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer ' + session
+                        }
+                    });
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+            }
+            
+            localStorage.removeItem('admin_session');
+            window.location.href = '/admin_login.html';
+        }
+
         // Copy to clipboard function
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(function() {
