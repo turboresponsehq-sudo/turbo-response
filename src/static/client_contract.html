@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Service Contract - Turbo Response HQ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            --accent-cyan: #06b6d4;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --card-bg: rgba(15, 23, 42, 0.8);
+            --border-glow: rgba(6, 182, 212, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--primary-gradient);
+            color: var(--text-primary);
+            line-height: 1.8;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            padding: 50px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: var(--text-secondary);
+        }
+
+        .warning-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid #ef4444;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
+            color: #fca5a5;
+        }
+
+        .warning-box strong {
+            color: #ef4444;
+            font-size: 1.1rem;
+        }
+
+        .highlight {
+            background: rgba(6, 182, 212, 0.1);
+            border-left: 3px solid var(--accent-cyan);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .highlight strong {
+            color: var(--accent-cyan);
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .signature-section {
+            background: rgba(6, 182, 212, 0.05);
+            border: 2px solid var(--accent-cyan);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        .signature-section h2 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .checkbox-group {
+            margin: 25px 0;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            margin-top: 3px;
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            color: var(--text-primary);
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .form-group {
+            margin: 20px 0;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .back-link a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 25px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Client Service Contract</h1>
+
+        <div class="warning-box">
+            <strong>⚠️ LEGALLY BINDING AGREEMENT</strong><br>
+            This is a legally binding contract. By signing below, you agree to all terms and conditions. Read carefully before proceeding.
+        </div>
+
+        <p><strong>Contract Date:</strong> <span id="currentDate"></span></p>
+        <p><strong>Service Provider:</strong> Turbo Response HQ</p>
+        <p><strong>Client Name:</strong> <span id="clientNameDisplay">[To be filled]</span></p>
+
+        <h2>Agreement Terms</h2>
+
+        <p>This Client Service Contract ("Contract") is entered into between Turbo Response HQ ("Provider") and the client identified above ("Client") for consumer defense document preparation services.</p>
+
+        <h2>1. Scope of Services</h2>
+        <p>Provider agrees to prepare response documents and provide strategic guidance for Client's consumer defense case as described in the submitted case details. Services include:</p>
+        <ul>
+            <li>Review of client-provided documents and correspondence</li>
+            <li>Preparation of response letters using AI-powered analysis</li>
+            <li>Strategic recommendations for case resolution</li>
+            <li>One round of revisions (if requested within 7 days of delivery)</li>
+        </ul>
+
+        <h2>2. What We Do NOT Provide</h2>
+        <div class="warning-box">
+            <strong>IMPORTANT LIMITATIONS:</strong>
+            <ul style="margin-top: 10px;">
+                <li>We are NOT attorneys and do NOT provide legal advice</li>
+                <li>We do NOT represent you in court or legal proceedings</li>
+                <li>We do NOT guarantee any specific outcome</li>
+                <li>We do NOT communicate with creditors, courts, or agencies on your behalf</li>
+            </ul>
+        </div>
+
+        <h2>3. Payment Terms</h2>
+        <ul>
+            <li><strong>Payment Required:</strong> Full payment must be received before work begins</li>
+            <li><strong>Pricing:</strong> As quoted after case review (Case Starter $149, Standard Defense $349, Comprehensive $699+)</li>
+            <li><strong>NO REFUNDS:</strong> All sales are final - no refunds, exchanges, or chargebacks permitted</li>
+            <li><strong>Rush Fees:</strong> Expedited service requests incur additional fees</li>
+        </ul>
+
+        <h2>4. Client Acknowledgments</h2>
+        <div class="highlight">
+            <p><strong>Client expressly acknowledges and agrees:</strong></p>
+            <ul>
+                <li>✓ No attorney-client relationship exists</li>
+                <li>✓ No guarantees are made about case outcomes</li>
+                <li>✓ Results depend on third-party decisions beyond Provider's control</li>
+                <li>✓ Client is responsible for reviewing and submitting all documents</li>
+                <li>✓ Client should consult an attorney for legal advice</li>
+                <li>✓ Payment is non-refundable once services are initiated</li>
+            </ul>
+        </div>
+
+        <h2>5. Limitation of Liability</h2>
+        <p>Provider's total liability shall not exceed the amount paid by Client for services. Provider is not liable for:</p>
+        <ul>
+            <li>Outcomes determined by creditors, courts, or government agencies</li>
+            <li>Delays caused by Client or third parties</li>
+            <li>Consequential, indirect, or punitive damages</li>
+            <li>Client's failure to follow recommendations or submit documents</li>
+        </ul>
+
+        <h2>6. Dispute Resolution</h2>
+        <p>Any disputes arising from this Contract shall be resolved through binding arbitration in accordance with American Arbitration Association rules. Client waives the right to jury trial and class action participation.</p>
+
+        <h2>7. Termination</h2>
+        <p>Provider reserves the right to terminate services if:</p>
+        <ul>
+            <li>Client provides false or fraudulent information</li>
+            <li>Client fails to cooperate or respond to communications</li>
+            <li>Client uses services for illegal purposes</li>
+            <li>Client initiates a chargeback or payment dispute</li>
+        </ul>
+        <p><strong>No refunds will be issued upon termination.</strong></p>
+
+        <h2>8. Entire Agreement</h2>
+        <p>This Contract, together with the Service Agreement available at our website, constitutes the entire agreement between the parties and supersedes all prior agreements or understandings.</p>
+
+        <div class="signature-section">
+            <h2>📋 Client Signature & Acknowledgment</h2>
+            
+            <p style="text-align: center; margin-bottom: 30px;">By checking the boxes below and providing your electronic signature, you agree to be legally bound by this Contract.</p>
+
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="agree1" required>
+                    <label for="agree1">I have read and understand this entire Contract and the Service Agreement</label>
+                </div>
+
+                <div class="checkbox-item">
+                    <input type="checkbox" id="agree2" required>
+                    <label for="agree2">I acknowledge that Turbo Response HQ is NOT a law firm and does NOT provide legal advice</label>
+                </div>
+
+                <div class="checkbox-item">
+                    <input type="checkbox" id="agree3" required>
+                    <label for="agree3">I understand that NO REFUNDS will be provided under any circumstances</label>
+                </div>
+
+                <div class="checkbox-item">
+                    <input type="checkbox" id="agree4" required>
+                    <label for="agree4">I understand that NO GUARANTEES are made about my case outcome</label>
+                </div>
+
+                <div class="checkbox-item">
+                    <input type="checkbox" id="agree5" required>
+                    <label for="agree5">I agree to resolve disputes through binding arbitration (no court, no jury trial, no class action)</label>
+                </div>
+
+                <div class="checkbox-item">
+                    <input type="checkbox" id="agree6" required>
+                    <label for="agree6">I have provided accurate and truthful information about my case</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="clientName">Full Legal Name (Electronic Signature) *</label>
+                <input type="text" id="clientName" required placeholder="Type your full legal name">
+            </div>
+
+            <div class="form-group">
+                <label for="signatureDate">Date *</label>
+                <input type="text" id="signatureDate" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="clientEmail">Email Address *</label>
+                <input type="email" id="clientEmail" required placeholder="your@email.com">
+            </div>
+
+            <p style="margin-top: 30px; font-size: 0.9rem; color: var(--text-muted); text-align: center;">
+                Electronic signatures are legally binding. By typing your name above, you agree that it constitutes your legal signature.
+            </p>
+        </div>
+
+        <div class="back-link">
+            <a href="/">← Back to Homepage</a>
+        </div>
+    </div>
+
+    <script>
+        // Set current date
+        const today = new Date();
+        const dateString = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        document.getElementById('currentDate').textContent = dateString;
+        document.getElementById('signatureDate').value = dateString;
+
+        // Update client name display when typed
+        document.getElementById('clientName').addEventListener('input', function() {
+            const name = this.value || '[To be filled]';
+            document.getElementById('clientNameDisplay').textContent = name;
+        });
+    </script>
+</body>
+</html>
+

@@ -68,6 +68,13 @@ def handle_form_submission():
                 'deadline': data.get('deadline'),
                 'documents': data.get('documents', [])
             },
+            'contract_acceptance': {
+                'agreed': data.get('contractAgreement', False),
+                'signature': data.get('clientSignature', ''),
+                'signature_date': data.get('signatureDate', ''),
+                'ip_address': request.remote_addr,
+                'timestamp': datetime.now().isoformat()
+            },
             'status': 'submitted',
             'automation_triggers': []
         }

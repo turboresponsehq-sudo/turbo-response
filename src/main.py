@@ -61,6 +61,16 @@ def confirmation():
     """Confirmation page after form submission"""
     return send_from_directory(app.static_folder, 'confirmation.html')
 
+@app.route('/service_agreement.html')
+def service_agreement():
+    """Service agreement and terms page"""
+    return send_from_directory(app.static_folder, 'service_agreement.html')
+
+@app.route('/client_contract.html')
+def client_contract():
+    """Client service contract page"""
+    return send_from_directory(app.static_folder, 'client_contract.html')
+
 @app.route('/privacy-policy')
 def privacy_policy():
     """Privacy policy page"""
