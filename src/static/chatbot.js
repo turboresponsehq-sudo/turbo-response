@@ -538,7 +538,7 @@ class TurboAI {
         // EXPLICIT pricing check FIRST (before FAQ matching)
         if (lowerMessage.includes('pric') || lowerMessage.includes('cost') || lowerMessage.includes('plan') || lowerMessage.includes('tier')) {
             return {
-                text: "We offer three flexible plans:\n\n💰 **Case Starter Plan - $149**\nSingle issue defense with AI analysis & professional response letter\n\n💰 **Standard Defense Plan - $349** (Most Popular)\nMultiple cases with 30-day support & ongoing assistance\n\n💰 **Comprehensive Case Management - Starting at $699**\nComplex cases with end-to-end oversight & priority support\n\nWhich plan would you like to know more about?",
+                text: "💰 Case Starter: $149 | Standard Defense: $349 (most popular) | Comprehensive: $699+\n\nRush services may have additional fees. Final pricing discussed after case review.\n\nWhich plan interests you?",
                 quickActions: [
                     { text: "Tell me more about $349 plan", action: "pricing_standard" },
                     { text: "Start My Case", action: "start_case" }
@@ -556,7 +556,7 @@ class TurboAI {
         // Check for pricing questions
         if (this.matchesQuery(lowerMessage, "price pricing cost plans tiers")) {
             return {
-                text: "We offer three flexible plans:\n\n💰 Case Starter Plan: $149 - Perfect for single issues\n\n💰 Standard Defense Plan: $349 (Most Popular!) - Great for multiple cases with 30-day support\n\n💰 Comprehensive Case Management: Starting at $699 - For complex, high-stakes cases\n\nEach plan includes AI analysis + expert review. Would you like details on any plan?",
+                text: "💰 Case Starter: $149 | Standard Defense: $349 (most popular) | Comprehensive: $699+\n\nRush services may have additional fees. Final pricing discussed after case review.\n\nWhich plan interests you?",
                 quickActions: [
                     { text: "Tell me more about $349 plan", action: "pricing_standard" },
                     { text: "Start My Case", action: "start_case" }
