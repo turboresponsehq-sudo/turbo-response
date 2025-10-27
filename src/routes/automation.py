@@ -999,7 +999,7 @@ def generate_payment_link():
             return jsonify({'success': False, 'error': 'Missing case_id or price'}), 400
         
         # Load case data
-        case_file = os.path.join(AUTOMATION_CONFIG['data_storage_path'], f"{case_id}.json")
+        case_file = os.path.join(AUTOMATION_CONFIG['data_storage_path'], f"{case_id}_submission.json")
         if not os.path.exists(case_file):
             return jsonify({'success': False, 'error': 'Case not found'}), 404
         
@@ -1079,7 +1079,7 @@ def confirm_payment(token):
         payment_links[token]['paid_at'] = datetime.now().isoformat()
         
         # Update case file
-        case_file = os.path.join(AUTOMATION_CONFIG['data_storage_path'], f"{case_id}.json")
+        case_file = os.path.join(AUTOMATION_CONFIG['data_storage_path'], f"{case_id}_submission.json")
         with open(case_file, 'r') as f:
             case_data = json.load(f)
         
@@ -1102,6 +1102,54 @@ def confirm_payment(token):
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
+
+@automation_bp.route('/api/admin/mark-paid', methods=['POST'])
+def mark_case_paid():
+    """Manually mark a case as paid"""
+    try:
+        data = request.get_json()
+        case_id = data.get('case_id')
+        payment_method = data.get('payment_method', 'manual')
+        
+        if not case_id:
+            return jsonify({
+                'success': False,
+                'error': 'case_id is required'
+            }), 400
+        
+        data_path = AUTOMATION_CONFIG['data_storage_path']
+        filepath = os.path.join(data_path, f"{case_id}_submission.json")
+        
+        if not os.path.exists(filepath):
+            return jsonify({
+                'success': False,
+                'error': 'Case not found'
+            }), 404
+        
+        # Read case data
+        with open(filepath, 'r') as f:
+            case_data = json.load(f)
+        
+        # Update payment status
+        case_data['payment_status'] = 'paid'
+        case_data['payment_method'] = payment_method
+        case_data['payment_marked_at'] = datetime.now().isoformat()
+        
+        # Save updated data
+        with open(filepath, 'w') as f:
+            json.dump(case_data, f, indent=2)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Case marked as paid',
+            'case_id': case_id
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
 @automation_bp.route('/api/admin/case/<case_id>/archive', methods=['POST'])
 def archive_case(case_id):

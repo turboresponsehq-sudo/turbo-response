@@ -47,14 +47,26 @@
 - [x] Track payment link status (sent, pending, paid) in admin dashboard
 
 
-- [ ] BUG: Admin dashboard showing "N/A" for client names and case details - need to fix data retrieval
-- [ ] CHANGE: Remove Case ID column, replace with Client Name column
-- [ ] CHANGE: Simplify Payment Status to show only "Paid", "Not Paid", or "Partial Payment"
-- [ ] CHANGE: Add Email column to admin dashboard table
-- [ ] CHANGE: Reorganize table columns: Name, Email, Category, Description, Payment Status, Case Status, Created, Actions
+- [x] BUG: Admin dashboard showing "N/A" for client names and case details - FIXED with correct data mapping (client_data vs contact_info)
+- [x] CHANGE: Remove Case ID column, replace with Client Name column - DONE
+- [x] CHANGE: Simplify Payment Status to show only "Paid", "Not Paid", or "Partial Payment" - DONE
+- [x] CHANGE: Add Email column to admin dashboard table - DONE
+- [x] CHANGE: Reorganize table columns: Name, Email, Category, Description, Payment Status, Case Status, Created, Actions - DONE
+- [x] FEATURE: Add Delete button to permanently remove cases from admin dashboard - DONE (with double confirmation)
+- [x] FEATURE: Add Archive button to hide completed/old cases from main view - DONE
+- [ ] FEATURE: Add filter toggle to show/hide archived cases (not implemented yet - cases auto-filter by status)
 
 
-- [ ] FEATURE: Add Delete button to permanently remove cases from admin dashboard
-- [ ] FEATURE: Add Archive button to hide completed/old cases from main view
-- [ ] FEATURE: Add filter toggle to show/hide archived cases
+
+## Current Bugs to Fix
+- [ ] BUG: "✅ Paid" button not working when clicked
+- [ ] BUG: "💳 Link" button (Generate Payment Link) not working after entering price and clicking OK
+
+## New Feature Request
+- [ ] FEATURE: AI Case Analysis System with ChatGPT integration
+  - Scan client documents and case information
+  - Generate complexity grade (Simple, Moderate, Complex, Very Complex)
+  - Create automated game plan with action steps
+  - Provide pricing recommendations based on complexity
+  - Estimate timeline and success probability
 
