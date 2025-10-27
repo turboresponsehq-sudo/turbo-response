@@ -1340,3 +1340,134 @@ def paypal_payment_complete():
             'error': str(e)
         }), 500
 
+
+
+@automation_bp.route('/api/admin/case/<case_id>/ai-analysis', methods=['POST'])
+def generate_ai_analysis(case_id):
+    """Generate AI-powered case analysis using OpenAI"""
+    try:
+        import os
+        from openai import OpenAI
+        
+        # Get OpenAI API key from environment
+        api_key = os.environ.get('OPENAI_API_KEY')
+        if not api_key:
+            return jsonify({
+                'success': False,
+                'error': 'OpenAI API key not configured'
+            }), 500
+        
+        # Load case data
+        data_path = AUTOMATION_CONFIG['data_storage_path']
+        filepath = os.path.join(data_path, f"{case_id}_submission.json")
+        
+        if not os.path.exists(filepath):
+            return jsonify({
+                'success': False,
+                'error': 'Case not found'
+            }), 404
+        
+        with open(filepath, 'r') as f:
+            case_data = json.load(f)
+        
+        # Extract case information
+        client_data = case_data.get('client_data', {})
+        category = client_data.get('category', 'Unknown')
+        description = client_data.get('caseDescription', 'No description provided')
+        client_name = client_data.get('fullName', 'Unknown')
+        
+        # Create AI prompt
+        prompt = f"""You are an expert legal assistant specializing in debt dispute resolution and consumer rights. Analyze this case and provide a detailed assessment.
+
+**Case Information:**
+- Client: {client_name}
+- Category: {category}
+- Description: {description}
+
+**Please provide:**
+
+1. **COMPLEXITY GRADE** (choose ONE):
+   - SIMPLE: Straightforward case, standard procedures, quick resolution
+   - MODERATE: Standard complexity, typical timeline, some challenges
+   - COMPLEX: Multiple issues, requires detailed work, longer timeline
+   - VERY COMPLEX: High-stakes, extensive research, multiple parties
+
+2. **GAME PLAN** (5-8 specific action steps):
+   - List concrete steps in order of priority
+   - Be specific and actionable
+
+3. **KEY CHALLENGES**:
+   - List 2-3 potential obstacles or issues to watch for
+
+4. **REQUIRED EVIDENCE/DOCUMENTATION**:
+   - What documents or evidence does the client need to provide?
+
+5. **PRICING RECOMMENDATION**:
+   - Suggested price range based on complexity
+   - Simple: $99-$149
+   - Moderate: $149-$249
+   - Complex: $249-$399
+   - Very Complex: $399-$599
+
+6. **TIMELINE ESTIMATE**:
+   - How many days to complete?
+
+7. **SUCCESS PROBABILITY**:
+   - Percentage estimate (e.g., 75%)
+   - Brief explanation
+
+8. **RELEVANT LAWS/REGULATIONS**:
+   - Cite 1-2 relevant laws (e.g., FDCPA, FCRA)
+
+Format your response as JSON with these exact keys:
+{{
+  "complexity": "SIMPLE|MODERATE|COMPLEX|VERY COMPLEX",
+  "game_plan": ["step 1", "step 2", ...],
+  "challenges": ["challenge 1", "challenge 2", ...],
+  "required_evidence": ["doc 1", "doc 2", ...],
+  "pricing_min": 99,
+  "pricing_max": 149,
+  "timeline_days": 7,
+  "success_probability": 75,
+  "success_explanation": "brief explanation",
+  "relevant_laws": ["law 1", "law 2"]
+}}"""
+        
+        # Call OpenAI API
+        client = OpenAI(api_key=api_key)
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are an expert legal assistant specializing in debt disputes and consumer rights. Always respond with valid JSON."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            response_format={"type": "json_object"}
+        )
+        
+        # Parse AI response
+        ai_response = response.choices[0].message.content
+        analysis = json.loads(ai_response)
+        
+        # Store analysis with case data
+        case_data['ai_analysis'] = analysis
+        case_data['ai_analysis_generated_at'] = datetime.now().isoformat()
+        
+        with open(filepath, 'w') as f:
+            json.dump(case_data, f, indent=2)
+        
+        return jsonify({
+            'success': True,
+            'analysis': analysis,
+            'case_id': case_id
+        }), 200
+        
+    except Exception as e:
+        print(f"Error generating AI analysis: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+

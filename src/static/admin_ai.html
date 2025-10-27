@@ -729,6 +729,22 @@
         </div>
     </div>
 
+    <!-- AI Analysis Modal -->
+    <div id="aiModal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h2>🤖 AI Case Analysis</h2>
+                <span class="close" onclick="closeAIModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="aiModalBody">
+                <div style="text-align: center; padding: 40px;">
+                    <div class="spinner" style="margin: 0 auto 20px;"></div>
+                    <p style="color: var(--text-secondary);">Analyzing case with AI...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Global variables
         let cases = [];
@@ -847,6 +863,7 @@
                         <td>
                             <div class="action-buttons">
                                 <button class="btn btn-primary btn-sm" onclick="viewCase('${case_.case_id}')">👁️ View</button>
+                                <button class="btn btn-primary btn-sm" onclick="generateAIAnalysis('${case_.case_id}')" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">🤖 AI Analysis</button>
                                 ${case_.payment_status !== 'paid' && !case_.payment_link ? 
                                     `<button class="btn btn-primary btn-sm" onclick="generatePaymentLink('${case_.case_id}')">💳 Link</button>` : 
                                     ''
@@ -1258,6 +1275,163 @@
                 }
             } catch (error) {
                 alert('❌ Error deleting case: ' + error.message);
+            }
+        }
+        
+        // Generate AI Analysis
+        async function generateAIAnalysis(caseId) {
+            try {
+                // Show modal with loading state
+                document.getElementById('aiModal').style.display = 'block';
+                document.getElementById('aiModalBody').innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <div class="spinner" style="margin: 0 auto 20px;"></div>
+                        <p style="color: var(--text-secondary);">🤖 Analyzing case with AI... This may take 10-15 seconds.</p>
+                    </div>
+                `;
+                
+                const response = await fetch(`/api/admin/case/${caseId}/ai-analysis`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const analysis = data.analysis;
+                    
+                    // Determine complexity color and badge
+                    let complexityColor = '#22c55e'; // green
+                    let complexityEmoji = '🟢';
+                    if (analysis.complexity === 'MODERATE') {
+                        complexityColor = '#eab308'; // yellow
+                        complexityEmoji = '🟡';
+                    } else if (analysis.complexity === 'COMPLEX') {
+                        complexityColor = '#f97316'; // orange
+                        complexityEmoji = '🟠';
+                    } else if (analysis.complexity === 'VERY COMPLEX') {
+                        complexityColor = '#ef4444'; // red
+                        complexityEmoji = '🔴';
+                    }
+                    
+                    // Display analysis
+                    document.getElementById('aiModalBody').innerHTML = `
+                        <div style="margin-bottom: 30px;">
+                            <div style="display: inline-block; padding: 15px 30px; background: ${complexityColor}22; border: 2px solid ${complexityColor}; border-radius: 12px; margin-bottom: 20px;">
+                                <h3 style="color: ${complexityColor}; margin: 0; font-size: 1.5rem;">
+                                    ${complexityEmoji} ${analysis.complexity}
+                                </h3>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <div class="detail-label">🎯 Game Plan</div>
+                            <div class="detail-value">
+                                <ol style="margin: 0; padding-left: 20px;">
+                                    ${analysis.game_plan.map(step => `<li style="margin-bottom: 10px;">${step}</li>`).join('')}
+                                </ol>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <div class="detail-label">⚠️ Key Challenges</div>
+                            <div class="detail-value">
+                                <ul style="margin: 0; padding-left: 20px;">
+                                    ${analysis.challenges.map(challenge => `<li style="margin-bottom: 8px;">${challenge}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <div class="detail-label">📄 Required Evidence</div>
+                            <div class="detail-value">
+                                <ul style="margin: 0; padding-left: 20px;">
+                                    ${analysis.required_evidence.map(doc => `<li style="margin-bottom: 8px;">${doc}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <div class="detail-label">💰 Pricing Recommendation</div>
+                            <div class="detail-value">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-cyan);">
+                                    $${analysis.pricing_min} - $${analysis.pricing_max}
+                                </div>
+                                <div style="margin-top: 5px; color: var(--text-secondary); font-size: 0.9rem;">
+                                    Based on ${analysis.complexity.toLowerCase()} complexity
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <div class="detail-label">⏱️ Timeline Estimate</div>
+                            <div class="detail-value">
+                                <strong>${analysis.timeline_days} days</strong>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <div class="detail-label">✅ Success Probability</div>
+                            <div class="detail-value">
+                                <div style="font-size: 1.3rem; font-weight: 700; color: #22c55e;">
+                                    ${analysis.success_probability}%
+                                </div>
+                                <div style="margin-top: 5px; color: var(--text-secondary); font-size: 0.9rem;">
+                                    ${analysis.success_explanation}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <div class="detail-label">⚖️ Relevant Laws</div>
+                            <div class="detail-value">
+                                <ul style="margin: 0; padding-left: 20px;">
+                                    ${analysis.relevant_laws.map(law => `<li style="margin-bottom: 8px;">${law}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 30px; padding: 20px; background: rgba(139, 92, 246, 0.1); border-radius: 12px; border-left: 4px solid #8b5cf6;">
+                            <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">
+                                🤖 <strong>AI-Generated Analysis</strong> - This analysis was created by AI based on the case information. Always verify details and use professional judgment.
+                            </p>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('aiModalBody').innerHTML = `
+                        <div style="text-align: center; padding: 40px;">
+                            <p style="color: #ef4444; font-size: 1.2rem; margin-bottom: 10px;">❌ Error Generating Analysis</p>
+                            <p style="color: var(--text-secondary);">${data.error}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error generating AI analysis:', error);
+                document.getElementById('aiModalBody').innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <p style="color: #ef4444; font-size: 1.2rem; margin-bottom: 10px;">❌ Error</p>
+                        <p style="color: var(--text-secondary);">${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Close AI modal
+        function closeAIModal() {
+            document.getElementById('aiModal').style.display = 'none';
+        }
+        
+        // Close AI modal when clicking outside
+        window.onclick = function(event) {
+            const aiModal = document.getElementById('aiModal');
+            const caseModal = document.getElementById('caseModal');
+            if (event.target == aiModal) {
+                aiModal.style.display = 'none';
+            }
+            if (event.target == caseModal) {
+                caseModal.style.display = 'none';
             }
         }
     </script>
