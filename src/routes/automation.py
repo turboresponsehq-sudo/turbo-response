@@ -1262,3 +1262,81 @@ def delete_case(case_id):
             'error': str(e)
         }), 500
 
+
+
+@automation_bp.route('/api/paypal-payment-complete', methods=['POST'])
+def paypal_payment_complete():
+    """Handle PayPal payment completion"""
+    try:
+        data = request.get_json()
+        payment_token = data.get('payment_token')
+        order_id = data.get('order_id')
+        payer_email = data.get('payer_email')
+        payer_name = data.get('payer_name')
+        amount = data.get('amount')
+        
+        if not payment_token or not order_id:
+            return jsonify({
+                'success': False,
+                'error': 'Missing required fields'
+            }), 400
+        
+        # Get case ID from payment_links
+        if payment_token not in payment_links:
+            return jsonify({
+                'success': False,
+                'error': 'Invalid payment token'
+            }), 404
+        
+        case_id = payment_links[payment_token]['case_id']
+        
+        # Update payment link status
+        payment_links[payment_token]['status'] = 'paid'
+        payment_links[payment_token]['paid_at'] = datetime.now().isoformat()
+        payment_links[payment_token]['paypal_order_id'] = order_id
+        payment_links[payment_token]['payer_email'] = payer_email
+        payment_links[payment_token]['payer_name'] = payer_name
+        
+        # Update case file
+        data_path = AUTOMATION_CONFIG['data_storage_path']
+        filepath = os.path.join(data_path, f"{case_id}_submission.json")
+        
+        if not os.path.exists(filepath):
+            return jsonify({
+                'success': False,
+                'error': 'Case file not found'
+            }), 404
+        
+        with open(filepath, 'r') as f:
+            case_data = json.load(f)
+        
+        # Update case with payment info
+        case_data['payment_status'] = 'paid'
+        case_data['payment_method'] = 'paypal'
+        case_data['payment_approved_at'] = datetime.now().isoformat()
+        case_data['paypal_order_id'] = order_id
+        case_data['paypal_payer_email'] = payer_email
+        case_data['paypal_payer_name'] = payer_name
+        case_data['payment_amount'] = amount
+        
+        if 'payment_link' in case_data:
+            case_data['payment_link']['status'] = 'paid'
+            case_data['payment_link']['paid_at'] = datetime.now().isoformat()
+        
+        with open(filepath, 'w') as f:
+            json.dump(case_data, f, indent=2)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Payment confirmed',
+            'case_id': case_id,
+            'order_id': order_id
+        }), 200
+        
+    except Exception as e:
+        print(f"Error processing PayPal payment: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+

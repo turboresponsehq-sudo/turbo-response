@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Complete Payment - Turbo Response HQ</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- PayPal SDK -->
-    <script src="https://www.paypal.com/sdk/js?client-id=ASARUGUyTS_4ie-luuj2npUpBHOkYZi_wLr2nfOuFHI4rFFDNgjD9yVdn2MLDpCn4xs_fLV4qOTfRFdA&currency=USD&disable-funding=credit,card"></script>
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
@@ -321,22 +319,20 @@
                     <button class="btn btn-primary" onclick="copyToClipboard('@Moneybossesapparel')">📋 Copy</button>
                 </div>
 
-                <!-- PayPal Automatic Payment Button -->
-                <div class="payment-method" style="border: 2px solid var(--accent-cyan); background: rgba(6, 182, 212, 0.05);">
+                <div class="payment-method">
                     <div class="payment-method-info">
                         <div class="payment-icon">💙</div>
                         <div>
-                            <div class="payment-name">PayPal (Recommended)</div>
-                            <div class="payment-handle" style="color: #22c55e;">✅ Instant Confirmation • Pay in 4 Available</div>
+                            <div class="payment-name">PayPal</div>
+                            <div class="payment-handle">Money Bosses Association</div>
                         </div>
                     </div>
-                    <div id="paypal-button-container" style="max-width: 300px;"></div>
+                    <button class="btn btn-primary" onclick="copyToClipboard('Money Bosses Association')">📋 Copy</button>
                 </div>
             </div>
 
             <div class="warning-box">
-                <strong>⚠️ IMPORTANT (Cash App & Venmo only):</strong> After making payment via Cash App or Venmo, click the "I've Completed Payment" button below to notify us. Include your Case ID in the payment note.<br><br>
-                <strong>💙 PayPal users:</strong> No need to click the button - your payment is automatically confirmed!
+                <strong>⚠️ IMPORTANT:</strong> After making payment, click the "I've Completed Payment" button below to notify us. Include your Case ID in the payment note.
             </div>
 
             <div style="text-align: center; margin-top: 30px;">
@@ -384,11 +380,7 @@
                     document.getElementById('contractIp').textContent = caseData.contract_acceptance.ip_address;
                     
                     // Populate price
-                    const price = caseData.price || '0.00';
-                    document.getElementById('totalAmount').textContent = `$${price}`;
-                    
-                    // Initialize PayPal button with the price
-                    initPayPalButton(price);
+                    document.getElementById('totalAmount').textContent = `$${caseData.price || '0.00'}`;
                 } else {
                     alert('Invalid or expired payment link');
                 }
@@ -432,74 +424,6 @@
             }
         }
 
-        // Initialize PayPal button
-        function initPayPalButton(amount) {
-            paypal.Buttons({
-                style: {
-                    shape: 'rect',
-                    color: 'blue',
-                    layout: 'vertical',
-                    label: 'paypal'
-                },
-                createOrder: function(data, actions) {
-                    return actions.order.create({
-                        purchase_units: [{
-                            description: 'Turbo Response HQ - Case Service',
-                            amount: {
-                                currency_code: 'USD',
-                                value: amount
-                            }
-                        }]
-                    });
-                },
-                onApprove: function(data, actions) {
-                    return actions.order.capture().then(async function(orderData) {
-                        // Payment successful - notify backend
-                        try {
-                            const response = await fetch('/api/paypal-payment-complete', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({
-                                    payment_token: paymentToken,
-                                    order_id: orderData.id,
-                                    payer_email: orderData.payer.email_address,
-                                    payer_name: orderData.payer.name.given_name + ' ' + orderData.payer.name.surname,
-                                    amount: orderData.purchase_units[0].amount.value
-                                })
-                            });
-                            
-                            const result = await response.json();
-                            
-                            if (result.success) {
-                                document.getElementById('successBox').innerHTML = `
-                                    <strong style="color: #22c55e;">✅ Payment Successful!</strong><br>
-                                    Thank you! Your payment has been confirmed. Order ID: ${orderData.id}<br>
-                                    Your case will be processed within 7 business days.
-                                `;
-                                document.getElementById('successBox').classList.add('show');
-                                
-                                // Hide payment methods after successful payment
-                                document.querySelector('.payment-methods').style.display = 'none';
-                                document.querySelector('.warning-box').style.display = 'none';
-                                document.querySelector('button[onclick="confirmPayment()"]').style.display = 'none';
-                            } else {
-                                alert('❌ Error processing payment confirmation. Please contact support with Order ID: ' + orderData.id);
-                            }
-                        } catch (error) {
-                            console.error('Error:', error);
-                            alert('❌ Error processing payment. Please contact support with Order ID: ' + orderData.id);
-                        }
-                    });
-                },
-                onError: function(err) {
-                    console.error('PayPal error:', err);
-                    alert('❌ Payment failed. Please try again or use Cash App/Venmo.');
-                }
-            }).render('#paypal-button-container');
-        }
-        
         // Load data on page load
         window.addEventListener('DOMContentLoaded', loadCaseData);
     </script>
