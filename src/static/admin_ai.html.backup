@@ -813,62 +813,38 @@
                 return;
             }
 
-            tbody.innerHTML = cases.map(case_ => {
-                // Fix data mapping - handle both old and new data structures
-                const clientData = case_.client_data || {};
-                const contactInfo = case_.contact_info || {};
-                const caseDetails = case_.case_details || {};
-                
-                const fullName = clientData.fullName || contactInfo.fullName || 'N/A';
-                const email = clientData.email || contactInfo.email || 'N/A';
-                const category = clientData.category || caseDetails.category || 'N/A';
-                const description = clientData.caseDescription || caseDetails.description || 'N/A';
-                
-                // Simplify payment status display
-                let paymentStatusText = 'Not Paid';
-                let paymentStatusClass = 'pending';
-                if (case_.payment_status === 'paid') {
-                    paymentStatusText = 'Paid';
-                    paymentStatusClass = 'paid';
-                } else if (case_.payment_status === 'partial') {
-                    paymentStatusText = 'Partial Payment';
-                    paymentStatusClass = 'partial';
-                }
-                
-                return `
-                    <tr>
-                        <td><strong>${fullName}</strong></td>
-                        <td>${email}</td>
-                        <td><span class="category-badge">${category}</span></td>
-                        <td>${description.length > 50 ? description.substring(0, 50) + '...' : description}</td>
-                        <td><span class="status-badge status-${paymentStatusClass}">${paymentStatusText}</span></td>
-                        <td><span class="status-badge status-${case_.status || 'submitted'}">${case_.status || 'Submitted'}</span></td>
-                        <td>${case_.timestamp ? new Date(case_.timestamp).toLocaleDateString() : 'N/A'}</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn btn-primary btn-sm" onclick="viewCase('${case_.case_id}')">👁️ View</button>
-                                ${case_.payment_status !== 'paid' && !case_.payment_link ? 
-                                    `<button class="btn btn-primary btn-sm" onclick="generatePaymentLink('${case_.case_id}')">💳 Link</button>` : 
-                                    ''
-                                }
-                                ${case_.payment_link && case_.payment_link.status === 'pending' ? 
-                                    `<button class="btn btn-secondary btn-sm" onclick="copyPaymentLink('${case_.payment_link.token}')">📋 Copy</button>` : 
-                                    ''
-                                }
-                                ${case_.payment_status !== 'paid' ? 
-                                    `<button class="btn btn-success btn-sm" onclick="markPaid('${case_.case_id}')">✅ Paid</button>` : 
-                                    ''
-                                }
-                                ${case_.status !== 'archived' ? 
-                                    `<button class="btn btn-secondary btn-sm" onclick="archiveCase('${case_.case_id}')">📦 Archive</button>` : 
-                                    `<button class="btn btn-secondary btn-sm" onclick="unarchiveCase('${case_.case_id}')">📤 Unarchive</button>`
-                                }
-                                <button class="btn btn-danger btn-sm" onclick="deleteCase('${case_.case_id}')">🗑️ Delete</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
+            tbody.innerHTML = cases.map(case_ => `
+                <tr>
+                    <td><strong>${case_.case_id ? case_.case_id.substring(0, 8) : 'N/A'}</strong></td>
+                    <td>${case_.contact_info?.email || 'N/A'}</td>
+                    <td><span class="category-badge">${case_.case_details?.category || 'N/A'}</span></td>
+                    <td>${case_.case_details?.description ? case_.case_details.description.substring(0, 50) + '...' : 'N/A'}</td>
+                    <td><span class="status-badge status-${case_.payment_status || 'pending'}">${case_.payment_status || 'Pending'}</span></td>
+                    <td><span class="status-badge status-${case_.status || 'submitted'}">${case_.status || 'Submitted'}</span></td>
+                    <td>${case_.timestamp ? new Date(case_.timestamp).toLocaleDateString() : 'N/A'}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary btn-sm" onclick="viewCase('${case_.case_id}')">👁️ View Details</button>
+                            ${case_.payment_status !== 'paid' && !case_.payment_link ? 
+                                `<button class="btn btn-primary btn-sm" onclick="generatePaymentLink('${case_.case_id}')">💳 Generate Payment Link</button>` : 
+                                ''
+                            }
+                            ${case_.payment_link && case_.payment_link.status === 'pending' ? 
+                                `<button class="btn btn-secondary btn-sm" onclick="copyPaymentLink('${case_.payment_link.token}')">📋 Copy Payment Link</button>` : 
+                                ''
+                            }
+                            ${case_.payment_status !== 'paid' ? 
+                                `<button class="btn btn-success btn-sm" onclick="markPaid('${case_.case_id}')">Mark Paid</button>` : 
+                                ''
+                            }
+                            ${case_.document_path ? 
+                                `<button class="btn btn-info btn-sm" onclick="viewDocuments('${case_.case_id}')">View Docs</button>` : 
+                                ''
+                            }
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
         }
 
         // Approve client manually
@@ -994,19 +970,6 @@
                         `;
                     }
                     
-                    // Fix data mapping - handle both old and new data structures
-                    const clientData = case_.client_data || {};
-                    const contactInfo = case_.contact_info || {};
-                    const caseDetails = case_.case_details || {};
-                    
-                    const fullName = clientData.fullName || contactInfo.fullName || 'N/A';
-                    const email = clientData.email || contactInfo.email || 'N/A';
-                    const phone = clientData.phone || contactInfo.phone || 'N/A';
-                    const address = clientData.address || contactInfo.address || 'N/A';
-                    const category = clientData.category || caseDetails.category || 'N/A';
-                    const description = clientData.caseDescription || caseDetails.description || 'N/A';
-                    const amount = clientData.amount || caseDetails.amount || '';
-                    
                     modalBody.innerHTML = `
                         <div class="detail-row">
                             <div class="detail-label">🆔 Case ID</div>
@@ -1016,22 +979,21 @@
                         <div class="detail-row">
                             <div class="detail-label">👤 Client Information</div>
                             <div class="detail-value">
-                                <div><strong>Name:</strong> ${fullName}</div>
-                                <div><strong>Email:</strong> ${email}</div>
-                                <div><strong>Phone:</strong> ${phone}</div>
-                                ${address !== 'N/A' ? `<div><strong>Address:</strong> ${address}</div>` : ''}
+                                <div><strong>Name:</strong> ${case_.contact_info?.fullName || 'N/A'}</div>
+                                <div><strong>Email:</strong> ${case_.contact_info?.email || 'N/A'}</div>
+                                <div><strong>Phone:</strong> ${case_.contact_info?.phone || 'N/A'}</div>
                             </div>
                         </div>
                         
                         <div class="detail-row">
                             <div class="detail-label">💼 Case Details</div>
                             <div class="detail-value">
-                                <div><strong>Category:</strong> ${category}</div>
+                                <div><strong>Category:</strong> ${case_.case_details?.category || 'N/A'}</div>
                                 <div style="margin-top: 10px;"><strong>Description:</strong></div>
                                 <div style="margin-top: 5px; padding: 10px; background: rgba(6, 182, 212, 0.05); border-radius: 8px;">
-                                    ${description}
+                                    ${case_.case_details?.description || 'N/A'}
                                 </div>
-                                ${amount ? `<div style="margin-top: 10px;"><strong>Amount Involved:</strong> $${amount}</div>` : ''}
+                                ${case_.case_details?.amount ? `<div style="margin-top: 10px;"><strong>Amount Involved:</strong> $${case_.case_details.amount}</div>` : ''}
                             </div>
                         </div>
                         
@@ -1177,88 +1139,6 @@
             }).catch(function(err) {
                 alert('❌ Failed to copy: ' + err);
             });
-        }
-        
-        // Archive case
-        async function archiveCase(caseId) {
-            if (!confirm('📦 Archive this case? It will be hidden from the main view.')) {
-                return;
-            }
-            
-            try {
-                const response = await fetch(`/api/admin/case/${caseId}/archive`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    alert('✅ Case archived successfully!');
-                    loadCases();
-                } else {
-                    alert('❌ Error: ' + data.error);
-                }
-            } catch (error) {
-                alert('❌ Error archiving case: ' + error.message);
-            }
-        }
-        
-        // Unarchive case
-        async function unarchiveCase(caseId) {
-            try {
-                const response = await fetch(`/api/admin/case/${caseId}/unarchive`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    alert('✅ Case unarchived successfully!');
-                    loadCases();
-                } else {
-                    alert('❌ Error: ' + data.error);
-                }
-            } catch (error) {
-                alert('❌ Error unarchiving case: ' + error.message);
-            }
-        }
-        
-        // Delete case
-        async function deleteCase(caseId) {
-            if (!confirm('🗑️ Are you sure you want to PERMANENTLY DELETE this case?\n\nThis action cannot be undone!')) {
-                return;
-            }
-            
-            // Double confirmation for safety
-            if (!confirm('⚠️ FINAL WARNING: This will permanently delete all case data and documents. Continue?')) {
-                return;
-            }
-            
-            try {
-                const response = await fetch(`/api/admin/case/${caseId}/delete`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    alert('✅ Case deleted permanently!');
-                    loadCases();
-                } else {
-                    alert('❌ Error: ' + data.error);
-                }
-            } catch (error) {
-                alert('❌ Error deleting case: ' + error.message);
-            }
         }
     </script>
     <!-- Turbo AI Chatbot -->

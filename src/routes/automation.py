@@ -1101,3 +1101,116 @@ def confirm_payment(token):
         print(f"Error confirming payment: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
+
+
+@automation_bp.route('/api/admin/case/<case_id>/archive', methods=['POST'])
+def archive_case(case_id):
+    """Archive a case (hide from main view)"""
+    try:
+        data_path = AUTOMATION_CONFIG['data_storage_path']
+        filepath = os.path.join(data_path, f"{case_id}_submission.json")
+        
+        if not os.path.exists(filepath):
+            return jsonify({
+                'success': False,
+                'error': 'Case not found'
+            }), 404
+        
+        # Read case data
+        with open(filepath, 'r') as f:
+            case_data = json.load(f)
+        
+        # Update status to archived
+        case_data['status'] = 'archived'
+        case_data['archived_at'] = datetime.now().isoformat()
+        
+        # Save updated data
+        with open(filepath, 'w') as f:
+            json.dump(case_data, f, indent=2)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Case archived successfully',
+            'case_id': case_id
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@automation_bp.route('/api/admin/case/<case_id>/unarchive', methods=['POST'])
+def unarchive_case(case_id):
+    """Unarchive a case (restore to main view)"""
+    try:
+        data_path = AUTOMATION_CONFIG['data_storage_path']
+        filepath = os.path.join(data_path, f"{case_id}_submission.json")
+        
+        if not os.path.exists(filepath):
+            return jsonify({
+                'success': False,
+                'error': 'Case not found'
+            }), 404
+        
+        # Read case data
+        with open(filepath, 'r') as f:
+            case_data = json.load(f)
+        
+        # Update status back to submitted
+        case_data['status'] = 'submitted'
+        case_data['unarchived_at'] = datetime.now().isoformat()
+        
+        # Save updated data
+        with open(filepath, 'w') as f:
+            json.dump(case_data, f, indent=2)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Case unarchived successfully',
+            'case_id': case_id
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@automation_bp.route('/api/admin/case/<case_id>/delete', methods=['DELETE'])
+def delete_case(case_id):
+    """Permanently delete a case and all associated documents"""
+    try:
+        data_path = AUTOMATION_CONFIG['data_storage_path']
+        doc_path = AUTOMATION_CONFIG['document_storage_path']
+        
+        filepath = os.path.join(data_path, f"{case_id}_submission.json")
+        case_doc_path = os.path.join(doc_path, case_id)
+        
+        # Check if case exists
+        if not os.path.exists(filepath):
+            return jsonify({
+                'success': False,
+                'error': 'Case not found'
+            }), 404
+        
+        # Delete case file
+        os.remove(filepath)
+        
+        # Delete associated documents if they exist
+        if os.path.exists(case_doc_path):
+            import shutil
+            shutil.rmtree(case_doc_path)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Case deleted permanently',
+            'case_id': case_id
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
