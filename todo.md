@@ -90,5 +90,23 @@
 - [x] BUG: AI Analysis showing error "Client.__init__() got an unexpected keyword argument 'proxies'" - FIXED (updated OpenAI library version)
 
 
-- [ ] BUG: Payment links showing "onrender.com" instead of custom domain "turboresponsehq.ai"
+- [x] BUG: Payment links showing "onrender.com" instead of custom domain "turboresponsehq.ai" - FIXED (replaced all URLs)
+
+
+
+## New Implementation Tasks
+- [ ] FEATURE: Update AI analysis prompt with complete Turbo Response philosophy
+  - Add 4-Tier classification system (Emergency/Recovery/Rebuilding/Empowerment)
+  - Add emotional state detection and tone switching
+  - Add legal violation detection (FDCPA, FCRA, ECOA, TCPA, etc.)
+  - Add pricing logic based on tier and complexity
+  - Add service recommendations (Starter/Standard/Comprehensive)
+  - Update output format to match AI Logic Map template
+  
+- [ ] FEATURE: Create Admin Settings page for Business Philosophy management
+  - Add "Settings" section to admin dashboard
+  - Create "Business Philosophy" editor
+  - Allow viewing and editing of philosophy
+  - Auto-update AI when philosophy changes
+  - Add version history tracking
 

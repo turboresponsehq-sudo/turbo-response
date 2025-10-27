@@ -1319,12 +1319,42 @@
                     // Display analysis
                     document.getElementById('aiModalBody').innerHTML = `
                         <div style="margin-bottom: 30px;">
-                            <div style="display: inline-block; padding: 15px 30px; background: ${complexityColor}22; border: 2px solid ${complexityColor}; border-radius: 12px; margin-bottom: 20px;">
+                            <div style="display: inline-block; padding: 15px 30px; background: ${complexityColor}22; border: 2px solid ${complexityColor}; border-radius: 12px; margin-bottom: 15px;">
                                 <h3 style="color: ${complexityColor}; margin: 0; font-size: 1.5rem;">
-                                    ${complexityEmoji} ${analysis.complexity}
+                                    ${complexityEmoji} ${analysis.tier_label || analysis.complexity}
                                 </h3>
+                                <div style="margin-top: 8px; font-size: 0.9rem; color: var(--text-secondary);">
+                                    ${analysis.tier || ''} • ${analysis.emotional_state || ''} • Role: ${analysis.ai_role || ''}
+                                </div>
+                            </div>
+                            ${analysis.emotional_message ? `
+                            <div style="padding: 15px; background: rgba(6, 182, 212, 0.1); border-left: 4px solid var(--accent-cyan); border-radius: 8px; margin-bottom: 20px;">
+                                <p style="margin: 0; color: var(--text-primary); font-style: italic;">
+                                    💬 "${analysis.emotional_message}"
+                                </p>
+                            </div>
+                            ` : ''}
+                        </div>
+                        
+                        ${analysis.legal_violations && analysis.legal_violations.length > 0 ? `
+                        <div class="detail-row">
+                            <div class="detail-label">⚠️ Legal Violations Detected</div>
+                            <div class="detail-value">
+                                <ul style="margin: 0; padding-left: 20px;">
+                                    ${analysis.legal_violations.map(violation => `<li style="margin-bottom: 8px; color: #ef4444; font-weight: 600;">${violation}</li>`).join('')}
+                                </ul>
                             </div>
                         </div>
+                        ` : ''}
+                        
+                        ${analysis.urgency_message ? `
+                        <div class="detail-row">
+                            <div class="detail-label">⏰ Cost of Waiting</div>
+                            <div class="detail-value" style="color: #f97316; font-weight: 600;">
+                                ${analysis.urgency_message}
+                            </div>
+                        </div>
+                        ` : ''}
                         
                         <div class="detail-row">
                             <div class="detail-label">🎯 Game Plan</div>
@@ -1353,15 +1383,30 @@
                             </div>
                         </div>
                         
+                        ${analysis.service_recommendation ? `
+                        <div class="detail-row">
+                            <div class="detail-label">📦 Service Recommendation</div>
+                            <div class="detail-value" style="font-weight: 600; color: var(--accent-cyan);">
+                                ${analysis.service_recommendation} Plan
+                            </div>
+                        </div>
+                        ` : ''}
+                        
                         <div class="detail-row">
                             <div class="detail-label">💰 Pricing Recommendation</div>
                             <div class="detail-value">
                                 <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-cyan);">
                                     $${analysis.pricing_min} - $${analysis.pricing_max}
                                 </div>
+                                ${analysis.pricing_reason ? `
                                 <div style="margin-top: 5px; color: var(--text-secondary); font-size: 0.9rem;">
-                                    Based on ${analysis.complexity.toLowerCase()} complexity
+                                    ${analysis.pricing_reason}
                                 </div>
+                                ` : `
+                                <div style="margin-top: 5px; color: var(--text-secondary); font-size: 0.9rem;">
+                                    Based on ${analysis.tier_label || analysis.complexity} tier
+                                </div>
+                                `}
                             </div>
                         </div>
                         
