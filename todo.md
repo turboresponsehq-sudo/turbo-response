@@ -87,5 +87,8 @@
 
 
 ## Current Bug
-- [ ] BUG: AI Analysis showing error "Client.__init__() got an unexpected keyword argument 'proxies'" - OpenAI library version compatibility issue
+- [x] BUG: AI Analysis showing error "Client.__init__() got an unexpected keyword argument 'proxies'" - FIXED (updated OpenAI library version)
+
+
+- [ ] BUG: Payment links showing "onrender.com" instead of custom domain "turboresponsehq.ai"
 

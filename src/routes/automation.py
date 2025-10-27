@@ -337,7 +337,7 @@ def send_admin_notification(submission_data):
                 <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
                 
                 <p>
-                    <a href="https://turboresponsehq.onrender.com/admin" 
+                    <a href="https://turboresponsehq.ai/admin" 
                        style="background: #06b6d4; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
                         Review in Admin Dashboard
                     </a>
@@ -414,7 +414,7 @@ def send_client_confirmation(submission_data):
                 <p>You'll need your case ID to check on your case status. Save this email for your records.</p>
                 
                 <h3>Questions?</h3>
-                <p>Reply to this email or visit our website at <a href="https://turboresponsehq.onrender.com">turboresponsehq.onrender.com</a></p>
+                <p>Reply to this email or visit our website at <a href="https://turboresponsehq.ai">turboresponsehq.ai</a></p>
                 
                 <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
                 
@@ -1037,7 +1037,7 @@ def generate_payment_link():
             'success': True,
             'payment_url': payment_url,
             'payment_token': payment_token,
-            'full_url': f"https://turboresponsehq.onrender.com{payment_url}"
+            'full_url': f"https://turboresponsehq.ai{payment_url}"
         }), 200
         
     except Exception as e:

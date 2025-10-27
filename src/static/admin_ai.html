@@ -1179,7 +1179,7 @@
         
         // Copy payment link to clipboard
         function copyPaymentLink(token) {
-            const paymentUrl = `https://turboresponsehq.onrender.com/payment.html?token=${token}`;
+            const paymentUrl = `https://turboresponsehq.ai/payment.html?token=${token}`;
             navigator.clipboard.writeText(paymentUrl).then(function() {
                 alert('✅ Payment link copied to clipboard!\n\n' + paymentUrl);
             }).catch(function(err) {
