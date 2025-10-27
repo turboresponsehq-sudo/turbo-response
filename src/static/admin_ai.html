@@ -339,6 +339,96 @@
             transform: translateY(-1px);
         }
 
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-glow);
+            margin: 5% auto;
+            padding: 0;
+            width: 90%;
+            max-width: 700px;
+            border-radius: 15px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-blue) 100%);
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            transform: scale(1.2);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .detail-row {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-glow);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--accent-cyan);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .detail-value {
+            color: var(--text-primary);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .contract-signature {
+            background: rgba(6, 182, 212, 0.05);
+            border-left: 3px solid var(--accent-cyan);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
         /* Cases Table */
         .cases-section {
             background: var(--card-bg);
@@ -626,6 +716,19 @@
         </div>
     </div>
 
+    <!-- Case Details Modal -->
+    <div id="caseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 Case Details</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content will be dynamically loaded here -->
+            </div>
+        </div>
+    </div>
+
     <script>
         // Global variables
         let cases = [];
@@ -721,6 +824,7 @@
                     <td>${case_.timestamp ? new Date(case_.timestamp).toLocaleDateString() : 'N/A'}</td>
                     <td>
                         <div class="action-buttons">
+                            <button class="btn btn-primary btn-sm" onclick="viewCase('${case_.case_id}')">👁️ View Details</button>
                             ${case_.payment_status !== 'paid' && !case_.payment_link ? 
                                 `<button class="btn btn-primary btn-sm" onclick="generatePaymentLink('${case_.case_id}')">💳 Generate Payment Link</button>` : 
                                 ''
@@ -731,10 +835,6 @@
                             }
                             ${case_.payment_status !== 'paid' ? 
                                 `<button class="btn btn-success btn-sm" onclick="markPaid('${case_.case_id}')">Mark Paid</button>` : 
-                                ''
-                            }
-                            ${case_.status === 'submitted' && case_.payment_status === 'paid' ? 
-                                `<button class="btn btn-primary btn-sm" onclick="viewCase('${case_.case_id}')">View Details</button>` : 
                                 ''
                             }
                             ${case_.document_path ? 
@@ -840,7 +940,7 @@
             }
         }
 
-        // View case details
+        // View case details in modal
         async function viewCase(caseId) {
             try {
                 const response = await fetch(`/api/admin/case/${caseId}`);
@@ -848,12 +948,93 @@
                 
                 if (data.success) {
                     const case_ = data.case;
-                    alert(`Case Details:\n\nCase ID: ${case_.case_id}\nClient: ${case_.contact_info?.fullName}\nEmail: ${case_.contact_info?.email}\nPhone: ${case_.contact_info?.phone}\nCategory: ${case_.case_details?.category}\nDescription: ${case_.case_details?.description}\nAmount: $${case_.case_details?.amount || 'N/A'}\nStatus: ${case_.status}\nPayment: ${case_.payment_status}`);
+                    const modalBody = document.getElementById('modalBody');
+                    
+                    // Format contract signature info
+                    let contractInfo = 'Not signed';
+                    if (case_.contract_acceptance) {
+                        const signature = case_.contract_acceptance.signature || 'N/A';
+                        const timestamp = case_.contract_acceptance.timestamp ? 
+                            new Date(case_.contract_acceptance.timestamp).toLocaleString() : 'N/A';
+                        const ip = case_.contract_acceptance.ip_address || 'N/A';
+                        
+                        contractInfo = `
+                            <div class="contract-signature">
+                                <div style="margin-bottom: 8px;"><strong>✅ Electronically Signed</strong></div>
+                                <div style="font-size: 0.9rem; color: var(--text-secondary);">
+                                    <div><strong>Signature:</strong> ${signature}</div>
+                                    <div><strong>Date/Time:</strong> ${timestamp}</div>
+                                    <div><strong>IP Address:</strong> ${ip}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    modalBody.innerHTML = `
+                        <div class="detail-row">
+                            <div class="detail-label">🆔 Case ID</div>
+                            <div class="detail-value"><code>${case_.case_id}</code></div>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <div class="detail-label">👤 Client Information</div>
+                            <div class="detail-value">
+                                <div><strong>Name:</strong> ${case_.contact_info?.fullName || 'N/A'}</div>
+                                <div><strong>Email:</strong> ${case_.contact_info?.email || 'N/A'}</div>
+                                <div><strong>Phone:</strong> ${case_.contact_info?.phone || 'N/A'}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <div class="detail-label">💼 Case Details</div>
+                            <div class="detail-value">
+                                <div><strong>Category:</strong> ${case_.case_details?.category || 'N/A'}</div>
+                                <div style="margin-top: 10px;"><strong>Description:</strong></div>
+                                <div style="margin-top: 5px; padding: 10px; background: rgba(6, 182, 212, 0.05); border-radius: 8px;">
+                                    ${case_.case_details?.description || 'N/A'}
+                                </div>
+                                ${case_.case_details?.amount ? `<div style="margin-top: 10px;"><strong>Amount Involved:</strong> $${case_.case_details.amount}</div>` : ''}
+                            </div>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <div class="detail-label">📝 Contract Acceptance</div>
+                            <div class="detail-value">
+                                ${contractInfo}
+                            </div>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <div class="detail-label">📈 Status Information</div>
+                            <div class="detail-value">
+                                <div><strong>Case Status:</strong> <span class="status-badge status-${case_.status || 'submitted'}">${case_.status || 'Submitted'}</span></div>
+                                <div style="margin-top: 8px;"><strong>Payment Status:</strong> <span class="status-badge status-${case_.payment_status || 'pending'}">${case_.payment_status || 'Pending'}</span></div>
+                                <div style="margin-top: 8px;"><strong>Submitted:</strong> ${case_.timestamp ? new Date(case_.timestamp).toLocaleString() : 'N/A'}</div>
+                                ${case_.payment_link ? `<div style="margin-top: 8px;"><strong>Payment Link:</strong> ${case_.payment_link.status === 'paid' ? '✅ Paid' : '⏳ Pending'}</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Show modal
+                    document.getElementById('caseModal').style.display = 'block';
                 } else {
                     alert('❌ Error loading case: ' + data.error);
                 }
             } catch (error) {
                 alert('❌ Error: ' + error.message);
+            }
+        }
+        
+        // Close modal
+        function closeModal() {
+            document.getElementById('caseModal').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('caseModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
             }
         }
 
