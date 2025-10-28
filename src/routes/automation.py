@@ -1038,8 +1038,30 @@ def admin_logout():
 # PAYMENT LINK SYSTEM
 # ============================================================================
 
-# Store payment links in memory (in production, use database)
-payment_links = {}
+# Persistent payment links storage
+PAYMENT_LINKS_FILE = '/data/turbo_response_payment_links.json'
+
+def load_payment_links():
+    """Load payment links from persistent storage"""
+    try:
+        if os.path.exists(PAYMENT_LINKS_FILE):
+            with open(PAYMENT_LINKS_FILE, 'r') as f:
+                return json.load(f)
+        return {}
+    except Exception as e:
+        print(f"Error loading payment links: {e}")
+        return {}
+
+def save_payment_links(payment_links):
+    """Save payment links to persistent storage"""
+    try:
+        os.makedirs(os.path.dirname(PAYMENT_LINKS_FILE), exist_ok=True)
+        with open(PAYMENT_LINKS_FILE, 'w') as f:
+            json.dump(payment_links, f, indent=2)
+        return True
+    except Exception as e:
+        print(f"Error saving payment links: {e}")
+        return False
 
 @automation_bp.route('/api/generate-payment-link', methods=['POST'])
 def generate_payment_link():
@@ -1064,6 +1086,9 @@ def generate_payment_link():
         import secrets
         payment_token = secrets.token_urlsafe(32)
         
+        # Load existing payment links
+        payment_links = load_payment_links()
+        
         # Store payment link data
         payment_links[payment_token] = {
             'case_id': case_id,
@@ -1072,6 +1097,9 @@ def generate_payment_link():
             'status': 'pending',
             'case_data': case_data
         }
+        
+        # Save to persistent storage
+        save_payment_links(payment_links)
         
         # Update case with payment link
         case_data['payment_link'] = {
@@ -1102,6 +1130,9 @@ def generate_payment_link():
 def get_payment_link_data(token):
     """Get case data for payment link"""
     try:
+        # Load payment links from persistent storage
+        payment_links = load_payment_links()
+        
         if token not in payment_links:
             return jsonify({'success': False, 'error': 'Invalid or expired link'}), 404
         
@@ -1122,6 +1153,9 @@ def get_payment_link_data(token):
 def confirm_payment(token):
     """Confirm payment completion"""
     try:
+        # Load payment links from persistent storage
+        payment_links = load_payment_links()
+        
         if token not in payment_links:
             return jsonify({'success': False, 'error': 'Invalid or expired link'}), 404
         
@@ -1131,6 +1165,9 @@ def confirm_payment(token):
         # Update payment link status
         payment_links[token]['status'] = 'paid'
         payment_links[token]['paid_at'] = datetime.now().isoformat()
+        
+        # Save updated payment links
+        save_payment_links(payment_links)
         
         # Update case file
         case_file = os.path.join(AUTOMATION_CONFIG['data_storage_path'], f"{case_id}_submission.json")
@@ -1335,6 +1372,9 @@ def paypal_payment_complete():
                 'error': 'Missing required fields'
             }), 400
         
+        # Load payment links from persistent storage
+        payment_links = load_payment_links()
+        
         # Get case ID from payment_links
         if payment_token not in payment_links:
             return jsonify({
@@ -1350,6 +1390,9 @@ def paypal_payment_complete():
         payment_links[payment_token]['paypal_order_id'] = order_id
         payment_links[payment_token]['payer_email'] = payer_email
         payment_links[payment_token]['payer_name'] = payer_name
+        
+        # Save updated payment links
+        save_payment_links(payment_links)
         
         # Update case file
         data_path = AUTOMATION_CONFIG['data_storage_path']

@@ -165,7 +165,10 @@
   - [x] Enhance pricing recommendations based on document content
 
 ## Current Bug
-- [ ] BUG: Documents not showing in admin dashboard View Details modal
+- [x] BUG: Documents not showing in admin dashboard View Details modal - FIXED
 
 ## Current Bug
-- [ ] BUG: Documents not showing in admin dashboard View Details modal
+- [x] BUG: Documents not showing in admin dashboard View Details modal - FIXED
+
+## Current Bug
+- [ ] BUG: Payment page showing $0.00 - Replace in-memory payment_links with persistent file storage
