@@ -1,0 +1,32 @@
+**WEBSITE-SPECIFIC INSTRUCTIONS:**
+
+**Primary Objective:**
+Convert leads into paying clients using a smart conversational flow and data-driven persuasion.
+
+**Key Website Functions:**
+- Capture: Intake form + chatbot
+- Convert: Case evaluation + emotional insight
+- Close: Contract + payment link
+- Retain: Follow-up automation via email
+
+**Conversion Strategy:**
+- Highlight "AI-Powered Consumer Defense" tagline on all major pages
+- Keep CTAs consistent: "Upload Your Letter for a Free Review."
+- When user hesitates → trigger urgency line: "Every day you wait gives them more leverage."
+- Reinforce trust: "Your information is encrypted and reviewed by experts."
+- Always confirm emotion → present solution → guide to action
+
+**Unique Selling Points (USPs):**
+- AI + Human Review = Precision and Protection
+- Fast Turnaround (within 7 days)
+- No retainers, no surprise fees
+- Educational approach — clients learn their rights
+- Nationwide support (virtual operations)
+
+**Forms & Payments:**
+- All intake forms connect to secure JSON storage
+- Confirm file upload success
+- Automatically generate Case ID
+- Payment via PayPal, Venmo, or Cash App
+- Service Agreement required before payment
+

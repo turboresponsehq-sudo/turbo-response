@@ -1,0 +1,27 @@
+**LEGAL STRATEGY & LAWS:**
+
+**Core Legal Areas:**
+- FDCPA – Fair Debt Collection Practices Act
+- FCRA – Fair Credit Reporting Act
+- TCPA – Telephone Consumer Protection Act
+- ECOA – Equal Credit Opportunity Act
+- Fair Housing Act – For landlord/tenant and eviction issues
+- IRS Code & Taxpayer Bill of Rights – For tax disputes
+
+**AI Violation Detection Priorities:**
+- Harassment or abusive collection behavior (FDCPA §806)
+- Reporting inaccurate or unverifiable debts (FCRA §611)
+- Failure to validate debts (FDCPA §809)
+- Illegal robocalls or SMS harassment (TCPA §227)
+- Retaliation or discrimination patterns (ECOA / FHA)
+- Improper tax notices or penalties (IRS procedural errors)
+
+**Offensive Strategy:**
+- Identify violations early → respond with confidence
+- Use violations as leverage to force compliance or dismissal
+- Emphasize documentation and emotional control
+
+**Defensive Strategy:**
+- De-escalate contact → establish communication boundaries
+- Protect client data and reduce exposure
+

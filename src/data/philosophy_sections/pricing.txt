@@ -1,0 +1,28 @@
+**PRICING STRATEGY & LOGIC:**
+
+**Price Ranges:**
+- Tier 1 – Emergency: $149–$199
+- Tier 2 – Recovery: $349–$499
+- Tier 3 – Rebuilding: $499–$699
+- Tier 4 – Empowerment: $699–$999+
+
+**Factors that Increase Price:**
+- Case complexity (multi-agency, multiple notices)
+- Time-sensitive actions (24–48 hr deadline)
+- High documentation volume
+- Legal escalation risk
+
+**Factors that Decrease Price:**
+- Simple, single-issue cases
+- Repeat client or referral
+- Pre-prepared documentation
+
+**Payment Logic:**
+- PayPal "Pay in 4" for affordability
+- Payment must be collected after contract signing
+- Refunds: None — service-based work with digital product delivery
+
+**Value Proposition:**
+Turbo Response doesn't sell letters — it sells strategic victories.
+Pricing reflects impact and intelligence, not just time spent.
+

@@ -208,7 +208,7 @@
                 </div>
                 <textarea id="mission" placeholder="Your mission statement and core values..."></textarea>
                 <div class="char-count" id="mission-count">0 characters</div>
-                <input type="file" id="mission-file" class="file-input" accept=".txt" onchange="handleFileUpload('mission')">
+                <input type="file" id="mission-file" class="file-input" accept=".txt,.docx,.pdf" onchange="handleFileUpload('mission')">
             </div>
 
             <!-- Section 2: 4-Tier System -->
@@ -222,7 +222,7 @@
                 </div>
                 <textarea id="tiers" placeholder="Emergency, Recovery, Rebuilding, Empowerment tiers..."></textarea>
                 <div class="char-count" id="tiers-count">0 characters</div>
-                <input type="file" id="tiers-file" class="file-input" accept=".txt" onchange="handleFileUpload('tiers')">
+                <input type="file" id="tiers-file" class="file-input" accept=".txt,.docx,.pdf" onchange="handleFileUpload('tiers')">
             </div>
 
             <!-- Section 3: Pricing Logic -->
@@ -236,7 +236,7 @@
                 </div>
                 <textarea id="pricing" placeholder="Pricing ranges, factors, adjustments..."></textarea>
                 <div class="char-count" id="pricing-count">0 characters</div>
-                <input type="file" id="pricing-file" class="file-input" accept=".txt" onchange="handleFileUpload('pricing')">
+                <input type="file" id="pricing-file" class="file-input" accept=".txt,.docx,.pdf" onchange="handleFileUpload('pricing')">
             </div>
 
             <!-- Section 4: Legal Strategy -->
@@ -250,7 +250,7 @@
                 </div>
                 <textarea id="legal" placeholder="FDCPA, FCRA, TCPA, violation detection..."></textarea>
                 <div class="char-count" id="legal-count">0 characters</div>
-                <input type="file" id="legal-file" class="file-input" accept=".txt" onchange="handleFileUpload('legal')">
+                <input type="file" id="legal-file" class="file-input" accept=".txt,.docx,.pdf" onchange="handleFileUpload('legal')">
             </div>
 
             <!-- Section 5: Communication Style -->
@@ -264,7 +264,7 @@
                 </div>
                 <textarea id="communication" placeholder="Tone, emotional intelligence, ERBN/LRBN/DRAB..."></textarea>
                 <div class="char-count" id="communication-count">0 characters</div>
-                <input type="file" id="communication-file" class="file-input" accept=".txt" onchange="handleFileUpload('communication')">
+                <input type="file" id="communication-file" class="file-input" accept=".txt,.docx,.pdf" onchange="handleFileUpload('communication')">
             </div>
 
             <!-- Section 6: Website-Specific -->
@@ -278,7 +278,7 @@
                 </div>
                 <textarea id="website" placeholder="Website features, forms, payment options, unique selling points..."></textarea>
                 <div class="char-count" id="website-count">0 characters</div>
-                <input type="file" id="website-file" class="file-input" accept=".txt" onchange="handleFileUpload('website')">
+                <input type="file" id="website-file" class="file-input" accept=".txt,.docx,.pdf" onchange="handleFileUpload('website')">
             </div>
         </div>
 
@@ -341,19 +341,51 @@
         }
 
         // Handle file upload
-        function handleFileUpload(section) {
+        async function handleFileUpload(section) {
             const fileInput = document.getElementById(`${section}-file`);
             const file = fileInput.files[0];
             
             if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const textarea = document.getElementById(section);
-                    // Append to existing content
-                    textarea.value += (textarea.value ? '\n\n' : '') + e.target.result;
-                    updateCharCount(section);
-                };
-                reader.readAsText(file);
+                // Check file type
+                const filename = file.name.toLowerCase();
+                if (!filename.endsWith('.txt') && !filename.endsWith('.docx') && !filename.endsWith('.pdf')) {
+                    alert('Please upload a .txt, .docx, or .pdf file');
+                    return;
+                }
+                
+                // Show loading
+                const textarea = document.getElementById(section);
+                const originalValue = textarea.value;
+                textarea.value = 'Processing document...';
+                
+                // Upload to backend for processing
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('section', section);
+                
+                try {
+                    const response = await fetch('/api/admin/upload-philosophy-document', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        textarea.value = result.content;
+                        updateCharCount(section);
+                        showNotification('Document uploaded and processed successfully!', 'success');
+                    } else {
+                        textarea.value = originalValue;
+                        showNotification('Error: ' + result.error, 'error');
+                    }
+                } catch (error) {
+                    textarea.value = originalValue;
+                    showNotification('Error uploading document: ' + error.message, 'error');
+                }
+                
+                // Reset file input
+                fileInput.value = '';
             }
         }
 

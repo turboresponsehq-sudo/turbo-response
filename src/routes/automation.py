@@ -1828,3 +1828,82 @@ def load_philosophy_sections():
 - Lead with emotion → Support with logic → Close with empowerment
 - Create urgency by showing the cost of waiting"""
 
+
+
+
+@automation_bp.route('/api/admin/upload-philosophy-document', methods=['POST'])
+def upload_philosophy_document():
+    """Upload and process document files (.txt, .docx, .pdf) for philosophy sections"""
+    try:
+        if 'file' not in request.files:
+            return jsonify({'success': False, 'error': 'No file provided'}), 400
+        
+        file = request.files['file']
+        section = request.form.get('section')
+        
+        if not section:
+            return jsonify({'success': False, 'error': 'No section specified'}), 400
+        
+        if file.filename == '':
+            return jsonify({'success': False, 'error': 'No file selected'}), 400
+        
+        # Get file extension
+        filename = file.filename.lower()
+        
+        # Extract text based on file type
+        text_content = ''
+        
+        if filename.endswith('.txt'):
+            # Plain text file
+            text_content = file.read().decode('utf-8')
+            
+        elif filename.endswith('.docx'):
+            # Word document
+            try:
+                from docx import Document
+                import io
+                doc = Document(io.BytesIO(file.read()))
+                text_content = '\n\n'.join([paragraph.text for paragraph in doc.paragraphs if paragraph.text.strip()])
+            except Exception as e:
+                return jsonify({'success': False, 'error': f'Error reading Word document: {str(e)}'}), 500
+                
+        elif filename.endswith('.pdf'):
+            # PDF file
+            try:
+                from PyPDF2 import PdfReader
+                import io
+                pdf = PdfReader(io.BytesIO(file.read()))
+                text_content = '\n\n'.join([page.extract_text() for page in pdf.pages])
+            except Exception as e:
+                return jsonify({'success': False, 'error': f'Error reading PDF: {str(e)}'}), 500
+        else:
+            return jsonify({'success': False, 'error': 'Unsupported file type. Please upload .txt, .docx, or .pdf files.'}), 400
+        
+        if not text_content.strip():
+            return jsonify({'success': False, 'error': 'No text content found in file'}), 400
+        
+        # Save to section file
+        data_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'philosophy_sections')
+        os.makedirs(data_dir, exist_ok=True)
+        
+        section_file = os.path.join(data_dir, f'{section}.txt')
+        
+        # Append to existing content or create new
+        if os.path.exists(section_file):
+            with open(section_file, 'r') as f:
+                existing_content = f.read()
+            text_content = existing_content + '\n\n' + text_content
+        
+        with open(section_file, 'w') as f:
+            f.write(text_content)
+        
+        return jsonify({
+            'success': True,
+            'content': text_content,
+            'message': f'Document uploaded and processed successfully'
+        }), 200
+        
+    except Exception as e:
+        print(f"Error uploading document: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
