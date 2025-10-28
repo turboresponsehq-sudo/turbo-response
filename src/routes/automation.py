@@ -1342,6 +1342,85 @@ def paypal_payment_complete():
 
 
 
+def scan_case_documents(case_id):
+    """
+    Scan all uploaded documents for a case and extract text content.
+    Supports PDF, images (with OCR), and Word documents.
+    """
+    try:
+        import PyPDF2
+        from docx import Document
+        from PIL import Image
+        import pytesseract
+        from pdf2image import convert_from_path
+        
+        doc_path = AUTOMATION_CONFIG['document_storage_path']
+        case_folder = os.path.join(doc_path, case_id)
+        
+        if not os.path.exists(case_folder):
+            return "No documents uploaded."
+        
+        extracted_texts = []
+        files = os.listdir(case_folder)
+        
+        if not files:
+            return "No documents uploaded."
+        
+        for filename in files:
+            filepath = os.path.join(case_folder, filename)
+            file_ext = filename.lower().split('.')[-1]
+            
+            try:
+                # PDF files
+                if file_ext == 'pdf':
+                    with open(filepath, 'rb') as f:
+                        pdf_reader = PyPDF2.PdfReader(f)
+                        text = ""
+                        for page in pdf_reader.pages:
+                            text += page.extract_text() + "\n"
+                        
+                        if text.strip():
+                            extracted_texts.append(f"\n--- Document: {filename} ---\n{text}")
+                        else:
+                            # If no text extracted, try OCR on PDF images
+                            try:
+                                images = convert_from_path(filepath)
+                                ocr_text = ""
+                                for i, image in enumerate(images):
+                                    ocr_text += pytesseract.image_to_string(image) + "\n"
+                                if ocr_text.strip():
+                                    extracted_texts.append(f"\n--- Document: {filename} (OCR) ---\n{ocr_text}")
+                            except Exception as ocr_error:
+                                print(f"OCR failed for {filename}: {ocr_error}")
+                
+                # Image files (OCR)
+                elif file_ext in ['jpg', 'jpeg', 'png', 'bmp', 'tiff']:
+                    image = Image.open(filepath)
+                    text = pytesseract.image_to_string(image)
+                    if text.strip():
+                        extracted_texts.append(f"\n--- Document: {filename} (Image OCR) ---\n{text}")
+                
+                # Word documents
+                elif file_ext in ['doc', 'docx']:
+                    doc = Document(filepath)
+                    text = "\n".join([paragraph.text for paragraph in doc.paragraphs])
+                    if text.strip():
+                        extracted_texts.append(f"\n--- Document: {filename} ---\n{text}")
+                        
+            except Exception as e:
+                print(f"Error processing {filename}: {e}")
+                continue
+        
+        if extracted_texts:
+            return "\n".join(extracted_texts)
+        else:
+            return "Documents were uploaded but text extraction failed. Files may be images or scanned documents that require manual review."
+            
+    except Exception as e:
+        print(f"Error scanning documents: {e}")
+        return "Error scanning documents. Manual review required."
+
+
 @automation_bp.route('/api/admin/case/<case_id>/ai-analysis', methods=['POST'])
 def generate_ai_analysis(case_id):
     """Generate AI-powered case analysis using OpenAI"""
@@ -1376,6 +1455,9 @@ def generate_ai_analysis(case_id):
         description = client_data.get('caseDescription', 'No description provided')
         client_name = client_data.get('fullName', 'Unknown')
         
+        # Scan uploaded documents and extract text
+        document_text = scan_case_documents(case_id)
+        
         # Load philosophy from organized sections
         philosophy_text = load_philosophy_sections()
         
@@ -1388,6 +1470,9 @@ def generate_ai_analysis(case_id):
 - Client: {client_name}
 - Category: {category}
 - Description: {description}
+
+**UPLOADED DOCUMENTS ANALYSIS:**
+{document_text}
 
 **YOUR ANALYSIS MUST:**
 
@@ -1421,11 +1506,36 @@ def generate_ai_analysis(case_id):
    - Always say: "You have rights — let's use them."
    - Never say: "You'll definitely win" or give legal advice
 
-5. **PRICING LOGIC** (based on tier + complexity):
-   - Tier 1 Emergency: $149-$199 (adjust up for multiple agencies, down for single letter)
-   - Tier 2 Recovery: $349-$499 (adjust up for 2-3 issues, down for quick validation)
-   - Tier 3 Rebuilding: $699-$999 (adjust up for ongoing support, down for repeat clients)
-   - Tier 4 Empowerment: $999+ (custom pricing for full portfolio review)
+5. **PRICING LOGIC** (comprehensive calculation):
+   
+   **Step 1 - Base Price (Amount at Stake):**
+   - Under $1,000: $149-$299
+   - $1,000-$5,000: $299-$499
+   - $5,000-$15,000: $499-$699
+   - $15,000-$50,000: $699-$999
+   - $50,000+: $999-$1,500+
+   
+   **Step 2 - Add Multipliers:**
+   - Time/Retainer (ongoing case): +$200-$400
+   - Court/Hearing scheduled: +$200-$300
+   - Federal agencies (IRS, EEOC, HUD): +$150-$300
+   - Multiple agencies: +$150-$300
+   - Extensive documentation (10+ docs): +$100-$200
+   - Urgent deadline (<30 days): +$100-$200
+   - Legal violations (6+): +$200-$400
+   
+   **Step 3 - Calculate Total:**
+   Start with base price from amount at stake, then add applicable multipliers.
+   
+   **Example:** IRS case, $23K owed, hearing scheduled:
+   - Base: $699 (amount: $15K-$50K)
+   - + Hearing: +$250
+   - + IRS (federal): +$150
+   - + Multiple deadlines: +$150
+   - + Retainer likely: +$300
+   - **Total: $1,549**
+   
+   **IMPORTANT:** Extract dollar amounts from documents and case description to determine base price.
 
 6. **SERVICE RECOMMENDATION**:
    - Starter Plan: Single issue, quick resolution
