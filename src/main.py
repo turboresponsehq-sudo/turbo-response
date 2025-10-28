@@ -56,6 +56,11 @@ def admin_dashboard():
     """Admin dashboard (requires authentication)"""
     return send_from_directory(app.static_folder, 'admin_ai.html')
 
+@app.route('/admin/settings')
+def admin_settings():
+    """Admin settings page"""
+    return send_from_directory(app.static_folder, 'admin_settings.html')
+
 @app.route('/confirmation')
 def confirmation():
     """Confirmation page after form submission"""

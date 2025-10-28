@@ -1516,3 +1516,99 @@ Format your response as JSON with these exact keys:
             'error': str(e)
         }), 500
 
+
+
+
+# Philosophy Management Endpoints
+@automation_bp.route('/api/admin/get-philosophy', methods=['GET'])
+def get_philosophy():
+    """Get current AI philosophy"""
+    try:
+        philosophy_file = os.path.join(os.path.dirname(__file__), '..', 'data', 'philosophy.txt')
+        
+        if os.path.exists(philosophy_file):
+            with open(philosophy_file, 'r') as f:
+                philosophy = f.read()
+        else:
+            # Return default philosophy
+            philosophy = """TURBO RESPONSE AI PHILOSOPHY
+
+**MISSION:** Defend consumers from predatory or unlawful actions with speed + precision. "We don't just respond fast — we respond smart."
+
+**CORE PHILOSOPHY:**
+- Protect the consumer → Simplify the law → Drive resolution fast
+- Lead with emotion → Support with logic → Close with empowerment
+- Create urgency by showing the cost of waiting
+- Fight back offensively, not just defensively
+- "You're not buying a service — you're buying back your control"
+
+**4-TIER SYSTEM:**
+- TIER 1 - EMERGENCY: Panic/Fear state. Immediate threats. Role: RESCUER.
+- TIER 2 - RECOVERY: Frustration/Overwhelm state. Active disputes. Role: ADVOCATE.
+- TIER 3 - REBUILDING: Caution/Uncertainty state. Long-term repair. Role: MENTOR.
+- TIER 4 - EMPOWERMENT: Confidence/Growth state. Strategic growth. Role: LEADER.
+
+**PRICING LOGIC:**
+- Tier 1 Emergency: $149-$199
+- Tier 2 Recovery: $349-$499
+- Tier 3 Rebuilding: $699-$999
+- Tier 4 Empowerment: $999+
+
+**LEGAL FOCUS:**
+FDCPA, FCRA, ECOA, FCBA, TCPA, Fair Housing Act, IRS Taxpayer Bill of Rights
+
+**CORE PRINCIPLES:**
+1. Always identify legal violations first
+2. Lead with emotion → follow with law
+3. Show cost of inaction to create urgency
+4. Protect client energy — remove confusion
+5. Never promise results; promise effort + speed
+6. Offer clarity over complexity
+7. Teach rights with every interaction
+"""
+        
+        return jsonify({'success': True, 'philosophy': philosophy}), 200
+        
+    except Exception as e:
+        print(f"Error getting philosophy: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@automation_bp.route('/api/admin/save-philosophy', methods=['POST'])
+def save_philosophy():
+    """Save updated AI philosophy"""
+    try:
+        data = request.get_json()
+        philosophy = data.get('philosophy', '')
+        
+        # Create data directory if it doesn't exist
+        data_dir = os.path.join(os.path.dirname(__file__), '..', 'data')
+        os.makedirs(data_dir, exist_ok=True)
+        
+        philosophy_file = os.path.join(data_dir, 'philosophy.txt')
+        
+        with open(philosophy_file, 'w') as f:
+            f.write(philosophy)
+        
+        return jsonify({'success': True}), 200
+        
+    except Exception as e:
+        print(f"Error saving philosophy: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@automation_bp.route('/api/admin/reset-philosophy', methods=['POST'])
+def reset_philosophy():
+    """Reset philosophy to default"""
+    try:
+        philosophy_file = os.path.join(os.path.dirname(__file__), '..', 'data', 'philosophy.txt')
+        
+        if os.path.exists(philosophy_file):
+            os.remove(philosophy_file)
+        
+        return jsonify({'success': True}), 200
+        
+    except Exception as e:
+        print(f"Error resetting philosophy: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
