@@ -564,6 +564,17 @@ class TurboAI {
             };
         }
         
+        // Check for timing/response time questions FIRST
+        if (this.matchesQuery(lowerMessage, "how long time take reach back response turnaround when")) {
+            return {
+                text: "⏱️ We typically review cases within 24-48 hours and provide initial analysis.\n\nFor urgent cases with immediate deadlines (like garnishments or evictions), we prioritize faster response times.\n\nOnce you submit your case, you'll get a Case ID to track progress!",
+                quickActions: [
+                    { text: "Start My Case", action: "start_case" },
+                    { text: "Learn More", action: "learn_more" }
+                ]
+            };
+        }
+        
         // Check for company info questions
         if (this.matchesQuery(lowerMessage, "about mission company who are you")) {
             return {

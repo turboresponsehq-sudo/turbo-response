@@ -180,4 +180,4 @@
 ## Future Improvements
 - [ ] Improve chatbot to give specific answers instead of generic responses (e.g., response time questions)
 
-- [ ] Add archive filter - archived cases should disappear from main view, add Show Archived toggle
+- [x] Add archive filter - archived cases disappear from main view, Show Archived toggle added
