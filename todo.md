@@ -171,4 +171,6 @@
 - [x] BUG: Documents not showing in admin dashboard View Details modal - FIXED
 
 ## Current Bug
-- [ ] BUG: Payment page showing $0.00 - Replace in-memory payment_links with persistent file storage
+- [x] BUG: Payment page showing $0.00 - FIXED with persistent file storage
+
+- [ ] Add ability to regenerate payment links for cases that already have one

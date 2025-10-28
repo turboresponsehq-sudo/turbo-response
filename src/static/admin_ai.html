@@ -872,7 +872,8 @@
                                     ''
                                 }
                                 ${case_.payment_link && case_.payment_link.status === 'pending' ? 
-                                    `<button class="btn btn-secondary btn-sm" onclick="copyPaymentLink('${case_.payment_link.token}')">📋 Copy</button>` : 
+                                    `<button class="btn btn-secondary btn-sm" onclick="copyPaymentLink('${case_.payment_link.token}')">📋 Copy</button>
+                                     <button class="btn btn-primary btn-sm" onclick="regeneratePaymentLink('${case_.case_id}')">🔄 New Link</button>` : 
                                     ''
                                 }
                                 ${case_.payment_status !== 'paid' ? 
@@ -1197,6 +1198,45 @@
                 
                 if (data.success) {
                     alert(`✅ Payment link generated!\n\nFull URL:\n${data.full_url}\n\nLink copied to clipboard!`);
+                    navigator.clipboard.writeText(data.full_url);
+                    loadCases(); // Reload cases to show new button
+                } else {
+                    alert('❌ Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Error generating payment link: ' + error.message);
+            }
+        }
+        
+        // Regenerate payment link for a case
+        async function regeneratePaymentLink(caseId) {
+            if (!confirm('🔄 Generate a new payment link for this case? The old link will be replaced.')) {
+                return;
+            }
+            
+            const price = prompt('💵 Enter the price for this case (e.g., 149, 349, 699):');
+            
+            if (!price || isNaN(price)) {
+                alert('❌ Invalid price');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/generate-payment-link', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        case_id: caseId,
+                        price: parseFloat(price)
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`✅ New payment link generated!\n\nFull URL:\n${data.full_url}\n\nLink copied to clipboard!`);
                     navigator.clipboard.writeText(data.full_url);
                     loadCases(); // Reload cases to show new button
                 } else {
