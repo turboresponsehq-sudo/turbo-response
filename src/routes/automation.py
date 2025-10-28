@@ -1376,17 +1376,13 @@ def generate_ai_analysis(case_id):
         description = client_data.get('caseDescription', 'No description provided')
         client_name = client_data.get('fullName', 'Unknown')
         
+        # Load philosophy from organized sections
+        philosophy_text = load_philosophy_sections()
+        
         # Create AI prompt
         prompt = f"""You are the AI assistant for Turbo Response, a Consumer Rights Agency that empowers everyday citizens to fight back against powerful institutions.
 
-**MISSION:** Defend consumers from predatory or unlawful actions with speed + precision. "We don't just respond fast — we respond smart."
-
-**CORE PHILOSOPHY:**
-- Protect the consumer → Simplify the law → Drive resolution fast
-- Lead with emotion → Support with logic → Close with empowerment
-- Create urgency by showing the cost of waiting
-- Fight back offensively, not just defensively
-- "You're not buying a service — you're buying back your control"
+{philosophy_text}
 
 **CASE INFORMATION:**
 - Client: {client_name}
@@ -1611,4 +1607,224 @@ def reset_philosophy():
     except Exception as e:
         print(f"Error resetting philosophy: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
+
+
+
+
+# Section-based Philosophy Management
+@automation_bp.route('/api/admin/get-philosophy-sections', methods=['GET'])
+def get_philosophy_sections():
+    """Get philosophy organized by sections"""
+    try:
+        data_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'philosophy_sections')
+        sections = {}
+        
+        section_names = ['mission', 'tiers', 'pricing', 'legal', 'communication', 'website']
+        
+        for section in section_names:
+            section_file = os.path.join(data_dir, f'{section}.txt')
+            if os.path.exists(section_file):
+                with open(section_file, 'r') as f:
+                    sections[section] = f.read()
+            else:
+                # Load default content for each section
+                sections[section] = get_default_section(section)
+        
+        return jsonify({'success': True, 'sections': sections}), 200
+        
+    except Exception as e:
+        print(f"Error getting philosophy sections: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@automation_bp.route('/api/admin/save-philosophy-sections', methods=['POST'])
+def save_philosophy_sections():
+    """Save philosophy sections"""
+    try:
+        data = request.get_json()
+        sections_data = data.get('sections', {})
+        
+        # Create sections directory
+        data_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'philosophy_sections')
+        os.makedirs(data_dir, exist_ok=True)
+        
+        # Save each section
+        for section_name, content in sections_data.items():
+            section_file = os.path.join(data_dir, f'{section_name}.txt')
+            with open(section_file, 'w') as f:
+                f.write(content)
+        
+        return jsonify({'success': True}), 200
+        
+    except Exception as e:
+        print(f"Error saving philosophy sections: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+def get_default_section(section_name):
+    """Get default content for a philosophy section"""
+    defaults = {
+        'mission': """**MISSION:** Defend consumers from predatory or unlawful actions with speed + precision. "We don't just respond fast — we respond smart."
+
+**CORE VALUES:**
+- Protect the consumer → Simplify the law → Drive resolution fast
+- Lead with emotion → Support with logic → Close with empowerment
+- Create urgency by showing the cost of waiting
+- Fight back offensively, not just defensively
+- "You're not buying a service — you're buying back your control" """,
+        
+        'tiers': """**4-TIER CLASSIFICATION SYSTEM:**
+
+**TIER 1 - EMERGENCY:** Panic/Fear state. Immediate threats (eviction, wage garnishment, bank freeze). Role: RESCUER.
+- Emotional State: Panic, fear, desperation
+- Timeline: Immediate (24-48 hours)
+- Pricing: $149-$199
+
+**TIER 2 - RECOVERY:** Frustration/Overwhelm state. Active disputes (debt validation, credit disputes). Role: ADVOCATE.
+- Emotional State: Frustration, anger, overwhelm
+- Timeline: 7-14 days
+- Pricing: $349-$499
+
+**TIER 3 - REBUILDING:** Caution/Uncertainty state. Long-term repair (credit rebuilding, record cleanup). Role: MENTOR.
+- Emotional State: Caution, uncertainty, hope
+- Timeline: 30-90 days
+- Pricing: $699-$999
+
+**TIER 4 - EMPOWERMENT:** Confidence/Growth state. Strategic growth (business setup, automation). Role: LEADER.
+- Emotional State: Confidence, curiosity, ambition
+- Timeline: Ongoing
+- Pricing: $999+""",
+        
+        'pricing': """**PRICING LOGIC:**
+
+**Factors that increase price:**
+- Multiple violations or creditors
+- Court involvement or legal deadlines
+- Complex documentation requirements
+- High-stakes outcomes (home, job, large amounts)
+
+**Factors that decrease price:**
+- Simple single-issue cases
+- Clear documentation provided
+- Standard timeline (no rush)
+- Straightforward resolution path
+
+**Service Tiers:**
+- Starter Plan: Single issue, standard timeline
+- Standard Plan: Multiple issues, moderate complexity
+- Comprehensive Plan: Full-service, urgent, complex""",
+        
+        'legal': """**LEGAL FOCUS AREAS:**
+
+**FDCPA (Fair Debt Collection Practices Act):**
+- §807: False, deceptive, or misleading representations
+- §805: Communication restrictions
+- §809: Validation of debts
+
+**FCRA (Fair Credit Reporting Act):**
+- §609: Disclosure requirements
+- §611: Dispute procedures
+- §616: Civil liability
+
+**ECOA (Equal Credit Opportunity Act):**
+- Discrimination in credit decisions
+
+**TCPA (Telephone Consumer Protection Act):**
+- Unwanted calls, texts, robocalls
+
+**Fair Housing Act:**
+- Housing discrimination
+
+**IRS Taxpayer Bill of Rights:**
+- Right to challenge IRS position
+- Right to appeal decisions""",
+        
+        'communication': """**COMMUNICATION FRAMEWORK:**
+
+**ERBN (Emotional Reasons to Buy Now):**
+- Relief from stress and fear
+- Protection and safety
+- Control over situation
+- Justice and validation
+- Hope for resolution
+
+**LRBN (Logical Reasons to Buy Now):**
+- Time-sensitive legal windows
+- Prevent escalation and additional costs
+- Expert knowledge and efficiency
+- Cost-effective vs. attorney fees
+- Proven track record
+
+**DRAB (Diminish, Reframe, Associate Pain, Bridge):**
+- Diminish objections with empathy
+- Reframe perspective to show value
+- Associate pain with inaction
+- Bridge to confident decision
+
+**Tone Switching:**
+- TIER 1: Urgent, protective, commanding (RESCUER)
+- TIER 2: Supportive, strategic, empowering (ADVOCATE)
+- TIER 3: Patient, educational, encouraging (MENTOR)
+- TIER 4: Collaborative, visionary, inspiring (LEADER)""",
+        
+        'website': """**WEBSITE-SPECIFIC INSTRUCTIONS:**
+
+**Key Features to Highlight:**
+- AI-powered case analysis (instant evaluation)
+- 24-hour response time
+- PayPal payment option (instant confirmation, Pay in 4)
+- Secure intake form at /intake
+- Admin dashboard for case tracking
+
+**Conversion Points:**
+- Direct new clients to intake form
+- Emphasize speed and technology advantage
+- Highlight success stories and testimonials
+- Show clear pricing and service tiers
+- Offer free case evaluation
+
+**Unique Selling Points:**
+- "We don't just respond fast — we respond smart"
+- AI-driven consumer defense
+- Same power large organizations use
+- Level the playing field"""
+    }
+    
+    return defaults.get(section_name, '')
+
+
+
+
+def load_philosophy_sections():
+    """Load and combine all philosophy sections"""
+    try:
+        data_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'philosophy_sections')
+        sections = []
+        
+        section_names = ['mission', 'tiers', 'pricing', 'legal', 'communication', 'website']
+        
+        for section in section_names:
+            section_file = os.path.join(data_dir, f'{section}.txt')
+            if os.path.exists(section_file):
+                with open(section_file, 'r') as f:
+                    content = f.read().strip()
+                    if content:
+                        sections.append(content)
+            else:
+                # Use default content
+                default_content = get_default_section(section)
+                if default_content:
+                    sections.append(default_content)
+        
+        return '\n\n'.join(sections)
+        
+    except Exception as e:
+        print(f"Error loading philosophy sections: {e}")
+        # Return fallback philosophy
+        return """**MISSION:** Defend consumers from predatory or unlawful actions with speed + precision.
+
+**CORE PHILOSOPHY:**
+- Protect the consumer → Simplify the law → Drive resolution fast
+- Lead with emotion → Support with logic → Close with empowerment
+- Create urgency by showing the cost of waiting"""
 

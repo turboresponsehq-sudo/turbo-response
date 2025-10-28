@@ -21,7 +21,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
@@ -56,86 +56,6 @@
             box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
         }
 
-        .settings-card {
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(6, 182, 212, 0.2);
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 20px;
-        }
-
-        .settings-card h2 {
-            color: #06b6d4;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 10px;
-            color: #cbd5e1;
-            font-weight: 600;
-        }
-
-        textarea {
-            width: 100%;
-            min-height: 400px;
-            padding: 15px;
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(6, 182, 212, 0.3);
-            border-radius: 8px;
-            color: #f8fafc;
-            font-family: 'Inter', monospace;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            resize: vertical;
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: #06b6d4;
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 15px;
-        }
-
-        button {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 1rem;
-        }
-
-        .btn-save {
-            background: linear-gradient(135deg, #06b6d4, #3b82f6);
-            color: white;
-        }
-
-        .btn-save:hover {
-            box-shadow: 0 0 30px rgba(6, 182, 212, 0.5);
-            transform: translateY(-2px);
-        }
-
-        .btn-reset {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid #ef4444;
-            color: #ef4444;
-        }
-
-        .btn-reset:hover {
-            background: rgba(239, 68, 68, 0.3);
-        }
-
         .success-message {
             padding: 15px;
             background: rgba(16, 185, 129, 0.2);
@@ -147,69 +67,257 @@
         }
 
         .info-box {
-            padding: 15px;
+            padding: 20px;
             background: rgba(6, 182, 212, 0.1);
             border-left: 4px solid #06b6d4;
             border-radius: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             color: #cbd5e1;
+        }
+
+        .sections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .section-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+
+        .section-card:hover {
+            border-color: rgba(6, 182, 212, 0.4);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            color: #06b6d4;
+            font-weight: 700;
+        }
+
+        .section-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-icon {
+            padding: 8px 12px;
+            background: rgba(6, 182, 212, 0.2);
+            border: 1px solid #06b6d4;
+            border-radius: 6px;
+            color: #06b6d4;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn-icon:hover {
+            background: rgba(6, 182, 212, 0.3);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 8px;
+            color: #f8fafc;
+            font-family: 'Inter', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
+        }
+
+        .save-all-btn {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .save-all-btn:hover {
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>⚙️ Settings</h1>
+            <h1>⚙️ Business Philosophy Settings</h1>
             <a href="/admin" class="back-btn">← Back to Dashboard</a>
         </div>
 
         <div id="successMessage" class="success-message">
-            ✅ Settings saved successfully!
+            ✅ All sections saved successfully!
         </div>
 
-        <div class="settings-card">
-            <h2>🧠 Business Philosophy & AI Training</h2>
-            
-            <div class="info-box">
-                <strong>📝 Instructions:</strong> This philosophy guides how the AI analyzes cases. Update it anytime to refine the AI's approach. The AI will use this immediately for all future analyses.
+        <div class="info-box">
+            <strong>📝 Instructions:</strong> Each section controls a specific aspect of how the AI analyzes cases. 
+            You can edit text directly or upload .txt files. Click <strong>💾 Save All Changes</strong> when done.
+            The AI will use the updated philosophy immediately.
+        </div>
+
+        <div class="sections-grid">
+            <!-- Section 1: Core Mission -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title">🎯 Core Mission & Values</div>
+                    <div class="section-actions">
+                        <button class="btn-icon" onclick="uploadFile('mission')">📤 Upload</button>
+                        <button class="btn-icon" onclick="clearSection('mission')">🗑️ Clear</button>
+                    </div>
+                </div>
+                <textarea id="mission" placeholder="Your mission statement and core values..."></textarea>
+                <div class="char-count" id="mission-count">0 characters</div>
+                <input type="file" id="mission-file" class="file-input" accept=".txt" onchange="handleFileUpload('mission')">
             </div>
 
-            <div class="form-group">
-                <label for="philosophy">AI Philosophy Document:</label>
-                <textarea id="philosophy" placeholder="Loading..."></textarea>
+            <!-- Section 2: 4-Tier System -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title">🧠 4-Tier Classification System</div>
+                    <div class="section-actions">
+                        <button class="btn-icon" onclick="uploadFile('tiers')">📤 Upload</button>
+                        <button class="btn-icon" onclick="clearSection('tiers')">🗑️ Clear</button>
+                    </div>
+                </div>
+                <textarea id="tiers" placeholder="Emergency, Recovery, Rebuilding, Empowerment tiers..."></textarea>
+                <div class="char-count" id="tiers-count">0 characters</div>
+                <input type="file" id="tiers-file" class="file-input" accept=".txt" onchange="handleFileUpload('tiers')">
             </div>
 
-            <div class="btn-group">
-                <button class="btn-save" onclick="savePhilosophy()">💾 Save Changes</button>
-                <button class="btn-reset" onclick="resetToDefault()">🔄 Reset to Default</button>
+            <!-- Section 3: Pricing Logic -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title">💰 Pricing Strategy & Logic</div>
+                    <div class="section-actions">
+                        <button class="btn-icon" onclick="uploadFile('pricing')">📤 Upload</button>
+                        <button class="btn-icon" onclick="clearSection('pricing')">🗑️ Clear</button>
+                    </div>
+                </div>
+                <textarea id="pricing" placeholder="Pricing ranges, factors, adjustments..."></textarea>
+                <div class="char-count" id="pricing-count">0 characters</div>
+                <input type="file" id="pricing-file" class="file-input" accept=".txt" onchange="handleFileUpload('pricing')">
+            </div>
+
+            <!-- Section 4: Legal Strategy -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title">⚖️ Legal Strategy & Laws</div>
+                    <div class="section-actions">
+                        <button class="btn-icon" onclick="uploadFile('legal')">📤 Upload</button>
+                        <button class="btn-icon" onclick="clearSection('legal')">🗑️ Clear</button>
+                    </div>
+                </div>
+                <textarea id="legal" placeholder="FDCPA, FCRA, TCPA, violation detection..."></textarea>
+                <div class="char-count" id="legal-count">0 characters</div>
+                <input type="file" id="legal-file" class="file-input" accept=".txt" onchange="handleFileUpload('legal')">
+            </div>
+
+            <!-- Section 5: Communication Style -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title">💬 Communication & Tone</div>
+                    <div class="section-actions">
+                        <button class="btn-icon" onclick="uploadFile('communication')">📤 Upload</button>
+                        <button class="btn-icon" onclick="clearSection('communication')">🗑️ Clear</button>
+                    </div>
+                </div>
+                <textarea id="communication" placeholder="Tone, emotional intelligence, ERBN/LRBN/DRAB..."></textarea>
+                <div class="char-count" id="communication-count">0 characters</div>
+                <input type="file" id="communication-file" class="file-input" accept=".txt" onchange="handleFileUpload('communication')">
+            </div>
+
+            <!-- Section 6: Website-Specific -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title">🌐 Website-Specific Instructions</div>
+                    <div class="section-actions">
+                        <button class="btn-icon" onclick="uploadFile('website')">📤 Upload</button>
+                        <button class="btn-icon" onclick="clearSection('website')">🗑️ Clear</button>
+                    </div>
+                </div>
+                <textarea id="website" placeholder="Website features, forms, payment options, unique selling points..."></textarea>
+                <div class="char-count" id="website-count">0 characters</div>
+                <input type="file" id="website-file" class="file-input" accept=".txt" onchange="handleFileUpload('website')">
             </div>
         </div>
+
+        <button class="save-all-btn" onclick="saveAllSections()">💾 Save All Changes</button>
     </div>
 
     <script>
-        // Load current philosophy
-        async function loadPhilosophy() {
+        const sections = ['mission', 'tiers', 'pricing', 'legal', 'communication', 'website'];
+
+        // Load all sections on page load
+        async function loadAllSections() {
             try {
-                const response = await fetch('/api/admin/get-philosophy');
+                const response = await fetch('/api/admin/get-philosophy-sections');
                 const data = await response.json();
-                document.getElementById('philosophy').value = data.philosophy || 'No philosophy set yet.';
+                
+                if (data.success) {
+                    sections.forEach(section => {
+                        const textarea = document.getElementById(section);
+                        textarea.value = data.sections[section] || '';
+                        updateCharCount(section);
+                    });
+                }
             } catch (error) {
-                console.error('Error loading philosophy:', error);
-                document.getElementById('philosophy').value = 'Error loading philosophy.';
+                console.error('Error loading sections:', error);
             }
         }
 
-        // Save philosophy
-        async function savePhilosophy() {
-            const philosophy = document.getElementById('philosophy').value;
-            
+        // Save all sections
+        async function saveAllSections() {
+            const sectionsData = {};
+            sections.forEach(section => {
+                sectionsData[section] = document.getElementById(section).value;
+            });
+
             try {
-                const response = await fetch('/api/admin/save-philosophy', {
+                const response = await fetch('/api/admin/save-philosophy-sections', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ philosophy })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sections: sectionsData })
                 });
 
                 if (response.ok) {
@@ -219,39 +327,58 @@
                         successMsg.style.display = 'none';
                     }, 3000);
                 } else {
-                    alert('❌ Error saving philosophy');
+                    alert('❌ Error saving sections');
                 }
             } catch (error) {
-                console.error('Error saving philosophy:', error);
-                alert('❌ Error saving philosophy');
+                console.error('Error saving sections:', error);
+                alert('❌ Error saving sections');
             }
         }
 
-        // Reset to default
-        async function resetToDefault() {
-            if (!confirm('Are you sure you want to reset to the default philosophy? This will overwrite your current settings.')) {
-                return;
-            }
+        // Upload file to section
+        function uploadFile(section) {
+            document.getElementById(`${section}-file`).click();
+        }
 
-            try {
-                const response = await fetch('/api/admin/reset-philosophy', {
-                    method: 'POST'
-                });
-
-                if (response.ok) {
-                    await loadPhilosophy();
-                    alert('✅ Reset to default philosophy');
-                } else {
-                    alert('❌ Error resetting philosophy');
-                }
-            } catch (error) {
-                console.error('Error resetting philosophy:', error);
-                alert('❌ Error resetting philosophy');
+        // Handle file upload
+        function handleFileUpload(section) {
+            const fileInput = document.getElementById(`${section}-file`);
+            const file = fileInput.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const textarea = document.getElementById(section);
+                    // Append to existing content
+                    textarea.value += (textarea.value ? '\n\n' : '') + e.target.result;
+                    updateCharCount(section);
+                };
+                reader.readAsText(file);
             }
         }
+
+        // Clear section
+        function clearSection(section) {
+            if (confirm(`Clear all content in this section?`)) {
+                document.getElementById(section).value = '';
+                updateCharCount(section);
+            }
+        }
+
+        // Update character count
+        function updateCharCount(section) {
+            const textarea = document.getElementById(section);
+            const count = textarea.value.length;
+            document.getElementById(`${section}-count`).textContent = `${count} characters`;
+        }
+
+        // Add event listeners for character counting
+        sections.forEach(section => {
+            document.getElementById(section).addEventListener('input', () => updateCharCount(section));
+        });
 
         // Load on page load
-        loadPhilosophy();
+        loadAllSections();
     </script>
 </body>
 </html>

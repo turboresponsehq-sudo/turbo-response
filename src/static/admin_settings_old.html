@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Turbo Response Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(6, 182, 212, 0.3);
+        }
+
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-btn {
+            padding: 10px 20px;
+            background: rgba(6, 182, 212, 0.2);
+            border: 1px solid #06b6d4;
+            border-radius: 8px;
+            color: #06b6d4;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(6, 182, 212, 0.3);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+        }
+
+        .settings-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .settings-card h2 {
+            color: #06b6d4;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #cbd5e1;
+            font-weight: 600;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 400px;
+            padding: 15px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 8px;
+            color: #f8fafc;
+            font-family: 'Inter', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            color: white;
+        }
+
+        .btn-save:hover {
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+
+        .btn-reset:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .success-message {
+            padding: 15px;
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid #10b981;
+            border-radius: 8px;
+            color: #10b981;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .info-box {
+            padding: 15px;
+            background: rgba(6, 182, 212, 0.1);
+            border-left: 4px solid #06b6d4;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: #cbd5e1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚙️ Settings</h1>
+            <a href="/admin" class="back-btn">← Back to Dashboard</a>
+        </div>
+
+        <div id="successMessage" class="success-message">
+            ✅ Settings saved successfully!
+        </div>
+
+        <div class="settings-card">
+            <h2>🧠 Business Philosophy & AI Training</h2>
+            
+            <div class="info-box">
+                <strong>📝 Instructions:</strong> This philosophy guides how the AI analyzes cases. Update it anytime to refine the AI's approach. The AI will use this immediately for all future analyses.
+            </div>
+
+            <div class="form-group">
+                <label for="philosophy">AI Philosophy Document:</label>
+                <textarea id="philosophy" placeholder="Loading..."></textarea>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-save" onclick="savePhilosophy()">💾 Save Changes</button>
+                <button class="btn-reset" onclick="resetToDefault()">🔄 Reset to Default</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load current philosophy
+        async function loadPhilosophy() {
+            try {
+                const response = await fetch('/api/admin/get-philosophy');
+                const data = await response.json();
+                document.getElementById('philosophy').value = data.philosophy || 'No philosophy set yet.';
+            } catch (error) {
+                console.error('Error loading philosophy:', error);
+                document.getElementById('philosophy').value = 'Error loading philosophy.';
+            }
+        }
+
+        // Save philosophy
+        async function savePhilosophy() {
+            const philosophy = document.getElementById('philosophy').value;
+            
+            try {
+                const response = await fetch('/api/admin/save-philosophy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ philosophy })
+                });
+
+                if (response.ok) {
+                    const successMsg = document.getElementById('successMessage');
+                    successMsg.style.display = 'block';
+                    setTimeout(() => {
+                        successMsg.style.display = 'none';
+                    }, 3000);
+                } else {
+                    alert('❌ Error saving philosophy');
+                }
+            } catch (error) {
+                console.error('Error saving philosophy:', error);
+                alert('❌ Error saving philosophy');
+            }
+        }
+
+        // Reset to default
+        async function resetToDefault() {
+            if (!confirm('Are you sure you want to reset to the default philosophy? This will overwrite your current settings.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/reset-philosophy', {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    await loadPhilosophy();
+                    alert('✅ Reset to default philosophy');
+                } else {
+                    alert('❌ Error resetting philosophy');
+                }
+            } catch (error) {
+                console.error('Error resetting philosophy:', error);
+                alert('❌ Error resetting philosophy');
+            }
+        }
+
+        // Load on page load
+        loadPhilosophy();
+    </script>
+</body>
+</html>
