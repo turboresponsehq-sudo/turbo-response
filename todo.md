@@ -175,4 +175,9 @@
 
 - [x] Add ability to regenerate payment links for cases that already have one
 
-- [ ] BUG: Payment page not loading price - fix data.price vs caseData.price
+- [x] BUG: Payment page not loading price - FIXED
+
+## Future Improvements
+- [ ] Improve chatbot to give specific answers instead of generic responses (e.g., response time questions)
+
+- [ ] Add archive filter - archived cases should disappear from main view, add Show Archived toggle

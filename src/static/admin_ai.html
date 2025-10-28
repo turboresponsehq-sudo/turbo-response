@@ -687,10 +687,15 @@
 
         <!-- Cases Section -->
         <div class="cases-section">
-            <h2 class="section-title">
-                <span class="section-icon">📋</span>
-                Case Management
-            </h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 class="section-title" style="margin: 0;">
+                    <span class="section-icon">📋</span>
+                    Case Management
+                </h2>
+                <button id="toggleArchivedBtn" class="btn btn-secondary" onclick="toggleArchived()" style="background: linear-gradient(135deg, #64748b, #475569);">
+                    📦 Show Archived
+                </button>
+            </div>
             
             <div class="table-container">
                 <table class="cases-table">
@@ -817,22 +822,43 @@
             document.getElementById('approvedToday').textContent = data.approved || 0;
         }
 
+        // State for showing archived cases
+        let showArchived = false;
+        
+        // Toggle archived cases visibility
+        function toggleArchived() {
+            showArchived = !showArchived;
+            const btn = document.getElementById('toggleArchivedBtn');
+            btn.textContent = showArchived ? '📦 Hide Archived' : '📦 Show Archived';
+            btn.style.background = showArchived ? 'linear-gradient(135deg, #eab308, #f59e0b)' : 'linear-gradient(135deg, #64748b, #475569)';
+            renderCasesTable();
+        }
+        
         // Render cases table
         function renderCasesTable() {
             const tbody = document.getElementById('casesTableBody');
             
-            if (cases.length === 0) {
+            // Filter cases based on archived status
+            const filteredCases = cases.filter(case_ => {
+                if (showArchived) {
+                    return case_.status === 'archived';
+                } else {
+                    return case_.status !== 'archived';
+                }
+            });
+            
+            if (filteredCases.length === 0) {
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="8" style="text-align: center; color: var(--text-muted);">
-                            No cases found
+                            ${showArchived ? 'No archived cases found' : 'No active cases found'}
                         </td>
                     </tr>
                 `;
                 return;
             }
 
-            tbody.innerHTML = cases.map(case_ => {
+            tbody.innerHTML = filteredCases.map(case_ => {
                 // Fix data mapping - handle both old and new data structures
                 const clientData = case_.client_data || {};
                 const contactInfo = case_.contact_info || {};
