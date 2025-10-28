@@ -383,8 +383,8 @@
                     document.getElementById('contractDate').textContent = caseData.contract_acceptance.signature_date;
                     document.getElementById('contractIp').textContent = caseData.contract_acceptance.ip_address;
                     
-                    // Populate price
-                    const price = caseData.price || '0.00';
+                    // Populate price - get from API response, not case data
+                    const price = data.price || caseData.price || '0.00';
                     document.getElementById('totalAmount').textContent = `$${price}`;
                     
                     // Initialize PayPal button with the price

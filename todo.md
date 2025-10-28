@@ -173,4 +173,6 @@
 ## Current Bug
 - [x] BUG: Payment page showing $0.00 - FIXED with persistent file storage
 
-- [ ] Add ability to regenerate payment links for cases that already have one
+- [x] Add ability to regenerate payment links for cases that already have one
+
+- [ ] BUG: Payment page not loading price - fix data.price vs caseData.price
