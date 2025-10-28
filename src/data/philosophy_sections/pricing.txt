@@ -1,21 +1,72 @@
 **PRICING STRATEGY & LOGIC:**
 
-**Price Ranges:**
-- Tier 1 – Emergency: $149–$199
-- Tier 2 – Recovery: $349–$499
-- Tier 3 – Rebuilding: $499–$699
-- Tier 4 – Empowerment: $699–$999+
+**Base Price Tiers (Amount at Stake):**
+- Under $1,000: $149–$299
+- $1,000–$5,000: $299–$499
+- $5,000–$15,000: $499–$699
+- $15,000–$50,000: $699–$999
+- $50,000+: $999–$1,500+
 
-**Factors that Increase Price:**
-- Case complexity (multi-agency, multiple notices)
-- Time-sensitive actions (24–48 hr deadline)
-- High documentation volume
-- Legal escalation risk
+**Time & Retainer Multipliers (+$200–$400):**
+- Ongoing case requiring retainer
+- Multi-stage case (appeals, follow-ups)
+- Ongoing monitoring needed
+- Extended timeline (3+ months)
+
+**Court/Legal Complexity (+$200–$300):**
+- Court hearing scheduled
+- Litigation pending or threatened
+- Administrative hearing (EEOC, IRS, etc.)
+- Legal representation needed
+
+**Agency/Jurisdiction Complexity (+$150–$300):**
+- Multiple agencies involved (IRS + state, multiple creditors)
+- Federal agencies (IRS, EEOC, HUD, FTC) +$100–$200
+- Specialized expertise required (tax law, employment law)
+- Multiple jurisdictions (federal + state)
+
+**Documentation & Deadline Multipliers (+$100–$200):**
+- Extensive documentation (10+ documents to review)
+- Multiple deadlines to track
+- Immediate deadline (<30 days) +$100–$200
+- Complex document preparation needed
+
+**Legal Violation Severity (+$100–$400):**
+- 1-2 violations: Base price
+- 3-5 violations: +$100–$200
+- 6+ violations: +$200–$400
+- Criminal violations: +$300–$500
+
+**Standard Service Tiers:**
+- Tier 1 – Emergency (Immediate threat, <30 days): $149–$499
+- Tier 2 – Recovery (Active collections, legal threats): $349–$699
+- Tier 3 – Rebuilding (Credit repair, dispute resolution): $499–$999
+- Tier 4 – Empowerment (Complex cases, multiple issues): $699–$1,500+
+
+**Pricing Calculation Method:**
+1. Start with base price from "Amount at Stake"
+2. Add time/retainer multiplier if applicable
+3. Add court/legal complexity if applicable
+4. Add agency/jurisdiction complexity if applicable
+5. Add documentation/deadline multipliers if applicable
+6. Add legal violation severity multiplier if applicable
+7. Final price should reflect TOTAL complexity and value delivered
+
+**Example Calculation:**
+IRS case, $23,000 owed, hearing scheduled, multiple documents:
+- Base: $699 (amount at stake: $15K–$50K)
+- + Hearing: +$250
+- + IRS (federal, specialized): +$150
+- + Multiple deadlines: +$150
+- + Likely retainer: +$300
+- **= $1,549 (Custom tier)**
 
 **Factors that Decrease Price:**
 - Simple, single-issue cases
-- Repeat client or referral
+- Repeat client or referral (-10%)
 - Pre-prepared documentation
+- No immediate deadline
+- Client has already gathered evidence
 
 **Payment Logic:**
 - PayPal "Pay in 4" for affordability
@@ -24,5 +75,8 @@
 
 **Value Proposition:**
 Turbo Response doesn't sell letters — it sells strategic victories.
-Pricing reflects impact and intelligence, not just time spent.
+Pricing reflects impact, expertise, time investment, and intelligence, not just document preparation.
+
+**Key Principle:**
+Price should reflect the TRUE value of your expertise, time investment, and the financial impact for the client. A case involving $20K+ in stakes with court involvement is worth $1,000+, not $149.
 
