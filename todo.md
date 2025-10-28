@@ -152,3 +152,20 @@
   - [ ] Extract key information (amounts, dates, agencies, violations, threats)
   - [ ] Integrate extracted info into AI analysis
   - [ ] Enhance pricing recommendations based on document content
+
+## Completed in This Session
+- [x] Add document upload guidance to intake form
+- [x] Update AI pricing logic with amount-based and complexity multipliers
+- [x] Add AI document scanning system
+  - [x] PDF text extraction
+  - [x] Image OCR for scanned documents
+  - [x] Word document processing
+  - [x] Extract key information (amounts, dates, agencies, violations, threats)
+  - [x] Integrate extracted info into AI analysis
+  - [x] Enhance pricing recommendations based on document content
+
+## Current Bug
+- [ ] BUG: Documents not showing in admin dashboard View Details modal
+
+## Current Bug
+- [ ] BUG: Documents not showing in admin dashboard View Details modal

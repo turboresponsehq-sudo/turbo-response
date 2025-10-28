@@ -766,6 +766,60 @@ def download_document(case_id, filename):
             'error': str(e)
         }), 500
 
+@automation_bp.route('/api/admin/case/<case_id>/document/<int:doc_index>', methods=['GET'])
+def download_document_by_index(case_id, doc_index):
+    """Download a document by index for a specific case"""
+    try:
+        # Load case data to get document filename
+        data_path = AUTOMATION_CONFIG['data_storage_path']
+        case_file = os.path.join(data_path, f"{case_id}_submission.json")
+        
+        if not os.path.exists(case_file):
+            return jsonify({
+                'success': False,
+                'error': 'Case not found'
+            }), 404
+        
+        with open(case_file, 'r') as f:
+            case_data = json.load(f)
+        
+        client_data = case_data.get('client_data', {})
+        documents = client_data.get('documents', [])
+        
+        if doc_index >= len(documents):
+            return jsonify({
+                'success': False,
+                'error': 'Document index out of range'
+            }), 404
+        
+        doc = documents[doc_index]
+        filename = doc.get('filename', f'document_{doc_index}')
+        
+        # Get document from storage
+        doc_path = AUTOMATION_CONFIG['document_storage_path']
+        case_doc_path = os.path.join(doc_path, case_id)
+        filepath = os.path.join(case_doc_path, filename)
+        
+        if not os.path.exists(filepath):
+            return jsonify({
+                'success': False,
+                'error': 'Document file not found on disk'
+            }), 404
+        
+        # Determine MIME type
+        mime_type, _ = mimetypes.guess_type(filename)
+        if not mime_type:
+            mime_type = 'application/octet-stream'
+        
+        from flask import send_file
+        return send_file(filepath, mimetype=mime_type, as_attachment=True, download_name=filename)
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 @automation_bp.route('/api/admin/case/<case_id>/approve', methods=['POST'])
 def approve_case_payment(case_id):
     """Mark a case payment as approved"""
