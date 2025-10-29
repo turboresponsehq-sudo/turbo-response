@@ -298,6 +298,12 @@ def send_admin_notification(submission_data):
     Contains full case details for review
     """
     try:
+        print(f"\n=== ADMIN NOTIFICATION TRIGGERED ===")
+        print(f"Case ID: {submission_data.get('case_id')}")
+        print(f"SMTP Username: {AUTOMATION_CONFIG.get('smtp_username')}")
+        print(f"SMTP Password exists: {bool(AUTOMATION_CONFIG.get('smtp_password'))}")
+        print(f"Enable email sending: {AUTOMATION_CONFIG.get('enable_email_sending')}")
+        
         client_data = submission_data['client_data']
         
         subject = f"🔔 New Case: {submission_data['case_id']} - {client_data.get('fullName', 'Unknown')}"
