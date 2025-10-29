@@ -196,3 +196,10 @@
 - [x] Need better law matching based on case category - IMPLEMENTED
 - [x] Need pricing adjustment for simple/straightforward cases - IMPLEMENTED
 
+
+
+## Current Bug - Admin Dashboard
+- [x] BUG: Admin page stuck on "Loading cases..." - API response too large (11.7 MB) - FIXED
+- [x] Optimized /api/admin/cases endpoint to exclude document content
+- [x] Only return case metadata + AI analysis, not full document scans
+

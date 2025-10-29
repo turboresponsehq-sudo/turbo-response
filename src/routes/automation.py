@@ -698,7 +698,28 @@ def get_all_cases():
                     try:
                         with open(filepath, 'r') as f:
                             case_data = json.load(f)
-                            cases.append(case_data)
+                            
+                            # Create lightweight summary for list view (exclude large document scans)
+                            case_summary = {
+                                'case_id': case_data.get('case_id'),
+                                'timestamp': case_data.get('timestamp'),
+                                'status': case_data.get('status'),
+                                'client_data': {
+                                    'fullName': case_data.get('client_data', {}).get('fullName'),
+                                    'email': case_data.get('client_data', {}).get('email'),
+                                    'phone': case_data.get('client_data', {}).get('phone'),
+                                    'category': case_data.get('client_data', {}).get('category'),
+                                    'amount': case_data.get('client_data', {}).get('amount'),
+                                    'deadline': case_data.get('client_data', {}).get('deadline'),
+                                    'caseDescription': case_data.get('client_data', {}).get('caseDescription', '')[:200] + '...' if len(case_data.get('client_data', {}).get('caseDescription', '')) > 200 else case_data.get('client_data', {}).get('caseDescription', ''),
+                                    'documents': len(case_data.get('client_data', {}).get('documents', []))  # Just count, not content
+                                },
+                                'ai_analysis': case_data.get('ai_analysis'),  # Keep AI analysis
+                                'ai_analysis_generated_at': case_data.get('ai_analysis_generated_at'),
+                                'notes': case_data.get('notes', []),
+                                'archived': case_data.get('archived', False)
+                            }
+                            cases.append(case_summary)
                     except Exception as e:
                         print(f"Error reading case file {filename}: {e}")
         
