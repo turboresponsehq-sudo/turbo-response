@@ -181,3 +181,18 @@
 - [ ] Improve chatbot to give specific answers instead of generic responses (e.g., response time questions)
 
 - [x] Add archive filter - archived cases disappear from main view, Show Archived toggle added
+
+
+## New Feature Request - Notifications
+- [x] Add email notification system when new case is submitted
+  - [x] Send to: turboresponsehq@gmail.com
+  - [x] Include case details (client name, email, category, description)
+  - [x] Include link to admin dashboard
+  - [x] Configured Gmail SMTP with app password
+
+## Current Bugs - AI Analysis
+- [x] BUG: AI citing wrong laws (IRS code for unemployment benefits, ECOA for wrong cases) - FIXED with category-based law matching
+- [x] BUG: AI pricing too high for simple cases (unemployment = $349-$499, should be ~$200) - FIXED with non-monetary case pricing
+- [x] Need better law matching based on case category - IMPLEMENTED
+- [x] Need pricing adjustment for simple/straightforward cases - IMPLEMENTED
+

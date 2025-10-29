@@ -1579,15 +1579,21 @@ def generate_ai_analysis(case_id):
    - **TIER 3 - REBUILDING**: Caution/Uncertainty state. Long-term repair (credit rebuilding, ChexSystems cleanup). Role: MENTOR. Tone: Encouraging + educational.
    - **TIER 4 - EMPOWERMENT**: Confidence/Growth state. Strategic growth (business setup, AI tools, education). Role: LEADER. Tone: Inspirational + strategic.
 
-2. **DETECT LEGAL VIOLATIONS** (Primary focus):
-   - FDCPA (Fair Debt Collection Practices Act) - §807, §809, §805
-   - FCRA (Fair Credit Reporting Act) - §609, §611, §615
-   - ECOA (Equal Credit Opportunity Act)
-   - FCBA (Fair Credit Billing Act)
-   - TCPA (Telephone Consumer Protection Act)
-   - Fair Housing Act
-   - IRS Taxpayer Bill of Rights
-   → Identify specific violations and offensive strategies (file complaints with CFPB, FTC, AG)
+2. **DETECT LEGAL VIOLATIONS** (Match laws to case category):
+   
+   **ONLY cite laws relevant to the case category:**
+   
+   - **Debt Collection:** FDCPA (§807, §809, §805), FCRA (§609, §611, §615), FCBA
+   - **Credit/Banking:** FCRA (§609, §611, §615), ECOA, FCBA, Reg E (Electronic Fund Transfer Act)
+   - **Housing/Eviction:** Fair Housing Act, State Landlord-Tenant Laws, SCRA (Servicemembers Civil Relief Act)
+   - **Employment/Unemployment:** Title VII, State Labor Laws, Unemployment Insurance Laws, WARN Act
+   - **Tax/IRS:** IRS Taxpayer Bill of Rights, Collection Due Process, Offer in Compromise rules
+   - **Harassment Calls:** TCPA (Telephone Consumer Protection Act), FDCPA §805
+   - **Discrimination:** ECOA, Fair Housing Act, Title VII, ADA
+   - **Consumer Fraud:** FTC Act, State Consumer Protection Laws, UDAAP
+   
+   **DO NOT cite laws that don't apply to the category.**
+   → Identify specific violations and offensive strategies (file complaints with CFPB, FTC, AG, State Labor Board)
 
 3. **GAME PLAN** (5-8 action steps):
    - Start with immediate actions
@@ -1605,14 +1611,22 @@ def generate_ai_analysis(case_id):
 
 5. **PRICING LOGIC** (comprehensive calculation):
    
-   **Step 1 - Base Price (Amount at Stake):**
+   **Step 1 - Determine Base Price:**
+   
+   **A. If monetary amount at stake exists:**
    - Under $1,000: $149-$299
    - $1,000-$5,000: $299-$499
    - $5,000-$15,000: $499-$699
    - $15,000-$50,000: $699-$999
    - $50,000+: $999-$1,500+
    
-   **Step 2 - Add Multipliers:**
+   **B. If NO monetary amount (unemployment, discrimination, harassment, etc.):**
+   - Simple/Single issue: $149-$249
+   - Moderate complexity: $249-$349
+   - Complex/Multiple issues: $349-$499
+   - Very complex/Federal agencies: $499-$699
+   
+   **Step 2 - Add Multipliers (only if applicable):**
    - Time/Retainer (ongoing case): +$200-$400
    - Court/Hearing scheduled: +$200-$300
    - Federal agencies (IRS, EEOC, HUD): +$150-$300
@@ -1622,17 +1636,20 @@ def generate_ai_analysis(case_id):
    - Legal violations (6+): +$200-$400
    
    **Step 3 - Calculate Total:**
-   Start with base price from amount at stake, then add applicable multipliers.
+   Start with base price, then add applicable multipliers.
    
-   **Example:** IRS case, $23K owed, hearing scheduled:
+   **Example 1:** IRS case, $23K owed, hearing scheduled:
    - Base: $699 (amount: $15K-$50K)
    - + Hearing: +$250
    - + IRS (federal): +$150
-   - + Multiple deadlines: +$150
-   - + Retainer likely: +$300
-   - **Total: $1,549**
+   - **Total: $1,099**
    
-   **IMPORTANT:** Extract dollar amounts from documents and case description to determine base price.
+   **Example 2:** Unemployment benefits denial (no dollar amount):
+   - Base: $199 (simple, single issue)
+   - + State agency: +$0 (not federal)
+   - **Total: $199**
+   
+   **IMPORTANT:** Extract dollar amounts from documents and case description. If no amount found, use category-based pricing.
 
 6. **SERVICE RECOMMENDATION**:
    - Starter Plan: Single issue, quick resolution
