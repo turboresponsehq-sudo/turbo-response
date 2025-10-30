@@ -490,9 +490,12 @@
     <!-- Main Container -->
     <div class="container">
         <div class="intake-header">
-            <h1 class="intake-title">AI Case Analysis</h1>
+            <h1 class="intake-title">AI Situation Analysis</h1>
             <p class="intake-subtitle">
-                Our AI will analyze your situation and generate the perfect legal response
+                Our AI will analyze your situation and generate the perfect response strategy
+            </p>
+            <p style="background: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; padding: 12px; margin: 15px 0; border-radius: 8px; color: #fca5a5; font-size: 0.9rem;">
+                ⚠️ <strong>Important Disclaimer:</strong> We are NOT lawyers and do NOT provide legal advice. We provide document preparation and consumer advocacy support services only.
             </p>
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
@@ -616,10 +619,10 @@
                     <div class="pricing-card-form" data-plan="starter">
                         <div class="plan-price">$149</div>
                         <div class="plan-name">Case Starter Plan</div>
-                        <div class="plan-description">For light disputes or single-notice responses</div>
+                        <div class="plan-description">For single-issue situations or one-time responses</div>
                         <ul class="plan-features">
-                            <li>One case review + AI-assisted response</li>
-                            <li>Personalized legal strategy outline</li>
+                            <li>One situation review + AI-assisted response</li>
+                            <li>Personalized action plan outline</li>
                             <li>Email follow-up + one revision</li>
                         </ul>
                     </div>
@@ -628,23 +631,23 @@
                         <div class="popular-badge">Most Popular</div>
                         <div class="plan-price">$349</div>
                         <div class="plan-name">Standard Defense Plan</div>
-                        <div class="plan-description">For multi-step disputes or recurring issues</div>
+                        <div class="plan-description">For multi-step situations or ongoing issues</div>
                         <ul class="plan-features">
-                            <li>Full AI + expert-reviewed case defense</li>
-                            <li>30-day follow-up and resubmission support</li>
-                            <li>Document prep + escalation guidance</li>
+                            <li>Full AI + quality-checked advocacy support</li>
+                            <li>30-day follow-up and resubmission assistance</li>
+                            <li>Document preparation + escalation guidance</li>
                         </ul>
                     </div>
                     
                     <div class="pricing-card-form" data-plan="comprehensive">
-                        <div class="plan-price">Starting at $699</div>
-                        <div class="plan-name">Comprehensive Case Management</div>
-                        <div class="plan-description">For complex or high-value cases</div>
+                         <div class="plan-price">Starting at $699</div>
+                        <div class="plan-name">Comprehensive Support</div>
+                        <div class="plan-description">For complex or high-value situations</div>
                         <ul class="plan-features">
-                            <li>End-to-end case handling</li>
-                            <li>Multi-stage dispute letters + appeals</li>
+                            <li>End-to-end document handling</li>
+                            <li>Multi-stage response letters + appeals</li>
                             <li>Ongoing updates + analytics dashboard</li>
-                            <li>Priority support</li>
+                        </ul>i>Priority support</li>
                         </ul>
                     </div>
                 </div>
@@ -668,7 +671,7 @@
                     </p>
                     <ol style="margin: 0 0 12px 0; padding-left: 20px; color: #e5e7eb; font-size: 0.9rem; line-height: 1.6;">
                         <li><strong>Most recent notice</strong> with deadline or threat</li>
-                        <li><strong>Court documents</strong> or legal notices</li>
+                        <li><strong>Court documents</strong> or official notices</li>
                         <li><strong>Proof of error</strong> (statements, receipts, W-2s)</li>
                         <li><strong>Previous correspondence</strong> with the agency</li>
                         <li><strong>Supporting evidence</strong> (contracts, agreements)</li>
@@ -676,7 +679,7 @@
                     <div style="background: rgba(251, 191, 36, 0.1); border-left: 3px solid #fbbf24; padding: 10px; border-radius: 5px;">
                         <p style="margin: 0; color: #fbbf24; font-size: 0.9rem; line-height: 1.5;">
                             <strong>💡 Have more than 10 documents?</strong><br>
-                            Upload the 5-10 most important ones and list the others in your case description above. We'll request additional documents if needed.
+                            Upload the 5-10 most important ones and list the others in your situation description above. We'll request additional documents if needed.
                         </p>
                     </div>
                 </div>
@@ -704,7 +707,7 @@
                 
                 <div style="background: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; padding: 15px; margin-bottom: 20px; border-radius: 8px;">
                     <p style="color: #fca5a5; font-weight: 600; margin-bottom: 10px;">⚠️ REQUIRED: You must read and agree to our service contract before submitting.</p>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">This is a legally binding agreement. Please review carefully.</p>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">This is a binding service agreement. Please review carefully.</p>
                 </div>
 
                 <div style="margin-bottom: 20px;">
@@ -726,7 +729,7 @@
                                     By checking this box, I acknowledge that:<br>
                                     • Turbo Response HQ is NOT a law firm and does NOT provide legal advice<br>
                                     • All sales are final with NO REFUNDS under any circumstances<br>
-                                    • No guarantees are made about case outcomes<br>
+                                     • No guarantees are made about outcomes<br>
                                     • I agree to binding arbitration for dispute resolution<br>
                                     • I have provided accurate and truthful information
                                 </small>
@@ -737,13 +740,13 @@
 
                 <div class="form-group">
                     <label for="clientSignature" style="display: block; color: var(--text-primary); font-weight: 600; margin-bottom: 8px;">
-                        Electronic Signature (Type your full legal name) *
+                        Electronic Signature (Type your full name) *
                     </label>
                     <input type="text" id="clientSignature" name="clientSignature" required 
-                           placeholder="Type your full legal name as electronic signature"
+                           placeholder="Type your full name as electronic signature"
                            style="width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--input-border); border-radius: 8px; color: var(--text-primary); font-size: 1rem;">
                     <small style="color: var(--text-muted); display: block; margin-top: 5px;">
-                        By typing your name, you agree that it constitutes your legal electronic signature.
+                        By typing your name, you agree that it constitutes your electronic signature.
                     </small>
                 </div>
 

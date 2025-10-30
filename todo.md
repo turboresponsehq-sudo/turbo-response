@@ -203,3 +203,13 @@
 - [x] Optimized /api/admin/cases endpoint to exclude document content
 - [x] Only return case metadata + AI analysis, not full document scans
 
+
+
+## URGENT - Legal Compliance Issue
+- [ ] CRITICAL: Remove all "legal advice" language from entire website
+- [ ] Remove any references to "attorney", "lawyer", "legal representation"
+- [ ] Emphasize: Document preparation, advocacy, administrative assistance
+- [ ] Add clear disclaimers: "We are NOT lawyers and do NOT provide legal advice"
+- [ ] Review: Landing page, intake form, admin dashboard, all static pages
+- [ ] Ensure compliance to avoid Unauthorized Practice of Law (UPL) violations
+
