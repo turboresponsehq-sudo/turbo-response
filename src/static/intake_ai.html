@@ -644,28 +644,26 @@
                     }
                 }
 
-                // Send the story to AI
-                const messageResponse = await fetch('/api/chat/message', {
+                // Send story for final analysis
+                const analysisResponse = await fetch('/api/chat/analyze-intake', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         conversation_id: conversationId,
-                        message: story
+                        story: story
                     })
                 });
 
-                const messageData = await messageResponse.json();
+                const analysisData = await analysisResponse.json();
                 
                 // Move to step 3
                 goToStep(3);
                 
-                // Add document analysis if available
-                if (documentAnalysis) {
-                    addMessage('ai', documentAnalysis);
-                }
+                // Show final analysis
+                addMessage('ai', analysisData.analysis);
                 
-                // Add AI response
-                addMessage('ai', messageData.response);
+                // Hide chat input since we're done
+                document.querySelector('.chat-input').style.display = 'none';
                 
             } catch (error) {
                 alert('Error: ' + error.message);

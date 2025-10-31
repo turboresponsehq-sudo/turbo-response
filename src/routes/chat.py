@@ -7,10 +7,7 @@ from werkzeug.utils import secure_filename
 from src.models.chat import db, Conversation, Message, EvidenceUpload, ChatLead
 from src.services.chat_ai import (
     analyze_initial_story,
-    generate_follow_up_questions,
-    generate_ai_response,
-    generate_case_analysis,
-    generate_hook_message
+    analyze_story_and_document
 )
 from src.services.document_analysis import (
     analyze_document,
@@ -120,70 +117,62 @@ def upload_document():
         return jsonify({'error': str(e)}), 500
 
 
-@chat_bp.route('/message', methods=['POST'])
-def send_message():
-    """Send a message and get AI response"""
+@chat_bp.route('/analyze-intake', methods=['POST'])
+def analyze_intake():
+    """Analyze story and document, provide professional summary and next steps"""
     try:
         data = request.get_json()
         conversation_id = data.get('conversation_id')
-        user_message = data.get('message', '').strip()
+        story = data.get('story', '').strip()
         
-        if not conversation_id or not user_message:
-            return jsonify({'error': 'Conversation ID and message required'}), 400
+        if not conversation_id or not story:
+            return jsonify({'error': 'Conversation ID and story required'}), 400
         
         conversation = Conversation.query.get(conversation_id)
         if not conversation:
             return jsonify({'error': 'Conversation not found'}), 404
         
-        # Save user message
+        # Get document analysis if available
+        document_analysis = None
+        messages = Message.query.filter_by(conversation_id=conversation.id).order_by(Message.timestamp).all()
+        for msg in messages:
+            if msg.role == 'assistant' and msg.msg_metadata:
+                try:
+                    document_analysis = json.loads(msg.msg_metadata)
+                    break
+                except:
+                    pass
+        
+        # Generate comprehensive analysis
+        ai_response = analyze_story_and_document(
+            story=story,
+            document_analysis=document_analysis,
+            category=conversation.category
+        )
+        
+        # Save story as user message
         user_msg = Message(
             conversation_id=conversation.id,
             role='user',
-            content=user_message
+            content=story
         )
         db.session.add(user_msg)
-        conversation.message_count += 1
         
-        # Get conversation history
-        messages = Message.query.filter_by(conversation_id=conversation.id).order_by(Message.timestamp).all()
-        
-        # Check if we have document analysis
-        has_document = conversation.evidence_count > 0
-        last_ai_message = next((msg for msg in reversed(messages[:-1]) if msg.role == 'assistant'), None)
-        
-        # Determine if we're still in Q&A or ready for action plan
-        question_count = sum(1 for msg in messages if msg.role == 'user')
-        
-        if question_count < 5:
-            # Still asking questions
-            ai_response = generate_ai_response(
-                [{'role': m.role, 'content': m.content} for m in messages],
-                user_message
-            )
-            assessment_complete = False
-        else:
-            # Ready for action plan
-            ai_response = "Thank you for providing all that information. Let me analyze your case and create a personalized action plan for you."
-            assessment_complete = True
-        
-        # Save AI response
+        # Save AI analysis
         ai_msg = Message(
             conversation_id=conversation.id,
             role='assistant',
             content=ai_response
         )
         db.session.add(ai_msg)
-        conversation.message_count += 1
         
-        if assessment_complete:
-            conversation.status = 'assessment_complete'
-        
+        conversation.message_count += 2
+        conversation.status = 'intake_complete'
         db.session.commit()
         
         return jsonify({
             'success': True,
-            'response': ai_response,
-            'assessment_complete': assessment_complete
+            'analysis': ai_response
         })
         
     except Exception as e:
