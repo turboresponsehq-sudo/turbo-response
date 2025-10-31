@@ -58,8 +58,8 @@
 
 
 ## Phase 7: Fix Deployment Errors
-- [ ] Fix SQLAlchemy metadata reserved name error in Message model
-- [ ] Remove metadata field or rename it
-- [ ] Push fix to GitHub
+- [x] Fix SQLAlchemy metadata reserved name error in Message model
+- [x] Remove metadata field or rename it
+- [x] Push fix to GitHub
 - [ ] Verify deployment succeeds
 
