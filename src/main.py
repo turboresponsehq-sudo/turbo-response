@@ -5,10 +5,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from flask import Flask, send_from_directory
 from flask_cors import CORS
-# Database imports disabled for Render deployment
-# from src.models.user import db
+from src.models.user import db
 from src.routes.user import user_bp
 from src.routes.automation import automation_bp
+from src.routes.chat import chat_bp
 
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 app.config['SECRET_KEY'] = 'asdf#FGSgvasgf$5$WGT'
@@ -18,14 +18,17 @@ CORS(app)
 
 app.register_blueprint(user_bp, url_prefix='/api')
 app.register_blueprint(automation_bp)
+app.register_blueprint(chat_bp)
 
-# Database disabled for Render deployment (uses temporary file system)
-# Uncomment below if you need to use database with persistent storage
-# app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(os.path.dirname(__file__), 'database', 'app.db')}"
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# db.init_app(app)
-# with app.app_context():
-#     db.create_all()
+# Database configuration
+db_path = os.path.join(os.path.dirname(__file__), 'database', 'app.db')
+os.makedirs(os.path.dirname(db_path), exist_ok=True)
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db.init_app(app)
+
+with app.app_context():
+    db.create_all()
 
 # ============================================================================
 # PAGE ROUTES - Serve specific HTML pages for each route
@@ -40,6 +43,11 @@ def home():
 def intake():
     """Intake form page where users submit their cases"""
     return send_from_directory(app.static_folder, 'intake_ai.html')
+
+@app.route('/chat')
+def chat():
+    """Conversational AI chat interface"""
+    return send_from_directory(app.static_folder, 'chat.html')
 
 @app.route('/admin')
 def admin():
