@@ -42,7 +42,7 @@ def home():
 @app.route('/intake')
 def intake():
     """Intake form page where users submit their cases"""
-    return send_from_directory(app.static_folder, 'intake_ai.html')
+    return send_from_directory(app.static_folder, 'intake_simple.html')
 
 @app.route('/chat')
 def chat():

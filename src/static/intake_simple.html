@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Intake - Turbo Response HQ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #06b6d4;
+            margin-bottom: 10px;
+        }
+        
+        .card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            border-radius: 15px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 8px;
+            color: #f8fafc;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .upload-area {
+            border: 2px dashed rgba(6, 182, 212, 0.3);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .upload-area:hover {
+            border-color: #06b6d4;
+            background: rgba(6, 182, 212, 0.05);
+        }
+        
+        .disclaimer-box {
+            background: rgba(234, 179, 8, 0.1);
+            border: 1px solid rgba(234, 179, 8, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .disclaimer-box h3 {
+            color: #eab308;
+            margin-bottom: 15px;
+        }
+        
+        .disclaimer-box p {
+            margin-bottom: 12px;
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: start;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            margin-top: 4px;
+            width: 20px;
+            height: 20px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .success-message h2 {
+            color: #10b981;
+            margin-bottom: 15px;
+        }
+        
+        #uploadedFiles {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #06b6d4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Case Intake Form</h1>
+            <p>Submit your information and we'll contact you within 24-48 hours</p>
+        </div>
+
+        <div class="card">
+            <form id="intakeForm">
+                <!-- Basic Information -->
+                <h2 style="margin-bottom: 20px;">Your Information</h2>
+                
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Phone Number *</label>
+                    <input type="tel" name="phone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Address *</label>
+                    <input type="text" name="address" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Case Category *</label>
+                    <select name="category" required>
+                        <option value="">Select a category...</option>
+                        <option value="debt">Debt Collection</option>
+                        <option value="eviction">Eviction & Housing</option>
+                        <option value="tax">IRS & Tax Issues</option>
+                        <option value="wage">Wage Garnishment</option>
+                        <option value="medical">Medical Bills</option>
+                        <option value="benefits">Benefits Denial</option>
+                        <option value="auto">Auto Repossession</option>
+                        <option value="consumer">Consumer Rights</option>
+                    </select>
+                </div>
+                
+                <!-- Story -->
+                <div class="form-group">
+                    <label>Describe Your Situation *</label>
+                    <textarea name="story" required placeholder="Please describe what happened, when you received the notice, and what action is being threatened..."></textarea>
+                </div>
+                
+                <!-- Document Upload -->
+                <div class="form-group">
+                    <label>Upload Documents (Optional)</label>
+                    <div class="upload-area" id="uploadArea">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">📄</div>
+                        <p>Drag & Drop or Click to Upload</p>
+                        <p style="font-size: 0.85rem; color: #64748b; margin-top: 5px;">PDF, JPG, PNG (Max 16MB)</p>
+                    </div>
+                    <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" multiple style="display: none;">
+                    <div id="uploadedFiles"></div>
+                </div>
+                
+                <!-- Disclaimer -->
+                <div class="disclaimer-box">
+                    <h3>⚠️ IMPORTANT DISCLAIMER & SERVICE AGREEMENT</h3>
+                    
+                    <p><strong>NOT LEGAL ADVICE:</strong> Turbo Response HQ is NOT a law firm and does NOT provide legal advice. We are NOT lawyers and cannot represent you in court. We do not practice law.</p>
+                    
+                    <p><strong>SERVICES PROVIDED:</strong> We provide document preparation, case strategy consultation, and administrative support services only. Our services include helping you understand your rights, preparing documents, and developing response strategies.</p>
+                    
+                    <p><strong>NO ATTORNEY-CLIENT RELATIONSHIP:</strong> By using our services, you acknowledge that no attorney-client relationship is created. We cannot and will not represent you in any legal proceedings.</p>
+                    
+                    <p><strong>NO GUARANTEED OUTCOMES:</strong> We make no guarantees, warranties, or promises about the outcome of your case. Results depend on many factors outside our control.</p>
+                    
+                    <p><strong>YOUR RESPONSIBILITY:</strong> You are responsible for reviewing all documents we prepare and making your own decisions about how to proceed. You should consult with a licensed attorney if you need legal advice.</p>
+                    
+                    <p><strong>INFORMATION ACCURACY:</strong> You agree to provide accurate and complete information. We are not responsible for outcomes resulting from inaccurate or incomplete information you provide.</p>
+                    
+                    <p><strong>PRIVACY:</strong> Your information will be kept confidential and used only to provide services to you. We will not share your information without your consent except as required by law.</p>
+                    
+                    <p><strong>FEES:</strong> Service fees will be discussed during your consultation call. By submitting this form, you are not obligated to purchase any services.</p>
+                </div>
+                
+                <!-- Agreement Checkbox -->
+                <div class="checkbox-group">
+                    <input type="checkbox" id="agreeTerms" required>
+                    <label for="agreeTerms">I have read and agree to the above disclaimer and service agreement. I understand that Turbo Response HQ is not a law firm and does not provide legal advice. *</label>
+                </div>
+                
+                <!-- Signature -->
+                <div class="form-group">
+                    <label>Electronic Signature (Type Your Full Name) *</label>
+                    <input type="text" name="signature" required placeholder="Type your full name as signature">
+                </div>
+                
+                <button type="submit" class="btn" id="submitBtn">Submit Case Intake</button>
+            </form>
+            
+            <div class="success-message" id="successMessage">
+                <h2>✅ Submission Received!</h2>
+                <p>Thank you for submitting your case information.</p>
+                <p><strong>A Turbo Response specialist will contact you within 24-48 hours</strong> to discuss your case and next steps.</p>
+                <p style="margin-top: 20px; color: #64748b;">Please check your email and phone for our call.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const uploadedFiles = document.getElementById('uploadedFiles');
+        let selectedFiles = [];
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#06b6d4';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = 'rgba(6, 182, 212, 0.3)';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'rgba(6, 182, 212, 0.3)';
+            if (e.dataTransfer.files.length) {
+                handleFiles(e.dataTransfer.files);
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            handleFiles(fileInput.files);
+        });
+
+        function handleFiles(files) {
+            selectedFiles = Array.from(files);
+            uploadedFiles.innerHTML = selectedFiles.map(f => `📎 ${f.name}`).join('<br>');
+        }
+
+        document.getElementById('intakeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            try {
+                const formData = new FormData(this);
+                
+                // Start conversation
+                const startResponse = await fetch('/api/chat/start', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        name: formData.get('name'),
+                        email: formData.get('email'),
+                        phone: formData.get('phone'),
+                        address: formData.get('address'),
+                        category: formData.get('category')
+                    })
+                });
+                
+                const startData = await startResponse.json();
+                const conversationId = startData.conversation_id;
+                
+                // Upload documents if any
+                if (selectedFiles.length > 0) {
+                    for (const file of selectedFiles) {
+                        const uploadFormData = new FormData();
+                        uploadFormData.append('file', file);
+                        uploadFormData.append('conversation_id', conversationId);
+                        
+                        await fetch('/api/chat/upload', {
+                            method: 'POST',
+                            body: uploadFormData
+                        });
+                    }
+                }
+                
+                // Submit story
+                await fetch('/api/chat/analyze-intake', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        conversation_id: conversationId,
+                        story: formData.get('story')
+                    })
+                });
+                
+                // Show success message
+                document.getElementById('intakeForm').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+                
+            } catch (error) {
+                alert('Error submitting form. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Case Intake';
+            }
+        });
+    </script>
+</body>
+</html>

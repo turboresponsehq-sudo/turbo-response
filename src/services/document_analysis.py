@@ -100,6 +100,7 @@ If you cannot read the document clearly, return an error in this format:
         
         # Parse response
         import json
+        import re
         result_text = response.choices[0].message.content.strip()
         
         # Extract JSON from markdown code blocks if present
@@ -107,6 +108,11 @@ If you cannot read the document clearly, return an error in this format:
             result_text = result_text.split('```json')[1].split('```')[0].strip()
         elif '```' in result_text:
             result_text = result_text.split('```')[1].split('```')[0].strip()
+        
+        # Find JSON object in text (handle cases where AI adds extra text)
+        json_match = re.search(r'\{[\s\S]*\}', result_text)
+        if json_match:
+            result_text = json_match.group(0)
             
         analysis = json.loads(result_text)
         
