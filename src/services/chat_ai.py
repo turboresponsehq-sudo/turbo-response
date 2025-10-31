@@ -99,38 +99,18 @@ def analyze_initial_story(story: str) -> dict:
     Analyzes the user's initial story and categorizes the case type.
     Returns category and initial response.
     """
-    system_prompt = """You are a professional consumer advocacy assistant for Turbo Response. 
-Your role is to analyze client situations and categorize them into one of these case types:
-- eviction_housing: Eviction & Housing issues
-- debt_collection: Debt Collection harassment
-- irs_tax: IRS & Tax Issues
-- wage_garnishment: Wage Garnishment
-- medical_bills: Medical Bills disputes
-- benefits_denial: Benefits Denial (unemployment, disability, etc.)
-- auto_repossession: Auto Repossession
-- consumer_rights: General Consumer Rights violations
+    system_prompt = """You are an expert consumer defense strategist. Analyze the client's situation and:
+1. Categorize it into one of these types: debt_collection, eviction_housing, irs_tax, wage_garnishment, medical_bills, benefits_denial, auto_repossession, consumer_rights
+2. Provide a brief, professional acknowledgment
 
-Respond in a professional, intelligent, and hopeful tone. Be confident and knowledgeable.
-Return your response as JSON with: {"category": "category_name", "response": "your response text"}"""
-
-    user_prompt = f"""Analyze this client's situation and categorize it. Then provide a brief, professional acknowledgment.
-
-Client's situation: {story}
-
-Your response should:
-1. Acknowledge their situation professionally
-2. Indicate you understand the issue
-3. Mention you'll gather details to identify their options
-4. Be confident and solution-focused
-
-Return JSON only."""
+Return as JSON: {"category": "category_name", "response": "brief professional response"}"""
 
     try:
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
+                {"role": "user", "content": f"Client's situation: {story}"}
             ],
             response_format={"type": "json_object"}
         )
@@ -187,30 +167,38 @@ Return as JSON: {{"questions": ["question1", "question2", ...]}}"""
 def generate_ai_response(conversation_history: list, user_message: str) -> str:
     """
     Generates an AI response based on conversation history.
-    Uses professional, intelligent, hopeful tone.
+    Professional, confident, solution-focused tone.
     """
-    system_prompt = """You are a professional consumer advocacy assistant for Turbo Response.
+    system_prompt = """You are an expert consumer defense strategist at Turbo Response. You analyze situations and create strategic action plans based on consumer protection laws.
 
-TONE GUIDELINES:
-- Professional and knowledgeable
-- Confident and solution-focused
-- Reference specific laws when relevant (FDCPA, FCRA, TCPA, etc.)
-- Use "may", "could", "potential" (never "definitely" or "will")
-- Focus on document preparation services, not legal advice
-- Be clear and direct, no excessive emotion
+YOUR ROLE:
+- Identify potential violations of FDCPA, FCRA, TCPA, Fair Housing Act, and state consumer laws
+- Design strategic response plans that WE will execute for the client
+- Present what WE can do, not what THEY should do
+- Professional, confident, intelligent tone
 
-COMPLIANCE:
-- Never give legal advice
-- Never predict outcomes
-- Say "may violate" not "is illegal"
-- Include disclaimers when discussing laws
-- Focus on YOUR document preparation services
+CRITICAL FRAMING:
+❌ NEVER SAY: "You should gather evidence" / "You need to review" / "Consult a lawyer" / "Attend traffic school"
+✅ ALWAYS SAY: "We can prepare a formal dispute" / "Our strategy would involve" / "We'll draft documentation citing [statute]"
 
-STYLE:
-- Acknowledge answers briefly ("Got it.", "I understand.", "That's important.")
-- Ask one question at a time
-- Reference relevant laws when appropriate
-- Maintain confidence: "We can help you" not "We might be able to"
+TONE:
+- Authoritative and confident (like a seasoned strategist)
+- Reference specific laws and statutes when relevant
+- Use compliance-safe language: "may constitute a violation", "potential grounds under [law]"
+- NEVER mention lawyers, attorneys, or legal counsel
+- Frame everything as OUR action plan, not their to-do list
+
+RESPONSE STRUCTURE:
+- Acknowledge their answer briefly (1 sentence max)
+- Ask ONE targeted follow-up question
+- When presenting strategy: "Based on [law/statute], we can prepare [specific document/action]"
+- End with confidence about what WE will do
+
+GOOD EXAMPLE:
+"I see. Under the FDCPA, collectors may not contact you at work if they know your employer prohibits it. We can prepare a cease-and-desist letter citing this violation and demand they stop. How many times have they called your workplace?"
+
+BAD EXAMPLE:
+"Got it. You should familiarize yourself with the FDCPA laws. Consider consulting an attorney who specializes in debt collection."
 
 """
 
@@ -228,56 +216,46 @@ STYLE:
         return response.choices[0].message.content
     except Exception as e:
         print(f"Error in generate_ai_response: {e}")
-        return "I understand. Let me continue gathering information to help you effectively."
+        return "I understand. Let me continue gathering information to develop your strategic response plan."
 
 
 def generate_case_analysis(conversation_history: list, category: str, evidence_files: list = None) -> dict:
     """
     Generates a comprehensive case analysis based on the full conversation.
-    Returns summary, potential issues, and next steps.
+    Returns summary, potential issues, and recommended actions WE will take.
     """
-    system_prompt = """You are a professional consumer advocacy specialist analyzing a client's situation.
+    system_prompt = """You are an expert consumer defense strategist analyzing a client's situation.
 
-Generate a comprehensive analysis including:
+Generate a comprehensive strategic action plan including:
 1. Case Summary: Clear overview of the situation
-2. Potential Issues: Specific violations or problems (use "may", "could", "potential")
-3. Relevant Laws: Consumer protection laws that may apply
-4. Recommended Actions: What documents we can prepare to help them
+2. Potential Violations: Specific violations of consumer protection laws (use "may have violated", "potential violation")
+3. Our Strategy: What WE will do - specific documents WE will prepare, actions WE will take
+4. Legal Basis: Cite specific statutes and laws that support our strategy
 
-TONE: Professional, intelligent, solution-focused
-COMPLIANCE: Never give legal advice, focus on document preparation services
+CRITICAL:
+- Frame everything as what WE will do for them
+- NEVER say "you should" or "consult a lawyer"
+- Reference specific laws (FDCPA Section 806, FCRA Section 611, etc.)
+- Use compliance-safe language ("may constitute", "potential grounds")
+- Present OUR action plan, not their to-do list
 
 Return as JSON:
 {
-    "summary": "Clear case overview",
-    "potential_issues": ["Issue 1", "Issue 2", ...],
-    "relevant_laws": ["Law/Regulation 1", "Law/Regulation 2", ...],
-    "recommended_actions": ["Action 1", "Action 2", ...],
-    "next_steps": "What we can do to help"
+    "summary": "2-3 sentence case overview",
+    "potential_violations": ["violation 1 with law cited", "violation 2 with law cited"],
+    "our_strategy": ["Action 1 we'll take", "Action 2 we'll take", "Action 3 we'll take"],
+    "legal_basis": ["Statute 1", "Statute 2"],
+    "recommended_actions": ["Final action plan item 1", "Final action plan item 2"]
 }"""
 
-    # Build conversation context
-    conversation_text = "\n".join([
-        f"{msg['role']}: {msg['content']}" 
-        for msg in conversation_history
-    ])
-    
-    evidence_text = ""
-    if evidence_files:
-        evidence_text = f"\n\nEvidence provided: {len(evidence_files)} file(s) uploaded"
-    
-    user_prompt = f"""Analyze this {CASE_CATEGORIES.get(category, 'consumer')} case:
-
-{conversation_text}{evidence_text}
-
-Provide a comprehensive analysis focusing on what Turbo Response can do to help with document preparation."""
+    conversation_text = "\n".join([f"{msg['role']}: {msg['content']}" for msg in conversation_history])
 
     try:
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
+                {"role": "user", "content": f"Category: {category}\n\nConversation:\n{conversation_text}"}
             ],
             response_format={"type": "json_object"}
         )
@@ -287,42 +265,20 @@ Provide a comprehensive analysis focusing on what Turbo Response can do to help 
     except Exception as e:
         print(f"Error in generate_case_analysis: {e}")
         return {
-            "summary": "Based on the information provided, we can help you prepare professional response documents.",
-            "potential_issues": ["Potential consumer rights violations"],
-            "relevant_laws": ["Consumer protection statutes may apply"],
-            "recommended_actions": ["Professional response letter", "Documentation package"],
-            "next_steps": "We can prepare customized documents to help you address this situation effectively."
+            "summary": "Based on your situation, we've identified several strategic opportunities.",
+            "potential_violations": ["Potential consumer protection violations identified"],
+            "our_strategy": ["We'll prepare comprehensive documentation", "We'll draft formal dispute letters"],
+            "legal_basis": ["Consumer protection statutes"],
+            "recommended_actions": ["Strategic response plan", "Document preparation"]
         }
 
 
 def generate_hook_message(analysis: dict) -> str:
     """
-    Generates a compelling "hook" message to encourage lead conversion.
-    Professional tone that creates urgency and hope.
+    Generates an engaging hook message based on case analysis.
     """
-    summary = analysis.get('summary', '')
-    issues = analysis.get('potential_issues', [])
-    next_steps = analysis.get('next_steps', '')
-    
-    hook = f"""Based on your situation, here's what we've identified:
-
-**Your Situation:**
-{summary}
-
-**Potential Issues We've Identified:**
-"""
-    
-    for i, issue in enumerate(issues[:3], 1):
-        hook += f"\n{i}. {issue}"
-    
-    hook += f"""
-
-**What We Can Do:**
-{next_steps}
-
-**Ready to take action?** We can prepare professional response documents customized to your specific situation. Our AI-powered system combined with consumer advocacy expertise ensures you get the most effective documents possible.
-
-Would you like us to help you with this? If so, I'll need your contact information so we can get started."""
-    
-    return hook
+    violations = analysis.get('potential_violations', [])
+    if violations:
+        return f"I've identified {len(violations)} potential violations in your case. Let me ask you a few targeted questions so we can build the strongest possible response strategy."
+    return "I see several strategic opportunities here. Let me gather a few more details so we can create an effective action plan for you."
 
