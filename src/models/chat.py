@@ -44,7 +44,7 @@ class Message(db.Model):
     conversation_id = db.Column(db.Integer, db.ForeignKey('conversations.id'), nullable=False)
     role = db.Column(db.String(20), nullable=False)  # user, assistant, system
     content = db.Column(db.Text, nullable=False)
-    metadata = db.Column(db.Text)  # JSON string for additional data
+    msg_metadata = db.Column(db.Text)  # JSON string for additional data
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     
     def to_dict(self):
@@ -53,7 +53,7 @@ class Message(db.Model):
             'conversation_id': self.conversation_id,
             'role': self.role,
             'content': self.content,
-            'metadata': self.metadata,
+            'msg_metadata': self.msg_metadata,
             'timestamp': self.timestamp.isoformat() if self.timestamp else None
         }
 

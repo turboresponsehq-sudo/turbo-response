@@ -54,3 +54,12 @@
 - [ ] Push to GitHub
 - [ ] Verify Render auto-deployment
 
+
+
+
+## Phase 7: Fix Deployment Errors
+- [ ] Fix SQLAlchemy metadata reserved name error in Message model
+- [ ] Remove metadata field or rename it
+- [ ] Push fix to GitHub
+- [ ] Verify deployment succeeds
+

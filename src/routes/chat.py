@@ -62,7 +62,7 @@ def start_conversation():
             conversation_id=conversation.id,
             role='assistant',
             content=questions_text,
-            metadata=json.dumps({'questions': questions, 'current_question': 0})
+            msg_metadata=json.dumps({'questions': questions, 'current_question': 0})
         )
         db.session.add(ai_msg)
         
@@ -116,8 +116,8 @@ def send_message():
         
         # Check if we're in Q&A phase
         last_ai_message = next((msg for msg in reversed(messages[:-1]) if msg.role == 'assistant'), None)
-        if last_ai_message and last_ai_message.metadata:
-            metadata = json.loads(last_ai_message.metadata)
+        if last_ai_message and last_ai_message.msg_metadata:
+            metadata = json.loads(last_ai_message.msg_metadata)
             questions = metadata.get('questions', [])
             current_q = metadata.get('current_question', 0)
             
@@ -132,7 +132,7 @@ def send_message():
                     conversation_id=conversation.id,
                     role='assistant',
                     content=ai_response,
-                    metadata=json.dumps({'questions': questions, 'current_question': next_q})
+                    msg_metadata=json.dumps({'questions': questions, 'current_question': next_q})
                 )
                 db.session.add(ai_msg)
                 conversation.message_count += 1
@@ -312,7 +312,7 @@ def analyze_case():
             conversation_id=conversation.id,
             role='assistant',
             content=hook_message,
-            metadata=json.dumps(analysis)
+            msg_metadata=json.dumps(analysis)
         )
         db.session.add(ai_msg)
         conversation.message_count += 1
