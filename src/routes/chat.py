@@ -8,8 +8,8 @@ from src.models.chat import db, Conversation, Message, EvidenceUpload, ChatLead
 from src.services.chat_ai import (
     analyze_initial_story,
     generate_follow_up_questions,
-    generate_conversational_response,
-    analyze_case,
+    generate_ai_response,
+    generate_case_analysis,
     generate_hook_message
 )
 from src.services.document_analysis import (
@@ -156,10 +156,9 @@ def send_message():
         
         if question_count < 5:
             # Still asking questions
-            ai_response = generate_conversational_response(
-                user_message,
-                conversation.category,
-                [{'role': m.role, 'content': m.content} for m in messages]
+            ai_response = generate_ai_response(
+                [{'role': m.role, 'content': m.content} for m in messages],
+                user_message
             )
             assessment_complete = False
         else:
@@ -209,9 +208,9 @@ def generate_action_plan():
         messages = Message.query.filter_by(conversation_id=conversation.id).order_by(Message.timestamp).all()
         
         # Analyze case
-        analysis = analyze_case(
-            conversation.category,
-            [{'role': m.role, 'content': m.content} for m in messages]
+        analysis = generate_case_analysis(
+            [{'role': m.role, 'content': m.content} for m in messages],
+            conversation.category
         )
         
         # Generate pricing based on complexity
