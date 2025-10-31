@@ -427,31 +427,49 @@
                 </form>
             </div>
 
-            <!-- Step 2: Document Upload -->
+            <!-- Step 2: Document Upload + Story -->
             <div id="step2" class="step-content hidden">
-                <h2 style="margin-bottom: 20px;">Upload Your Document</h2>
+                <h2 style="margin-bottom: 20px;">Tell Us Your Story & Upload Documents</h2>
                 <p style="margin-bottom: 20px; color: var(--text-secondary);">
-                    Have you received a letter, notice, or denial? Upload it for instant AI analysis.
+                    Share what happened and upload any relevant documents you have.
                 </p>
-                <div class="upload-area" id="uploadArea">
-                    <div class="category-icon" style="font-size: 3rem; margin-bottom: 15px;">📄</div>
-                    <h3>Drag & Drop or Click to Upload</h3>
-                    <p style="color: var(--text-muted); margin-top: 10px;">
-                        Accepted formats: PDF, JPG, PNG (Max 16MB)
-                    </p>
-                    <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
+                
+                <!-- Story Textarea -->
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <label>Describe Your Situation *</label>
+                    <textarea 
+                        id="userStory" 
+                        rows="6" 
+                        placeholder="Please describe what happened, when you received the notice, and what action is being threatened..."
+                        style="width: 100%; padding: 15px; background: var(--input-bg); border: 1px solid var(--input-border); border-radius: 10px; color: var(--text-primary); font-size: 1rem; font-family: inherit; resize: vertical;"
+                        required
+                    ></textarea>
                 </div>
-                <div id="uploadedFile" class="hidden" style="margin-top: 20px; padding: 15px; background: rgba(6, 182, 212, 0.1); border-radius: 10px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span id="fileName"></span>
-                        <button onclick="removeFile()" style="background: none; border: none; color: var(--accent-cyan); cursor: pointer;">✕ Remove</button>
+                
+                <!-- Document Upload -->
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 10px; font-weight: 600;">Upload Documents (Optional)</label>
+                    <p style="margin-bottom: 15px; color: var(--text-muted); font-size: 0.9rem;">
+                        Have a letter, notice, or denial? Upload it for AI analysis.
+                    </p>
+                    <div class="upload-area" id="uploadArea">
+                        <div class="category-icon" style="font-size: 3rem; margin-bottom: 15px;">📄</div>
+                        <h3>Drag & Drop or Click to Upload</h3>
+                        <p style="color: var(--text-muted); margin-top: 10px;">
+                            Accepted formats: PDF, JPG, PNG (Max 16MB)
+                        </p>
+                        <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
+                    </div>
+                    <div id="uploadedFile" class="hidden" style="margin-top: 20px; padding: 15px; background: rgba(6, 182, 212, 0.1); border-radius: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span id="fileName"></span>
+                            <button onclick="removeFile()" style="background: none; border: none; color: var(--accent-cyan); cursor: pointer;">✕ Remove</button>
+                        </div>
                     </div>
                 </div>
-                <button onclick="skipDocument()" class="btn" style="margin-top: 20px; background: rgba(100, 116, 139, 0.5);">
-                    Skip - I Don't Have a Document
-                </button>
-                <button onclick="analyzeDocument()" id="analyzeBtn" class="btn hidden" style="margin-top: 20px;">
-                    Analyze My Document
+                
+                <button onclick="submitStoryAndDocument()" id="submitBtn" class="btn" style="margin-top: 20px;">
+                    Start My Free Assessment
                 </button>
             </div>
 
@@ -592,42 +610,72 @@
             document.getElementById('analyzeBtn').classList.add('hidden');
         }
 
-        async function analyzeDocument() {
-            const file = fileInput.files[0];
-            if (!file) return;
+        async function submitStoryAndDocument() {
+            const story = document.getElementById('userStory').value.trim();
+            if (!story) {
+                alert('Please describe your situation');
+                return;
+            }
 
             // Show loading
-            document.getElementById('analyzeBtn').disabled = true;
-            document.getElementById('analyzeBtn').textContent = 'Analyzing...';
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Analyzing...';
 
-            // Upload and analyze
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('conversation_id', conversationId);
-
-            const response = await fetch('/api/chat/upload', {
-                method: 'POST',
-                body: formData
-            });
-
-            const data = await response.json();
-            
-            if (data.success) {
-                uploadedDocuments.push(data.file_url);
+            try {
+                // If there's a document, upload it first
+                let documentAnalysis = null;
+                const file = fileInput.files[0];
                 
-                // Add AI analysis message to chat
-                addMessage('ai', data.analysis_message);
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('conversation_id', conversationId);
+
+                    const uploadResponse = await fetch('/api/chat/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const uploadData = await uploadResponse.json();
+                    if (uploadData.success) {
+                        uploadedDocuments.push(uploadData.file_url);
+                        documentAnalysis = uploadData.analysis_message;
+                    }
+                }
+
+                // Send the story to AI
+                const messageResponse = await fetch('/api/chat/message', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        conversation_id: conversationId,
+                        message: story
+                    })
+                });
+
+                const messageData = await messageResponse.json();
                 
                 // Move to step 3
                 goToStep(3);
                 
-                // Start asking questions
-                await askNextQuestion();
+                // Add document analysis if available
+                if (documentAnalysis) {
+                    addMessage('ai', documentAnalysis);
+                }
+                
+                // Add AI response
+                addMessage('ai', messageData.response);
+                
+            } catch (error) {
+                alert('Error: ' + error.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Start My Free Assessment';
             }
         }
 
         function skipDocument() {
-            // Move to step 3 without document
+            // Deprecated - now combined with story
             goToStep(3);
             
             // Add welcome message

@@ -78,7 +78,7 @@ If you cannot read the document clearly, return an error in this format:
     "error": "description of the problem"
 }}"""
 
-        # Call OpenAI vision API
+        # Call OpenAI vision API with timeout
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
@@ -94,7 +94,8 @@ If you cannot read the document clearly, return an error in this format:
                 }
             ],
             max_tokens=2000,
-            temperature=0.3
+            temperature=0.3,
+            timeout=45.0  # 45 second timeout
         )
         
         # Parse response
