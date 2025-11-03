@@ -5,10 +5,12 @@ import {
   messages,
   evidenceUploads,
   leads,
+  leadNotes,
   type InsertConversation,
   type InsertMessage,
   type InsertEvidenceUpload,
   type InsertLead,
+  type InsertLeadNote,
 } from "../drizzle/schema";
 
 /**
@@ -186,6 +188,85 @@ export async function getLeadWithConversation(leadId: number) {
   return {
     lead,
     ...fullConversation,
+  };
+}
+
+
+// ============================================================================
+// LEAD NOTES (Phase 3: Intelligence Upgrade)
+// ============================================================================
+
+export async function createLeadNote(data: InsertLeadNote) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(leadNotes).values(data);
+  return Number(result[0].insertId);
+}
+
+export async function getLeadNotes(leadId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  return await db
+    .select()
+    .from(leadNotes)
+    .where(eq(leadNotes.leadId, leadId))
+    .orderBy(desc(leadNotes.createdAt));
+}
+
+export async function updateLead(id: number, data: Partial<InsertLead>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(leads).set(data).where(eq(leads.id, id));
+}
+
+// ============================================================================
+// ANALYTICS (Phase 3: Intelligence Upgrade)
+// ============================================================================
+
+export async function getAnalytics() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Get all leads
+  const allLeads = await db.select().from(leads);
+
+  // Calculate metrics
+  const totalLeads = allLeads.length;
+  const convertedLeads = allLeads.filter((l) => l.status === "converted").length;
+  const conversionRate = totalLeads > 0 ? (convertedLeads / totalLeads) * 100 : 0;
+
+  // Group by category
+  const byCategory: Record<string, number> = {};
+  allLeads.forEach((lead) => {
+    const cat = lead.category || "unknown";
+    byCategory[cat] = (byCategory[cat] || 0) + 1;
+  });
+
+  // Group by status
+  const byStatus: Record<string, number> = {};
+  allLeads.forEach((lead) => {
+    byStatus[lead.status] = (byStatus[lead.status] || 0) + 1;
+  });
+
+  // Recent activity (last 7 days)
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const recentLeads = allLeads.filter((l) => new Date(l.createdAt) >= sevenDaysAgo);
+
+  return {
+    totalLeads,
+    convertedLeads,
+    conversionRate: Math.round(conversionRate * 10) / 10,
+    byCategory,
+    byStatus,
+    recentActivity: {
+      last7Days: recentLeads.length,
+      newLeads: recentLeads.filter((l) => l.status === "new").length,
+      contacted: recentLeads.filter((l) => l.status === "contacted").length,
+    },
   };
 }
 
