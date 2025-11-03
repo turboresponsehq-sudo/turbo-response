@@ -161,3 +161,22 @@ export const leads = mysqlTable("leads", {
 
 export type Lead = typeof leads.$inferSelect;
 export type InsertLead = typeof leads.$inferInsert;
+
+/**
+ * Lead notes table - admin notes for each lead
+ * Phase 3: Intelligence Upgrade feature
+ */
+export const leadNotes = mysqlTable("lead_notes", {
+  id: int("id").autoincrement().primaryKey(),
+  leadId: int("leadId").notNull(),
+  /** Note content */
+  content: text("content").notNull(),
+  /** Note type: general, phone_call, follow_up, important */
+  noteType: varchar("noteType", { length: 50 }).default("general").notNull(),
+  /** Admin who created the note */
+  createdBy: varchar("createdBy", { length: 255 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type LeadNote = typeof leadNotes.$inferSelect;
+export type InsertLeadNote = typeof leadNotes.$inferInsert;

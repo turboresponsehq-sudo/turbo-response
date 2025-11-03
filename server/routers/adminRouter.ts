@@ -6,6 +6,10 @@ import {
   getAllConversations,
   getLeadWithConversation,
   updateLeadStatus,
+  createLeadNote,
+  getLeadNotes,
+  updateLead,
+  getAnalytics,
 } from "../chatDb";
 
 /**
@@ -76,5 +80,63 @@ export const adminRouter = router({
       await updateLeadStatus(input.leadId, input.status, input.notes);
       return { success: true };
     }),
+
+  /**
+   * Phase 3: Add note to lead
+   */
+  addLeadNote: protectedProcedure
+    .input(
+      z.object({
+        leadId: z.number(),
+        content: z.string(),
+        noteType: z.enum(["general", "phone_call", "follow_up", "important"]).default("general"),
+        createdBy: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const noteId = await createLeadNote({
+        leadId: input.leadId,
+        content: input.content,
+        noteType: input.noteType,
+        createdBy: input.createdBy || ctx.user?.name || "Admin",
+      });
+      return { success: true, noteId };
+    }),
+
+  /**
+   * Phase 3: Get all notes for a lead
+   */
+  getLeadNotes: protectedProcedure
+    .input(z.object({ leadId: z.number() }))
+    .query(async ({ input }) => {
+      return await getLeadNotes(input.leadId);
+    }),
+
+  /**
+   * Phase 3: Update lead information
+   */
+  updateLead: protectedProcedure
+    .input(
+      z.object({
+        leadId: z.number(),
+        name: z.string().optional(),
+        email: z.string().optional(),
+        phone: z.string().optional(),
+        bestTimeToCall: z.string().optional(),
+        category: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { leadId, ...data } = input;
+      await updateLead(leadId, data);
+      return { success: true };
+    }),
+
+  /**
+   * Phase 3: Get analytics dashboard data
+   */
+  getAnalytics: protectedProcedure.query(async () => {
+    return await getAnalytics();
+  }),
 });
 

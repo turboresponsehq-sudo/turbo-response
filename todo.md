@@ -95,3 +95,35 @@
 - [x] Show loading spinner immediately when user clicks Send button
 - [x] Disable input and buttons during AI processing to prevent double-submission
 
+
+
+
+---
+
+## Phase 3: Intelligence Upgrade - Case Management Enhancement
+
+### Backend (tRPC Procedures)
+- [x] Add updateCase procedure to admin router
+- [x] Add addCaseNote procedure to admin router  
+- [x] Add getCaseNotes procedure to admin router
+- [x] Add getAnalytics procedure to admin router
+- [ ] Modify analyzeCase to include notes and update history
+- [x] Update database schema for notes and update_history fields
+
+### Frontend (React Components)
+- [x] Build EditCaseModal component
+- [x] Build NotesModal component
+- [x] Add search/filter bar to AdminWorkflow page
+- [x] Enhance case cards with note count badges and last modified date
+- [x] Build Analytics dashboard page (/analytics route)
+- [x] Add analytics navigation link to AdminDashboard
+
+### Testing & Deployment
+- [ ] Test edit case functionality
+- [ ] Test notes system
+- [ ] Test re-analysis with updates
+- [ ] Test search and filter
+- [ ] Test analytics dashboard
+- [ ] Save deployment checkpoint
+- [ ] Verify on turboresponsehq.ai
+
