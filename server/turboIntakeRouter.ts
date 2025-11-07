@@ -27,6 +27,208 @@ function generateSubmissionId(): string {
   return `TURBO-INTAKE-${year}${month}${day}-${hours}${minutes}${seconds}`;
 }
 
+/**
+ * Background processing function for generating audit and blueprint
+ * This runs asynchronously to avoid blocking the form submission
+ */
+async function processReportsInBackground(
+  id: number,
+  submissionId: string,
+  input: any
+) {
+  try {
+    // LAYER 1: Generate Manus Audit
+    const auditContent = `# Business Audit Report for ${input.businessName}
+
+**Generated:** ${new Date().toISOString()}
+**Submission ID:** ${submissionId}
+
+## Business Overview
+- **Owner:** ${input.ownerName}
+- **Industry:** ${input.industry || "Not specified"}
+- **What They Sell:** ${input.whatYouSell || "Not specified"}
+- **Ideal Customer:** ${input.idealCustomer || "Not specified"}
+
+## Challenges & Goals
+- **Biggest Struggle:** ${input.biggestStruggle || "Not specified"}
+- **60-90 Day Goal:** ${input.goal60To90Days || "Not specified"}
+- **Long-Term Vision:** ${input.longTermVision || "Not specified"}
+
+## Online Presence
+- **Website:** ${input.websiteUrl || "Not provided"}
+- **Instagram:** ${input.instagramHandle || "Not provided"}
+- **Facebook:** ${input.facebookUrl || "Not provided"}
+- **TikTok:** ${input.tiktokHandle || "Not provided"}
+
+## Layer 1 Analysis (Manus AI)
+This section contains the detailed analysis from Manus AI including:
+- Website audit (design, UX, conversion optimization)
+- Social media analysis (engagement, content strategy, branding)
+- Identified issues and opportunities
+- Quick wins and recommendations
+
+**Note:** This is a placeholder. The actual Manus AI analysis will be integrated in the next phase.
+`;
+
+    // Save audit to S3
+    const auditReportKey = `turbo-intake-audits/${submissionId}_audit.md`;
+    const { url: auditUrl } = await storagePut(auditReportKey, auditContent, "text/markdown");
+    await markAuditGenerated(id, auditUrl);
+
+    // LAYER 2: Generate OpenAI Strategic Blueprint
+    const auditData = {
+      businessName: input.businessName,
+      ownerName: input.ownerName,
+      industry: input.industry,
+      whatYouSell: input.whatYouSell,
+      idealCustomer: input.idealCustomer,
+      biggestStruggle: input.biggestStruggle,
+      goal60To90Days: input.goal60To90Days,
+      longTermVision: input.longTermVision,
+      websiteUrl: input.websiteUrl,
+      instagramHandle: input.instagramHandle,
+      facebookUrl: input.facebookUrl,
+      tiktokHandle: input.tiktokHandle,
+      manusAudit: auditContent,
+    };
+
+    const response = await invokeLLM({
+      messages: [
+        {
+          role: "system",
+          content: `You are an elite business strategist and digital transformation consultant. You create $10,000+ strategic blueprints that replace entire consulting teams.
+
+Your reports must be:
+- Executive-level quality
+- Extremely detailed and actionable
+- Structured for investor presentations
+- Worth $2,500-$10,000 in consulting value
+- Demonstrate elite intelligence and strategy
+
+You will generate a comprehensive 10-section strategic blueprint based on the Manus audit data provided.`,
+        },
+        {
+          role: "user",
+          content: `Create a comprehensive strategic blueprint for this business:
+
+${JSON.stringify(auditData, null, 2)}
+
+Generate a detailed strategic blueprint with the following 10 sections:
+
+## 1. EXECUTIVE SUMMARY (1 page)
+- Who the business is
+- What stage they're at
+- What problems were discovered in the audit
+- What opportunity exists
+- The "big picture" ROI they can achieve
+
+## 2. BRAND & MARKET POSITIONING ANALYSIS
+- What the brand currently communicates
+- Brand archetype
+- Strengths
+- Weaknesses
+- Missing identity components
+- Audience alignment issues
+- Tone & messaging recommendations
+
+## 3. FUNNEL ARCHITECTURE BLUEPRINT
+Based on their current website & business model:
+- **Awareness Funnel:** Where traffic should come from, what content drives it
+- **Engagement Funnel:** What hooks work for their audience, value ladders for their niche
+- **Conversion Funnel:** Purchase center layout, lead magnets, offer positioning, pricing psychology
+- **Retention Funnel:** Upsells, automations, follow-up sequences
+Make this visual + step-by-step.
+
+## 4. WEBSITE & PURCHASE CENTER REDESIGN PLAN
+- Home page structure
+- Services/product pages
+- CTA placement
+- Data-capture systems
+- How to structure the intake form
+- What automations trigger after submission
+
+## 5. SOCIAL MEDIA STRATEGY (Platform-by-Platform)
+For each platform the client has, produce:
+- What type of content to post
+- Posting frequency
+- Tone, themes, angles
+- What will grow the brand fastest
+- What will convert the audience
+- Competitive positioning
+
+## 6. AUTOMATION & AI SYSTEM ARCHITECTURE
+Outline:
+- What agents the business needs
+- What automations should run
+- What workflows should exist
+- How to structure their CRM
+- How data flows from IG/FB/Website into backend
+- What should be built on top of APIs
+- Recommended tools that integrate well
+
+## 7. DATA STRATEGY & INTELLIGENCE LAYER
+- What data the business should start collecting
+- What insights matter the most
+- How to use customers' behaviors
+- How to use analytics to improve conversion
+- How the business can use backend to power BI
+
+## 8. OFFER OPTIMIZATION SECTION
+- Audit the client's offers
+- Identify weak points
+- Identify power moves
+- Identify premium positioning
+- Create a "money map" listing all potential monetization angles
+
+## 9. 90-DAY EXECUTION PLAN
+A clear, step-by-step breakdown:
+- Week 1-2: Fix foundational issues
+- Week 3-4: Rebuild funnel + website
+- Week 5-6: Implement automation
+- Week 7-8: Launch content systems
+- Week 9-12: Optimize and scale
+
+## 10. HIGH-LEVEL PRESENTATION VERSION (Condensed Deck)
+Produce a second format:
+- A short "presentation-style" version
+- 10-15 slides worth of content
+- Designed for investor meetings, networking events, and sales calls
+- Strong strategic highlights
+- Key metrics and ROI projections
+
+Make this report look like a $10,000 consulting package. Be extremely detailed, specific, and actionable.`,
+        },
+      ],
+    });
+
+    const blueprintContent =
+      typeof response.choices[0].message.content === "string"
+        ? response.choices[0].message.content
+        : "No blueprint generated";
+
+    // Save blueprint to S3
+    const blueprintReportKey = `turbo-intake-blueprints/${submissionId}_blueprint.md`;
+    const { url: blueprintUrl } = await storagePut(
+      blueprintReportKey,
+      blueprintContent,
+      "text/markdown"
+    );
+    await markBlueprintGenerated(id, blueprintUrl);
+
+    // Notify owner that both reports are ready
+    await notifyOwner({
+      title: "Strategic Blueprint Complete",
+      content: `Both Layer 1 audit and Layer 2 strategic blueprint are ready for ${input.businessName}. Submission ID: ${submissionId}`,
+    });
+  } catch (error) {
+    console.error("Error generating reports:", error);
+    await notifyOwner({
+      title: "Report Generation Failed",
+      content: `Failed to generate reports for ${input.businessName}. Submission ID: ${submissionId}. Error: ${error}`,
+    });
+  }
+}
+
 export const turboIntakeRouter = router({
   /**
    * Submit a new Turbo Intake form (public endpoint for clients)
@@ -65,9 +267,13 @@ export const turboIntakeRouter = router({
       // Notify owner about new submission
       await notifyOwner({
         title: "New Turbo Intake Submission",
-        content: `New business audit request from ${input.businessName} (${input.ownerName}). Submission ID: ${submissionId}`,
+        content: `New business audit request from ${input.businessName} (${input.ownerName}). Submission ID: ${submissionId}. Automatic analysis starting...`,
       });
 
+      // Process reports in background (non-blocking)
+      processReportsInBackground(id, submissionId, input).catch(console.error);
+
+      // Return immediately to user
       return {
         success: true,
         submissionId,

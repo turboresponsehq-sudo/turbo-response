@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,11 +9,15 @@ import { Loader2, FileText, Sparkles, CheckCircle, Clock, ExternalLink } from "l
 import { toast } from "sonner";
 
 export default function AdminTurboIntake() {
+  const { user, loading: authLoading, isAuthenticated } = useAuth();
   const [selectedSubmission, setSelectedSubmission] = useState<number | null>(null);
   const [generatingAudit, setGeneratingAudit] = useState(false);
   const [generatingBlueprint, setGeneratingBlueprint] = useState(false);
 
-  const { data: submissions, isLoading, refetch } = trpc.turboIntake.getSubmissions.useQuery();
+  const { data: submissions, isLoading, refetch, error } = trpc.turboIntake.getSubmissions.useQuery(
+    undefined,
+    { enabled: isAuthenticated && user?.role === 'admin' }
+  );
   const { data: submissionDetails } = trpc.turboIntake.getSubmissionDetails.useQuery(
     { id: selectedSubmission! },
     { enabled: selectedSubmission !== null }
@@ -63,10 +69,41 @@ export default function AdminTurboIntake() {
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
-  if (isLoading) {
+  if (authLoading || (isLoading && isAuthenticated)) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+        <h2 className="text-2xl font-bold">Authentication Required</h2>
+        <p className="text-muted-foreground">Please log in to access the Turbo Intake dashboard.</p>
+        <Button asChild>
+          <a href={getLoginUrl()}>Log In</a>
+        </Button>
+      </div>
+    );
+  }
+
+  if (user?.role !== 'admin') {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+        <h2 className="text-2xl font-bold">Admin Access Required</h2>
+        <p className="text-muted-foreground">You need admin privileges to access this page.</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+        <h2 className="text-2xl font-bold text-destructive">Error Loading Submissions</h2>
+        <p className="text-muted-foreground">{error.message}</p>
+        <Button onClick={() => refetch()}>Retry</Button>
       </div>
     );
   }

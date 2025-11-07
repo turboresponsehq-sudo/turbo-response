@@ -9,6 +9,7 @@ import ChatInterface from "./pages/ChatInterface";
 import AdminDashboard from "./pages/AdminDashboard";
 import Analytics from "./pages/Analytics";
 import AdminTurboIntake from "./pages/AdminTurboIntake";
+import TurboIntake from "./pages/TurboIntake";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -19,6 +20,7 @@ function Router() {
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/analytics" component={Analytics} />
       <Route path="/admin/turbo-intake" component={AdminTurboIntake} />
+      <Route path="/turbo-intake" component={TurboIntake} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
