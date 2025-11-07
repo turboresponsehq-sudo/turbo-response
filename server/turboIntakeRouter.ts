@@ -11,6 +11,7 @@ import {
 } from "./turboIntakeDb";
 import { notifyOwner } from "./_core/notification";
 import { storagePut } from "./storage";
+import { generateComprehensiveAudit } from "./analysisHelpers";
 
 /**
  * Generate unique submission ID
@@ -36,44 +37,30 @@ async function processReportsInBackground(
   submissionId: string,
   input: any
 ) {
+  console.log(`[Background Processing] Starting for submission ${submissionId}...`);
   try {
-    // LAYER 1: Generate Manus Audit
-    const auditContent = `# Business Audit Report for ${input.businessName}
-
-**Generated:** ${new Date().toISOString()}
-**Submission ID:** ${submissionId}
-
-## Business Overview
-- **Owner:** ${input.ownerName}
-- **Industry:** ${input.industry || "Not specified"}
-- **What They Sell:** ${input.whatYouSell || "Not specified"}
-- **Ideal Customer:** ${input.idealCustomer || "Not specified"}
-
-## Challenges & Goals
-- **Biggest Struggle:** ${input.biggestStruggle || "Not specified"}
-- **60-90 Day Goal:** ${input.goal60To90Days || "Not specified"}
-- **Long-Term Vision:** ${input.longTermVision || "Not specified"}
-
-## Online Presence
-- **Website:** ${input.websiteUrl || "Not provided"}
-- **Instagram:** ${input.instagramHandle || "Not provided"}
-- **Facebook:** ${input.facebookUrl || "Not provided"}
-- **TikTok:** ${input.tiktokHandle || "Not provided"}
-
-## Layer 1 Analysis (Manus AI)
-This section contains the detailed analysis from Manus AI including:
-- Website audit (design, UX, conversion optimization)
-- Social media analysis (engagement, content strategy, branding)
-- Identified issues and opportunities
-- Quick wins and recommendations
-
-**Note:** This is a placeholder. The actual Manus AI analysis will be integrated in the next phase.
-`;
+    // LAYER 1: Generate Manus Audit with real analysis
+    console.log(`[Background Processing] Running comprehensive analysis for ${input.businessName}...`);
+    const auditContent = await generateComprehensiveAudit({
+      businessName: input.businessName,
+      ownerName: input.ownerName,
+      industry: input.industry,
+      whatYouSell: input.whatYouSell,
+      idealCustomer: input.idealCustomer,
+      biggestStruggle: input.biggestStruggle,
+      goal60To90Days: input.goal60To90Days,
+      longTermVision: input.longTermVision,
+      websiteUrl: input.websiteUrl,
+      instagramHandle: input.instagramHandle,
+      facebookUrl: input.facebookUrl,
+      tiktokHandle: input.tiktokHandle,
+    });
 
     // Save audit to S3
     const auditReportKey = `turbo-intake-audits/${submissionId}_audit.md`;
     const { url: auditUrl } = await storagePut(auditReportKey, auditContent, "text/markdown");
     await markAuditGenerated(id, auditUrl);
+    console.log(`[Background Processing] Layer 1 audit saved for ${submissionId}`);
 
     // LAYER 2: Generate OpenAI Strategic Blueprint
     const auditData = {
@@ -214,6 +201,7 @@ Make this report look like a $10,000 consulting package. Be extremely detailed, 
       "text/markdown"
     );
     await markBlueprintGenerated(id, blueprintUrl);
+    console.log(`[Background Processing] Layer 2 blueprint saved for ${submissionId}`);
 
     // Notify owner that both reports are ready
     await notifyOwner({
@@ -221,7 +209,7 @@ Make this report look like a $10,000 consulting package. Be extremely detailed, 
       content: `Both Layer 1 audit and Layer 2 strategic blueprint are ready for ${input.businessName}. Submission ID: ${submissionId}`,
     });
   } catch (error) {
-    console.error("Error generating reports:", error);
+    console.error(`[Background Processing] Error for ${submissionId}:`, error);
     await notifyOwner({
       title: "Report Generation Failed",
       content: `Failed to generate reports for ${input.businessName}. Submission ID: ${submissionId}. Error: ${error}`,
