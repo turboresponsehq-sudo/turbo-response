@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import ChatInterface from "./pages/ChatInterface";
 import AdminDashboard from "./pages/AdminDashboard";
 import Analytics from "./pages/Analytics";
+import AdminTurboIntake from "./pages/AdminTurboIntake";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -17,6 +18,7 @@ function Router() {
       <Route path="/chat" component={ChatInterface} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/analytics" component={Analytics} />
+      <Route path="/admin/turbo-intake" component={AdminTurboIntake} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
