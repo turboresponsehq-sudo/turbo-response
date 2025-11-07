@@ -180,3 +180,72 @@ export const leadNotes = mysqlTable("lead_notes", {
 
 export type LeadNote = typeof leadNotes.$inferSelect;
 export type InsertLeadNote = typeof leadNotes.$inferInsert;
+
+
+/**
+ * Turbo Intake - 2-Layer Audit System for Business Clients
+ * Layer 1: Manus audit (website + social media analysis)
+ * Layer 2: OpenAI strategic blueprint (funnel, automation, execution plan)
+ */
+
+// Turbo Intake submission status enum
+export const intakeStatuses = [
+  "pending",
+  "audit_generated",
+  "blueprint_generated",
+  "completed"
+] as const;
+
+export type IntakeStatus = typeof intakeStatuses[number];
+
+/**
+ * Turbo Intake submissions table - business client intake forms
+ */
+export const turboIntakeSubmissions = mysqlTable("turbo_intake_submissions", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Unique submission ID (e.g., TURBO-INTAKE-20251107-211806) */
+  submissionId: varchar("submissionId", { length: 100 }).notNull().unique(),
+  
+  // Business Information
+  businessName: varchar("businessName", { length: 255 }).notNull(),
+  ownerName: varchar("ownerName", { length: 255 }).notNull(),
+  industry: varchar("industry", { length: 255 }),
+  
+  // Contact Information
+  email: varchar("email", { length: 320 }).notNull(),
+  phone: varchar("phone", { length: 50 }),
+  
+  // Business Details
+  whatYouSell: text("whatYouSell"),
+  idealCustomer: text("idealCustomer"),
+  biggestStruggle: text("biggestStruggle"),
+  goal60To90Days: text("goal60To90Days"),
+  longTermVision: text("longTermVision"),
+  
+  // Online Presence
+  websiteUrl: varchar("websiteUrl", { length: 500 }),
+  instagramHandle: varchar("instagramHandle", { length: 100 }),
+  facebookUrl: varchar("facebookUrl", { length: 500 }),
+  tiktokHandle: varchar("tiktokHandle", { length: 100 }),
+  otherSocialMedia: text("otherSocialMedia"),
+  
+  // Processing Status
+  status: varchar("status", { length: 50 }).default("pending").notNull(),
+  
+  // Layer 1: Manus Audit
+  auditGenerated: int("auditGenerated").default(0).notNull(), // 0 = false, 1 = true
+  auditGeneratedAt: timestamp("auditGeneratedAt"),
+  auditReportPath: varchar("auditReportPath", { length: 500 }),
+  
+  // Layer 2: OpenAI Blueprint
+  blueprintGenerated: int("blueprintGenerated").default(0).notNull(), // 0 = false, 1 = true
+  blueprintGeneratedAt: timestamp("blueprintGeneratedAt"),
+  blueprintReportPath: varchar("blueprintReportPath", { length: 500 }),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type TurboIntakeSubmission = typeof turboIntakeSubmissions.$inferSelect;
+export type InsertTurboIntakeSubmission = typeof turboIntakeSubmissions.$inferInsert;
+
