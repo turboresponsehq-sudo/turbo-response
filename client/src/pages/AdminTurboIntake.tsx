@@ -5,13 +5,14 @@ import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, FileText, Sparkles, CheckCircle, Clock, ExternalLink } from "lucide-react";
+import { Loader2, FileText, Sparkles, CheckCircle, Clock, ExternalLink, Copy } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AdminTurboIntake() {
   const { user, loading: authLoading, isAuthenticated } = useAuth();
   const [selectedSubmission, setSelectedSubmission] = useState<number | null>(null);
-  const [generatingAudit, setGeneratingAudit] = useState(false);
+  const [blueprintData, setBlueprintData] = useState<any>(null);
+  const [loadingBlueprint, setLoadingBlueprint] = useState(false);
   const [generatingBlueprint, setGeneratingBlueprint] = useState(false);
 
   const { data: submissions, isLoading, refetch, error } = trpc.turboIntake.getSubmissions.useQuery(
@@ -23,21 +24,11 @@ export default function AdminTurboIntake() {
     { enabled: selectedSubmission !== null }
   );
 
-  const generateAuditMutation = trpc.turboIntake.generateAudit.useMutation({
-    onSuccess: () => {
-      toast.success("Layer 1 audit generated successfully!");
-      refetch();
-      setGeneratingAudit(false);
-    },
-    onError: (error) => {
-      toast.error(`Failed to generate audit: ${error.message}`);
-      setGeneratingAudit(false);
-    },
-  });
+
 
   const generateBlueprintMutation = trpc.turboIntake.generateBlueprint.useMutation({
     onSuccess: () => {
-      toast.success("Layer 2 strategic blueprint generated successfully!");
+      toast.success("Strategic blueprint generated successfully!");
       refetch();
       setGeneratingBlueprint(false);
     },
@@ -47,20 +38,35 @@ export default function AdminTurboIntake() {
     },
   });
 
-  const handleGenerateAudit = async (submissionId: number) => {
-    setGeneratingAudit(true);
-    await generateAuditMutation.mutateAsync({ submissionId });
-  };
+
 
   const handleGenerateBlueprint = async (submissionId: number) => {
     setGeneratingBlueprint(true);
     await generateBlueprintMutation.mutateAsync({ submissionId });
   };
 
+  const fetchBlueprintData = async (url: string) => {
+    setLoadingBlueprint(true);
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      setBlueprintData(data);
+    } catch (error) {
+      console.error('Failed to fetch blueprint:', error);
+      toast.error('Failed to load blueprint data');
+    } finally {
+      setLoadingBlueprint(false);
+    }
+  };
+
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success(`${label} copied to clipboard!`);
+  };
+
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       pending: { label: "Pending", variant: "secondary" as const },
-      audit_generated: { label: "Audit Ready", variant: "default" as const },
       blueprint_generated: { label: "Blueprint Ready", variant: "default" as const },
       completed: { label: "Completed", variant: "default" as const },
     };
@@ -111,9 +117,9 @@ export default function AdminTurboIntake() {
   return (
     <div className="container max-w-7xl py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Turbo Intake - 2-Layer Audit System</h1>
+        <h1 className="text-3xl font-bold mb-2">Turbo Intake - Strategic Blueprint System</h1>
         <p className="text-muted-foreground">
-          Manage business audit submissions and generate strategic blueprints
+          View business submissions and their AI-generated strategic blueprints
         </p>
       </div>
 
@@ -146,17 +152,10 @@ export default function AdminTurboIntake() {
                   </span>
                 </div>
 
-                {submission.auditGenerated === 1 && (
-                  <div className="flex items-center gap-2 text-green-600">
-                    <CheckCircle className="w-4 h-4" />
-                    <span>Layer 1 Audit Complete</span>
-                  </div>
-                )}
-
                 {submission.blueprintGenerated === 1 && (
                   <div className="flex items-center gap-2 text-blue-600">
                     <Sparkles className="w-4 h-4" />
-                    <span>Layer 2 Blueprint Complete</span>
+                    <span>Blueprint Complete</span>
                   </div>
                 )}
               </div>
@@ -245,86 +244,146 @@ export default function AdminTurboIntake() {
               </div>
             </div>
 
-            {/* Layer 1: Audit Generation */}
-            <div className="border-t pt-6">
-              <h3 className="font-semibold mb-3 flex items-center gap-2">
-                <FileText className="w-5 h-5" />
-                Layer 1: Manus Audit
-              </h3>
-              {submissionDetails.auditGenerated === 1 ? (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-green-600">
-                    <CheckCircle className="w-5 h-5" />
-                    <span>Audit generated on {new Date(submissionDetails.auditGeneratedAt!).toLocaleString()}</span>
-                  </div>
-                  {submissionDetails.auditReportPath && (
-                    <Button variant="outline" asChild>
-                      <a
-                        href={submissionDetails.auditReportPath}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <FileText className="w-4 h-4 mr-2" />
-                        View Audit Report
-                      </a>
-                    </Button>
-                  )}
-                </div>
-              ) : (
-                <Button
-                  onClick={() => handleGenerateAudit(submissionDetails.id)}
-                  disabled={generatingAudit}
-                >
-                  {generatingAudit ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Generating Audit...
-                    </>
-                  ) : (
-                    <>
-                      <FileText className="w-4 h-4 mr-2" />
-                      Generate Layer 1 Audit
-                    </>
-                  )}
-                </Button>
-              )}
-            </div>
-
-            {/* Layer 2: Blueprint Generation */}
+            {/* Strategic Blueprint */}
             <div className="border-t pt-6">
               <h3 className="font-semibold mb-3 flex items-center gap-2">
                 <Sparkles className="w-5 h-5" />
-                Layer 2: Strategic Blueprint (OpenAI)
+                Strategic Blueprint (5 Sections)
               </h3>
               {submissionDetails.blueprintGenerated === 1 ? (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-blue-600">
-                    <CheckCircle className="w-5 h-5" />
-                    <span>Blueprint generated on {new Date(submissionDetails.blueprintGeneratedAt!).toLocaleString()}</span>
-                  </div>
-                  {submissionDetails.blueprintReportPath && (
-                    <Button variant="outline" asChild>
-                      <a
-                        href={submissionDetails.blueprintReportPath}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-blue-600">
+                      <CheckCircle className="w-5 h-5" />
+                      <span>Blueprint generated on {new Date(submissionDetails.blueprintGeneratedAt!).toLocaleString()}</span>
+                    </div>
+                    {submissionDetails.blueprintReportPath && !blueprintData && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => fetchBlueprintData(submissionDetails.blueprintReportPath!)}
+                        disabled={loadingBlueprint}
                       >
-                        <Sparkles className="w-4 h-4 mr-2" />
-                        View Strategic Blueprint
-                      </a>
-                    </Button>
+                        {loadingBlueprint ? (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        ) : (
+                          <Sparkles className="w-4 h-4 mr-2" />
+                        )}
+                        Load Blueprint
+                      </Button>
+                    )}
+                  </div>
+
+                  {blueprintData && (
+                    <div className="space-y-4 mt-4">
+                      {/* Executive Summary */}
+                      <div className="border rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-semibold">1. Executive Summary</h4>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => copyToClipboard(blueprintData.executive_summary, 'Executive Summary')}
+                          >
+                            <Copy className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        <p className="text-sm whitespace-pre-wrap">{blueprintData.executive_summary}</p>
+                      </div>
+
+                      {/* Brand Positioning */}
+                      <div className="border rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-semibold">2. Brand Positioning</h4>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => copyToClipboard(blueprintData.brand_positioning, 'Brand Positioning')}
+                          >
+                            <Copy className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        <p className="text-sm whitespace-pre-wrap">{blueprintData.brand_positioning}</p>
+                      </div>
+
+                      {/* Funnel & Website Strategy */}
+                      <div className="border rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-semibold">3. Funnel & Website Strategy</h4>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => copyToClipboard(blueprintData.funnel_and_website_strategy, 'Funnel & Website Strategy')}
+                          >
+                            <Copy className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        <p className="text-sm whitespace-pre-wrap">{blueprintData.funnel_and_website_strategy}</p>
+                      </div>
+
+                      {/* Social Strategy */}
+                      <div className="border rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-semibold">4. Social Strategy</h4>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => copyToClipboard(blueprintData.social_strategy, 'Social Strategy')}
+                          >
+                            <Copy className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        <p className="text-sm whitespace-pre-wrap">{blueprintData.social_strategy}</p>
+                      </div>
+
+                      {/* 30-Day Plan */}
+                      <div className="border rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-semibold">5. 30-Day Strategic Action Plan</h4>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => copyToClipboard(blueprintData.thirty_day_plan, '30-Day Plan')}
+                          >
+                            <Copy className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        <p className="text-sm whitespace-pre-wrap">{blueprintData.thirty_day_plan}</p>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => copyToClipboard(JSON.stringify(blueprintData, null, 2), 'Full Blueprint JSON')}
+                        >
+                          <Copy className="w-4 h-4 mr-2" />
+                          Copy Full JSON
+                        </Button>
+                        <Button
+                          variant="outline"
+                          asChild
+                        >
+                          <a
+                            href={submissionDetails.blueprintReportPath!}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <ExternalLink className="w-4 h-4 mr-2" />
+                            Download JSON
+                          </a>
+                        </Button>
+                      </div>
+                    </div>
                   )}
                 </div>
               ) : (
-                <div className="space-y-3">
-                  {submissionDetails.auditGenerated === 0 && (
-                    <p className="text-sm text-muted-foreground">
-                      Please generate Layer 1 audit first before creating the strategic blueprint.
-                    </p>
-                  )}
+                  <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    Blueprint is automatically generated when form is submitted.
+                  </p>
                   <Button
                     onClick={() => handleGenerateBlueprint(submissionDetails.id)}
-                    disabled={generatingBlueprint || submissionDetails.auditGenerated === 0}
+                    disabled={generatingBlueprint}
                   >
                     {generatingBlueprint ? (
                       <>
@@ -334,7 +393,7 @@ export default function AdminTurboIntake() {
                     ) : (
                       <>
                         <Sparkles className="w-4 h-4 mr-2" />
-                        Generate Layer 2 Blueprint
+                        Generate Blueprint
                       </>
                     )}
                   </Button>

@@ -11,7 +11,6 @@ import {
 } from "./turboIntakeDb";
 import { notifyOwner } from "./_core/notification";
 import { storagePut } from "./storage";
-import { generateComprehensiveAudit } from "./analysisHelpers";
 
 /**
  * Generate unique submission ID
@@ -37,32 +36,9 @@ async function processReportsInBackground(
   submissionId: string,
   input: any
 ) {
-  console.log(`[Background Processing] Starting for submission ${submissionId}...`);
+  console.log(`[Background Processing] Starting OpenAI blueprint generation for submission ${submissionId}...`);
   try {
-    // LAYER 1: Generate Manus Audit with real analysis
-    console.log(`[Background Processing] Running comprehensive analysis for ${input.businessName}...`);
-    const auditContent = await generateComprehensiveAudit({
-      businessName: input.businessName,
-      ownerName: input.ownerName,
-      industry: input.industry,
-      whatYouSell: input.whatYouSell,
-      idealCustomer: input.idealCustomer,
-      biggestStruggle: input.biggestStruggle,
-      goal60To90Days: input.goal60To90Days,
-      longTermVision: input.longTermVision,
-      websiteUrl: input.websiteUrl,
-      instagramHandle: input.instagramHandle,
-      facebookUrl: input.facebookUrl,
-      tiktokHandle: input.tiktokHandle,
-    });
-
-    // Save audit to S3
-    const auditReportKey = `turbo-intake-audits/${submissionId}_audit.md`;
-    const { url: auditUrl } = await storagePut(auditReportKey, auditContent, "text/markdown");
-    await markAuditGenerated(id, auditUrl);
-    console.log(`[Background Processing] Layer 1 audit saved for ${submissionId}`);
-
-    // LAYER 2: Generate OpenAI Strategic Blueprint
+    // Generate OpenAI Strategic Blueprint (5 sections)
     const auditData = {
       businessName: input.businessName,
       ownerName: input.ownerName,
@@ -76,114 +52,67 @@ async function processReportsInBackground(
       instagramHandle: input.instagramHandle,
       facebookUrl: input.facebookUrl,
       tiktokHandle: input.tiktokHandle,
-      manusAudit: auditContent,
+      // User provides their own audit - we just generate strategic blueprint
     };
 
     const response = await invokeLLM({
+      response_format: { type: "json_object" },
       messages: [
         {
           role: "system",
-          content: `You are an elite business strategist and digital transformation consultant. You create $10,000+ strategic blueprints that replace entire consulting teams.
+          content: `You are a business strategist who creates clean, actionable business strategy blueprints.
 
-Your reports must be:
-- Executive-level quality
-- Extremely detailed and actionable
-- Structured for investor presentations
-- Worth $2,500-$10,000 in consulting value
-- Demonstrate elite intelligence and strategy
+Your output MUST be in JSON format with EXACTLY 5 sections:
+1. executive_summary (5-7 sentences)
+2. brand_positioning (short summary)
+3. funnel_and_website_strategy (high-level structure)
+4. social_strategy (platform-by-platform)
+5. thirty_day_plan (week-by-week action steps)
 
-You will generate a comprehensive 10-section strategic blueprint based on the Manus audit data provided.`,
+Keep it simple, structured, and actionable. This is for closing business clients.`,
         },
         {
           role: "user",
-          content: `Create a comprehensive strategic blueprint for this business:
+          content: `Based on the Manus audit below, create a strategic business blueprint.
 
+**Business Data:**
 ${JSON.stringify(auditData, null, 2)}
 
-Generate a detailed strategic blueprint with the following 10 sections:
+**Output MUST be valid JSON with these 5 sections:**
 
-## 1. EXECUTIVE SUMMARY (1 page)
-- Who the business is
-- What stage they're at
-- What problems were discovered in the audit
-- What opportunity exists
-- The "big picture" ROI they can achieve
+1. **executive_summary**: 5-7 sentences covering:
+   - Who the business is
+   - Main problems found
+   - Main opportunities
+   - Big-picture ROI
 
-## 2. BRAND & MARKET POSITIONING ANALYSIS
-- What the brand currently communicates
-- Brand archetype
-- Strengths
-- Weaknesses
-- Missing identity components
-- Audience alignment issues
-- Tone & messaging recommendations
+2. **brand_positioning**: Short summary of:
+   - Current brand identity
+   - Target audience alignment
+   - Positioning weaknesses
+   - Messaging recommendations
 
-## 3. FUNNEL ARCHITECTURE BLUEPRINT
-Based on their current website & business model:
-- **Awareness Funnel:** Where traffic should come from, what content drives it
-- **Engagement Funnel:** What hooks work for their audience, value ladders for their niche
-- **Conversion Funnel:** Purchase center layout, lead magnets, offer positioning, pricing psychology
-- **Retention Funnel:** Upsells, automations, follow-up sequences
-Make this visual + step-by-step.
+3. **funnel_and_website_strategy**: High-level plan for:
+   - What their website should look like (key sections)
+   - Customer journey structure
+   - Recommended funnel structure
+   - Key CTAs
+   - Data collection points
+   - Recommended automations
 
-## 4. WEBSITE & PURCHASE CENTER REDESIGN PLAN
-- Home page structure
-- Services/product pages
-- CTA placement
-- Data-capture systems
-- How to structure the intake form
-- What automations trigger after submission
+4. **social_strategy**: Platform-by-platform breakdown:
+   - Content themes that attract their audience
+   - Content types that convert
+   - Posting frequency
+   - Brand voice
 
-## 5. SOCIAL MEDIA STRATEGY (Platform-by-Platform)
-For each platform the client has, produce:
-- What type of content to post
-- Posting frequency
-- Tone, themes, angles
-- What will grow the brand fastest
-- What will convert the audience
-- Competitive positioning
+5. **thirty_day_plan**: Week-by-week action steps:
+   - Week 1: Fix foundational issues
+   - Week 2: Website/funnel changes
+   - Week 3: Content rollout
+   - Week 4: Automations + data tracking
 
-## 6. AUTOMATION & AI SYSTEM ARCHITECTURE
-Outline:
-- What agents the business needs
-- What automations should run
-- What workflows should exist
-- How to structure their CRM
-- How data flows from IG/FB/Website into backend
-- What should be built on top of APIs
-- Recommended tools that integrate well
-
-## 7. DATA STRATEGY & INTELLIGENCE LAYER
-- What data the business should start collecting
-- What insights matter the most
-- How to use customers' behaviors
-- How to use analytics to improve conversion
-- How the business can use backend to power BI
-
-## 8. OFFER OPTIMIZATION SECTION
-- Audit the client's offers
-- Identify weak points
-- Identify power moves
-- Identify premium positioning
-- Create a "money map" listing all potential monetization angles
-
-## 9. 90-DAY EXECUTION PLAN
-A clear, step-by-step breakdown:
-- Week 1-2: Fix foundational issues
-- Week 3-4: Rebuild funnel + website
-- Week 5-6: Implement automation
-- Week 7-8: Launch content systems
-- Week 9-12: Optimize and scale
-
-## 10. HIGH-LEVEL PRESENTATION VERSION (Condensed Deck)
-Produce a second format:
-- A short "presentation-style" version
-- 10-15 slides worth of content
-- Designed for investor meetings, networking events, and sales calls
-- Strong strategic highlights
-- Key metrics and ROI projections
-
-Make this report look like a $10,000 consulting package. Be extremely detailed, specific, and actionable.`,
+Return ONLY the JSON object. No markdown, no extra text.`,
         },
       ],
     });
@@ -194,19 +123,19 @@ Make this report look like a $10,000 consulting package. Be extremely detailed, 
         : "No blueprint generated";
 
     // Save blueprint to S3
-    const blueprintReportKey = `turbo-intake-blueprints/${submissionId}_blueprint.md`;
+    const blueprintReportKey = `turbo-intake-blueprints/${submissionId}_blueprint.json`;
     const { url: blueprintUrl } = await storagePut(
       blueprintReportKey,
       blueprintContent,
-      "text/markdown"
+      "application/json"
     );
     await markBlueprintGenerated(id, blueprintUrl);
-    console.log(`[Background Processing] Layer 2 blueprint saved for ${submissionId}`);
+    console.log(`[Background Processing] 5-section blueprint saved for ${submissionId}`);
 
     // Notify owner that both reports are ready
     await notifyOwner({
       title: "Strategic Blueprint Complete",
-      content: `Both Layer 1 audit and Layer 2 strategic blueprint are ready for ${input.businessName}. Submission ID: ${submissionId}`,
+      content: `5-section strategic blueprint is ready for ${input.businessName}. Submission ID: ${submissionId}. View at /admin/turbo-intake`,
     });
   } catch (error) {
     console.error(`[Background Processing] Error for ${submissionId}:`, error);
