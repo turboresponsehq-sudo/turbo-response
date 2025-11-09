@@ -1,0 +1,18 @@
+{
+  "query": "SELECT id, submissionId, businessName, auditGenerated, blueprintGenerated, createdAt FROM turbo_intake_submissions WHERE submissionId = 'TURBO-INTAKE-20251107-174819';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute SELECT id, submissionId, businessName, auditGenerated, blueprintGenerated, createdAt FROM turbo_intake_submissions WHERE submissionId = 'TURBO-INTAKE-20251107-174819';",
+  "rows": [
+    {
+      "id": "90001",
+      "submissionId": "TURBO-INTAKE-20251107-174819",
+      "businessName": "Real Analysis Test",
+      "auditGenerated": "1",
+      "blueprintGenerated": "1",
+      "createdAt": "2025-11-07 22:48:22"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tsubmissionId\tbusinessName\tauditGenerated\tblueprintGenerated\tcreatedAt\n90001\tTURBO-INTAKE-20251107-174819\tReal Analysis Test\t1\t1\t2025-11-07 22:48:22\n",
+  "stderr": "",
+  "execution_time_ms": 49
+}

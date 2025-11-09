@@ -25,4 +25,227 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+/**
+ * Conversational AI tables for consumer advocacy chatbot
+ */
+
+// Case category enum
+export const caseCategories = [
+  "debt_collection",
+  "eviction",
+  "credit_errors",
+  "unemployment",
+  "bank_issues",
+  "wage_garnishment",
+  "discrimination",
+  "other"
+] as const;
+
+export type CaseCategory = typeof caseCategories[number];
+
+// Conversation status enum
+export const conversationStatuses = [
+  "active",
+  "awaiting_upload",
+  "analyzing",
+  "completed",
+  "abandoned"
+] as const;
+
+export type ConversationStatus = typeof conversationStatuses[number];
+
+// Lead status enum
+export const leadStatuses = [
+  "new",
+  "contacted",
+  "qualified",
+  "converted",
+  "closed"
+] as const;
+
+export type LeadStatus = typeof leadStatuses[number];
+
+// Message role enum
+export const messageRoles = ["user", "assistant", "system"] as const;
+export type MessageRole = typeof messageRoles[number];
+
+/**
+ * Conversations table - tracks each chat session
+ */
+export const conversations = mysqlTable("conversations", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Optional user ID if authenticated (most will be anonymous) */
+  userId: int("userId"),
+  /** Detected case category based on initial story */
+  category: varchar("category", { length: 50 }),
+  /** Current conversation status */
+  status: varchar("status", { length: 50 }).default("active").notNull(),
+  /** Summary of the case for quick reference */
+  summary: text("summary"),
+  /** Number of messages in this conversation */
+  messageCount: int("messageCount").default(0).notNull(),
+  /** Number of evidence files uploaded */
+  evidenceCount: int("evidenceCount").default(0).notNull(),
+  /** Whether this conversation resulted in a lead */
+  convertedToLead: int("convertedToLead").default(0).notNull(), // 0 = false, 1 = true
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Conversation = typeof conversations.$inferSelect;
+export type InsertConversation = typeof conversations.$inferInsert;
+
+/**
+ * Messages table - stores user and AI messages
+ */
+export const messages = mysqlTable("messages", {
+  id: int("id").autoincrement().primaryKey(),
+  conversationId: int("conversationId").notNull(),
+  /** Role: user, assistant, or system */
+  role: varchar("role", { length: 20 }).notNull(),
+  /** Message content */
+  content: text("content").notNull(),
+  /** Metadata (JSON string for additional data like question type, etc.) */
+  metadata: text("metadata"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Message = typeof messages.$inferSelect;
+export type InsertMessage = typeof messages.$inferInsert;
+
+/**
+ * Evidence uploads table - tracks uploaded files
+ */
+export const evidenceUploads = mysqlTable("evidence_uploads", {
+  id: int("id").autoincrement().primaryKey(),
+  conversationId: int("conversationId").notNull(),
+  /** S3 file key */
+  fileKey: varchar("fileKey", { length: 500 }).notNull(),
+  /** Public S3 URL */
+  fileUrl: text("fileUrl").notNull(),
+  /** Original filename */
+  filename: varchar("filename", { length: 255 }),
+  /** MIME type */
+  mimeType: varchar("mimeType", { length: 100 }),
+  /** File size in bytes */
+  fileSize: int("fileSize"),
+  uploadedAt: timestamp("uploadedAt").defaultNow().notNull(),
+});
+
+export type EvidenceUpload = typeof evidenceUploads.$inferSelect;
+export type InsertEvidenceUpload = typeof evidenceUploads.$inferInsert;
+
+/**
+ * Leads table - captured contact information for sales follow-up
+ */
+export const leads = mysqlTable("leads", {
+  id: int("id").autoincrement().primaryKey(),
+  conversationId: int("conversationId").notNull(),
+  /** Full name */
+  name: varchar("name", { length: 255 }).notNull(),
+  /** Email address */
+  email: varchar("email", { length: 320 }).notNull(),
+  /** Phone number */
+  phone: varchar("phone", { length: 50 }),
+  /** Best time to call: morning, afternoon, evening */
+  bestTimeToCall: varchar("bestTimeToCall", { length: 20 }),
+  /** Lead status for tracking */
+  status: varchar("status", { length: 50 }).default("new").notNull(),
+  /** Notes from admin */
+  notes: text("notes"),
+  /** Case category (copied from conversation for quick filtering) */
+  category: varchar("category", { length: 50 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Lead = typeof leads.$inferSelect;
+export type InsertLead = typeof leads.$inferInsert;
+
+/**
+ * Lead notes table - admin notes for each lead
+ * Phase 3: Intelligence Upgrade feature
+ */
+export const leadNotes = mysqlTable("lead_notes", {
+  id: int("id").autoincrement().primaryKey(),
+  leadId: int("leadId").notNull(),
+  /** Note content */
+  content: text("content").notNull(),
+  /** Note type: general, phone_call, follow_up, important */
+  noteType: varchar("noteType", { length: 50 }).default("general").notNull(),
+  /** Admin who created the note */
+  createdBy: varchar("createdBy", { length: 255 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type LeadNote = typeof leadNotes.$inferSelect;
+export type InsertLeadNote = typeof leadNotes.$inferInsert;
+
+
+/**
+ * Turbo Intake - 2-Layer Audit System for Business Clients
+ * Layer 1: Manus audit (website + social media analysis)
+ * Layer 2: OpenAI strategic blueprint (funnel, automation, execution plan)
+ */
+
+// Turbo Intake submission status enum
+export const intakeStatuses = [
+  "pending",
+  "audit_generated",
+  "blueprint_generated",
+  "completed"
+] as const;
+
+export type IntakeStatus = typeof intakeStatuses[number];
+
+/**
+ * Turbo Intake submissions table - business client intake forms
+ */
+export const turboIntakeSubmissions = mysqlTable("turbo_intake_submissions", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Unique submission ID (e.g., TURBO-INTAKE-20251107-211806) */
+  submissionId: varchar("submissionId", { length: 100 }).notNull().unique(),
+  
+  // Business Information
+  businessName: varchar("businessName", { length: 255 }).notNull(),
+  ownerName: varchar("ownerName", { length: 255 }).notNull(),
+  industry: varchar("industry", { length: 255 }),
+  
+  // Contact Information
+  email: varchar("email", { length: 320 }).notNull(),
+  phone: varchar("phone", { length: 50 }),
+  
+  // Business Details
+  whatYouSell: text("whatYouSell"),
+  idealCustomer: text("idealCustomer"),
+  biggestStruggle: text("biggestStruggle"),
+  goal60To90Days: text("goal60To90Days"),
+  longTermVision: text("longTermVision"),
+  
+  // Online Presence
+  websiteUrl: varchar("websiteUrl", { length: 500 }),
+  instagramHandle: varchar("instagramHandle", { length: 100 }),
+  facebookUrl: varchar("facebookUrl", { length: 500 }),
+  tiktokHandle: varchar("tiktokHandle", { length: 100 }),
+  otherSocialMedia: text("otherSocialMedia"),
+  
+  // Processing Status
+  status: varchar("status", { length: 50 }).default("pending").notNull(),
+  
+  // Layer 1: Manus Audit
+  auditGenerated: int("auditGenerated").default(0).notNull(), // 0 = false, 1 = true
+  auditGeneratedAt: timestamp("auditGeneratedAt"),
+  auditReportPath: varchar("auditReportPath", { length: 500 }),
+  
+  // Layer 2: OpenAI Blueprint
+  blueprintGenerated: int("blueprintGenerated").default(0).notNull(), // 0 = false, 1 = true
+  blueprintGeneratedAt: timestamp("blueprintGeneratedAt"),
+  blueprintReportPath: varchar("blueprintReportPath", { length: 500 }),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type TurboIntakeSubmission = typeof turboIntakeSubmissions.$inferSelect;
+export type InsertTurboIntakeSubmission = typeof turboIntakeSubmissions.$inferInsert;
+
