@@ -1,0 +1,35 @@
+{
+  "query": "SELECT id, submissionId, businessName FROM turbo_intake_submissions;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute SELECT id, submissionId, businessName FROM turbo_intake_submissions;",
+  "rows": [
+    {
+      "id": "1",
+      "submissionId": "TURBO-INTAKE-20251107-211806",
+      "businessName": "Turbo Resort"
+    },
+    {
+      "id": "30001",
+      "submissionId": "TURBO-INTAKE-20251107-171241",
+      "businessName": "Test Business Co"
+    },
+    {
+      "id": "30002",
+      "submissionId": "TURBO-INTAKE-20251107-171748",
+      "businessName": "Test Co"
+    },
+    {
+      "id": "60001",
+      "submissionId": "TURBO-INTAKE-20251107-173123",
+      "businessName": "Debug Test"
+    },
+    {
+      "id": "90001",
+      "submissionId": "TURBO-INTAKE-20251107-174819",
+      "businessName": "Real Analysis Test"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tsubmissionId\tbusinessName\n1\tTURBO-INTAKE-20251107-211806\tTurbo Resort\n30001\tTURBO-INTAKE-20251107-171241\tTest Business Co\n30002\tTURBO-INTAKE-20251107-171748\tTest Co\n60001\tTURBO-INTAKE-20251107-173123\tDebug Test\n90001\tTURBO-INTAKE-20251107-174819\tReal Analysis Test\n",
+  "stderr": "",
+  "execution_time_ms": 108
+}

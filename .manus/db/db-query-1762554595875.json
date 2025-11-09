@@ -1,0 +1,38 @@
+{
+  "query": "SELECT * FROM turbo_intake_submissions WHERE submissionId = 'TURBO-INTAKE-20251107-211806' LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute SELECT * FROM turbo_intake_submissions WHERE submissionId = 'TURBO-INTAKE-20251107-211806' LIMIT 1;",
+  "rows": [
+    {
+      "id": "1",
+      "submissionId": "TURBO-INTAKE-20251107-211806",
+      "businessName": "Turbo Resort",
+      "ownerName": "Zakhy C",
+      "industry": "AI Systems / Consumer Advocacy Technology",
+      "email": "wearemoneybosses@gmail.com",
+      "phone": "4047599635",
+      "whatYouSell": "AI systems",
+      "idealCustomer": "Entrepreneurs",
+      "biggestStruggle": "Capturing leads",
+      "goal60To90Days": "Capture more leads",
+      "longTermVision": "To be one of the biggest case builders",
+      "websiteUrl": "https://turboresponsehq.ai/",
+      "instagramHandle": "@moneyboss_zakhy",
+      "facebookUrl": "NULL",
+      "tiktokHandle": "NULL",
+      "otherSocialMedia": "NULL",
+      "status": "pending",
+      "auditGenerated": "0",
+      "auditGeneratedAt": "NULL",
+      "auditReportPath": "NULL",
+      "blueprintGenerated": "0",
+      "blueprintGeneratedAt": "NULL",
+      "blueprintReportPath": "NULL",
+      "createdAt": "2025-11-07 21:55:58",
+      "updatedAt": "2025-11-07 21:55:58"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tsubmissionId\tbusinessName\townerName\tindustry\temail\tphone\twhatYouSell\tidealCustomer\tbiggestStruggle\tgoal60To90Days\tlongTermVision\twebsiteUrl\tinstagramHandle\tfacebookUrl\ttiktokHandle\totherSocialMedia\tstatus\tauditGenerated\tauditGeneratedAt\tauditReportPath\tblueprintGenerated\tblueprintGeneratedAt\tblueprintReportPath\tcreatedAt\tupdatedAt\n1\tTURBO-INTAKE-20251107-211806\tTurbo Resort\tZakhy C\tAI Systems / Consumer Advocacy Technology\twearemoneybosses@gmail.com\t4047599635\tAI systems\tEntrepreneurs\tCapturing leads\tCapture more leads\tTo be one of the biggest case builders\thttps://turboresponsehq.ai/\t@moneyboss_zakhy\tNULL\tNULL\tNULL\tpending\t0\tNULL\tNULL\t0\tNULL\tNULL\t2025-11-07 21:55:58\t2025-11-07 21:55:58\n",
+  "stderr": "",
+  "execution_time_ms": 49
+}

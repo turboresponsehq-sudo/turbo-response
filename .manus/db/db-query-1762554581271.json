@@ -1,0 +1,37 @@
+{
+  "query": "SELECT id, submissionId, businessName, status, auditGenerated, blueprintGenerated, createdAt FROM turbo_intake_submissions ORDER BY createdAt DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute SELECT id, submissionId, businessName, status, auditGenerated, blueprintGenerated, createdAt FROM turbo_intake_submissions ORDER BY createdAt DESC LIMIT 5;",
+  "rows": [
+    {
+      "id": "30002",
+      "submissionId": "TURBO-INTAKE-20251107-171748",
+      "businessName": "Test Co",
+      "status": "blueprint_generated",
+      "auditGenerated": "1",
+      "blueprintGenerated": "1",
+      "createdAt": "2025-11-07 22:17:48"
+    },
+    {
+      "id": "30001",
+      "submissionId": "TURBO-INTAKE-20251107-171241",
+      "businessName": "Test Business Co",
+      "status": "blueprint_generated",
+      "auditGenerated": "1",
+      "blueprintGenerated": "1",
+      "createdAt": "2025-11-07 22:12:42"
+    },
+    {
+      "id": "1",
+      "submissionId": "TURBO-INTAKE-20251107-211806",
+      "businessName": "Turbo Resort",
+      "status": "pending",
+      "auditGenerated": "0",
+      "blueprintGenerated": "0",
+      "createdAt": "2025-11-07 21:55:58"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tsubmissionId\tbusinessName\tstatus\tauditGenerated\tblueprintGenerated\tcreatedAt\n30002\tTURBO-INTAKE-20251107-171748\tTest Co\tblueprint_generated\t1\t1\t2025-11-07 22:17:48\n30001\tTURBO-INTAKE-20251107-171241\tTest Business Co\tblueprint_generated\t1\t1\t2025-11-07 22:12:42\n1\tTURBO-INTAKE-20251107-211806\tTurbo Resort\tpending\t0\t0\t2025-11-07 21:55:58\n",
+  "stderr": "",
+  "execution_time_ms": 187
+}
