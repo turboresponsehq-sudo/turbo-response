@@ -4,6 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
 import { chatRouter } from "./routers/chatRouter";
 import { adminRouter } from "./routers/adminRouter";
+import { turboIntakeRouter } from "./turboIntakeRouter";
 
 export const appRouter = router({
   system: systemRouter,
@@ -24,6 +25,9 @@ export const appRouter = router({
 
   // Admin router for managing leads
   admin: adminRouter,
+
+  // Turbo Intake router for 2-layer audit system
+  turboIntake: turboIntakeRouter,
 });
 
 export type AppRouter = typeof appRouter;

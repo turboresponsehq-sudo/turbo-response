@@ -1,0 +1,40 @@
+CREATE TABLE `lead_notes` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`leadId` int NOT NULL,
+	`content` text NOT NULL,
+	`noteType` varchar(50) NOT NULL DEFAULT 'general',
+	`createdBy` varchar(255),
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	CONSTRAINT `lead_notes_id` PRIMARY KEY(`id`)
+);
+--> statement-breakpoint
+CREATE TABLE `turbo_intake_submissions` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`submissionId` varchar(100) NOT NULL,
+	`businessName` varchar(255) NOT NULL,
+	`ownerName` varchar(255) NOT NULL,
+	`industry` varchar(255),
+	`email` varchar(320) NOT NULL,
+	`phone` varchar(50),
+	`whatYouSell` text,
+	`idealCustomer` text,
+	`biggestStruggle` text,
+	`goal60To90Days` text,
+	`longTermVision` text,
+	`websiteUrl` varchar(500),
+	`instagramHandle` varchar(100),
+	`facebookUrl` varchar(500),
+	`tiktokHandle` varchar(100),
+	`otherSocialMedia` text,
+	`status` varchar(50) NOT NULL DEFAULT 'pending',
+	`auditGenerated` int NOT NULL DEFAULT 0,
+	`auditGeneratedAt` timestamp,
+	`auditReportPath` varchar(500),
+	`blueprintGenerated` int NOT NULL DEFAULT 0,
+	`blueprintGeneratedAt` timestamp,
+	`blueprintReportPath` varchar(500),
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `turbo_intake_submissions_id` PRIMARY KEY(`id`),
+	CONSTRAINT `turbo_intake_submissions_submissionId_unique` UNIQUE(`submissionId`)
+);
