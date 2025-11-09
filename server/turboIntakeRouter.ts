@@ -321,52 +321,126 @@ This section would contain the detailed analysis from Manus AI including:
         tiktokHandle: submission.tiktokHandle,
       };
 
-      // Call OpenAI to generate strategic blueprint
+      // Call OpenAI to generate strategic blueprint in JSON format
       const response = await invokeLLM({
         messages: [
           {
             role: "system",
-            content: `You are a world-class business strategist and digital marketing expert. Your job is to create comprehensive strategic blueprints for businesses based on their audit data.
-
-You will receive business information and audit insights. Your task is to create a detailed strategic blueprint that includes:
-
-1. **Funnel Architecture** - Complete funnel design from awareness to conversion
-2. **Website Flow Optimization** - User journey mapping and conversion path design
-3. **Content & Messaging Map** - Content strategy across all channels
-4. **Automation Blueprint** - Email sequences, chatbots, and workflow automation
-5. **Data-Capture Strategy** - Lead magnets, opt-in forms, and conversion mechanisms
-6. **AI Agent Recommendations** - How to leverage AI for customer service, lead qualification, and operations
-7. **Step-by-Step Execution Plan** - 30/60/90 day roadmap with specific action items
-
-Make the blueprint actionable, specific, and tailored to their business. Include exact tactics, tools, and timelines.`,
+            content: `You are a world-class business strategist and digital marketing expert. Create comprehensive strategic blueprints in JSON format.`,
           },
           {
             role: "user",
-            content: `Create a comprehensive strategic blueprint for this business:
+            content: `Create a strategic blueprint for this business:
 
 ${JSON.stringify(auditData, null, 2)}
 
-Generate a detailed strategic plan covering:
-- Funnel architecture
-- Website flow optimization
-- Content and messaging map
-- Automation blueprint
-- Data-capture strategy
-- AI agent recommendations
-- 30/60/90 day execution plan
-
-Make it specific, actionable, and results-focused.`,
+Provide a detailed, actionable strategic plan.`,
           },
         ],
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "strategic_blueprint",
+            strict: true,
+            schema: {
+              type: "object",
+              properties: {
+                executive_summary: {
+                  type: "string",
+                  description: "Comprehensive executive summary covering current state, key challenges, biggest opportunities, and expected ROI"
+                },
+                brand_positioning: {
+                  type: "object",
+                  properties: {
+                    current_identity: { type: "string" },
+                    target_audience_alignment: { type: "string" },
+                    positioning_weaknesses: { type: "string" },
+                    messaging_recommendations: { type: "string" }
+                  },
+                  required: ["current_identity", "target_audience_alignment", "positioning_weaknesses", "messaging_recommendations"],
+                  additionalProperties: false
+                },
+                funnel_and_website_strategy: {
+                  type: "object",
+                  properties: {
+                    website_structure: { type: "string" },
+                    customer_journey: { type: "string" },
+                    funnel_structure: { type: "string" },
+                    key_ctas: { type: "string" },
+                    data_collection_points: { type: "string" },
+                    recommended_automations: { type: "string" }
+                  },
+                  required: ["website_structure", "customer_journey", "funnel_structure", "key_ctas", "data_collection_points", "recommended_automations"],
+                  additionalProperties: false
+                },
+                social_strategy: {
+                  type: "object",
+                  properties: {
+                    instagram: {
+                      type: "object",
+                      properties: {
+                        content_themes: { type: "string" },
+                        content_types: { type: "string" },
+                        posting_frequency: { type: "string" },
+                        brand_voice: { type: "string" }
+                      },
+                      required: ["content_themes", "content_types", "posting_frequency", "brand_voice"],
+                      additionalProperties: false
+                    },
+                    linkedin: {
+                      type: "object",
+                      properties: {
+                        content_themes: { type: "string" },
+                        content_types: { type: "string" },
+                        posting_frequency: { type: "string" },
+                        brand_voice: { type: "string" }
+                      },
+                      required: ["content_themes", "content_types", "posting_frequency", "brand_voice"],
+                      additionalProperties: false
+                    },
+                    tiktok: {
+                      type: "object",
+                      properties: {
+                        content_themes: { type: "string" },
+                        content_types: { type: "string" },
+                        posting_frequency: { type: "string" },
+                        brand_voice: { type: "string" }
+                      },
+                      required: ["content_themes", "content_types", "posting_frequency", "brand_voice"],
+                      additionalProperties: false
+                    }
+                  },
+                  required: ["instagram", "linkedin", "tiktok"],
+                  additionalProperties: false
+                },
+                thirty_day_plan: {
+                  type: "object",
+                  properties: {
+                    week_1: { type: "string" },
+                    week_2: { type: "string" },
+                    week_3: { type: "string" },
+                    week_4: { type: "string" }
+                  },
+                  required: ["week_1", "week_2", "week_3", "week_4"],
+                  additionalProperties: false
+                }
+              },
+              required: ["executive_summary", "brand_positioning", "funnel_and_website_strategy", "social_strategy", "thirty_day_plan"],
+              additionalProperties: false
+            }
+          }
+        }
       });
 
-      const blueprintContent = typeof response.choices[0].message.content === 'string' 
-        ? response.choices[0].message.content 
-        : "No blueprint generated";
+      const blueprintContent = typeof response.choices[0].message.content === 'string'
+        ? response.choices[0].message.content
+        : JSON.stringify(response.choices[0].message.content || {});
+      
+      const blueprintData = JSON.parse(blueprintContent);
 
       // Save blueprint report to S3
-      const reportKey = `turbo-intake-blueprints/${submission.submissionId}_blueprint.md`;
-      const { url } = await storagePut(reportKey, blueprintContent, "text/markdown");
+      const reportKey = `turbo-intake-blueprints/${submission.submissionId}_blueprint.json`;
+      const { url } = await storagePut(reportKey, blueprintContent, "application/json");
 
       // Update database
       await markBlueprintGenerated(input.submissionId, url);
@@ -382,6 +456,45 @@ Make it specific, actionable, and results-focused.`,
         reportUrl: url,
         blueprint: blueprintContent,
       };
+    }),
+
+  /**
+   * Fetch blueprint data (server-side proxy to avoid CORS issues)
+   * Handles both JSON and Markdown formats for backward compatibility
+   */
+  getBlueprintData: protectedProcedure
+    .input(z.object({ url: z.string() }))
+    .query(async ({ input, ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Admin access required");
+      }
+
+      try {
+        console.log('[getBlueprintData] Fetching from URL:', input.url);
+        const response = await globalThis.fetch(input.url);
+        console.log('[getBlueprintData] Response status:', response.status);
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch blueprint: HTTP ${response.status}`);
+        }
+        
+        const text = await response.text();
+        console.log('[getBlueprintData] Response text length:', text.length);
+        
+        // Try to parse as JSON first
+        try {
+          const data = JSON.parse(text);
+          console.log('[getBlueprintData] Successfully parsed as JSON');
+          return { format: 'json', data };
+        } catch (jsonError) {
+          // If JSON parsing fails, it's Markdown format
+          console.log('[getBlueprintData] Not JSON, treating as Markdown');
+          return { format: 'markdown', data: text };
+        }
+      } catch (error) {
+        console.error('[getBlueprintData] Error:', error);
+        throw new Error(`Failed to load blueprint: ${error instanceof Error ? error.message : String(error)}`);
+      }
     }),
 });
 
