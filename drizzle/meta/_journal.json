@@ -15,34 +15,6 @@
       "when": 1761873258338,
       "tag": "0001_lowly_reaper",
       "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1762204527587,
-      "tag": "0002_wet_ultimo",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1762551836798,
-      "tag": "0003_great_earthquake",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1762719392820,
-      "tag": "0004_cultured_ken_ellis",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1762720508570,
-      "tag": "0005_violet_purifiers",
-      "breakpoints": true
     }
   ]
 }

@@ -1,9 +1,0 @@
-{
-  "query": "INSERT INTO turbo_intake_submissions (\n  submissionId,\n  businessName,\n  ownerName,\n  industry,\n  email,\n  phone,\n  whatYouSell,\n  idealCustomer,\n  biggestStruggle,\n  goal60To90Days,\n  longTermVision,\n  websiteUrl,\n  instagramHandle,\n  status,\n  auditGenerated,\n  blueprintGenerated,\n  createdAt,\n  updatedAt\n) VALUES (\n  'TURBO-INTAKE-20251107-211806',\n  'Turbo Resort',\n  'Zakhy C',\n  'AI Systems / Consumer Advocacy Technology',\n  'wearemoneybosses@gmail.com',\n  '4047599635',\n  'AI systems',\n  'Entrepreneurs',\n  'Capturing leads',\n  'Capture more leads',\n  'To be one of the biggest case builders',\n  'https://turboresponsehq.ai/',\n  '@moneyboss_zakhy',\n  'pending',\n  0,\n  0,\n  NOW(),\n  NOW()\n);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute INSERT INTO turbo_intake_submissions (\n  submissionId,\n  businessName,\n  ownerName,\n  industry,\n  email,\n  phone,\n  whatYouSell,\n  idealCustomer,\n  biggestStruggle,\n  goal60To90Days,\n  longTermVision,\n  websiteUrl,\n  instagramHandle,\n  status,\n  auditGenerated,\n  blueprintGenerated,\n  createdAt,\n  updatedAt\n) VALUES (\n  'TURBO-INTAKE-20251107-211806',\n  'Turbo Resort',\n  'Zakhy C',\n  'AI Systems / Consumer Advocacy Technology',\n  'wearemoneybosses@gmail.com',\n  '4047599635',\n  'AI systems',\n  'Entrepreneurs',\n  'Capturing leads',\n  'Capture more leads',\n  'To be one of the biggest case builders',\n  'https://turboresponsehq.ai/',\n  '@moneyboss_zakhy',\n  'pending',\n  0,\n  0,\n  NOW(),\n  NOW()\n);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 1659
-}
