@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
@@ -45,18 +45,45 @@ export default function AdminTurboIntake() {
     await generateBlueprintMutation.mutateAsync({ submissionId });
   };
 
-  const fetchBlueprintData = async (url: string) => {
-    setLoadingBlueprint(true);
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      setBlueprintData(data);
-    } catch (error) {
-      console.error('Failed to fetch blueprint:', error);
-      toast.error('Failed to load blueprint data');
-    } finally {
-      setLoadingBlueprint(false);
+  const [blueprintUrl, setBlueprintUrl] = useState<string | null>(null);
+  
+  const { data: fetchedBlueprintData, isLoading: isFetchingBlueprint, error: blueprintError } = trpc.turboIntake.getBlueprintData.useQuery(
+    { url: blueprintUrl! },
+    { enabled: blueprintUrl !== null }
+  );
+
+  useEffect(() => {
+    if (fetchedBlueprintData) {
+      console.log('Blueprint data loaded:', fetchedBlueprintData);
+      
+      // Handle both JSON and Markdown formats
+      if (fetchedBlueprintData.format === 'json') {
+        setBlueprintData(fetchedBlueprintData.data);
+        toast.success('Blueprint loaded successfully!');
+      } else if (fetchedBlueprintData.format === 'markdown') {
+        // For markdown, show it in a simple format
+        toast.info('Legacy blueprint format detected (Markdown)');
+        // Convert markdown to a simple display object
+        setBlueprintData({
+          legacy_format: true,
+          markdown_content: fetchedBlueprintData.data
+        });
+      }
+      
+      setBlueprintUrl(null); // Reset to allow fetching again
     }
+  }, [fetchedBlueprintData]);
+
+  useEffect(() => {
+    if (blueprintError) {
+      console.error('Failed to fetch blueprint:', blueprintError);
+      toast.error(`Failed to load blueprint data: ${blueprintError.message}`);
+      setBlueprintUrl(null); // Reset on error
+    }
+  }, [blueprintError]);
+
+  const fetchBlueprintData = async (url: string) => {
+    setBlueprintUrl(url);
   };
 
   const copyToClipboard = (text: string, label: string) => {
@@ -276,6 +303,25 @@ export default function AdminTurboIntake() {
 
                   {blueprintData && (
                     <div className="space-y-4 mt-4">
+                      {/* Check if legacy markdown format */}
+                      {blueprintData.legacy_format ? (
+                        <div className="border rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="font-semibold">Legacy Blueprint (Markdown Format)</h4>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => copyToClipboard(blueprintData.markdown_content, 'Blueprint')}
+                            >
+                              <Copy className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          <div className="text-sm whitespace-pre-wrap font-mono bg-muted p-4 rounded max-h-96 overflow-y-auto">
+                            {blueprintData.markdown_content}
+                          </div>
+                        </div>
+                      ) : (
+                        <>
                       {/* Executive Summary */}
                       <div className="border rounded-lg p-4">
                         <div className="flex items-center justify-between mb-2">
@@ -373,6 +419,8 @@ export default function AdminTurboIntake() {
                           </a>
                         </Button>
                       </div>
+                      </>
+                      )}
                     </div>
                   )}
                 </div>
