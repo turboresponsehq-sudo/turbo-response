@@ -2,9 +2,6 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
-import { chatRouter } from "./routers/chatRouter";
-import { adminRouter } from "./routers/adminRouter";
-import { turboIntakeRouter } from "./turboIntakeRouter";
 
 export const appRouter = router({
   system: systemRouter,
@@ -20,14 +17,12 @@ export const appRouter = router({
     }),
   }),
 
-  // Chat router for conversational AI
-  chat: chatRouter,
-
-  // Admin router for managing leads
-  admin: adminRouter,
-
-  // Turbo Intake router for 2-layer audit system
-  turboIntake: turboIntakeRouter,
+  // TODO: add feature routers here, e.g.
+  // todo: router({
+  //   list: protectedProcedure.query(({ ctx }) =>
+  //     db.getUserTodos(ctx.user.id)
+  //   ),
+  // }),
 });
 
 export type AppRouter = typeof appRouter;
