@@ -38,3 +38,9 @@
 - [x] Fix 404 errors on deployed site - all routes except homepage returning 404
 - [x] Add SPA routing configuration for Render deployment
 - [x] Fix admin login redirecting to Manus OAuth - use simple localStorage auth
+
+## Missing Legal Pages (NEW)
+- [x] client_contract.html → ClientContract.tsx + CSS
+- [x] service_agreement.html → ServiceAgreement.tsx + CSS
+- [x] disclaimer.html → Disclaimer.tsx + CSS
+- [x] terms_of_service.html → TermsOfService.tsx + CSS
