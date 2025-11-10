@@ -33,3 +33,7 @@
 - [ ] Save checkpoint
 - [ ] Push to GitHub
 - [ ] Verify on turboresponsehq.ai
+
+## Bug Fixes
+- [ ] Fix 404 errors on deployed site - all routes except homepage returning 404
+- [ ] Add SPA routing configuration for Render deployment

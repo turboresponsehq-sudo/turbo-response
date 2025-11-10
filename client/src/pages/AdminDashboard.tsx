@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import "./AdminDashboard.css";
-import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useLocation } from "wouter";
 import {
   Table,
   TableBody,
@@ -22,11 +22,18 @@ import {
 } from "@/components/ui/dialog";
 import { Loader2, Eye, Mail, Phone, Calendar } from "lucide-react";
 import { toast } from "sonner";
-import { getLoginUrl } from "@/const";
 
 export default function AdminDashboard() {
-  const { user, isAuthenticated, loading: authLoading } = useAuth();
+  const [, setLocation] = useLocation();
   const [selectedLeadId, setSelectedLeadId] = useState<number | null>(null);
+
+  // Validate admin session
+  const { data: session, isLoading: sessionLoading } = trpc.adminAuth.validateSession.useQuery();
+  const logoutMutation = trpc.adminAuth.logout.useMutation({
+    onSuccess: () => {
+      setLocation("/admin/login");
+    },
+  });
 
   const { data: leads, isLoading: leadsLoading } = trpc.admin.getLeads.useQuery();
   const { data: leadDetails } = trpc.admin.getLeadDetails.useQuery(
@@ -49,7 +56,13 @@ export default function AdminDashboard() {
   };
 
   // Auth check
-  if (authLoading) {
+  useEffect(() => {
+    if (!sessionLoading && (!session || !session.valid)) {
+      setLocation("/admin/login");
+    }
+  }, [session, sessionLoading, setLocation]);
+
+  if (sessionLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -57,18 +70,8 @@ export default function AdminDashboard() {
     );
   }
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
-        <Card className="p-8 max-w-md text-center">
-          <h2 className="text-2xl font-bold mb-4">Admin Access Required</h2>
-          <p className="text-muted-foreground mb-6">
-            Please sign in to access the admin dashboard.
-          </p>
-          <Button onClick={() => (window.location.href = getLoginUrl())}>Sign In</Button>
-        </Card>
-      </div>
-    );
+  if (!session || !session.valid) {
+    return null; // Will redirect via useEffect
   }
 
   const getStatusColor = (status: string) => {

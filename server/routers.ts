@@ -4,6 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
 import { chatRouter } from "./routers/chatRouter";
 import { adminRouter } from "./routers/adminRouter";
+import { adminAuthRouter } from "./routers/adminAuthRouter";
 
 export const appRouter = router({
   system: systemRouter,
@@ -21,6 +22,9 @@ export const appRouter = router({
 
   // Chat router for conversational AI
   chat: chatRouter,
+
+  // Admin authentication router (custom session management)
+  adminAuth: adminAuthRouter,
 
   // Admin router for managing leads
   admin: adminRouter,
