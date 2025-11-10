@@ -1,161 +1,136 @@
-import { Button } from "@/components/ui/button";
-import { APP_TITLE } from "@/const";
 import { Link } from "wouter";
-import { MessageSquare, Shield, FileText, Zap } from "lucide-react";
+import "./Home.css";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      {/* Hero Section */}
-      <div className="container max-w-6xl py-20">
-        <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            {APP_TITLE}
-          </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-            AI-Powered Consumer Defense Platform
-          </p>
-          <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto">
-            Fighting debt collectors, evictions, credit errors, and more. Get professional response
-            documents customized to your situation in 24 hours.
-          </p>
-
-          <Link href="/chat">
-            <Button size="lg" className="text-lg px-8 py-6 h-auto">
-              <MessageSquare className="mr-2 h-5 w-5" />
-              Start Your Free Case Analysis
-            </Button>
-          </Link>
-
-          <p className="text-sm text-muted-foreground mt-4">
-            No credit card required • Takes 5-10 minutes
-          </p>
-        </div>
-
-        {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border">
-            <MessageSquare className="h-10 w-10 text-blue-600 mb-4" />
-            <h3 className="font-semibold mb-2">Conversational AI</h3>
-            <p className="text-sm text-muted-foreground">
-              Tell your story naturally. Our AI asks smart follow-up questions to understand your
-              situation.
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border">
-            <Shield className="h-10 w-10 text-purple-600 mb-4" />
-            <h3 className="font-semibold mb-2">Expert Analysis</h3>
-            <p className="text-sm text-muted-foreground">
-              Get instant analysis of potential issues and your options based on consumer protection
-              laws.
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border">
-            <FileText className="h-10 w-10 text-green-600 mb-4" />
-            <h3 className="font-semibold mb-2">Custom Documents</h3>
-            <p className="text-sm text-muted-foreground">
-              Professional response letters, cease & desist, validation requests - all customized to
-              your case.
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border">
-            <Zap className="h-10 w-10 text-orange-600 mb-4" />
-            <h3 className="font-semibold mb-2">Fast Turnaround</h3>
-            <p className="text-sm text-muted-foreground">
-              Get your document package within 24-48 hours. Ready to sign and send immediately.
-            </p>
-          </div>
-        </div>
-
-        {/* How It Works */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg p-8 shadow-sm border mb-16">
-          <h2 className="text-3xl font-bold text-center mb-8">How It Works</h2>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="bg-blue-100 dark:bg-blue-900/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-blue-600">1</span>
-              </div>
-              <h3 className="font-semibold mb-2">Tell Your Story</h3>
-              <p className="text-sm text-muted-foreground">
-                Chat with our AI and answer a few questions about your situation. Upload any evidence
-                you have.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-purple-100 dark:bg-purple-900/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-purple-600">2</span>
-              </div>
-              <h3 className="font-semibold mb-2">Get Analysis</h3>
-              <p className="text-sm text-muted-foreground">
-                Our AI analyzes your case and identifies potential issues, inconsistencies, and your
-                options.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-green-100 dark:bg-green-900/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-green-600">3</span>
-              </div>
-              <h3 className="font-semibold mb-2">Receive Documents</h3>
-              <p className="text-sm text-muted-foreground">
-                Get your custom document package within 24 hours. Sign, send, and protect your rights.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* We Help With */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold mb-8">We Help With</h2>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
-            {[
-              "Debt Collection Harassment",
-              "Eviction Defense",
-              "Credit Report Errors",
-              "Unemployment Benefits",
-              "Wage Garnishment",
-              "Bank Account Issues",
-              "Discrimination Cases",
-              "Consumer Rights Violations",
-            ].map(item => (
-              <div
-                key={item}
-                className="bg-slate-100 dark:bg-slate-800 px-4 py-3 rounded-lg text-sm font-medium"
-              >
-                {item}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* CTA Section */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-12 text-center text-white">
-          <h2 className="text-3xl font-bold mb-4">Ready to Fight Back?</h2>
-          <p className="text-lg mb-8 opacity-90">
-            Don't let debt collectors, landlords, or creditors push you around. Get the documents you
-            need to respond with confidence.
-          </p>
-
-          <Link href="/chat">
-            <Button size="lg" variant="secondary" className="text-lg px-8 py-6 h-auto">
-              <MessageSquare className="mr-2 h-5 w-5" />
-              Start Free Case Analysis Now
-            </Button>
-          </Link>
-
-          <p className="text-sm mt-4 opacity-75">
-            ⚠️ We are NOT lawyers. We provide document preparation services only. For legal advice,
-            consult a licensed attorney.
-          </p>
+    <>
+      {/* Animated Background */}
+      <div className="bg-animation">
+        <div className="bg-grid"></div>
+        <div className="floating-elements">
+          <div className="floating-element"></div>
+          <div className="floating-element"></div>
+          <div className="floating-element"></div>
+          <div className="floating-element"></div>
+          <div className="floating-element"></div>
         </div>
       </div>
-    </div>
+
+      {/* Header */}
+      <header className="header">
+        <div className="nav-container">
+          <Link href="/" className="logo">
+            <div className="logo-icon">⚡</div>
+            TURBO RESPONSE
+          </Link>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section className="hero">
+        <div className="hero-content">
+          <div className="hero-badge">
+            🤖 Powered by Advanced AI Technology
+          </div>
+          <h1 className="hero-title">
+            AI-POWERED<br />
+            CONSUMER DEFENSE
+          </h1>
+          <p className="hero-description">
+            We are a next-generation, AI-powered consumer rights platform that delivers rapid legal responses in minutes — not days. Built with cutting-edge technology, our platform empowers everyday people to stand up against unfair practices, while giving them a seamless, modern experience.
+          </p>
+          <p className="hero-subtitle">
+            Stop evictions, IRS threats, and debt collectors with professional legal game plans generated in minutes using cutting-edge AI
+          </p>
+          <Link href="/chat" className="cta-button">
+            🚀 GET STARTED
+          </Link>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="features">
+        <h2 className="features-title">Next-Generation Legal Defense</h2>
+        <div className="features-grid">
+          <div className="feature-card">
+            <div className="feature-icon">🧠</div>
+            <h3>AI-Powered Analysis</h3>
+            <p>Advanced machine learning analyzes your case and generates the perfect legal response game plan</p>
+          </div>
+          <div className="feature-card">
+            <div className="feature-icon">⚡</div>
+            <h3>Lightning Fast</h3>
+            <p>Get professional legal game plans in minutes, not days. Our AI works 24/7 to protect your rights</p>
+          </div>
+          <div className="feature-card">
+            <div className="feature-icon">🛡️</div>
+            <h3>Expert Reviewed</h3>
+            <p>Every AI-generated game plan is reviewed by consumer rights specialists for maximum effectiveness</p>
+          </div>
+          <div className="feature-card">
+            <div className="feature-icon">🎯</div>
+            <h3>Precision Targeting</h3>
+            <p>AI identifies the exact laws and regulations to cite for your specific situation and jurisdiction</p>
+          </div>
+          <div className="feature-card">
+            <div className="feature-icon">🔒</div>
+            <h3>Bank-Level Security</h3>
+            <p>Your sensitive information is protected with military-grade encryption and secure processing</p>
+          </div>
+          <div className="feature-card">
+            <div className="feature-icon">📊</div>
+            <h3>Success Analytics</h3>
+            <p>Track your case progress with real-time analytics and success probability scoring</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="pricing">
+        <h2 className="pricing-title">Choose Your Case Defense Package</h2>
+        <div className="pricing-grid">
+          <div className="pricing-card">
+            <div className="pricing-price">$149</div>
+            <div className="pricing-name">Case Starter Plan</div>
+            <div className="pricing-description">
+              For light disputes or single-notice responses. One case review + AI-assisted response, personalized legal strategy outline, email follow-up + one revision
+            </div>
+            <Link href="/chat" className="cta-button">
+              Start Your Case
+            </Link>
+          </div>
+          <div className="pricing-card featured">
+            <div className="pricing-price">$349</div>
+            <div className="pricing-name">Standard Defense Plan</div>
+            <div className="pricing-description">
+              For multi-step disputes or recurring issues. Full AI + expert-reviewed case defense, 30-day follow-up & resubmission support, document prep + escalation guidance
+            </div>
+            <Link href="/chat" className="cta-button">
+              Most Popular
+            </Link>
+          </div>
+          <div className="pricing-card">
+            <div className="pricing-price">Starting at $699</div>
+            <div className="pricing-name">Comprehensive Case Management</div>
+            <div className="pricing-description">
+              For complex or high-value cases. End-to-end case handling, multi-stage dispute letters + appeals, ongoing updates + analytics dashboard access, priority support
+            </div>
+            <Link href="/chat" className="cta-button">
+              Start Your Case
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="footer">
+        <div className="footer-text">
+          © 2025 Rapid Response AI. Advanced consumer defense technology.
+        </div>
+        <div className="footer-text">
+          🔒 Secure • 🤖 AI-Powered • ⚡ Lightning Fast
+        </div>
+      </footer>
+    </>
   );
 }
-
