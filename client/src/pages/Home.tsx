@@ -42,7 +42,7 @@ export default function Home() {
           <p className="hero-subtitle">
             Stop evictions, IRS threats, and debt collectors with professional legal game plans generated in minutes using cutting-edge AI
           </p>
-          <Link href="/chat" className="cta-button">
+          <Link href="/intake" className="cta-button">
             🚀 GET STARTED
           </Link>
         </div>
@@ -95,7 +95,7 @@ export default function Home() {
             <div className="pricing-description">
               For light disputes or single-notice responses. One case review + AI-assisted response, personalized legal strategy outline, email follow-up + one revision
             </div>
-            <Link href="/chat" className="cta-button">
+            <Link href="/intake" className="cta-button">
               Start Your Case
             </Link>
           </div>
@@ -105,7 +105,7 @@ export default function Home() {
             <div className="pricing-description">
               For multi-step disputes or recurring issues. Full AI + expert-reviewed case defense, 30-day follow-up & resubmission support, document prep + escalation guidance
             </div>
-            <Link href="/chat" className="cta-button">
+            <Link href="/intake" className="cta-button">
               Most Popular
             </Link>
           </div>
@@ -115,7 +115,7 @@ export default function Home() {
             <div className="pricing-description">
               For complex or high-value cases. End-to-end case handling, multi-stage dispute letters + appeals, ongoing updates + analytics dashboard access, priority support
             </div>
-            <Link href="/chat" className="cta-button">
+            <Link href="/intake" className="cta-button">
               Start Your Case
             </Link>
           </div>
