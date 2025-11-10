@@ -7,8 +7,6 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import ChatInterface from "./pages/ChatInterface";
 import AdminDashboard from "./pages/AdminDashboard";
-import TurboIntake from "./pages/TurboIntake";
-import AdminTurboIntake from "./pages/AdminTurboIntake";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -17,8 +15,6 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path="/chat" component={ChatInterface} />
       <Route path="/admin" component={AdminDashboard} />
-      <Route path="/turbo-intake" component={TurboIntake} />
-      <Route path="/admin/turbo-intake" component={AdminTurboIntake} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
