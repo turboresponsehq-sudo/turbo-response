@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import "./AdminDashboard.css";
-import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -25,8 +25,19 @@ import { toast } from "sonner";
 import { getLoginUrl } from "@/const";
 
 export default function AdminDashboard() {
-  const { user, isAuthenticated, loading: authLoading } = useAuth();
+  const [, setLocation] = useLocation();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
   const [selectedLeadId, setSelectedLeadId] = useState<number | null>(null);
+
+  useEffect(() => {
+    // Check for simple admin session
+    const session = localStorage.getItem("admin_session");
+    if (session) {
+      setIsAuthenticated(true);
+    }
+    setAuthLoading(false);
+  }, []);
 
   const { data: leads, isLoading: leadsLoading } = trpc.admin.getLeads.useQuery();
   const { data: leadDetails } = trpc.admin.getLeadDetails.useQuery(
@@ -58,17 +69,11 @@ export default function AdminDashboard() {
   }
 
   if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
-        <Card className="p-8 max-w-md text-center">
-          <h2 className="text-2xl font-bold mb-4">Admin Access Required</h2>
-          <p className="text-muted-foreground mb-6">
-            Please sign in to access the admin dashboard.
-          </p>
-          <Button onClick={() => (window.location.href = getLoginUrl())}>Sign In</Button>
-        </Card>
-      </div>
-    );
+    // Redirect to admin login page
+    useEffect(() => {
+      setLocation("/admin/login");
+    }, [setLocation]);
+    return null;
   }
 
   const getStatusColor = (status: string) => {

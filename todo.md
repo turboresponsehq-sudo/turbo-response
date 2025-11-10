@@ -33,3 +33,8 @@
 - [ ] Save checkpoint
 - [ ] Push to GitHub
 - [ ] Verify on turboresponsehq.ai
+
+## Bug Fixes
+- [x] Fix 404 errors on deployed site - all routes except homepage returning 404
+- [x] Add SPA routing configuration for Render deployment
+- [x] Fix admin login redirecting to Manus OAuth - use simple localStorage auth
