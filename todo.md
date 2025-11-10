@@ -44,3 +44,7 @@
 - [x] service_agreement.html → ServiceAgreement.tsx + CSS
 - [x] disclaimer.html → Disclaimer.tsx + CSS
 - [x] terms_of_service.html → TermsOfService.tsx + CSS
+
+## Current Issues
+- [ ] Admin login page (/admin/login) showing dashboard instead of login form on live site
+- [ ] Need to verify Render is deploying the correct AdminLogin.tsx file
