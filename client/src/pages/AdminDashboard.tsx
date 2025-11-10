@@ -68,11 +68,14 @@ export default function AdminDashboard() {
     );
   }
 
-  if (!isAuthenticated) {
-    // Redirect to admin login page
-    useEffect(() => {
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
       setLocation("/admin/login");
-    }, [setLocation]);
+    }
+  }, [authLoading, isAuthenticated, setLocation]);
+
+  if (!isAuthenticated) {
     return null;
   }
 
