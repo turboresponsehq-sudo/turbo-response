@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { trpc } from "@/lib/trpc";
 import "./AdminLogin.css";
 
 export default function AdminLogin() {
@@ -9,27 +10,30 @@ export default function AdminLogin() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // Check if already logged in via session validation
+  const { data: session } = trpc.adminAuth.validateSession.useQuery();
+  
   useEffect(() => {
-    // Check if already logged in
-    const session = localStorage.getItem("admin_session");
-    if (session) {
+    if (session && session.valid) {
       setLocation("/admin");
     }
-  }, [setLocation]);
+  }, [session, setLocation]);
+
+  const loginMutation = trpc.adminAuth.login.useMutation({
+    onSuccess: () => {
+      setLocation("/admin");
+    },
+    onError: (error) => {
+      setError("❌ " + (error.message || "Invalid credentials"));
+      setIsLoading(false);
+    },
+  });
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
-
-    // Simple demo login - replace with real authentication
-    if (username === "admin" && password === "admin123") {
-      localStorage.setItem("admin_session", "demo-token");
-      setLocation("/admin");
-    } else {
-      setError("❌ Invalid credentials");
-      setIsLoading(false);
-    }
+    loginMutation.mutate({ username, password });
   };
 
   return (
