@@ -1,39 +1,24 @@
-import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
-import { trpc } from "@/lib/trpc";
+// TEMPORARY: Backend calls removed to fix static build
+// TODO: Re-add backend integration after setting up separate backend service
+
+import { useState } from "react";
 import "./AdminLogin.css";
 
 export default function AdminLogin() {
-  const [, setLocation] = useLocation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Check if already logged in via session validation
-  const { data: session } = trpc.adminAuth.validateSession.useQuery();
-  
-  useEffect(() => {
-    if (session && session.valid) {
-      setLocation("/admin");
-    }
-  }, [session, setLocation]);
-
-  const loginMutation = trpc.adminAuth.login.useMutation({
-    onSuccess: () => {
-      setLocation("/admin");
-    },
-    onError: (error) => {
-      setError("❌ " + (error.message || "Invalid credentials"));
-      setIsLoading(false);
-    },
-  });
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-    setIsLoading(true);
-    loginMutation.mutate({ username, password });
+    
+    if (!username || !password) {
+      setError('❌ Please enter both username and password');
+      return;
+    }
+    
+    // PLACEHOLDER: Backend integration disabled
+    setError("⚠️ Backend integration temporarily disabled. Please check back later.");
   };
 
   return (
@@ -87,8 +72,8 @@ export default function AdminLogin() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <button type="submit" className="btn-login" disabled={isLoading}>
-            {isLoading ? "Logging in..." : "🔓 Login to Dashboard"}
+          <button type="submit" className="btn-login">
+            🔓 Login to Dashboard
           </button>
         </form>
 
