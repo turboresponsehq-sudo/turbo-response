@@ -1,0 +1,111 @@
+:root {
+  --primary-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  --accent-cyan: #06b6d4;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --card-bg: rgba(15, 23, 42, 0.8);
+  --border-glow: rgba(6, 182, 212, 0.2);
+}
+
+.agreement-page {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--primary-gradient);
+  color: var(--text-primary);
+  line-height: 1.8;
+  padding: 40px 20px;
+  min-height: 100vh;
+}
+
+.agreement-container {
+  max-width: 900px;
+  margin: 0 auto;
+  background: var(--card-bg);
+  border: 1px solid var(--border-glow);
+  border-radius: 20px;
+  padding: 50px;
+  backdrop-filter: blur(10px);
+}
+
+.agreement-container h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--accent-cyan);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.effective-date {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-bottom: 40px;
+  font-size: 0.95rem;
+}
+
+.agreement-container h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+.agreement-container h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-top: 25px;
+  margin-bottom: 15px;
+}
+
+.agreement-container p {
+  margin-bottom: 15px;
+  color: var(--text-secondary);
+}
+
+.highlight {
+  background: rgba(6, 182, 212, 0.1);
+  border-left: 3px solid var(--accent-cyan);
+  padding: 20px;
+  margin: 25px 0;
+  border-radius: 8px;
+}
+
+.highlight strong {
+  color: var(--accent-cyan);
+}
+
+.agreement-container ul,
+.agreement-container ol {
+  margin-left: 30px;
+  margin-bottom: 20px;
+  color: var(--text-secondary);
+}
+
+.agreement-container li {
+  margin-bottom: 10px;
+}
+
+.back-link {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.back-link a {
+  color: var(--accent-cyan);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .agreement-container {
+    padding: 30px 25px;
+  }
+
+  .agreement-container h1 {
+    font-size: 2rem;
+  }
+
+  .agreement-container h2 {
+    font-size: 1.3rem;
+  }
+}
