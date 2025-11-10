@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import ChatInterface from "./pages/ChatInterface";
 import AdminDashboard from "./pages/AdminDashboard";
+import FloatingChatWidget from "./components/FloatingChatWidget";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -31,12 +32,13 @@ function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider
-        defaultTheme="light"
+        defaultTheme="dark"
         // switchable
       >
         <TooltipProvider>
           <Toaster />
           <Router />
+          <FloatingChatWidget />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
