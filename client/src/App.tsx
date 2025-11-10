@@ -7,6 +7,11 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import ChatInterface from "./pages/ChatInterface";
 import AdminDashboard from "./pages/AdminDashboard";
+import IntakeForm from "./pages/IntakeForm";
+import Payment from "./pages/Payment";
+import TurboIntake from "./pages/TurboIntake";
+import AdminLogin from "./pages/AdminLogin";
+import AdminSettings from "./pages/AdminSettings";
 import FloatingChatWidget from "./components/FloatingChatWidget";
 
 function Router() {
@@ -15,6 +20,11 @@ function Router() {
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path="/chat" component={ChatInterface} />
+      <Route path="/intake" component={IntakeForm} />
+      <Route path="/payment" component={Payment} />
+      <Route path="/turbo-intake" component={TurboIntake} />
+      <Route path="/admin/login" component={AdminLogin} />
+      <Route path="/admin/settings" component={AdminSettings} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}

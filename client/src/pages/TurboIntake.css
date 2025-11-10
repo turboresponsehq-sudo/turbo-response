@@ -1,0 +1,207 @@
+/* Turbo Intake Page Styles */
+
+.turbo-intake-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.turbo-intake-page .container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.turbo-intake-page .header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.turbo-intake-page .header h1 {
+  font-size: 32px;
+  color: #667eea;
+  margin-bottom: 10px;
+}
+
+.turbo-intake-page .intro-box {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 25px;
+  border-radius: 15px;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.turbo-intake-page .intro-box h2 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.turbo-intake-page .intro-box p {
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+
+.turbo-intake-page .intro-box strong {
+  display: block;
+  margin-top: 15px;
+  font-size: 16px;
+}
+
+.turbo-intake-page .form-section {
+  margin-bottom: 35px;
+}
+
+.turbo-intake-page .section-title {
+  font-size: 20px;
+  color: #667eea;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #667eea;
+  font-weight: 600;
+}
+
+.turbo-intake-page .form-group {
+  margin-bottom: 20px;
+}
+
+.turbo-intake-page label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.turbo-intake-page label .required {
+  color: #e74c3c;
+  margin-left: 3px;
+}
+
+.turbo-intake-page input[type="text"],
+.turbo-intake-page input[type="email"],
+.turbo-intake-page input[type="tel"],
+.turbo-intake-page input[type="url"],
+.turbo-intake-page textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: border-color 0.3s;
+  font-family: inherit;
+}
+
+.turbo-intake-page input:focus,
+.turbo-intake-page textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.turbo-intake-page textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.turbo-intake-page input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  border: 2px dashed #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.turbo-intake-page .checkbox-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.turbo-intake-page .checkbox-group input[type="checkbox"] {
+  margin-top: 3px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.turbo-intake-page .checkbox-group label {
+  margin: 0;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.turbo-intake-page .submit-btn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.turbo-intake-page .submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+}
+
+.turbo-intake-page .submit-btn:active {
+  transform: translateY(0);
+}
+
+.turbo-intake-page .submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.turbo-intake-page .success-message {
+  display: none;
+  background: #27ae60;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  margin-top: 20px;
+  font-size: 16px;
+}
+
+.turbo-intake-page .error-message {
+  display: none;
+  background: #e74c3c;
+  color: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .turbo-intake-page .container {
+    padding: 25px 20px;
+  }
+
+  .turbo-intake-page .header h1 {
+    font-size: 26px;
+  }
+
+  .turbo-intake-page .intro-box h2 {
+    font-size: 20px;
+  }
+
+  .turbo-intake-page .intro-box p {
+    font-size: 14px;
+  }
+}
