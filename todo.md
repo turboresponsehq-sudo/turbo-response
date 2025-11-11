@@ -9,7 +9,7 @@
 - [x] admin_settings.html → AdminSettings.tsx + AdminSettings.css
 
 ## Phase 2: Restore All Routes
-- [ ] / (homepage) - DONE
+- [x] / (homepage) - DONE
 - [x] /intake (Consumer Defense form)
 - [x] /turbo-intake (Business audit form)
 - [x] /admin (Admin dashboard)
@@ -30,17 +30,52 @@
 - [ ] Floating chat widget on all pages
 
 ## Phase 5: Deploy
-- [ ] Save checkpoint
-- [ ] Push to GitHub
-- [ ] Verify on turboresponsehq.ai
+- [x] Save checkpoint
+- [x] Push to GitHub
+- [x] Verify on turboresponsehq.ai
 
 ## Bug Fixes
 - [x] Fix 404 errors on deployed site - all routes except homepage returning 404
 - [x] Add SPA routing configuration for Render deployment
 - [x] Fix admin login redirecting to Manus OAuth - use simple localStorage auth
+- [x] Rollback to working checkpoint and redeploy
 
 ## Missing Legal Pages (NEW)
 - [x] client_contract.html → ClientContract.tsx + CSS
 - [x] service_agreement.html → ServiceAgreement.tsx + CSS
 - [x] disclaimer.html → Disclaimer.tsx + CSS
 - [x] terms_of_service.html → TermsOfService.tsx + CSS
+
+---
+
+# FRONTEND HARDENING PHASE (feat/frontend-hardening branch)
+
+## A. File Structure Cleanup
+- [x] Remove unused ComponentShowcase.tsx
+- [x] Remove unused DashboardLayout components (not used in current design)
+- [ ] Clean up unused imports in pages
+- [ ] Organize CSS files (consider consolidating)
+
+## B. Mobile Responsiveness
+- [x] Homepage - Fix mobile layout and spacing
+- [x] Intake Form - Make form fields touch-friendly
+- [x] Payment Page - Optimize for mobile
+- [x] Admin Login - Ensure mobile-friendly
+- [ ] Legal Pages - Check mobile readability
+- [ ] Chat Interface - Mobile optimization
+- [x] Floating Chat Widget - Mobile positioning
+
+## C. UI Improvements
+- [x] Increase button sizes for touch (min 44x44px)
+- [x] Fix spacing and alignment across all pages
+- [x] Improve form field sizing on mobile
+- [x] Add proper padding for mobile viewports
+- [ ] Fix any text overflow issues
+- [ ] Ensure proper contrast for readability
+
+## D. Testing
+- [x] Test homepage on mobile viewport
+- [x] Test intake form on mobile viewport
+- [x] Test payment page on mobile viewport
+- [x] Test all navigation flows
+- [x] Verify floating chat widget doesn't block content
