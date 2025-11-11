@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { trpc } from "@/lib/trpc";
 import "./AdminDashboard.css";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -13,297 +12,129 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Loader2, Eye, Mail, Phone, Calendar } from "lucide-react";
-import { toast } from "sonner";
-import { getLoginUrl } from "@/const";
+import { Loader2, Mail, Phone, Calendar } from "lucide-react";
 
 export default function AdminDashboard() {
   const [, setLocation] = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
-  const [selectedLeadId, setSelectedLeadId] = useState<number | null>(null);
 
   useEffect(() => {
     // Check for simple admin session
     const session = localStorage.getItem("admin_session");
     if (session) {
       setIsAuthenticated(true);
+    } else {
+      setLocation("/admin/login");
     }
     setAuthLoading(false);
-  }, []);
-
-  const { data: leads, isLoading: leadsLoading } = trpc.admin.getLeads.useQuery();
-  const { data: leadDetails } = trpc.admin.getLeadDetails.useQuery(
-    { leadId: selectedLeadId! },
-    { enabled: !!selectedLeadId }
-  );
-  const updateStatusMutation = trpc.admin.updateLeadStatus.useMutation();
-
-  const handleStatusChange = async (leadId: number, status: string) => {
-    try {
-      await updateStatusMutation.mutateAsync({
-        leadId,
-        status: status as any,
-      });
-      toast.success("Status updated");
-      window.location.reload(); // Refresh data
-    } catch (error) {
-      toast.error("Failed to update status");
-    }
-  };
+  }, [setLocation]);
 
   // Auth check
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-slate-900">
+        <Loader2 className="h-8 w-8 animate-spin text-cyan-500" />
       </div>
     );
   }
 
   if (!isAuthenticated) {
-    // Redirect to admin login page
-    useEffect(() => {
-      setLocation("/admin/login");
-    }, [setLocation]);
     return null;
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "new":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
-      case "contacted":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
-      case "qualified":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200";
-      case "converted":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
-      case "closed":
-        return "bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200";
-      default:
-        return "bg-slate-100 text-slate-800";
-    }
-  };
-
-  const getCategoryLabel = (category: string | null) => {
-    if (!category) return "Unknown";
-    return category
-      .split("_")
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
+  // Mock data for display
+  const leads: any[] = [];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-slate-900">
       <div className="container max-w-7xl py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Manage leads and conversations</p>
+          <h1 className="text-3xl font-bold mb-2 text-white">Admin Dashboard</h1>
+          <p className="text-slate-400">Manage leads and conversations</p>
         </div>
 
         {/* Stats Cards */}
         <div className="grid md:grid-cols-4 gap-4 mb-8">
-          <Card className="p-4">
-            <p className="text-sm text-muted-foreground mb-1">Total Leads</p>
-            <p className="text-2xl font-bold">{leads?.length || 0}</p>
+          <Card className="p-4 bg-slate-800 border-slate-700">
+            <p className="text-sm text-slate-400 mb-1">Total Leads</p>
+            <p className="text-2xl font-bold text-white">{leads.length || 0}</p>
           </Card>
-          <Card className="p-4">
-            <p className="text-sm text-muted-foreground mb-1">New</p>
-            <p className="text-2xl font-bold">
-              {leads?.filter(l => l.status === "new").length || 0}
+          <Card className="p-4 bg-slate-800 border-slate-700">
+            <p className="text-sm text-slate-400 mb-1">New</p>
+            <p className="text-2xl font-bold text-white">
+              {leads.filter(l => l.status === "new").length || 0}
             </p>
           </Card>
-          <Card className="p-4">
-            <p className="text-sm text-muted-foreground mb-1">Contacted</p>
-            <p className="text-2xl font-bold">
-              {leads?.filter(l => l.status === "contacted").length || 0}
+          <Card className="p-4 bg-slate-800 border-slate-700">
+            <p className="text-sm text-slate-400 mb-1">Contacted</p>
+            <p className="text-2xl font-bold text-white">
+              {leads.filter(l => l.status === "contacted").length || 0}
             </p>
           </Card>
-          <Card className="p-4">
-            <p className="text-sm text-muted-foreground mb-1">Converted</p>
-            <p className="text-2xl font-bold">
-              {leads?.filter(l => l.status === "converted").length || 0}
+          <Card className="p-4 bg-slate-800 border-slate-700">
+            <p className="text-sm text-slate-400 mb-1">Converted</p>
+            <p className="text-2xl font-bold text-white">
+              {leads.filter(l => l.status === "converted").length || 0}
             </p>
           </Card>
         </div>
 
         {/* Leads Table */}
-        <Card className="p-6">
-          <h2 className="text-xl font-bold mb-4">All Leads</h2>
+        <Card className="p-6 bg-slate-800 border-slate-700">
+          <h2 className="text-xl font-bold mb-4 text-white">All Leads</h2>
 
-          {leadsLoading ? (
-            <div className="flex justify-center py-8">
-              <Loader2 className="h-8 w-8 animate-spin" />
+          {leads.length === 0 ? (
+            <div className="text-center py-8 text-slate-400">
+              No leads yet. Backend functionality is currently disabled in static deployment.
             </div>
-          ) : !leads || leads.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">No leads yet</div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Phone</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead className="text-slate-300">Name</TableHead>
+                    <TableHead className="text-slate-300">Email</TableHead>
+                    <TableHead className="text-slate-300">Phone</TableHead>
+                    <TableHead className="text-slate-300">Category</TableHead>
+                    <TableHead className="text-slate-300">Status</TableHead>
+                    <TableHead className="text-slate-300">Created</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {leads.map(lead => (
                     <TableRow key={lead.id}>
-                      <TableCell className="font-medium">{lead.name}</TableCell>
+                      <TableCell className="font-medium text-white">{lead.name}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Mail className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm">{lead.email}</span>
+                          <Mail className="h-4 w-4 text-slate-400" />
+                          <span className="text-sm text-slate-300">{lead.email}</span>
                         </div>
                       </TableCell>
                       <TableCell>
                         {lead.phone ? (
                           <div className="flex items-center gap-2">
-                            <Phone className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-sm">{lead.phone}</span>
+                            <Phone className="h-4 w-4 text-slate-400" />
+                            <span className="text-sm text-slate-300">{lead.phone}</span>
                           </div>
                         ) : (
-                          <span className="text-sm text-muted-foreground">-</span>
+                          <span className="text-sm text-slate-400">-</span>
                         )}
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline">{getCategoryLabel(lead.category)}</Badge>
+                        <Badge variant="outline" className="text-slate-300 border-slate-600">
+                          {lead.category}
+                        </Badge>
                       </TableCell>
                       <TableCell>
-                        <select
-                          value={lead.status}
-                          onChange={e => handleStatusChange(lead.id, e.target.value)}
-                          className={`text-xs px-2 py-1 rounded-md border-0 ${getStatusColor(
-                            lead.status
-                          )}`}
-                        >
-                          <option value="new">New</option>
-                          <option value="contacted">Contacted</option>
-                          <option value="qualified">Qualified</option>
-                          <option value="converted">Converted</option>
-                          <option value="closed">Closed</option>
-                        </select>
+                        <Badge className="bg-blue-600 text-white">{lead.status}</Badge>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-2 text-sm text-slate-400">
                           <Calendar className="h-4 w-4" />
                           {new Date(lead.createdAt).toLocaleDateString()}
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setSelectedLeadId(lead.id)}
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
-                            <DialogHeader>
-                              <DialogTitle>Lead Details: {lead.name}</DialogTitle>
-                            </DialogHeader>
-
-                            {leadDetails && (
-                              <div className="space-y-6">
-                                {/* Contact Info */}
-                                <div>
-                                  <h3 className="font-semibold mb-2">Contact Information</h3>
-                                  <div className="space-y-1 text-sm">
-                                    <p>
-                                      <strong>Email:</strong> {leadDetails.lead.email}
-                                    </p>
-                                    <p>
-                                      <strong>Phone:</strong> {leadDetails.lead.phone || "N/A"}
-                                    </p>
-                                    <p>
-                                      <strong>Best Time:</strong>{" "}
-                                      {leadDetails.lead.bestTimeToCall || "N/A"}
-                                    </p>
-                                  </div>
-                                </div>
-
-                                {/* Case Summary */}
-                                {leadDetails.conversation?.summary && (
-                                  <div>
-                                    <h3 className="font-semibold mb-2">Case Summary</h3>
-                                    <p className="text-sm bg-slate-50 dark:bg-slate-800 p-3 rounded">
-                                      {leadDetails.conversation.summary}
-                                    </p>
-                                  </div>
-                                )}
-
-                                {/* Conversation History */}
-                                <div>
-                                  <h3 className="font-semibold mb-2">Conversation History</h3>
-                                  <div className="space-y-2 max-h-60 overflow-y-auto">
-                                    {leadDetails.messages?.map((msg, idx) => (
-                                      <div
-                                        key={idx}
-                                        className={`text-sm p-2 rounded ${
-                                          msg.role === "user"
-                                            ? "bg-blue-50 dark:bg-blue-900/20"
-                                            : msg.role === "system"
-                                            ? "bg-green-50 dark:bg-green-900/20"
-                                            : "bg-slate-50 dark:bg-slate-800"
-                                        }`}
-                                      >
-                                        <p className="font-medium text-xs mb-1">
-                                          {msg.role === "user"
-                                            ? "User"
-                                            : msg.role === "system"
-                                            ? "System"
-                                            : "AI"}
-                                        </p>
-                                        <p className="whitespace-pre-wrap">{msg.content}</p>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-
-                                {/* Evidence Files */}
-                                {leadDetails.evidence && leadDetails.evidence.length > 0 && (
-                                  <div>
-                                    <h3 className="font-semibold mb-2">Evidence Files</h3>
-                                    <div className="space-y-2">
-                                      {leadDetails.evidence.map((file, idx) => (
-                                        <div
-                                          key={idx}
-                                          className="flex items-center justify-between text-sm bg-slate-50 dark:bg-slate-800 p-2 rounded"
-                                        >
-                                          <span>{file.filename || "Unnamed file"}</span>
-                                          <Button
-                                            variant="link"
-                                            size="sm"
-                                            onClick={() => window.open(file.fileUrl, "_blank")}
-                                          >
-                                            View
-                                          </Button>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                          </DialogContent>
-                        </Dialog>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -312,8 +143,21 @@ export default function AdminDashboard() {
             </div>
           )}
         </Card>
+
+        {/* Logout Button */}
+        <div className="mt-8 text-center">
+          <Button
+            variant="outline"
+            onClick={() => {
+              localStorage.removeItem("admin_session");
+              setLocation("/admin/login");
+            }}
+            className="bg-slate-800 border-slate-700 text-white hover:bg-slate-700"
+          >
+            Logout
+          </Button>
+        </div>
       </div>
     </div>
   );
 }
-
