@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
+import { PaymentSkeleton } from "@/components/Skeleton";
 import "./Payment.css";
 
 export default function Payment() {
+  const [isLoading, setIsLoading] = useState(true);
   const [caseData, setCaseData] = useState({
     caseId: "Loading...",
     clientName: "Loading...",
@@ -28,17 +30,21 @@ export default function Payment() {
     const caseId = `CASE-${Date.now()}`;
     const today = new Date().toLocaleDateString();
 
-    setCaseData({
-      caseId,
-      clientName: name,
-      clientEmail: email,
-      caseCategory: category.toUpperCase(),
-      submissionDate: today,
-      contractSignature: name,
-      contractDate: today,
-      contractIp: "Recorded",
-      totalAmount: "$349.00", // Default price
-    });
+    // Simulate loading
+    setTimeout(() => {
+      setCaseData({
+        caseId,
+        clientName: name,
+        clientEmail: email,
+        caseCategory: category.toUpperCase(),
+        submissionDate: today,
+        contractSignature: name,
+        contractDate: today,
+        contractIp: "Recorded",
+        totalAmount: "$349.00", // Default price
+      });
+      setIsLoading(false);
+    }, 800);
   }, []);
 
   const copyToClipboard = (text: string) => {
@@ -59,6 +65,14 @@ export default function Payment() {
       window.location.href = "/";
     }, 3000);
   };
+
+  if (isLoading) {
+    return (
+      <div className="payment-page">
+        <PaymentSkeleton />
+      </div>
+    );
+  }
 
   return (
     <div className="payment-page">

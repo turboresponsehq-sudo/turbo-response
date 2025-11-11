@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { IntakeFormSkeleton } from "@/components/Skeleton";
 import "./TurboIntake.css";
 
 export default function TurboIntake() {
+  const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -23,6 +25,13 @@ export default function TurboIntake() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -57,6 +66,14 @@ export default function TurboIntake() {
       }, 3000);
     }, 2000);
   };
+
+  if (isLoading) {
+    return (
+      <div className="turbo-intake-page">
+        <IntakeFormSkeleton />
+      </div>
+    );
+  }
 
   return (
     <div className="turbo-intake-page">

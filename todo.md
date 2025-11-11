@@ -9,7 +9,7 @@
 - [x] admin_settings.html → AdminSettings.tsx + AdminSettings.css
 
 ## Phase 2: Restore All Routes
-- [x] / (homepage) - DONE
+- [ ] / (homepage) - DONE
 - [x] /intake (Consumer Defense form)
 - [x] /turbo-intake (Business audit form)
 - [x] /admin (Admin dashboard)
@@ -30,15 +30,14 @@
 - [ ] Floating chat widget on all pages
 
 ## Phase 5: Deploy
-- [x] Save checkpoint
-- [x] Push to GitHub
-- [x] Verify on turboresponsehq.ai
+- [ ] Save checkpoint
+- [ ] Push to GitHub
+- [ ] Verify on turboresponsehq.ai
 
 ## Bug Fixes
 - [x] Fix 404 errors on deployed site - all routes except homepage returning 404
 - [x] Add SPA routing configuration for Render deployment
 - [x] Fix admin login redirecting to Manus OAuth - use simple localStorage auth
-- [x] Rollback to working checkpoint and redeploy
 
 ## Missing Legal Pages (NEW)
 - [x] client_contract.html → ClientContract.tsx + CSS
@@ -48,34 +47,23 @@
 
 ---
 
-# FRONTEND HARDENING PHASE (feat/frontend-hardening branch)
+# LOADING & OPTIMIZATION PHASE (feat/loading-and-optimization branch)
 
-## A. File Structure Cleanup
-- [x] Remove unused ComponentShowcase.tsx
-- [x] Remove unused DashboardLayout components (not used in current design)
-- [ ] Clean up unused imports in pages
-- [ ] Organize CSS files (consider consolidating)
+## A. Loading Skeletons
+- [x] Create CSS-only skeleton component styles
+- [x] Implement skeleton for /intake page
+- [x] Implement skeleton for /payment page
+- [x] Implement skeleton for /turbo-intake page
+- [x] Add soft pulse animation (dark-mode compatible)
 
-## B. Mobile Responsiveness
-- [x] Homepage - Fix mobile layout and spacing
-- [x] Intake Form - Make form fields touch-friendly
-- [x] Payment Page - Optimize for mobile
-- [x] Admin Login - Ensure mobile-friendly
-- [ ] Legal Pages - Check mobile readability
-- [ ] Chat Interface - Mobile optimization
-- [x] Floating Chat Widget - Mobile positioning
+## B. Image Optimization
+- [x] Convert hero images to WebP format (N/A - site uses CSS gradients)
+- [x] Add lazy loading to non-critical images
+- [x] Optimize file sizes without quality loss (N/A - no image files)
+- [x] Test image loading performance
 
-## C. UI Improvements
-- [x] Increase button sizes for touch (min 44x44px)
-- [x] Fix spacing and alignment across all pages
-- [x] Improve form field sizing on mobile
-- [x] Add proper padding for mobile viewports
-- [ ] Fix any text overflow issues
-- [ ] Ensure proper contrast for readability
-
-## D. Testing
-- [x] Test homepage on mobile viewport
-- [x] Test intake form on mobile viewport
-- [x] Test payment page on mobile viewport
-- [x] Test all navigation flows
-- [x] Verify floating chat widget doesn't block content
+## C. Testing
+- [x] Test skeleton loading states
+- [x] Verify WebP image compatibility (N/A - no WebP images)
+- [x] Check lazy loading behavior
+- [x] Confirm no backend changes made

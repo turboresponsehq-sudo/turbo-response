@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { IntakeFormSkeleton } from "@/components/Skeleton";
 import "./IntakeForm.css";
 
 interface FileUpload {
@@ -20,6 +21,7 @@ const categories = [
 
 export default function IntakeForm() {
   const [, setLocation] = useLocation();
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [uploadedFiles, setUploadedFiles] = useState<FileUpload[]>([]);
   const [progress, setProgress] = useState(0);
@@ -34,6 +36,14 @@ export default function IntakeForm() {
     amount: "",
     deadline: "",
   });
+
+  // Simulate initial loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Calculate progress
   useEffect(() => {
@@ -95,6 +105,25 @@ export default function IntakeForm() {
   };
 
   const isFormComplete = progress === 100;
+
+  if (isLoading) {
+    return (
+      <div className="intake-page">
+        <div className="bg-animation">
+          <div className="bg-grid"></div>
+        </div>
+        <header className="header">
+          <div className="nav-container">
+            <a href="/" className="logo">
+              <div className="logo-icon">⚡</div>
+              TURBO RESPONSE
+            </a>
+          </div>
+        </header>
+        <IntakeFormSkeleton />
+      </div>
+    );
+  }
 
   return (
     <div className="intake-page">
