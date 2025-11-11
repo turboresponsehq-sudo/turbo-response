@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { adminSessionProcedure, router } from "../_core/trpc";
+import { protectedProcedure, router } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
 import {
   getAllLeads,
@@ -16,7 +16,7 @@ export const adminRouter = router({
   /**
    * Get all leads
    */
-  getLeads: adminSessionProcedure
+  getLeads: protectedProcedure
     .input(
       z
         .object({
@@ -32,7 +32,7 @@ export const adminRouter = router({
   /**
    * Get all conversations
    */
-  getConversations: adminSessionProcedure
+  getConversations: protectedProcedure
     .input(
       z
         .object({
@@ -48,7 +48,7 @@ export const adminRouter = router({
   /**
    * Get lead with full conversation details
    */
-  getLeadDetails: adminSessionProcedure
+  getLeadDetails: protectedProcedure
     .input(z.object({ leadId: z.number() }))
     .query(async ({ input }) => {
       const result = await getLeadWithConversation(input.leadId);
@@ -64,7 +64,7 @@ export const adminRouter = router({
   /**
    * Update lead status
    */
-  updateLeadStatus: adminSessionProcedure
+  updateLeadStatus: protectedProcedure
     .input(
       z.object({
         leadId: z.number(),
