@@ -43,24 +43,3 @@ export const adminProcedure = t.procedure.use(
     });
   }),
 );
-
-/**
- * Admin session procedure - validates admin_session cookie
- * This is separate from Manus OAuth and uses custom session management
- */
-const requireAdminSession = t.middleware(async opts => {
-  const { ctx, next } = opts;
-  const token = ctx.req.cookies?.admin_session;
-
-  if (!token) {
-    throw new TRPCError({ code: "UNAUTHORIZED", message: "Admin session required" });
-  }
-
-  // Session validation happens in the adminAuthRouter
-  // Here we just check that the cookie exists
-  // The actual validation is done by calling adminAuth.validateSession
-
-  return next({ ctx });
-});
-
-export const adminSessionProcedure = t.procedure.use(requireAdminSession);

@@ -161,20 +161,3 @@ export const leads = mysqlTable("leads", {
 
 export type Lead = typeof leads.$inferSelect;
 export type InsertLead = typeof leads.$inferInsert;
-
-/**
- * Admin sessions table - tracks admin authentication sessions
- */
-export const adminSessions = mysqlTable("admin_sessions", {
-  id: int("id").autoincrement().primaryKey(),
-  /** Session token (UUID) */
-  token: varchar("token", { length: 255 }).notNull().unique(),
-  /** Admin username */
-  username: varchar("username", { length: 100 }).notNull(),
-  /** Session expiration timestamp */
-  expiresAt: timestamp("expiresAt").notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
-
-export type AdminSession = typeof adminSessions.$inferSelect;
-export type InsertAdminSession = typeof adminSessions.$inferInsert;

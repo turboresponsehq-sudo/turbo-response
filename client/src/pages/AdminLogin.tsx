@@ -1,24 +1,35 @@
-// TEMPORARY: Backend calls removed to fix static build
-// TODO: Re-add backend integration after setting up separate backend service
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import "./AdminLogin.css";
 
 export default function AdminLogin() {
+  const [, setLocation] = useLocation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // Check if already logged in
+    const session = localStorage.getItem("admin_session");
+    if (session) {
+      setLocation("/admin");
+    }
+  }, [setLocation]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!username || !password) {
-      setError('❌ Please enter both username and password');
-      return;
+    setError("");
+    setIsLoading(true);
+
+    // Simple demo login - replace with real authentication
+    if (username === "admin" && password === "admin123") {
+      localStorage.setItem("admin_session", "demo-token");
+      setLocation("/admin");
+    } else {
+      setError("❌ Invalid credentials");
+      setIsLoading(false);
     }
-    
-    // PLACEHOLDER: Backend integration disabled
-    setError("⚠️ Backend integration temporarily disabled. Please check back later.");
   };
 
   return (
@@ -72,8 +83,8 @@ export default function AdminLogin() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <button type="submit" className="btn-login">
-            🔓 Login to Dashboard
+          <button type="submit" className="btn-login" disabled={isLoading}>
+            {isLoading ? "Logging in..." : "🔓 Login to Dashboard"}
           </button>
         </form>
 

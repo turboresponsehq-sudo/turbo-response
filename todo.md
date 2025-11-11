@@ -35,8 +35,6 @@
 - [ ] Verify on turboresponsehq.ai
 
 ## Bug Fixes
-- [ ] Fix 404 errors on deployed site - all routes except homepage returning 404
-- [ ] Add SPA routing configuration for Render deployment
 - [x] Fix 404 errors on deployed site - all routes except homepage returning 404
 - [x] Add SPA routing configuration for Render deployment
 - [x] Fix admin login redirecting to Manus OAuth - use simple localStorage auth
@@ -46,7 +44,3 @@
 - [x] service_agreement.html → ServiceAgreement.tsx + CSS
 - [x] disclaimer.html → Disclaimer.tsx + CSS
 - [x] terms_of_service.html → TermsOfService.tsx + CSS
-
-## Current Issues
-- [ ] Admin login page (/admin/login) showing dashboard instead of login form on live site
-- [ ] Need to verify Render is deploying the correct AdminLogin.tsx file
