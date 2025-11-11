@@ -12,6 +12,10 @@ import Payment from "./pages/Payment";
 import TurboIntake from "./pages/TurboIntake";
 import AdminLogin from "./pages/AdminLogin";
 import AdminSettings from "./pages/AdminSettings";
+import ClientContract from "./pages/ClientContract";
+import ServiceAgreement from "./pages/ServiceAgreement";
+import Disclaimer from "./pages/Disclaimer";
+import TermsOfService from "./pages/TermsOfService";
 import FloatingChatWidget from "./components/FloatingChatWidget";
 
 function Router() {
@@ -26,6 +30,10 @@ function Router() {
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin/settings" component={AdminSettings} />
       <Route path="/admin" component={AdminDashboard} />
+      <Route path="/client-contract" component={ClientContract} />
+      <Route path="/service-agreement" component={ServiceAgreement} />
+      <Route path="/disclaimer" component={Disclaimer} />
+      <Route path="/terms-of-service" component={TermsOfService} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
