@@ -2,6 +2,7 @@ app = 'turbo-response-api'
 primary_region = 'ord'
 
 [build]
+  dockerfile = "Dockerfile"
   [build.args]
     NODE_ENV = "production"
 
