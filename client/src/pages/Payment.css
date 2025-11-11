@@ -212,16 +212,8 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .payment-page .container {
-    padding: 100px 16px 40px;
-  }
-
   .payment-page .card {
-    padding: 25px 20px;
-  }
-
-  .payment-page .page-title {
-    font-size: 2rem;
+    padding: 25px;
   }
 
   .payment-page .price-amount {
@@ -230,7 +222,6 @@
 
   .payment-page .info-row {
     flex-direction: column;
-    gap: 8px;
   }
 
   .payment-page .info-value {
@@ -241,7 +232,6 @@
   .payment-page .payment-method {
     flex-direction: column;
     gap: 15px;
-    padding: 16px;
   }
 
   .payment-page .payment-method-info {
@@ -250,26 +240,5 @@
 
   .payment-page .btn {
     width: 100%;
-    min-height: 48px;
-    padding: 14px 28px;
-    font-size: 1rem;
-  }
-
-  .payment-page .payment-icon {
-    font-size: 2rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .payment-page .page-title {
-    font-size: 1.75rem;
-  }
-
-  .payment-page .price-amount {
-    font-size: 2rem;
-  }
-
-  .payment-page .card {
-    padding: 20px 16px;
   }
 }
