@@ -52,9 +52,13 @@ export default function AdminDashboard() {
     const fetchLeads = async () => {
       try {
         const response = await api.get('/api/admin/leads');
-        setLeads(response.leads || []);
+        // Handle both response.leads and response.data.leads
+        const leadsData = response?.leads || response?.data?.leads || response || [];
+        setLeads(Array.isArray(leadsData) ? leadsData : []);
       } catch (error) {
         console.error('Failed to fetch leads:', error);
+        // Set empty array on error to prevent crashes
+        setLeads([]);
       } finally {
         setIsLoading(false);
       }
@@ -130,17 +134,17 @@ export default function AdminDashboard() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {leads.map(lead => (
-                    <TableRow key={lead.id}>
-                      <TableCell className="font-medium text-white">{lead.name}</TableCell>
+                  {leads.map((lead, index) => (
+                    <TableRow key={lead?.id || index}>
+                      <TableCell className="font-medium text-white">{lead?.name || 'N/A'}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Mail className="h-4 w-4 text-slate-400" />
-                          <span className="text-sm text-slate-300">{lead.email}</span>
+                          <span className="text-sm text-slate-300">{lead?.email || 'N/A'}</span>
                         </div>
                       </TableCell>
                       <TableCell>
-                        {lead.phone ? (
+                        {lead?.phone ? (
                           <div className="flex items-center gap-2">
                             <Phone className="h-4 w-4 text-slate-400" />
                             <span className="text-sm text-slate-300">{lead.phone}</span>
@@ -151,16 +155,16 @@ export default function AdminDashboard() {
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className="text-slate-300 border-slate-600">
-                          {lead.category}
+                          {lead?.category || 'N/A'}
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge className="bg-blue-600 text-white">{lead.status}</Badge>
+                        <Badge className="bg-blue-600 text-white">{lead?.status || 'new'}</Badge>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2 text-sm text-slate-400">
                           <Calendar className="h-4 w-4" />
-                          {new Date(lead.createdAt).toLocaleDateString()}
+                          {lead?.createdAt ? new Date(lead.createdAt).toLocaleDateString() : 'N/A'}
                         </div>
                       </TableCell>
                     </TableRow>
