@@ -96,8 +96,6 @@
   font-size: 15px;
   transition: border-color 0.3s;
   font-family: inherit;
-  background: white !important;
-  color: #333 !important;
 }
 
 .turbo-intake-page input:focus,

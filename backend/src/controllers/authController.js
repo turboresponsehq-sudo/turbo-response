@@ -54,7 +54,7 @@ const register = async (req, res, next) => {
   }
 };
 
-// Login user
+// Login user (email-based authentication)
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;

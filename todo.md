@@ -261,90 +261,28 @@
 
 ---
 
-# BUSINESS INTAKE SYSTEM RESTORATION
+# 🚨 CRITICAL BUG FIXES (COMMIT 46f2108 - Nov 12, 2025)
 
-## Business Intake Form (React)
-- [x] Port turbo_intake.html to React component (TurboIntake.tsx already exists)
-- [x] Add all 15 form fields (contact, digital presence, business snapshot, vision)
-- [x] Add form validation
-- [x] Style with modern Turbo Response design
-- [x] Add route to App.tsx
+## BLOCKING ALL TESTING - MUST FIX FIRST
 
-## Database Schema
-- [x] Create business_submissions table
-- [x] Add columns for all 15 fields
-- [x] Create indexes for search/filtering
-- [x] Add timestamps and status tracking
+- [ ] Fix Consumer Intake Form - HTTP 400 on submission
+  - Investigate POST /api/intake endpoint
+  - Verify file uploads work correctly
+  - Verify text fields reach backend
+  - Verify JSON body structure
+  - Test submission end-to-end
 
-## Blueprint Generator (Node.js)
-- [x] Port blueprint_generator.py to Node.js
-- [x] Integrate OpenAI API
-- [x] Generate 5-section strategy blueprint
-- [x] Save blueprint to database
-- [x] Return JSON response
+- [ ] Fix Admin Login - HTTP 400 on login
+  - Investigate POST /api/auth/login endpoint
+  - Verify admin credentials (admin / admin123)
+  - Verify JWT token generation
+  - Check for duplicate admin login components
+  - Ensure only ONE login component exists
 
-## Admin View
-- [x] Create AdminBusinessIntake.tsx component
-- [x] List all business submissions
-- [x] Show submission details
-- [x] Add "Generate Blueprint" button
-- [x] Display generated blueprint
-- [x] Add route to admin navigation
+## REQUIRED BEFORE CONTINUING
 
-## Backend API
-- [x] Create POST /api/business-intake/submit endpoint
-- [x] Create GET /api/admin/business-intake/submissions endpoint
-- [x] Create POST /api/admin/business-intake/generate-blueprint/:id endpoint
-- [x] Create GET /api/admin/business-intake/blueprint/:id endpoint
-
-## Testing
-- [ ] Test form submission
-- [ ] Test database storage
-- [ ] Test blueprint generation
-- [ ] Test admin view
-- [ ] Verify all routes work
-
-
----
-
-# BLUEPRINT GENERATOR FIX (DEPLOYMENT BLOCKER)
-
-## Issue
-- [ ] blueprintGenerator.js uses invokeLLM from webdev _core/llm
-- [ ] _core/llm doesn't exist in standalone backend
-- [ ] Deployment fails with MODULE_NOT_FOUND error
-
-## Fix
-- [x] Replace invokeLLM with direct OpenAI API call
-- [x] Use OpenAI npm package
-- [x] Keep same prompt structure and response format
-- [ ] Test locally before deploying
-
-## Deploy
-- [x] Push fix to GitHub
-- [x] Wait for Render auto-deploy
-- [x] Verify deployment succeeds
-- [ ] Run database migration
-
-
----
-
-# 🐛 PRODUCTION BUG FIXES (Chief Strategist Testing - Nov 12, 2025)
-
-## Critical (Blocking)
-- [x] Bug #1: Fix Business Intake form UI - dark gray unreadable fields, overlapping banner (DEPLOYED)
-- [ ] Bug #3: Fix Admin Login page - "Unexpected Error Occurred" (IN PROGRESS)
-- [x] Bug #6: Fix Admin Business page - 404 Not Found (route exists, needs deployment)
-- [x] Bug #7: Fix Business Submission detail page - 404 Not Found (route exists, needs deployment)
-- [x] Bug #9: Fix Business Intake Submit API - Working correctly (uses POST not GET)
-
-## High Priority (UX Breaking)
-- [x] Bug #4: Fix Consumer Cases page - "Failed to fetch cases" API error (DEPLOYED)
-- [x] Bug #5: Fix Consumer Case Detail page - "Failed to fetch case details" API error (DEPLOYED)
-- [x] Bug #8: Fix Admin Settings page - "Failed to Fetch Cap" API error (DEPLOYED)
-
-## Medium Priority (Data Issues)
-- [ ] Bug #2: Fix Payment page - remove hardcoded $349, use AI pricing + admin override (IN PROGRESS)
-
-## Low Priority (Expected Behavior)
-- [ ] Bug #10: Document - Analyze endpoint requires admin auth token (working as designed)
+- [ ] Intake form submits successfully
+- [ ] Admin login works
+- [ ] Admin dashboard loads
+- [ ] Cases list appears
+- [ ] Case detail pages load
