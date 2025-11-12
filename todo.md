@@ -429,3 +429,26 @@
 - [ ] Test visually on desktop
 - [ ] Test visually on mobile
 - [ ] Confirm readability and clarity
+
+## CRITICAL CSS OVERRIDE FIX (Nov 12, 2025 - PRODUCTION ISSUE)
+- [ ] Implement aggressive CSS overrides with !important flags
+- [ ] Add inline styles directly to TurboIntake.tsx
+- [ ] Force white labels (#ffffff !important)
+- [ ] Force white input backgrounds (#ffffff !important)
+- [ ] Force dark placeholders (#555 !important)
+- [ ] Add box-shadow to inputs for contrast
+- [ ] Verify production build contains updated styles
+- [ ] Test live site in multiple browsers after deployment
+
+
+---
+
+# BACKEND 502 ERROR FIX (Nov 12, 2025)
+
+## Database Import Error
+- [x] Fix turboIntakeController.js database import
+- [x] Use correct database connection pattern
+- [x] Match existing intakeController.js structure
+- [x] Changed ../config/database to ../services/database/db
+- [ ] Deploy fix to Render
+- [ ] Verify backend starts successfully

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { IntakeFormSkeleton } from "@/components/Skeleton";
+import { TurboIntakeStyles } from "./TurboIntakeOverrides";
 import "./TurboIntake.css";
 
 export default function TurboIntake() {
@@ -104,8 +105,10 @@ export default function TurboIntake() {
   }
 
   return (
-    <div className="turbo-intake-page">
-      <div className="container">
+    <>
+      <TurboIntakeStyles />
+      <div className="turbo-intake-page">
+        <div className="container">
         <div className="header">
           <h1>Turbo Intake</h1>
         </div>
@@ -413,5 +416,6 @@ export default function TurboIntake() {
         )}
       </div>
     </div>
+    </>
   );
 }
