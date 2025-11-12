@@ -325,3 +325,26 @@
 - [x] Wait for Render auto-deploy
 - [x] Verify deployment succeeds
 - [ ] Run database migration
+
+
+---
+
+# 🐛 PRODUCTION BUG FIXES (Chief Strategist Testing - Nov 12, 2025)
+
+## Critical (Blocking)
+- [x] Bug #1: Fix Business Intake form UI - dark gray unreadable fields, overlapping banner (DEPLOYED)
+- [ ] Bug #3: Fix Admin Login page - "Unexpected Error Occurred" (IN PROGRESS)
+- [x] Bug #6: Fix Admin Business page - 404 Not Found (route exists, needs deployment)
+- [x] Bug #7: Fix Business Submission detail page - 404 Not Found (route exists, needs deployment)
+- [x] Bug #9: Fix Business Intake Submit API - Working correctly (uses POST not GET)
+
+## High Priority (UX Breaking)
+- [x] Bug #4: Fix Consumer Cases page - "Failed to fetch cases" API error (DEPLOYED)
+- [x] Bug #5: Fix Consumer Case Detail page - "Failed to fetch case details" API error (DEPLOYED)
+- [x] Bug #8: Fix Admin Settings page - "Failed to Fetch Cap" API error (DEPLOYED)
+
+## Medium Priority (Data Issues)
+- [ ] Bug #2: Fix Payment page - remove hardcoded $349, use AI pricing + admin override (IN PROGRESS)
+
+## Low Priority (Expected Behavior)
+- [ ] Bug #10: Document - Analyze endpoint requires admin auth token (working as designed)
