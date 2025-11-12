@@ -30,8 +30,11 @@ export default function AdminLogin() {
         password,
       });
 
-      // Store session token
+      // Store session token and user info
       localStorage.setItem("admin_session", response.token);
+      if (response.user) {
+        localStorage.setItem("admin_user", JSON.stringify(response.user));
+      }
       setLocation("/admin");
     } catch (error: any) {
       setError(`❌ ${error.message}`);
