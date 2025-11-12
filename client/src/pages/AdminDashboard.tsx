@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { api } from "@/lib/api";
 import "./AdminDashboard.css";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -43,8 +44,26 @@ export default function AdminDashboard() {
     return null;
   }
 
-  // Mock data for display
-  const leads: any[] = [];
+  // Fetch leads from API
+  const [leads, setLeads] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLeads = async () => {
+      try {
+        const response = await api.get('/api/admin/leads');
+        setLeads(response.leads || []);
+      } catch (error) {
+        console.error('Failed to fetch leads:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchLeads();
+    }
+  }, [isAuthenticated]);
 
   return (
     <div className="min-h-screen bg-slate-900">
@@ -53,6 +72,14 @@ export default function AdminDashboard() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2 text-white">Admin Dashboard</h1>
           <p className="text-slate-400">Manage leads and conversations</p>
+          <div className="mt-4 flex gap-4">
+            <Button
+              onClick={() => setLocation("/admin/consumer/cases")}
+              className="bg-cyan-600 hover:bg-cyan-700 text-white"
+            >
+              ⚖️ Consumer Defense Cases
+            </Button>
+          </div>
         </div>
 
         {/* Stats Cards */}

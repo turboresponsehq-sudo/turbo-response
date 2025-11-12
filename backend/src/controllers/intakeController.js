@@ -19,6 +19,8 @@ const submit = async (req, res, next) => {
       address,
       category,
       case_details,
+      amount,
+      deadline,
       documents
     } = req.body;
 
@@ -42,8 +44,8 @@ const submit = async (req, res, next) => {
     const result = await query(
       `INSERT INTO cases (
         user_id, case_number, category, email, full_name, phone, address, 
-        case_details, documents, status, payment_status
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+        case_details, amount, deadline, documents, status, payment_status
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
       RETURNING id, case_number, category, status, created_at`,
       [
         req.user?.id || null,
@@ -54,6 +56,8 @@ const submit = async (req, res, next) => {
         phone || null,
         address || null,
         case_details,
+        amount || null,
+        deadline || null,
         JSON.stringify(documents || []),
         'pending',
         'unpaid'
@@ -70,6 +74,8 @@ const submit = async (req, res, next) => {
 
     res.status(201).json({
       message: 'Case submitted successfully',
+      case_id: newCase.id,
+      case_number: newCase.case_number,
       case: newCase
     });
   } catch (error) {

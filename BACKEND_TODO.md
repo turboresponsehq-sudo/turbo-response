@@ -78,3 +78,13 @@
 - [ ] Test payment flow
 - [ ] Test admin dashboard
 - [ ] Deploy updated frontend
+
+
+---
+
+# DATABASE FIX (Nov 11, 2025)
+- [x] Fix duplicate trigger creation error
+- [x] Make all schema statements idempotent (CREATE IF NOT EXISTS)
+- [x] Update schema.sql with safe trigger creation
+- [ ] Verify backend starts successfully on Render
+- [ ] Test health endpoint

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { PaymentSkeleton } from "@/components/Skeleton";
+import { api } from "@/lib/api";
 import "./Payment.css";
 
 export default function Payment() {
@@ -53,17 +54,32 @@ export default function Payment() {
     });
   };
 
-  const confirmPayment = () => {
+  const confirmPayment = async () => {
     if (!confirm("Have you completed the payment? Click OK to confirm.")) {
       return;
     }
 
-    setShowSuccess(true);
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const caseId = urlParams.get("caseId");
 
-    // Redirect after 3 seconds
-    setTimeout(() => {
-      window.location.href = "/";
-    }, 3000);
+      if (caseId) {
+        // Submit payment confirmation to backend
+        await api.post('/api/payment/confirm', {
+          case_id: caseId,
+          payment_method: 'manual', // Cash App or Venmo
+        });
+      }
+
+      setShowSuccess(true);
+
+      // Redirect after 3 seconds
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 3000);
+    } catch (error: any) {
+      alert(`Payment confirmation failed: ${error.message}`);
+    }
   };
 
   if (isLoading) {

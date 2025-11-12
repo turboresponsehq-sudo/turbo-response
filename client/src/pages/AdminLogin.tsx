@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { api } from "@/lib/api";
 import "./AdminLogin.css";
 
 export default function AdminLogin() {
@@ -22,12 +23,18 @@ export default function AdminLogin() {
     setError("");
     setIsLoading(true);
 
-    // Simple demo login - replace with real authentication
-    if (username === "admin" && password === "admin123") {
-      localStorage.setItem("admin_session", "demo-token");
+    try {
+      // Authenticate with backend
+      const response = await api.post('/api/auth/login', {
+        username,
+        password,
+      });
+
+      // Store session token
+      localStorage.setItem("admin_session", response.token);
       setLocation("/admin");
-    } else {
-      setError("❌ Invalid credentials");
+    } catch (error: any) {
+      setError(`❌ ${error.message}`);
       setIsLoading(false);
     }
   };
