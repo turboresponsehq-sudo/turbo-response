@@ -286,3 +286,46 @@
 - [ ] Admin dashboard loads
 - [ ] Cases list appears
 - [ ] Case detail pages load
+
+
+---
+
+# PHASE 2: FULL PIPELINE INTEGRATION (Nov 12, 2025)
+
+## Admin Dashboard Fixes
+- [x] Fix localStorage key mismatch (admin_session, admin_user)
+- [x] Fix API endpoint (/api/admin/consumer/cases)
+- [x] Fix response structure (res.data.cases)
+- [x] Admin dashboard loads without flickering
+- [x] Case data displays correctly
+
+## Case Detail Modal
+- [x] Make each case in dashboard clickable
+- [x] Create Case Detail Modal component
+- [x] Display client info (name, email, phone)
+- [x] Display case info (type, date, description)
+- [x] Add "Generate AI Analysis" button
+- [x] Connect to POST /api/admin/analyze/:id
+- [x] Display AI analysis results in modal
+- [x] Add "Create Demand Letter" button (placeholder)
+
+## Intake Form Database Integration
+- [x] Connect /intake form to backend database
+- [x] Verify POST /api/intake endpoint works
+- [x] Test form submission stores in cases table
+- [x] Verify submissions appear in admin dashboard
+- [x] Test file upload integration
+
+## Email Notifications
+- [x] Implement email notification on new intake submission
+- [x] Send to turboresponsehq@gmail.com
+- [x] Include case details in email
+- [ ] Configure EMAIL_USER and EMAIL_PASSWORD secrets
+- [ ] Test email delivery
+
+## Testing & Deployment
+- [ ] Test full pipeline: intake → database → dashboard → analysis
+- [ ] Verify all features work in production
+- [ ] Push to GitHub
+- [ ] Render auto-deploy
+- [ ] Final testing on live site
