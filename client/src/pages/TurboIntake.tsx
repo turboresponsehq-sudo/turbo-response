@@ -55,16 +55,34 @@ export default function TurboIntake() {
 
     setIsSubmitting(true);
 
-    // Simulate submission
-    setTimeout(() => {
-      setShowSuccess(true);
-      setIsSubmitting(false);
+    try {
+      const response = await fetch('https://turbo-response-backend.onrender.com/api/business-intake/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-      // Reset form after 3 seconds
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 3000);
-    }, 2000);
+      const data = await response.json();
+
+      if (data.success) {
+        setShowSuccess(true);
+        setIsSubmitting(false);
+
+        // Redirect after 3 seconds
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 3000);
+      } else {
+        alert('Submission failed: ' + (data.error || 'Unknown error'));
+        setIsSubmitting(false);
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('Failed to submit form. Please try again.');
+      setIsSubmitting(false);
+    }
   };
 
   if (isLoading) {

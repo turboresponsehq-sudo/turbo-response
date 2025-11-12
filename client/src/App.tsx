@@ -19,6 +19,8 @@ import TermsOfService from "./pages/TermsOfService";
 import FloatingChatWidget from "./components/FloatingChatWidget";
 import AdminConsumerCases from "./pages/AdminConsumerCases";
 import AdminConsumerCaseDetail from "./pages/AdminConsumerCaseDetail";
+import AdminBusinessIntake from "./pages/AdminBusinessIntake";
+import AdminBusinessIntakeDetail from "./pages/AdminBusinessIntakeDetail";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes

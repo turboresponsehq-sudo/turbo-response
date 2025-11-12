@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { api } from "@/lib/api";
 import "./AdminDashboard.css";
 import { Button } from "@/components/ui/button";
@@ -78,6 +78,9 @@ export default function AdminDashboard() {
               className="bg-cyan-600 hover:bg-cyan-700 text-white"
             >
               ⚖️ Consumer Defense Cases
+            <Link href="/admin/business-intake" className="nav-link">
+              🚀 Business Intake
+            </Link>
             </Button>
           </div>
         </div>
