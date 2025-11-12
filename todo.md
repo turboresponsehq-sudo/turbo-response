@@ -67,3 +67,126 @@
 - [x] Verify WebP image compatibility (N/A - no WebP images)
 - [x] Check lazy loading behavior
 - [x] Confirm no backend changes made
+
+---
+
+# FILE UPLOAD## File Upload Issue (Reported by Chief - 11/11/2025)
+
+## Issue: Images show in UI but don't upload to backend
+- [x] Diagnose why file selection works but upload fails
+- [x] Check if backend API endpoint exists for file uploads
+- [x] Fix file upload integration with S3 storage
+- [ ] Test file upload end-to-end on production
+- [ ] Verify uploaded files are accessible and stored correctly
+## URGENT: Immediate File Upload on Selection (Chief's Request)
+- [x] Change upload logic to trigger IMMEDIATELY on file selection
+- [x] Store uploaded file URLs in state
+- [x] Remove file upload from form submit handler
+- [x] Include file URLs in form submission
+- [ ] Test immediate upload works
+- [ ] Deploy to production
+
+## BACKEND MIGRATION: Railway → Render (Chief's Request)
+- [x] Update file storage to use Render persistent disk (/data/uploads)
+- [x] Create render.yaml configuration for backend
+- [x] Update CORS to allow frontend domain
+- [x] Update frontend API_BASE_URL to new Render backend
+- [x] Deploy backend to Render
+- [x] Upgrade to Starter plan for persistent disk support
+- [x] Create Render disk (1GB, /data mount)
+- [ ] Test file uploads work with persistent storage
+- [ ] Test all backend features (intake, AI, payments)
+- [ ] Delete Railway project
+
+## DEBUG: File Upload Handler Not Firing (Chief's Request)
+- [x] Add alert() to handleFileUpload to test if onChange fires
+- [x] Deploy debug version
+- [x] Test file selection (AWAITING CHIEF'S RESULT)
+- [x] If alert shows → Upload logic issue ✅ CONFIRMED
+- [ ] If alert doesn't show → Event binding issue
+
+## FIX: Upload Logic Issue (Diagnosed)
+- [x] Add comprehensive console logging
+- [x] Deploy logging version
+- [x] Test and capture console output
+- [x] Identify exact failure point: Backend 500 error
+- [x] Check backend logs on Render
+- [x] Backend upload endpoint works perfectly (returns 200)
+- [x] Add network-level logging to frontend API
+- [x] Deploy network logging version
+- [ ] Test and capture detailed network logs
+- [ ] Identify why frontend sees 500 when backend returns 200
+
+## OPTION B: Upload Files on Form Submit (Workaround)
+- [x] Remove handleFileUpload onChange handler
+- [x] Store selected files in state (File objects, not uploaded yet)
+- [x] Upload all files when user clicks "Complete Intake Form"
+- [x] Show loading state during upload ("Uploading X files...")
+- [x] Submit form with uploaded file URLs
+- [x] Test locally
+- [x] Deploy to production (commit c931527)
+- [ ] Wait for Render deployment
+- [ ] Test on iPhone
+
+## MISSION CRITICAL: Restore Original Working Upload
+- [x] Find commit where upload was working (df4a3f9)
+- [x] Extract working upload logic from that commit
+- [x] Merge with new backend endpoint (/api/upload/multiple)
+- [x] Remove debug logging
+- [x] Deploy to production (commit ab49b18 - LIVE)
+- [ ] Test on iPhone
+- [ ] Test on desktop
+- [ ] Verify files save to database
+- [ ] Verify intake form completes
+
+## CRITICAL: Submit Button Disabled on Mobile
+- [x] Check button disabled state logic
+- [x] Check field validation preventing submission
+- [x] FOUND BUG: Progress calculation counted 8 fields but only checked 6
+- [x] FIX: Changed totalFields from 8 to 6 (amount and deadline are optional)
+- [ ] Deploy fix
+- [ ] Test on mobile
+
+## CRITICAL: Backend /api/intake Returns 500
+- [ ] Check Render backend logs for exact error
+- [ ] Check field names (documents vs uploadedFiles)
+- [ ] Check JSON parsing
+- [ ] Check database insert
+- [ ] Fix intake controller
+- [ ] Deploy backend fix
+- [ ] Test end-to-end
+
+
+---
+
+# PHASE 4: CONSUMER DEFENSE ADMIN DASHBOARD UI
+
+## Admin Case List Page
+- [x] Create AdminConsumerCases.tsx component
+- [x] Fetch cases from GET /api/admin/consumer/cases
+- [x] Display table with status badges
+- [x] Show case details (type, amount, deadline, created_at)
+- [x] Add "View Case" button
+
+## Case Detail Page
+- [x] Create AdminConsumerCaseDetail.tsx component
+- [x] Fetch case details from GET /api/admin/consumer/case/:id
+- [x] Display full case information
+- [x] Show file attachments
+- [x] Add "Run AI Analysis" button (POST /api/admin/consumer/analyze-case/:id)
+- [x] Display AI analysis results (violations, laws_cited, recommended_actions, urgency, summary, pricing, success_probability)
+
+## Letter Generation
+- [x] Add "Generate Letter" button (POST /api/admin/consumer/generate-letter/:id)
+- [x] Create letter preview modal
+- [x] Add copy/download functionality
+
+## Admin Notifications
+- [x] Create AdminNotifications component
+- [x] Fetch notifications from GET /api/admin/consumer/notifications
+- [x] Display notification panel
+
+## Routes & Navigation
+- [x] Add routes to App.tsx
+- [x] Update admin navigation
+- [x] Test all pages

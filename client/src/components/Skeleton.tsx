@@ -51,8 +51,12 @@ export function IntakeFormSkeleton() {
   return (
     <div className="skeleton-container">
       <div style={{ textAlign: "center", marginBottom: "40px" }}>
-        <Skeleton variant="title" width="60%" style={{ margin: "0 auto 16px" }} />
-        <Skeleton variant="text" width="80%" style={{ margin: "0 auto" }} />
+        <div style={{ margin: "0 auto 16px", width: "60%" }}>
+          <Skeleton variant="title" width="100%" />
+        </div>
+        <div style={{ margin: "0 auto", width: "80%" }}>
+          <Skeleton variant="text" width="100%" />
+        </div>
       </div>
 
       <div className="skeleton-form">
@@ -92,14 +96,20 @@ export function PaymentSkeleton() {
   return (
     <div className="skeleton-container">
       <div style={{ textAlign: "center", marginBottom: "40px" }}>
-        <Skeleton variant="title" width="50%" style={{ margin: "0 auto" }} />
+        <div style={{ margin: "0 auto", width: "50%" }}>
+          <Skeleton variant="title" width="100%" />
+        </div>
       </div>
 
       <div className="skeleton-form">
         {/* Price Display Skeleton */}
         <div style={{ textAlign: "center", marginBottom: "32px" }}>
-          <Skeleton variant="title" width="40%" style={{ margin: "0 auto 16px" }} />
-          <Skeleton variant="text" width="60%" style={{ margin: "0 auto" }} />
+          <div style={{ margin: "0 auto 16px", width: "40%" }}>
+            <Skeleton variant="title" width="100%" />
+          </div>
+          <div style={{ margin: "0 auto", width: "60%" }}>
+            <Skeleton variant="text" width="100%" />
+          </div>
         </div>
 
         {/* Payment Info Skeleton */}

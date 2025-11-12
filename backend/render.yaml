@@ -1,11 +1,15 @@
 services:
   - type: web
     name: turbo-response-api
-    env: node
+    runtime: node
     region: oregon
     plan: free
     buildCommand: npm install
     startCommand: npm start
+    disk:
+      name: uploads
+      mountPath: /data
+      sizeGB: 1
     envVars:
       - key: NODE_ENV
         value: production
@@ -23,3 +27,7 @@ services:
         sync: false
       - key: FRONTEND_URL
         sync: false
+      - key: BACKEND_URL
+        sync: false
+      - key: RENDER_DISK_PATH
+        value: /data

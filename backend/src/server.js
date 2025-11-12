@@ -1,3 +1,6 @@
+// Load environment variables first
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const logger = require('./utils/logger');
@@ -12,17 +15,28 @@ const chatRoutes = require('./routes/chat');
 const paymentRoutes = require('./routes/payment');
 const adminRoutes = require('./routes/admin');
 const casesRoutes = require('./routes/cases');
+const uploadRoutes = require('./routes/upload');
+const adminConsumerRoutes = require('./routes/adminConsumer');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true
-}));
+app.use( 
+  cors({
+    origin: "https://turboresponsehq.ai",
+    credentials: true
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve uploaded files statically from Render persistent disk or local
+const path = require('path');
+const uploadsPath = process.env.RENDER_DISK_PATH 
+  ? path.join(process.env.RENDER_DISK_PATH, 'uploads')
+  : path.join(__dirname, '../uploads');
+app.use('/uploads', express.static(uploadsPath));
 
 // Request logging
 app.use((req, res, next) => {
@@ -48,6 +62,8 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/cases', casesRoutes);
+app.use('/api/upload', uploadRoutes);
+app.use('/api/admin/consumer', adminConsumerRoutes);
 
 // 404 handler
 app.use((req, res) => {

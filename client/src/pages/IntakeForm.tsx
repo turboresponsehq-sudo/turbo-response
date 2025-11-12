@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { IntakeFormSkeleton } from "@/components/Skeleton";
+import { api } from "@/lib/api";
 import "./IntakeForm.css";
 
 interface FileUpload {
   file: File;
   name: string;
+  url?: string; // URL from backend after upload
+  uploading?: boolean; // Upload in progress
 }
 
 const categories = [
@@ -48,7 +51,7 @@ export default function IntakeForm() {
   // Calculate progress
   useEffect(() => {
     let filledFields = 0;
-    const totalFields = 8; // 7 form fields + 1 category
+    const totalFields = 6; // 5 required fields + 1 category (amount and deadline are optional)
 
     if (formData.email.trim()) filledFields++;
     if (formData.fullName.trim()) filledFields++;
@@ -68,13 +71,64 @@ export default function IntakeForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('🔥 handleFileUpload FIRED');
     const files = Array.from(e.target.files || []);
+    console.log('📁 Files selected:', files.length, files.map(f => f.name));
+    
+    if (files.length === 0) {
+      console.log('⚠️ No files selected');
+      return;
+    }
+    
+    // Add files to state with uploading status
     const newFiles = files.map((file) => ({
       file,
       name: file.name,
+      uploading: true,
     }));
     setUploadedFiles((prev) => [...prev, ...newFiles]);
+    console.log('✅ Files added to state');
+
+    // Upload each file immediately
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const fileIndex = uploadedFiles.length + i;
+      console.log(`📤 Uploading file ${i+1}/${files.length}: ${file.name}`);
+      
+      try {
+        const formData = new FormData();
+        formData.append('files', file);
+        console.log('📦 FormData created');
+
+        console.log('🌐 Calling api.uploadFile...');
+        const uploadResponse = await api.uploadFile('/api/upload/multiple', formData);
+        console.log('✅ Upload response:', uploadResponse);
+        
+        const fileUrl = uploadResponse.files[0].file_url;
+        console.log('🔗 File URL:', fileUrl);
+
+        // Update file with URL and remove uploading status
+        setUploadedFiles((prev) => 
+          prev.map((f, idx) => 
+            idx === fileIndex ? { ...f, url: fileUrl, uploading: false } : f
+          )
+        );
+        console.log(`✅ File ${i+1} uploaded successfully`);
+      } catch (error: any) {
+        console.error('❌ File upload failed:', error);
+        console.error('❌ Error details:', {
+          message: error.message,
+          name: error.name,
+          stack: error.stack
+        });
+        alert(`Failed to upload ${file.name}: ${error.message}`);
+        
+        // Remove failed file from list
+        setUploadedFiles((prev) => prev.filter((_, idx) => idx !== fileIndex));
+      }
+    }
+    console.log('🎉 All uploads complete');
   };
 
   const removeFile = (index: number) => {
@@ -91,17 +145,38 @@ export default function IntakeForm() {
 
     setIsSubmitting(true);
 
-    // Simulate AI processing
-    setTimeout(() => {
+    try {
+      // Get already-uploaded file URLs from state
+      const documentUrls = uploadedFiles
+        .filter(f => f.url) // Only include successfully uploaded files
+        .map(f => f.url!);
+
+      // Submit intake form to backend with document URLs
+      const response = await api.post('/api/intake', {
+        email: formData.email,
+        full_name: formData.fullName,
+        phone: formData.phone,
+        address: formData.address,
+        category: selectedCategory,
+        case_details: formData.caseDescription,
+        amount: formData.amount ? parseFloat(formData.amount) : null,
+        deadline: formData.deadline || null,
+        documents: documentUrls,
+      });
+
+      // Redirect to payment page with case ID
       const params = new URLSearchParams({
+        caseId: response.case_id,
         email: formData.email,
         name: formData.fullName,
         category: selectedCategory,
-        status: "form_submitted",
       });
 
       setLocation(`/payment?${params.toString()}`);
-    }, 3000);
+    } catch (error: any) {
+      alert(`Submission failed: ${error.message}`);
+      setIsSubmitting(false);
+    }
   };
 
   const isFormComplete = progress === 100;
@@ -336,11 +411,14 @@ export default function IntakeForm() {
                 <div className="file-list">
                   {uploadedFiles.map((file, index) => (
                     <div key={index} className="file-item">
-                      <span className="file-name">📄 {file.name}</span>
+                      <span className="file-name">
+                        {file.uploading ? "⏳" : "✅"} {file.name}
+                      </span>
                       <button
                         type="button"
                         className="file-remove"
                         onClick={() => removeFile(index)}
+                        disabled={file.uploading}
                       >
                         ×
                       </button>

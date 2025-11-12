@@ -1,10 +1,21 @@
 const OpenAI = require('openai');
 const logger = require('../../utils/logger');
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+// Lazy initialization of OpenAI client
+let openai = null;
+
+const getOpenAIClient = () => {
+  if (!openai) {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OPENAI_API_KEY environment variable is not set');
+    }
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY
+    });
+    logger.info('OpenAI client initialized');
+  }
+  return openai;
+};
 
 // Generate legal blueprint using AI
 const generateBlueprint = async (caseData) => {
@@ -36,7 +47,8 @@ ${case_details}
 
 Please provide a comprehensive legal blueprint that this person can use to defend their rights.`;
 
-    const response = await openai.chat.completions.create({
+    const client = getOpenAIClient();
+    const response = await client.chat.completions.create({
       model: 'gpt-4-turbo-preview',
       messages: [
         { role: 'system', content: systemPrompt },
@@ -87,7 +99,8 @@ const chat = async (messages, caseContext = null) => {
       ...messages
     ];
 
-    const response = await openai.chat.completions.create({
+    const client = getOpenAIClient();
+    const response = await client.chat.completions.create({
       model: 'gpt-4-turbo-preview',
       messages: chatMessages,
       temperature: 0.8,
