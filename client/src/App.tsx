@@ -19,8 +19,6 @@ import TermsOfService from "./pages/TermsOfService";
 import FloatingChatWidget from "./components/FloatingChatWidget";
 import AdminConsumerCases from "./pages/AdminConsumerCases";
 import AdminConsumerCaseDetail from "./pages/AdminConsumerCaseDetail";
-import AdminBusinessIntake from "./pages/AdminBusinessIntake";
-import AdminBusinessIntakeDetail from "./pages/AdminBusinessIntakeDetail";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -35,8 +33,6 @@ function Router() {
       <Route path="/admin/settings" component={AdminSettings} />
       <Route path="/admin/consumer/case/:id" component={AdminConsumerCaseDetail} />
       <Route path="/admin/consumer/cases" component={AdminConsumerCases} />
-      <Route path="/admin/business/submission/:id" component={AdminBusinessIntakeDetail} />
-      <Route path="/admin/business" component={AdminBusinessIntake} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/client-contract" component={ClientContract} />
       <Route path="/service-agreement" component={ServiceAgreement} />

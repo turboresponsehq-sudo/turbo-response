@@ -1,27 +1,15 @@
 // API Configuration
 export const API_BASE_URL = 'https://turbo-response-backend.onrender.com';
 
-// Helper to get auth headers
-const getAuthHeaders = () => {
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-  };
-  
-  const token = localStorage.getItem('admin_session');
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-  
-  return headers;
-};
-
 // API Helper Functions
 export const api = {
   // POST request helper
   post: async (endpoint: string, data: any) => {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'POST',
-      headers: getAuthHeaders(),
+      headers: {
+        'Content-Type': 'application/json',
+      },
       credentials: 'include',
       body: JSON.stringify(data),
     });
@@ -38,7 +26,9 @@ export const api = {
   get: async (endpoint: string) => {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'GET',
-      headers: getAuthHeaders(),
+      headers: {
+        'Content-Type': 'application/json',
+      },
       credentials: 'include',
     });
 

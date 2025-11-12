@@ -32,7 +32,7 @@ const submit = async (req, res, next) => {
     }
 
     // Validate category
-    const validCategories = ['eviction', 'debt_collection', 'irs_tax', 'other'];
+    const validCategories = ['eviction', 'debt', 'irs', 'wage', 'medical', 'benefits', 'auto', 'consumer'];
     if (!validCategories.includes(category)) {
       return res.status(400).json({ error: 'Invalid category' });
     }
