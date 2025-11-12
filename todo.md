@@ -452,3 +452,14 @@
 - [x] Changed ../config/database to ../services/database/db
 - [ ] Deploy fix to Render
 - [ ] Verify backend starts successfully
+
+## CRITICAL ROUTING FIX (Nov 12, 2025 - BLOCKING ISSUE)
+
+- [ ] Find and delete static turbo-intake HTML files in public folder
+- [ ] Remove /public/turbo-intake directory if exists
+- [ ] Remove /public/turbo-intake.html if exists
+- [ ] Remove /public/turbo-intake/index.html if exists
+- [ ] Verify React Router handles /turbo-intake route
+- [ ] Rebuild frontend
+- [ ] Deploy to production
+- [ ] Test that React TurboIntake.tsx component loads (not static HTML)
