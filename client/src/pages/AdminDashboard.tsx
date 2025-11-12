@@ -22,12 +22,12 @@ export default function AdminDashboard() {
     const fetchData = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_API_URL || "https://turbo-response-backend.onrender.com"}/api/admin/cases`,
+          `${import.meta.env.VITE_API_URL || "https://turbo-response-backend.onrender.com"}/api/admin/consumer/cases`,
           {
             headers: { Authorization: `Bearer ${storedToken}` },
           }
         );
-        setCases(res.data || []);
+        setCases(res.data.cases || []);
       } catch (err) {
         console.error(err);
         setError("Could not load data. Please try again later.");
