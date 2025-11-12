@@ -6,6 +6,7 @@ const cors = require('cors');
 const logger = require('./utils/logger');
 const errorHandler = require('./middleware/errorHandler');
 const { initDatabase } = require('./services/database/init');
+const { seedAdminAccount } = require('./services/database/seed');
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -17,7 +18,6 @@ const adminRoutes = require('./routes/admin');
 const casesRoutes = require('./routes/cases');
 const uploadRoutes = require('./routes/upload');
 const adminConsumerRoutes = require('./routes/adminConsumer');
-const migrationRoutes = require('./routes/migration');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -65,7 +65,6 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/cases', casesRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/admin/consumer', adminConsumerRoutes);
-app.use('/api/migration', migrationRoutes); // ONE-TIME MIGRATION - DELETE AFTER USE
 
 // 404 handler
 app.use((req, res) => {
@@ -83,6 +82,9 @@ const startServer = async () => {
   try {
     // Initialize database schema
     await initDatabase();
+    
+    // Seed admin account (auto-creates if not exists)
+    await seedAdminAccount();
     
     // Start server
     app.listen(PORT, () => {
