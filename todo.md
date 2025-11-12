@@ -329,3 +329,65 @@
 - [ ] Push to GitHub
 - [ ] Render auto-deploy
 - [ ] Final testing on live site
+
+
+---
+
+# INTAKE FORM VISIBILITY & SUBMISSION FIXES (Nov 12, 2025)
+
+## Label Visibility Issues
+- [x] Fix invisible field labels (white text on white background)
+- [x] Change label text color to bright white with text shadow
+- [x] Ensure all form fields have visible labels
+- [x] Increased font size and letter spacing for better readability
+
+## Success Confirmation
+- [x] Add "Form Submitted Successfully" message
+- [x] Show confirmation after successful submission
+- [x] Include case number in confirmation
+- [x] Provide clear next steps to user
+- [x] Add 3-second delay before redirect to payment
+
+## Submission Flow Verification
+- [ ] Test form submission end-to-end
+- [ ] Verify data reaches backend database
+- [ ] Confirm case appears in admin dashboard
+- [ ] Check all fields are stored correctly
+- [ ] Verify file uploads work
+
+## Deployment
+- [ ] Push fixes to GitHub
+- [ ] Render auto-deploy
+- [ ] Test on production site
+
+
+---
+
+# BUSINESS CLIENT INTAKE FORM IMPLEMENTATION (Nov 12, 2025)
+
+## Database Schema
+- [x] Create business_intakes table
+- [x] Add fields for business data
+- [x] Migration file created (will run on Render)
+
+## Backend /api/turbo-intake Route
+- [x] Create turboIntakeController.js
+- [x] Implement business intake submission handler
+- [x] Add file upload support
+- [x] Create /api/turbo-intake route
+- [x] Return proper JSON response
+- [x] Register route in server.js
+
+## Frontend Success Confirmation
+- [x] Replace alert with green banner
+- [x] Add formStatus state management
+- [x] Implement auto-dismiss after 4 seconds
+- [x] Style banner with provided CSS
+- [x] Connect form to /api/turbo-intake
+- [x] Add error banner for failures
+
+## Deployment
+- [ ] Push fixes to GitHub
+- [ ] Render auto-deploy
+- [ ] Test live form submission
+- [ ] Verify file uploads work

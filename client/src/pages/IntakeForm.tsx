@@ -29,6 +29,8 @@ export default function IntakeForm() {
   const [uploadedFiles, setUploadedFiles] = useState<FileUpload[]>([]);
   const [progress, setProgress] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [caseNumber, setCaseNumber] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -164,15 +166,20 @@ export default function IntakeForm() {
         documents: documentUrls,
       });
 
-      // Redirect to payment page with case ID
-      const params = new URLSearchParams({
-        caseId: response.case_id,
-        email: formData.email,
-        name: formData.fullName,
-        category: selectedCategory,
-      });
-
-      setLocation(`/payment?${params.toString()}`);
+      // Show success message
+      setSubmitSuccess(true);
+      setCaseNumber(response.case_number);
+      
+      // Wait 3 seconds before redirecting to payment
+      setTimeout(() => {
+        const params = new URLSearchParams({
+          caseId: response.case_id,
+          email: formData.email,
+          name: formData.fullName,
+          category: selectedCategory,
+        });
+        setLocation(`/payment?${params.toString()}`);
+      }, 3000);
     } catch (error: any) {
       alert(`Submission failed: ${error.message}`);
       setIsSubmitting(false);
@@ -441,6 +448,84 @@ export default function IntakeForm() {
               : `🚀 Complete Form (${Math.round(progress)}%)`}
           </button>
         </form>
+
+        {/* Success Message Overlay */}
+        {submitSuccess && (
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(0, 0, 0, 0.8)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 9999,
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: "#ffffff",
+                padding: "3rem",
+                borderRadius: "16px",
+                maxWidth: "500px",
+                width: "90%",
+                textAlign: "center",
+                boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "4rem",
+                  marginBottom: "1rem",
+                  animation: "bounce 0.6s ease-in-out",
+                }}
+              >
+                ✅
+              </div>
+              <h2
+                style={{
+                  fontSize: "1.8rem",
+                  fontWeight: "bold",
+                  color: "#10b981",
+                  marginBottom: "1rem",
+                }}
+              >
+                Form Submitted Successfully!
+              </h2>
+              {caseNumber && (
+                <p
+                  style={{
+                    fontSize: "1.1rem",
+                    color: "#374151",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  <strong>Case Number:</strong> {caseNumber}
+                </p>
+              )}
+              <p
+                style={{
+                  fontSize: "1rem",
+                  color: "#6b7280",
+                  marginBottom: "1.5rem",
+                }}
+              >
+                Your case has been received and is being processed by our AI system.
+              </p>
+              <p
+                style={{
+                  fontSize: "0.9rem",
+                  color: "#9ca3af",
+                }}
+              >
+                Redirecting to payment page...
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
