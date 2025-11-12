@@ -16,6 +16,10 @@ interface CaseDetail {
   status: string;
   created_at: string;
   documents: string[];
+  payment_status?: string;
+  payment_method?: string;
+  payment_confirmed_at?: string;
+  payment_verified_at?: string;
 }
 
 interface Analysis {
@@ -49,6 +53,7 @@ export default function AdminConsumerCaseDetail() {
   const [loading, setLoading] = useState(true);
   const [analyzing, setAnalyzing] = useState(false);
   const [generatingLetter, setGeneratingLetter] = useState(false);
+  const [verifyingPayment, setVerifyingPayment] = useState(false);
   const [error, setError] = useState('');
   
   const [showLetterModal, setShowLetterModal] = useState(false);
@@ -159,6 +164,64 @@ export default function AdminConsumerCaseDetail() {
       }
     } finally {
       setAnalyzing(false);
+    }
+  };
+
+  const handleVerifyPayment = async () => {
+    if (!confirm('Confirm that payment has been received and verified?')) {
+      return;
+    }
+
+    try {
+      setVerifyingPayment(true);
+      const response = await fetch(
+        `https://turbo-response-backend.onrender.com/api/payment/verify/${caseId}`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'paid', verified_by: 1 }) // TODO: Get admin ID from auth
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to verify payment');
+      }
+
+      alert('✅ Payment verified successfully!');
+      fetchCaseDetails(); // Refresh case data
+    } catch (err) {
+      alert('Failed to verify payment: ' + (err instanceof Error ? err.message : 'Unknown error'));
+    } finally {
+      setVerifyingPayment(false);
+    }
+  };
+
+  const handleMarkNotPaid = async () => {
+    if (!confirm('Mark this payment as NOT PAID? This will notify the client.')) {
+      return;
+    }
+
+    try {
+      setVerifyingPayment(true);
+      const response = await fetch(
+        `https://turbo-response-backend.onrender.com/api/payment/verify/${caseId}`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'unpaid', verified_by: 1 }) // TODO: Get admin ID from auth
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to update payment status');
+      }
+
+      alert('Payment marked as not paid.');
+      fetchCaseDetails(); // Refresh case data
+    } catch (err) {
+      alert('Failed to update payment status: ' + (err instanceof Error ? err.message : 'Unknown error'));
+    } finally {
+      setVerifyingPayment(false);
     }
   };
 
@@ -345,7 +408,57 @@ export default function AdminConsumerCaseDetail() {
             <label>Status:</label>
             <span className="status-value">{caseData.status}</span>
           </div>
+          <div className="info-item">
+            <label>Payment Status:</label>
+            <span className={`payment-status payment-${caseData.payment_status || 'unpaid'}`}>
+              {caseData.payment_status === 'payment_pending' ? '⏳ Pending Verification' :
+               caseData.payment_status === 'paid' ? '✅ Verified' :
+               '❌ Unpaid'}
+            </span>
+          </div>
+          {caseData.payment_method && (
+            <div className="info-item">
+              <label>Payment Method:</label>
+              <span>{caseData.payment_method}</span>
+            </div>
+          )}
+          {caseData.payment_confirmed_at && (
+            <div className="info-item">
+              <label>Payment Confirmed:</label>
+              <span>{new Date(caseData.payment_confirmed_at).toLocaleString()}</span>
+            </div>
+          )}
         </div>
+        
+        {/* Payment Verification Buttons */}
+        {caseData.payment_status === 'payment_pending' && (
+          <div className="payment-verification-section">
+            <h3>💳 Payment Verification</h3>
+            <p>Client has confirmed payment. Please verify the payment was received.</p>
+            <div className="verification-buttons">
+              <button 
+                className="btn btn-success"
+                onClick={handleVerifyPayment}
+                disabled={verifyingPayment}
+              >
+                ✅ Mark as Verified
+              </button>
+              <button 
+                className="btn btn-danger"
+                onClick={handleMarkNotPaid}
+                disabled={verifyingPayment}
+              >
+                ❌ Mark as Not Paid
+              </button>
+            </div>
+          </div>
+        )}
+        
+        {caseData.payment_verified_at && (
+          <div className="payment-verified-notice">
+            ✅ Payment verified on {new Date(caseData.payment_verified_at).toLocaleString()}
+          </div>
+        )}
         
         <div className="description-section">
           <label>Description:</label>
