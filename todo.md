@@ -220,3 +220,40 @@
 - [x] Create settings UI to set cap
 - [x] Show warning when approaching cap
 - [x] Block runs when cap exceeded
+
+
+---
+
+# MANUAL PAYMENT SYSTEM (PayPal, Cash App, Venmo)
+
+## Remove Stripe
+- [x] Delete Stripe payment routes
+- [x] Delete Stripe payment controller
+- [x] Remove Stripe from package.json
+- [x] Remove Stripe environment variables
+- [x] Delete Stripe webhook code
+
+## Payment Instructions Page
+- [x] Create PaymentInstructions.tsx component (already exists as Payment.tsx)
+- [x] Show 3 buttons: PayPal, Cash App, Venmo
+- [x] Display business payment info when clicked
+- [x] Show amount to pay
+- [x] Add "I Completed My Payment" button
+
+## Client Confirmation Flow
+- [x] Create POST /api/payment/confirm endpoint
+- [x] Update case status to "payment_pending"
+- [x] Create admin notification
+- [x] Show confirmation screen to client
+
+## Admin Verification
+- [x] Add "Mark as Verified" button to case detail
+- [x] Add "Mark as Not Paid" button to case detail
+- [x] Create PUT /api/payment/verify endpoint
+- [x] Update case payment status
+- [x] Show payment method in admin view
+
+## Database
+- [x] Add payment_method column to cases table
+- [x] Add payment_confirmed_at timestamp
+- [x] Add payment_verified_by admin ID
