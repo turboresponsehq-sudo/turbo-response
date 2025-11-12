@@ -463,3 +463,12 @@
 - [ ] Rebuild frontend
 - [ ] Deploy to production
 - [ ] Test that React TurboIntake.tsx component loads (not static HTML)
+
+## CSS LOADING ISSUE (Nov 12, 2025 - CRITICAL)
+
+- [ ] Check TurboIntake.tsx for CSS imports
+- [ ] Verify BusinessIntake.css file exists
+- [ ] Ensure CSS is imported in component
+- [ ] Check if CSS class names match between component and stylesheet
+- [ ] Verify CSS is included in build output
+- [ ] Test CSS loading in production
