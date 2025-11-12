@@ -17,6 +17,7 @@ const adminRoutes = require('./routes/admin');
 const casesRoutes = require('./routes/cases');
 const uploadRoutes = require('./routes/upload');
 const adminConsumerRoutes = require('./routes/adminConsumer');
+const businessIntakeRoutes = require('./routes/businessIntake');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -64,6 +65,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/cases', casesRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/admin/consumer', adminConsumerRoutes);
+app.use('/api/business-intake', businessIntakeRoutes);
 
 // 404 handler
 app.use((req, res) => {

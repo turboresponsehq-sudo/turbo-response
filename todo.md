@@ -257,3 +257,49 @@
 - [x] Add payment_method column to cases table
 - [x] Add payment_confirmed_at timestamp
 - [x] Add payment_verified_by admin ID
+
+
+---
+
+# BUSINESS INTAKE SYSTEM RESTORATION
+
+## Business Intake Form (React)
+- [x] Port turbo_intake.html to React component (TurboIntake.tsx already exists)
+- [x] Add all 15 form fields (contact, digital presence, business snapshot, vision)
+- [x] Add form validation
+- [x] Style with modern Turbo Response design
+- [x] Add route to App.tsx
+
+## Database Schema
+- [x] Create business_submissions table
+- [x] Add columns for all 15 fields
+- [x] Create indexes for search/filtering
+- [x] Add timestamps and status tracking
+
+## Blueprint Generator (Node.js)
+- [x] Port blueprint_generator.py to Node.js
+- [x] Integrate OpenAI API
+- [x] Generate 5-section strategy blueprint
+- [x] Save blueprint to database
+- [x] Return JSON response
+
+## Admin View
+- [x] Create AdminBusinessIntake.tsx component
+- [x] List all business submissions
+- [x] Show submission details
+- [x] Add "Generate Blueprint" button
+- [x] Display generated blueprint
+- [x] Add route to admin navigation
+
+## Backend API
+- [x] Create POST /api/business-intake/submit endpoint
+- [x] Create GET /api/admin/business-intake/submissions endpoint
+- [x] Create POST /api/admin/business-intake/generate-blueprint/:id endpoint
+- [x] Create GET /api/admin/business-intake/blueprint/:id endpoint
+
+## Testing
+- [ ] Test form submission
+- [ ] Test database storage
+- [ ] Test blueprint generation
+- [ ] Test admin view
+- [ ] Verify all routes work
