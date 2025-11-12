@@ -22,7 +22,7 @@ export default function AdminDashboard() {
     const fetchData = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_API_URL || "https://turbo-response-backend.onrender.com"}/api/intakes`,
+          `${import.meta.env.VITE_API_URL || "https://turbo-response-backend.onrender.com"}/api/admin/cases`,
           {
             headers: { Authorization: `Bearer ${storedToken}` },
           }
