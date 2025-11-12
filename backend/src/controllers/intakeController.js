@@ -1,5 +1,6 @@
 const { query } = require('../services/database/db');
 const logger = require('../utils/logger');
+const { sendNewCaseNotification } = require('../services/emailService');
 
 // Generate unique case number
 const generateCaseNumber = () => {
@@ -70,6 +71,24 @@ const submit = async (req, res, next) => {
       caseId: newCase.id,
       caseNumber: newCase.case_number,
       category: newCase.category
+    });
+
+    // Send email notification to admin (non-blocking)
+    sendNewCaseNotification({
+      id: newCase.id,
+      case_number: newCase.case_number,
+      category,
+      email,
+      full_name,
+      phone,
+      address,
+      case_details,
+      amount,
+      deadline,
+      documents,
+      created_at: newCase.created_at,
+    }).catch(err => {
+      logger.error('Failed to send new case notification email', { error: err.message });
     });
 
     res.status(201).json({
