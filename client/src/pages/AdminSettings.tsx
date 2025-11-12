@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import SpendingCapSettings from "@/components/SpendingCapSettings";
 import "./AdminSettings.css";
 
 const sections = [
@@ -67,6 +68,9 @@ export default function AdminSettings() {
           <strong>💾 Save All Changes</strong> when done. The AI will use the updated
           philosophy immediately.
         </div>
+
+        {/* AI Spending Cap Settings */}
+        <SpendingCapSettings />
 
         <div className="sections-grid">
           {sections.map((section) => (
