@@ -10,7 +10,6 @@ const { initDatabase } = require('./services/database/init');
 // Import routes
 const authRoutes = require('./routes/auth');
 const intakeRoutes = require('./routes/intake');
-const blueprintRoutes = require('./routes/blueprint');
 const chatRoutes = require('./routes/chat');
 const paymentRoutes = require('./routes/payment');
 const adminRoutes = require('./routes/admin');
@@ -58,7 +57,6 @@ app.get('/health', (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/intake', intakeRoutes);
-app.use('/api/blueprint', blueprintRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/admin', adminRoutes);

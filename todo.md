@@ -303,3 +303,25 @@
 - [ ] Test blueprint generation
 - [ ] Test admin view
 - [ ] Verify all routes work
+
+
+---
+
+# BLUEPRINT GENERATOR FIX (DEPLOYMENT BLOCKER)
+
+## Issue
+- [ ] blueprintGenerator.js uses invokeLLM from webdev _core/llm
+- [ ] _core/llm doesn't exist in standalone backend
+- [ ] Deployment fails with MODULE_NOT_FOUND error
+
+## Fix
+- [x] Replace invokeLLM with direct OpenAI API call
+- [x] Use OpenAI npm package
+- [x] Keep same prompt structure and response format
+- [ ] Test locally before deploying
+
+## Deploy
+- [x] Push fix to GitHub
+- [x] Wait for Render auto-deploy
+- [x] Verify deployment succeeds
+- [ ] Run database migration

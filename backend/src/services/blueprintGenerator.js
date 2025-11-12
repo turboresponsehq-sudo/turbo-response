@@ -3,8 +3,13 @@
  * Generates AI-powered 5-section business strategy blueprints using GPT-4o
  */
 
-const { invokeLLM } = require('../_core/llm');
+const OpenAI = require('openai');
 const logger = require('../utils/logger');
+
+// Initialize OpenAI client
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
 
 /**
  * Generate a comprehensive business strategy blueprint
@@ -60,7 +65,8 @@ Return ONLY valid JSON in this exact structure:
 
 Do not include any markdown formatting, code blocks, or explanatory text. Return ONLY the JSON object.`;
 
-    const response = await invokeLLM({
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o',
       messages: [
         {
           role: 'system',
