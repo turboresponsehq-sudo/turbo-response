@@ -1,0 +1,58 @@
+const bcrypt = require('bcryptjs');
+const { query } = require('./db');
+const logger = require('../../utils/logger');
+
+/**
+ * Seed admin account on server startup
+ * This ensures admin account always exists without manual intervention
+ */
+const seedAdminAccount = async () => {
+  try {
+    logger.info('🌱 Checking admin account...');
+
+    // Check if admin account exists
+    const existingAdmin = await query(
+      'SELECT id, email, role FROM users WHERE email = $1',
+      ['turboresponsehq@gmail.com']
+    );
+
+    if (existingAdmin.rows.length > 0) {
+      logger.info('✅ Admin account already exists');
+      return;
+    }
+
+    // Create admin account
+    logger.info('🔧 Creating admin account...');
+    
+    const adminEmail = 'turboresponsehq@gmail.com';
+    const adminPassword = 'admin123';
+    const passwordHash = await bcrypt.hash(adminPassword, 10);
+
+    const result = await query(
+      `INSERT INTO users (email, password_hash, full_name, role, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, NOW(), NOW())
+       RETURNING id, email, role`,
+      [adminEmail, passwordHash, 'Admin', 'admin']
+    );
+
+    logger.info('✅ Admin account created successfully', {
+      id: result.rows[0].id,
+      email: result.rows[0].email,
+      role: result.rows[0].role
+    });
+
+    logger.info('🔑 Admin credentials:', {
+      email: adminEmail,
+      password: adminPassword
+    });
+
+  } catch (error) {
+    // Don't crash the server if seeding fails
+    logger.error('❌ Failed to seed admin account:', error.message);
+    logger.warn('⚠️ Server will continue, but admin login may not work');
+  }
+};
+
+module.exports = {
+  seedAdminAccount
+};
