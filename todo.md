@@ -391,3 +391,41 @@
 - [ ] Render auto-deploy
 - [ ] Test live form submission
 - [ ] Verify file uploads work
+
+
+---
+
+# BUSINESS INTAKE FORM UI VISIBILITY FIXES (Nov 12, 2025)
+
+## Field Labels and Placeholders
+- [x] Add visible labels above all input fields
+- [x] Ensure labels are clear and descriptive
+- [x] Brighten placeholder text to #999999
+- [x] Add required field indicators (red asterisks)
+- [x] Add placeholders to all contact fields
+
+## Input Field Styling
+- [x] Improve input field contrast
+- [x] Set white input background (#ffffff)
+- [x] Add visible borders to input fields (#d0d0d0)
+- [x] Ensure consistent styling across all fields
+- [x] Improve label font weight and size
+
+## Section Organization
+- [x] "Basic Contact" section header exists
+- [x] "Digital Presence" section header exists
+- [x] "Business Snapshot" section header exists
+- [x] "Vision" section header exists
+- [x] Improve spacing between sections
+
+## Mobile Responsiveness
+- [x] Test form on local dev server
+- [x] Ensure all fields are readable
+- [x] Verify scrollability works
+- [x] Responsive CSS already implemented
+
+## Deployment
+- [ ] Deploy fixes to production
+- [ ] Test visually on desktop
+- [ ] Test visually on mobile
+- [ ] Confirm readability and clarity

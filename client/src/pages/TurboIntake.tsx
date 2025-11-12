@@ -135,6 +135,7 @@ export default function TurboIntake() {
                 type="text"
                 id="fullName"
                 name="fullName"
+                placeholder="Enter your full name"
                 required
                 value={formData.fullName}
                 onChange={handleInputChange}
@@ -149,6 +150,7 @@ export default function TurboIntake() {
                 type="email"
                 id="email"
                 name="email"
+                placeholder="your.email@example.com"
                 required
                 value={formData.email}
                 onChange={handleInputChange}
@@ -163,6 +165,7 @@ export default function TurboIntake() {
                 type="tel"
                 id="phone"
                 name="phone"
+                placeholder="(555) 123-4567"
                 required
                 value={formData.phone}
                 onChange={handleInputChange}
@@ -177,6 +180,7 @@ export default function TurboIntake() {
                 type="text"
                 id="businessName"
                 name="businessName"
+                placeholder="Your Company Name"
                 required
                 value={formData.businessName}
                 onChange={handleInputChange}

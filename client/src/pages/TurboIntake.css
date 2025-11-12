@@ -74,9 +74,10 @@
 .turbo-intake-page label {
   display: block;
   margin-bottom: 8px;
-  color: #333;
-  font-weight: 500;
-  font-size: 14px;
+  color: #1a1a1a;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.3px;
 }
 
 .turbo-intake-page label .required {
@@ -91,11 +92,19 @@
 .turbo-intake-page textarea {
   width: 100%;
   padding: 12px 15px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid #d0d0d0;
   border-radius: 8px;
   font-size: 15px;
-  transition: border-color 0.3s;
+  transition: border-color 0.3s, box-shadow 0.3s;
   font-family: inherit;
+  background-color: #ffffff;
+  color: #1a1a1a;
+}
+
+.turbo-intake-page input::placeholder,
+.turbo-intake-page textarea::placeholder {
+  color: #999999;
+  opacity: 1;
 }
 
 .turbo-intake-page input:focus,
