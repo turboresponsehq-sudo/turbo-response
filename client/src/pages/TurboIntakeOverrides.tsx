@@ -2,7 +2,7 @@ export const TurboIntakeStyles = () => (
   <style>{`
     /* FORCE VISIBILITY OF ALL LABELS */
     .turbo-intake-page label {
-      color: #ffffff !important;
+      color: #1a1a1a !important;
       font-size: 16px !important;
       font-weight: 600 !important;
       opacity: 1 !important;
@@ -42,7 +42,7 @@ export const TurboIntakeStyles = () => (
     .turbo-intake-page h3,
     .turbo-intake-page h4,
     .turbo-intake-page .section-title {
-      color: #ffffff !important;
+      color: #667eea !important;
       font-weight: 700 !important;
       opacity: 1 !important;
     }
