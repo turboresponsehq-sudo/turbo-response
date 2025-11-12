@@ -18,6 +18,7 @@ const adminRoutes = require('./routes/admin');
 const casesRoutes = require('./routes/cases');
 const uploadRoutes = require('./routes/upload');
 const adminConsumerRoutes = require('./routes/adminConsumer');
+const turboIntakeRoutes = require('./routes/turboIntake');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -58,6 +59,7 @@ app.get('/health', (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/intake', intakeRoutes);
+app.use('/api/turbo-intake', turboIntakeRoutes);
 app.use('/api/blueprint', blueprintRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/payment', paymentRoutes);

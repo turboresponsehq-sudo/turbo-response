@@ -24,7 +24,8 @@ export default function TurboIntake() {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [formStatus, setFormStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -54,18 +55,45 @@ export default function TurboIntake() {
     }
 
     setIsSubmitting(true);
+    setFormStatus('idle');
+    setErrorMessage('');
 
-    // Simulate submission
-    setTimeout(() => {
-      setShowSuccess(true);
+    try {
+      const response = await fetch('https://turbo-response-backend.onrender.com/api/turbo-intake', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Submission failed');
+      }
+
+      setFormStatus('success');
       setIsSubmitting(false);
 
-      // Reset form after 3 seconds
+      // Redirect to home after 4 seconds
       setTimeout(() => {
         window.location.href = "/";
-      }, 3000);
-    }, 2000);
+      }, 4000);
+    } catch (error: any) {
+      setFormStatus('error');
+      setErrorMessage(error.message || 'Failed to submit form');
+      setIsSubmitting(false);
+    }
   };
+
+  // Auto-dismiss success message after 4 seconds
+  useEffect(() => {
+    if (formStatus === 'success') {
+      const timer = setTimeout(() => setFormStatus('idle'), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [formStatus]);
 
   if (isLoading) {
     return (
@@ -343,10 +371,40 @@ export default function TurboIntake() {
           </button>
         </form>
 
-        {showSuccess && (
-          <div className="success-message" style={{ display: "block" }}>
-            ✅ Success! Your submission has been received. We'll analyze your business
-            and send you the AI audit report within 24-48 hours.
+        {/* Success Banner */}
+        {formStatus === 'success' && (
+          <div
+            style={{
+              backgroundColor: "#0CBA70",
+              color: "white",
+              padding: "12px 16px",
+              borderRadius: "6px",
+              marginTop: "16px",
+              textAlign: "center",
+              fontWeight: "500",
+              boxShadow: "0px 2px 6px rgba(0,0,0,0.15)",
+              transition: "opacity 0.5s ease-in-out"
+            }}
+          >
+            ✅ Submission received! Our team will contact you soon.
+          </div>
+        )}
+
+        {/* Error Banner */}
+        {formStatus === 'error' && (
+          <div
+            style={{
+              backgroundColor: "#ef4444",
+              color: "white",
+              padding: "12px 16px",
+              borderRadius: "6px",
+              marginTop: "16px",
+              textAlign: "center",
+              fontWeight: "500",
+              boxShadow: "0px 2px 6px rgba(0,0,0,0.15)",
+            }}
+          >
+            ❌ {errorMessage}
           </div>
         )}
       </div>
