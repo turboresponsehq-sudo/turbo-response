@@ -115,6 +115,34 @@ router.post('/analyze-case/:id', async (req, res) => {
 
     const caseData = caseResult.rows[0];
 
+    // Check monthly spending cap before running analysis
+    const capResult = await query(
+      "SELECT setting_value FROM admin_settings WHERE setting_key = 'monthly_spending_cap'"
+    );
+    
+    if (capResult.rows.length > 0 && capResult.rows[0].setting_value) {
+      const monthlyCap = parseFloat(capResult.rows[0].setting_value);
+      
+      // Calculate current month spending
+      const spendingResult = await query(`
+        SELECT COALESCE(SUM(estimated_cost), 0) as total_spent
+        FROM ai_usage_logs
+        WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_TIMESTAMP)
+      `);
+      
+      const currentSpending = parseFloat(spendingResult.rows[0].total_spent);
+      
+      if (currentSpending >= monthlyCap) {
+        return res.status(429).json({
+          success: false,
+          error: `Monthly spending cap of $${monthlyCap.toFixed(2)} reached. Current spending: $${currentSpending.toFixed(2)}`,
+          cap_exceeded: true,
+          current_spending: currentSpending,
+          monthly_cap: monthlyCap
+        });
+      }
+    }
+
     // Generate AI analysis
     const analysis = await generateComprehensiveAnalysis({
       category: caseData.category,
@@ -122,6 +150,24 @@ router.post('/analyze-case/:id', async (req, res) => {
       amount: caseData.amount,
       uploadedFiles: caseData.uploaded_files ? JSON.parse(caseData.uploaded_files) : [],
     });
+    
+    // Log usage for cost tracking
+    if (analysis._usage) {
+      await query(
+        `INSERT INTO ai_usage_logs (case_id, analysis_type, tokens_used, estimated_cost, model_used)
+         VALUES ($1, $2, $3, $4, $5)`,
+        [
+          caseId,
+          'comprehensive',
+          analysis._usage.tokens,
+          analysis._usage.cost,
+          analysis._usage.model
+        ]
+      );
+      
+      // Remove usage data from response
+      delete analysis._usage;
+    }
 
     // Check if analysis already exists
     const existingAnalysis = await query(
@@ -354,6 +400,119 @@ router.post('/notification/:id/mark-read', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to mark notification as read',
+    });
+  }
+});
+
+/**
+ * GET /api/admin/consumer/usage-stats
+ * Get AI usage statistics for current month
+ */
+router.get('/usage-stats', async (req, res) => {
+  try {
+    // Get current month usage
+    const usageResult = await query(`
+      SELECT 
+        COUNT(*) as total_runs,
+        SUM(tokens_used) as total_tokens,
+        SUM(estimated_cost) as total_cost
+      FROM ai_usage_logs
+      WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_TIMESTAMP)
+    `);
+    
+    // Get monthly spending cap
+    const capResult = await query(
+      "SELECT setting_value FROM admin_settings WHERE setting_key = 'monthly_spending_cap'"
+    );
+    
+    const monthlyCap = capResult.rows.length > 0 && capResult.rows[0].setting_value
+      ? parseFloat(capResult.rows[0].setting_value)
+      : null;
+    
+    const stats = usageResult.rows[0];
+    const totalCost = parseFloat(stats.total_cost) || 0;
+    const totalRuns = parseInt(stats.total_runs) || 0;
+    
+    res.json({
+      success: true,
+      stats: {
+        total_runs: totalRuns,
+        total_tokens: parseInt(stats.total_tokens) || 0,
+        total_cost: totalCost,
+        monthly_cap: monthlyCap,
+        cap_remaining: monthlyCap ? Math.max(0, monthlyCap - totalCost) : null,
+        cap_percentage: monthlyCap ? (totalCost / monthlyCap) * 100 : null,
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching usage stats:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch usage stats',
+    });
+  }
+});
+
+/**
+ * PUT /api/admin/consumer/settings/spending-cap
+ * Update monthly spending cap
+ */
+router.put('/settings/spending-cap', async (req, res) => {
+  try {
+    const { cap } = req.body;
+    
+    // Validate cap (must be null or positive number)
+    if (cap !== null && (isNaN(cap) || cap < 0)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Cap must be null (unlimited) or a positive number',
+      });
+    }
+    
+    await query(
+      `INSERT INTO admin_settings (setting_key, setting_value, updated_at)
+       VALUES ('monthly_spending_cap', $1, CURRENT_TIMESTAMP)
+       ON CONFLICT (setting_key) 
+       DO UPDATE SET setting_value = $1, updated_at = CURRENT_TIMESTAMP`,
+      [cap]
+    );
+    
+    res.json({
+      success: true,
+      cap: cap,
+    });
+  } catch (error) {
+    console.error('Error updating spending cap:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to update spending cap',
+    });
+  }
+});
+
+/**
+ * GET /api/admin/consumer/settings/spending-cap
+ * Get current monthly spending cap
+ */
+router.get('/settings/spending-cap', async (req, res) => {
+  try {
+    const result = await query(
+      "SELECT setting_value FROM admin_settings WHERE setting_key = 'monthly_spending_cap'"
+    );
+    
+    const cap = result.rows.length > 0 && result.rows[0].setting_value
+      ? parseFloat(result.rows[0].setting_value)
+      : null;
+    
+    res.json({
+      success: true,
+      cap: cap,
+    });
+  } catch (error) {
+    console.error('Error fetching spending cap:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch spending cap',
     });
   }
 });

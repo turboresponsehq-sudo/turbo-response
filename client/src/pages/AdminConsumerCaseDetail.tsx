@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useRoute } from 'wouter';
+import AIUsageTracker from '@/components/AIUsageTracker';
 import './AdminConsumerCaseDetail.css';
 
 interface CaseDetail {
@@ -52,6 +53,11 @@ export default function AdminConsumerCaseDetail() {
   
   const [showLetterModal, setShowLetterModal] = useState(false);
   const [selectedLetter, setSelectedLetter] = useState<Letter | null>(null);
+  
+  // Confirmation and cooldown states
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [cooldownSeconds, setCooldownSeconds] = useState(0);
+  const [lastAnalysisTime, setLastAnalysisTime] = useState<number>(0);
 
   const caseId = params?.id;
 
@@ -83,12 +89,36 @@ export default function AdminConsumerCaseDetail() {
     }
   };
 
+  // Handle cooldown timer
+  useEffect(() => {
+    if (cooldownSeconds > 0) {
+      const timer = setTimeout(() => {
+        setCooldownSeconds(cooldownSeconds - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [cooldownSeconds]);
+  
+  // Show confirmation dialog before analysis
+  const handleAnalyzeClick = () => {
+    setShowConfirmDialog(true);
+  };
+  
+  // Confirm and run analysis
+  const confirmAnalysis = () => {
+    setShowConfirmDialog(false);
+    runAIAnalysis();
+  };
+  
   const runAIAnalysis = async () => {
     if (!caseId) return;
     
     try {
       setAnalyzing(true);
       setError('');
+      
+      // Record analysis start time
+      const startTime = Date.now();
       
       const response = await fetch(
         `https://turbo-response-backend.onrender.com/api/admin/consumer/analyze-case/${caseId}`,
@@ -112,8 +142,21 @@ export default function AdminConsumerCaseDetail() {
       if (caseData) {
         setCaseData({ ...caseData, status: 'analyzed' });
       }
+      
+      // Start 15-second cooldown
+      setLastAnalysisTime(Date.now());
+      setCooldownSeconds(15);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'AI analysis failed');
+      const errorMessage = err instanceof Error ? err.message : 'AI analysis failed';
+      setError(errorMessage);
+      
+      // Check if it's a spending cap error
+      if (errorMessage.includes('spending cap')) {
+        // Don't start cooldown on cap errors
+      } else {
+        // Start cooldown even on errors to prevent spam
+        setCooldownSeconds(10);
+      }
     } finally {
       setAnalyzing(false);
     }
@@ -329,16 +372,21 @@ export default function AdminConsumerCaseDetail() {
         )}
       </div>
 
+      {/* AI Usage Tracker */}
+      <AIUsageTracker />
+
       {/* AI Analysis Section */}
       <div className="analysis-card">
         <div className="card-header">
           <h2>🤖 AI Analysis</h2>
           <button 
-            onClick={runAIAnalysis}
-            disabled={analyzing}
+            onClick={handleAnalyzeClick}
+            disabled={analyzing || cooldownSeconds > 0}
             className="btn-analyze"
           >
-            {analyzing ? '⏳ Analyzing...' : '🚀 Run AI Analysis'}
+            {analyzing ? '⏳ Analyzing...' : 
+             cooldownSeconds > 0 ? `⏱️ Cooldown (${cooldownSeconds}s)` :
+             '🚀 Run AI Analysis'}
           </button>
         </div>
 
@@ -462,6 +510,55 @@ export default function AdminConsumerCaseDetail() {
               <p>Click "Generate Letter" to create a legal response letter.</p>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Confirmation Dialog */}
+      {showConfirmDialog && (
+        <div className="modal-overlay" onClick={() => setShowConfirmDialog(false)}>
+          <div className="modal-content confirm-dialog" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>⚠️ Confirm AI Analysis</h2>
+              <button 
+                onClick={() => setShowConfirmDialog(false)}
+                className="btn-close-modal"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-body">
+              <p style={{ fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '1rem' }}>
+                You are about to run an AI analysis on this case using OpenAI GPT-4.
+              </p>
+              <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>
+                This will:
+              </p>
+              <ul style={{ color: '#e2e8f0', marginLeft: '1.5rem', marginBottom: '1rem' }}>
+                <li>Analyze violations and applicable laws</li>
+                <li>Generate recommendations and success probability</li>
+                <li>Consume API tokens (estimated cost: $0.01-0.05)</li>
+                <li>Update the case analysis in the database</li>
+              </ul>
+              <p style={{ color: '#fbbf24', fontWeight: 600 }}>
+                ⏱️ After running, there will be a 15-second cooldown before you can run another analysis.
+              </p>
+            </div>
+            <div className="modal-footer">
+              <button 
+                onClick={() => setShowConfirmDialog(false)}
+                className="btn-copy"
+                style={{ background: 'rgba(100, 116, 139, 0.2)', border: '1px solid #64748b' }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={confirmAnalysis}
+                className="btn-download"
+              >
+                ✅ Confirm & Run Analysis
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

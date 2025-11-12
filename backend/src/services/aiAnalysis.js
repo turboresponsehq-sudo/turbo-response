@@ -55,6 +55,17 @@ Documents: ${caseData.uploadedFiles?.length || 0} uploaded
 
     const analysis = JSON.parse(content);
     
+    // Track usage for cost monitoring
+    const tokensUsed = response.usage?.total_tokens || 0;
+    const estimatedCost = calculateCost(tokensUsed, 'gpt-4o');
+    
+    // Return usage data along with analysis
+    analysis._usage = {
+      tokens: tokensUsed,
+      cost: estimatedCost,
+      model: 'gpt-4o'
+    };
+    
     // Ensure all required fields exist with defaults
     return {
       violations: analysis.violations || ['Analysis pending'],
@@ -254,8 +265,28 @@ Create a formal, legally sound letter addressing the issues.`;
   }
 }
 
+/**
+ * Calculate estimated OpenAI API cost based on tokens and model
+ * Pricing as of 2024:
+ * - GPT-4o: $2.50 per 1M input tokens, $10.00 per 1M output tokens
+ * - GPT-4: $30.00 per 1M input tokens, $60.00 per 1M output tokens
+ * 
+ * Using average estimate: $5 per 1M tokens for GPT-4o
+ */
+function calculateCost(tokens, model) {
+  const costPer1MTokens = {
+    'gpt-4o': 5.00,
+    'gpt-4': 45.00,
+    'gpt-3.5-turbo': 1.50,
+  };
+  
+  const rate = costPer1MTokens[model] || 5.00;
+  return (tokens / 1000000) * rate;
+}
+
 module.exports = {
   generateComprehensiveAnalysis,
   generateLetter,
+  calculateCost,
   LETTER_TEMPLATES,
 };

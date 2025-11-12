@@ -190,3 +190,33 @@
 - [x] Add routes to App.tsx
 - [x] Update admin navigation
 - [x] Test all pages
+
+
+---
+
+# AI ANALYSIS SAFEGUARDS & USAGE TRACKING
+
+## Backend Usage Tracking
+- [x] Create `ai_usage_logs` database table
+- [x] Add usage logging to analyze-case endpoint
+- [x] Create GET /api/admin/consumer/usage-stats endpoint
+- [x] Calculate estimated OpenAI costs
+
+## Frontend Confirmation & Cooldown
+- [x] Add confirmation dialog before AI analysis
+- [x] Implement 10-15 second cooldown timer
+- [x] Disable button during cooldown
+- [x] Show countdown in button text
+
+## Usage Tracker UI
+- [x] Create UsageTracker component
+- [x] Display runs this month
+- [x] Display estimated cost
+- [x] Add to Case Detail page
+
+## Monthly Spending Cap
+- [x] Create admin_settings table for cap value
+- [x] Add spending cap check to backend
+- [x] Create settings UI to set cap
+- [x] Show warning when approaching cap
+- [x] Block runs when cap exceeded
