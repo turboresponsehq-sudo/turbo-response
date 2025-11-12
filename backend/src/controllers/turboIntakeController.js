@@ -1,4 +1,4 @@
-const { query } = require('../config/database');
+const { query } = require('../services/database/db');
 const logger = require('../utils/logger');
 
 // Submit new business intake form
