@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getMyCases, getCaseById, getAllCases, getAdminCaseById, updateCaseStatus, runAIAnalysis, getAIAnalysis } = require('../controllers/casesController');
+const { getMyCases, getCaseById, getAllCases, getAdminCaseById, updateCaseStatus, runAIAnalysis, getAIAnalysis, deleteCase } = require('../controllers/casesController');
 const { authenticateToken } = require('../middleware/auth');
 
 /**
@@ -31,6 +31,9 @@ router.post('/case/:id/analyze', authenticateToken, requireAdmin, runAIAnalysis)
 
 // GET /api/case/:id/analysis - Get last saved AI analysis (admin only)
 router.get('/case/:id/analysis', authenticateToken, requireAdmin, getAIAnalysis);
+
+// DELETE /api/case/:id - Delete case (admin only)
+router.delete('/case/:id', authenticateToken, requireAdmin, deleteCase);
 
 // User routes
 // GET /api/cases - Get all cases for current user

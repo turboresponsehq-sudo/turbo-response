@@ -220,3 +220,20 @@
 - [ ] Verify on production
 - [ ] Test on iPhone Safari (incognito)
 - [ ] Generate status report with screenshots
+
+
+---
+
+## 🚨 CRITICAL: ADMIN WORKFLOW FIXES (BEFORE DEPLOYMENT)
+
+- [x] Fix backend getCaseById to return all fields (case_number, category, created_at, full_name, address, description)
+- [x] Verify AdminCaseDetail.tsx has AI Analysis panel
+- [x] Fix mobile case row clicks in AdminDashboard (add onClick handlers)
+- [x] Add Delete Case button to AdminCaseDetail.tsx
+- [x] Create DELETE /api/case/:id endpoint
+- [ ] Test case detail page loads with all data
+- [ ] Test AI Analysis button works
+- [ ] Test Delete Case button works
+- [ ] Test mobile case row clicks on iPhone
+- [ ] Redeploy frontend + backend together
+- [ ] Verify production shows complete case details

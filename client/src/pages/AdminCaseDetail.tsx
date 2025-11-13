@@ -43,6 +43,7 @@ export default function AdminCaseDetail() {
   const [aiAnalysis, setAiAnalysis] = useState<any>(null);
   const [analyzingAI, setAnalyzingAI] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("admin_session");
@@ -91,6 +92,29 @@ export default function AdminCaseDetail() {
       setUpdateMessage({ type: 'error', text: errorMsg });
     } finally {
       setUpdating(false);
+    }
+  };
+
+  const handleDeleteCase = async () => {
+    if (!confirm(`Are you sure you want to delete case ${caseData.case_number}? This action cannot be undone.`)) {
+      return;
+    }
+
+    const storedToken = localStorage.getItem("admin_session");
+    setDeleting(true);
+
+    try {
+      await axios.delete(
+        `${API_URL}/api/case/${params?.id}`,
+        { headers: { Authorization: `Bearer ${storedToken}` } }
+      );
+      
+      // Redirect to dashboard after successful deletion
+      setLocation("/admin");
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.error || "Failed to delete case";
+      alert(`Error: ${errorMsg}`);
+      setDeleting(false);
     }
   };
 
@@ -310,7 +334,29 @@ export default function AdminCaseDetail() {
                 flex: "0 0 auto"
               }}
             >
-              {updating ? "Updating..." : "Update"}
+            {updating ? "Updating..." : "Update"}
+          </button>
+          </div>
+
+          {/* Delete Case Button */}
+          <div style={{ marginTop: "1rem" }}>
+            <button
+              onClick={handleDeleteCase}
+              disabled={deleting}
+              style={{
+                padding: "0.75rem 1rem",
+                minHeight: "48px",
+                backgroundColor: deleting ? "#e9ecef" : "#dc3545",
+                color: deleting ? "#6c757d" : "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: deleting ? "not-allowed" : "pointer",
+                fontSize: "0.875rem",
+                fontWeight: 500,
+                width: "100%"
+              }}
+            >
+              {deleting ? "Deleting..." : "🗑️ Delete Case"}
             </button>
           </div>
         </div>
