@@ -472,3 +472,70 @@
 - [ ] Check if CSS class names match between component and stylesheet
 - [ ] Verify CSS is included in build output
 - [ ] Test CSS loading in production
+
+
+---
+
+# ADMIN WORKFLOW RESTORATION (Nov 12, 2025) - APPROVED BY CHIEF
+
+## Phase 1: Database Schema & Status Value Corrections
+- [ ] Create migration: restore_admin_workflow_status.sql
+- [ ] Update status constraint to: 'Pending Review', 'In Review', 'Awaiting Client', 'Completed', 'Rejected'
+- [ ] Update default status to 'Pending Review'
+- [ ] Update intakeController.js to use 'Pending Review' as default
+
+## Phase 2: Backend API Routes for Admin Case Management
+- [ ] Create /backend/src/routes/cases.js with GET /api/cases
+- [ ] Add GET /api/case/:id endpoint
+- [ ] Add PATCH /api/case/:id endpoint (status only)
+- [ ] Implement status transition validation
+- [ ] Register cases routes in server.js
+
+## Phase 3: Simplified Admin Dashboard React UI
+- [ ] Rewrite AdminDashboard.tsx - remove AI features
+- [ ] Show simple case list table only
+- [ ] Display: Case ID, Client Name, Category, Status, Created Date
+- [ ] Make rows clickable to navigate to /admin/case/:id
+- [ ] Remove modal with AI analysis
+- [ ] Remove "Generate AI Analysis" button
+- [ ] Remove pricing suggestions display
+
+## Phase 4: Admin Case Detail Page with Status Editor
+- [ ] Create AdminCaseDetail.tsx component
+- [ ] Add route /admin/case/:id to App.tsx
+- [ ] Display full case information
+- [ ] Show client contact details
+- [ ] Show case details and description
+- [ ] Show attachments list
+- [ ] Add status dropdown with 5 options
+- [ ] Add "Update Status" button
+- [ ] Implement status update API call
+- [ ] Add back to dashboard button
+
+## Phase 5: Confirmation Page Copy Cleanup
+- [ ] Update ConsumerConfirmation.tsx line 110
+- [ ] Remove "pricing options" mention
+- [ ] Change to "We'll contact you via email or phone to discuss next steps"
+
+## Phase 6: Route Documentation & Deployment
+- [ ] Add comment to /payment route in App.tsx
+- [ ] Document route separation (consumer vs business workflows)
+- [ ] Test complete flow: /intake → /consumer/confirmation
+- [ ] Test admin flow: /admin → /admin/case/:id
+- [ ] Verify status editing works
+- [ ] Push to GitHub
+- [ ] Deploy to Render
+- [ ] Verify on production
+
+## Verification Checklist
+- [ ] Database status values match specification exactly
+- [ ] Default status is "Pending Review"
+- [ ] Admin dashboard shows simple case list only
+- [ ] Clicking case navigates to /admin/case/:id
+- [ ] Case detail page shows all required fields
+- [ ] Status dropdown has exactly 5 options
+- [ ] Status transitions are validated
+- [ ] PATCH /api/case/:id endpoint works
+- [ ] Confirmation page has no pricing mentions
+- [ ] Consumer intake redirects to /consumer/confirmation
+- [ ] No payment/contract auto-triggers from consumer intake

@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS cases (
   id SERIAL PRIMARY KEY,
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   case_number VARCHAR(50) UNIQUE NOT NULL,
-  category VARCHAR(100) NOT NULL CHECK (category IN ('eviction', 'debt_collection', 'irs_tax', 'other')),
+  category VARCHAR(100) NOT NULL CHECK (category IN ('eviction', 'debt', 'irs', 'wage', 'medical', 'benefits', 'auto', 'consumer')),
   status VARCHAR(50) DEFAULT 'pending' CHECK (status IN ('pending', 'processing', 'completed', 'cancelled')),
   
   -- Contact information

@@ -19,6 +19,8 @@ import TermsOfService from "./pages/TermsOfService";
 import FloatingChatWidget from "./components/FloatingChatWidget";
 import AdminConsumerCases from "./pages/AdminConsumerCases";
 import AdminConsumerCaseDetail from "./pages/AdminConsumerCaseDetail";
+import AdminCaseDetail from "./pages/AdminCaseDetail";
+import ConsumerConfirmation from "./pages/ConsumerConfirmation";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -27,13 +29,20 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path="/chat" component={ChatInterface} />
       <Route path="/intake" component={IntakeForm} />
+      <Route path="/consumer/confirmation" component={ConsumerConfirmation} />
+      
+      {/* Payment route - NOT part of consumer intake flow, used for business audit workflow */}
       <Route path="/payment" component={Payment} />
       <Route path="/turbo-intake" component={TurboIntake} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin/settings" component={AdminSettings} />
+      {/* Admin workflow routes - restored to specification */}
+      <Route path="/admin/case/:id" component={AdminCaseDetail} />
+      <Route path="/admin" component={AdminDashboard} />
+      
+      {/* Legacy AI analysis routes - separate system */}
       <Route path="/admin/consumer/case/:id" component={AdminConsumerCaseDetail} />
       <Route path="/admin/consumer/cases" component={AdminConsumerCases} />
-      <Route path="/admin" component={AdminDashboard} />
       <Route path="/client-contract" component={ClientContract} />
       <Route path="/service-agreement" component={ServiceAgreement} />
       <Route path="/disclaimer" component={Disclaimer} />
