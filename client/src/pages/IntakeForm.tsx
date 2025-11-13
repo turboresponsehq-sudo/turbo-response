@@ -170,15 +170,13 @@ export default function IntakeForm() {
       setSubmitSuccess(true);
       setCaseNumber(response.case_number);
       
-      // Wait 3 seconds before redirecting to payment
+      // Wait 3 seconds before redirecting to consumer confirmation
       setTimeout(() => {
         const params = new URLSearchParams({
           caseId: response.case_id,
-          email: formData.email,
-          name: formData.fullName,
           category: selectedCategory,
         });
-        setLocation(`/payment?${params.toString()}`);
+        setLocation(`/consumer/confirmation?${params.toString()}`);
       }, 3000);
     } catch (error: any) {
       alert(`Submission failed: ${error.message}`);

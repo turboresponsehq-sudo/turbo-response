@@ -85,6 +85,14 @@ const startServer = async () => {
     // Initialize database schema
     await initDatabase();
     
+    // Run pending migrations
+    try {
+      const runMigrations = (await import('./migrations/run-migrations.mjs')).default;
+      await runMigrations();
+    } catch (migrationError) {
+      logger.warn('Migration runner not available or failed:', migrationError.message);
+    }
+    
     // Seed admin account (auto-creates if not exists)
     await seedAdminAccount();
     

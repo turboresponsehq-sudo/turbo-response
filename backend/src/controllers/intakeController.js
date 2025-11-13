@@ -60,7 +60,7 @@ const submit = async (req, res, next) => {
         amount || null,
         deadline || null,
         JSON.stringify(documents || []),
-        'pending',
+        'Pending Review',
         'unpaid'
       ]
     );
