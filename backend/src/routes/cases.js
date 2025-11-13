@@ -18,7 +18,7 @@ const requireAdmin = (req, res, next) => {
 
 // Admin routes (must come before user routes to avoid conflicts)
 // GET /api/cases/admin/all - Get all cases (admin only)
-router.get('/admin/all', authenticateToken, requireAdmin, getAllCases);
+router.get('/cases/admin/all', authenticateToken, requireAdmin, getAllCases);
 
 // GET /api/case/:id - Get case details by ID (admin only)
 router.get('/case/:id', authenticateToken, requireAdmin, getAdminCaseById);
@@ -28,9 +28,9 @@ router.patch('/case/:id', authenticateToken, requireAdmin, updateCaseStatus);
 
 // User routes
 // GET /api/cases - Get all cases for current user
-router.get('/', authenticateToken, getMyCases);
+router.get('/cases', authenticateToken, getMyCases);
 
 // GET /api/cases/:case_id - Get single case details
-router.get('/:case_id', authenticateToken, getCaseById);
+router.get('/cases/:case_id', authenticateToken, getCaseById);
 
 module.exports = router;

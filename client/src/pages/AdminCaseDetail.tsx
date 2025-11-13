@@ -3,6 +3,7 @@
  * Restored to match authoritative specification
  * Shows full case info + attachments + status dropdown editor
  * NO AI analysis, NO pricing, NO contract elements
+ * PHASE 1: Mobile responsive with proper breakpoints
  */
 
 import { useEffect, useState } from "react";
@@ -92,7 +93,7 @@ export default function AdminCaseDetail() {
 
   if (loading) {
     return (
-      <div style={{ padding: "2rem", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+      <div style={{ padding: "1rem", fontFamily: "system-ui, -apple-system, sans-serif" }}>
         <p>Loading case details...</p>
       </div>
     );
@@ -100,18 +101,20 @@ export default function AdminCaseDetail() {
 
   if (error) {
     return (
-      <div style={{ padding: "2rem", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+      <div style={{ padding: "1rem", fontFamily: "system-ui, -apple-system, sans-serif" }}>
         <p style={{ color: "red" }}>{error}</p>
         <button
           onClick={() => setLocation("/admin")}
           style={{
             marginTop: "1rem",
-            padding: "0.5rem 1rem",
+            padding: "0.75rem 1.5rem",
+            minHeight: "48px",
             backgroundColor: "#6c757d",
             color: "white",
             border: "none",
             borderRadius: "4px",
-            cursor: "pointer"
+            cursor: "pointer",
+            fontSize: "1rem"
           }}
         >
           Back to Dashboard
@@ -122,18 +125,20 @@ export default function AdminCaseDetail() {
 
   if (!caseData) {
     return (
-      <div style={{ padding: "2rem", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+      <div style={{ padding: "1rem", fontFamily: "system-ui, -apple-system, sans-serif" }}>
         <p>Case not found</p>
         <button
           onClick={() => setLocation("/admin")}
           style={{
             marginTop: "1rem",
-            padding: "0.5rem 1rem",
+            padding: "0.75rem 1.5rem",
+            minHeight: "48px",
             backgroundColor: "#6c757d",
             color: "white",
             border: "none",
             borderRadius: "4px",
-            cursor: "pointer"
+            cursor: "pointer",
+            fontSize: "1rem"
           }}
         >
           Back to Dashboard
@@ -142,21 +147,23 @@ export default function AdminCaseDetail() {
     );
   }
 
-  const documents = caseData.documents ? JSON.parse(caseData.documents) : [];
+  // documents is already parsed by pg driver (JSONB type)
+  const documents = Array.isArray(caseData.documents) ? caseData.documents : [];
 
   return (
     <div style={{ 
-      padding: "2rem", 
+      padding: "1rem", 
       fontFamily: "system-ui, -apple-system, sans-serif", 
       maxWidth: "900px", 
       margin: "0 auto" 
     }}>
       {/* Header with Back Button */}
-      <div style={{ marginBottom: "2rem" }}>
+      <div style={{ marginBottom: "1.5rem" }}>
         <button
           onClick={() => setLocation("/admin")}
           style={{
             padding: "0.5rem 1rem",
+            minHeight: "48px",
             backgroundColor: "#6c757d",
             color: "white",
             border: "none",
@@ -168,7 +175,7 @@ export default function AdminCaseDetail() {
         >
           ← Back to Dashboard
         </button>
-        <h1 style={{ margin: "0.5rem 0 0 0", fontSize: "1.75rem", color: "#212529" }}>
+        <h1 style={{ margin: "0.5rem 0 0 0", fontSize: "1.5rem", color: "#212529" }}>
           Case Details
         </h1>
       </div>
@@ -190,14 +197,15 @@ export default function AdminCaseDetail() {
       {/* Case Information Card */}
       <div style={{ 
         backgroundColor: "#f8f9fa", 
-        padding: "1.5rem", 
+        padding: "1rem", 
         borderRadius: "8px", 
-        marginBottom: "1.5rem",
+        marginBottom: "1rem",
         border: "1px solid #dee2e6"
       }}>
-        <h2 style={{ marginTop: 0, fontSize: "1.25rem", color: "#212529" }}>Case Information</h2>
+        <h2 style={{ marginTop: 0, fontSize: "1.125rem", color: "#212529" }}>Case Information</h2>
         
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
+        {/* Responsive grid - 2 columns on desktop, 1 on mobile */}
+        <div className="info-grid" style={{ display: "grid", gap: "1rem", marginBottom: "1rem" }}>
           <div>
             <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
               <strong>Case ID:</strong>
@@ -216,15 +224,15 @@ export default function AdminCaseDetail() {
           </div>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.5rem" }}>
+        <div className="info-grid" style={{ display: "grid", gap: "1rem", marginBottom: "1rem" }}>
           <div>
             <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
               <strong>Created:</strong>
             </p>
-            <p style={{ margin: 0, fontSize: "1rem" }}>
+            <p style={{ margin: 0, fontSize: "0.875rem" }}>
               {new Date(caseData.created_at).toLocaleString('en-US', {
                 year: 'numeric',
-                month: 'long',
+                month: 'short',
                 day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit'
@@ -236,10 +244,10 @@ export default function AdminCaseDetail() {
               <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
                 <strong>Last Updated:</strong>
               </p>
-              <p style={{ margin: 0, fontSize: "1rem" }}>
+              <p style={{ margin: 0, fontSize: "0.875rem" }}>
                 {new Date(caseData.updated_at).toLocaleString('en-US', {
                   year: 'numeric',
-                  month: 'long',
+                  month: 'short',
                   day: 'numeric',
                   hour: '2-digit',
                   minute: '2-digit'
@@ -249,7 +257,7 @@ export default function AdminCaseDetail() {
           )}
         </div>
 
-        {/* Status Editor */}
+        {/* Status Editor - Stacks on mobile */}
         <div style={{ 
           borderTop: "1px solid #dee2e6", 
           paddingTop: "1rem",
@@ -264,18 +272,18 @@ export default function AdminCaseDetail() {
           }}>
             Case Status:
           </label>
-          <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+          <div className="status-controls" style={{ display: "flex", gap: "0.75rem", alignItems: "stretch" }}>
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
               style={{
-                padding: "0.5rem",
+                padding: "0.75rem",
                 fontSize: "1rem",
                 borderRadius: "4px",
                 border: "1px solid #ced4da",
                 backgroundColor: "white",
-                flex: "0 0 auto",
-                minWidth: "200px"
+                flex: "1 1 auto",
+                minHeight: "48px"
               }}
             >
               {STATUS_OPTIONS.map(status => (
@@ -286,17 +294,20 @@ export default function AdminCaseDetail() {
               onClick={handleStatusUpdate}
               disabled={updating || selectedStatus === caseData.status}
               style={{
-                padding: "0.5rem 1rem",
+                padding: "0.75rem 1rem",
+                minHeight: "48px",
                 backgroundColor: selectedStatus === caseData.status ? "#e9ecef" : "#007bff",
                 color: selectedStatus === caseData.status ? "#6c757d" : "white",
                 border: "none",
                 borderRadius: "4px",
                 cursor: selectedStatus === caseData.status ? "not-allowed" : "pointer",
                 fontSize: "0.875rem",
-                fontWeight: 500
+                fontWeight: 500,
+                whiteSpace: "nowrap",
+                flex: "0 0 auto"
               }}
             >
-              {updating ? "Updating..." : "Update Status"}
+              {updating ? "Updating..." : "Update"}
             </button>
           </div>
         </div>
@@ -305,14 +316,14 @@ export default function AdminCaseDetail() {
       {/* Client Information Card */}
       <div style={{ 
         backgroundColor: "#f8f9fa", 
-        padding: "1.5rem", 
+        padding: "1rem", 
         borderRadius: "8px", 
-        marginBottom: "1.5rem",
+        marginBottom: "1rem",
         border: "1px solid #dee2e6"
       }}>
-        <h2 style={{ marginTop: 0, fontSize: "1.25rem", color: "#212529" }}>Client Information</h2>
+        <h2 style={{ marginTop: 0, fontSize: "1.125rem", color: "#212529" }}>Client Information</h2>
         
-        <div style={{ display: "grid", gap: "1rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <div>
             <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
               <strong>Full Name:</strong>
@@ -324,7 +335,7 @@ export default function AdminCaseDetail() {
             <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
               <strong>Email:</strong>
             </p>
-            <p style={{ margin: 0, fontSize: "1rem" }}>
+            <p style={{ margin: 0, fontSize: "1rem", wordBreak: "break-word" }}>
               <a href={`mailto:${caseData.email}`} style={{ color: "#007bff", textDecoration: "none" }}>
                 {caseData.email}
               </a>
@@ -358,12 +369,12 @@ export default function AdminCaseDetail() {
       {/* Case Details Card */}
       <div style={{ 
         backgroundColor: "#f8f9fa", 
-        padding: "1.5rem", 
+        padding: "1rem", 
         borderRadius: "8px", 
-        marginBottom: "1.5rem",
+        marginBottom: "1rem",
         border: "1px solid #dee2e6"
       }}>
-        <h2 style={{ marginTop: 0, fontSize: "1.25rem", color: "#212529" }}>Case Details</h2>
+        <h2 style={{ marginTop: 0, fontSize: "1.125rem", color: "#212529" }}>Case Details</h2>
         
         <div style={{ marginBottom: "1rem" }}>
           <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
@@ -406,37 +417,104 @@ export default function AdminCaseDetail() {
         )}
       </div>
 
-      {/* Attachments Card */}
+      {/* Document List UI - Enhanced for Phase 1 */}
       {documents.length > 0 && (
         <div style={{ 
           backgroundColor: "#f8f9fa", 
-          padding: "1.5rem", 
+          padding: "1rem", 
           borderRadius: "8px",
           border: "1px solid #dee2e6"
         }}>
-          <h2 style={{ marginTop: 0, fontSize: "1.25rem", color: "#212529" }}>
+          <h2 style={{ marginTop: 0, fontSize: "1.125rem", color: "#212529" }}>
             Attachments ({documents.length})
           </h2>
-          <ul style={{ margin: 0, padding: "0 0 0 1.5rem" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             {documents.map((doc: string, idx: number) => (
-              <li key={idx} style={{ marginBottom: "0.5rem" }}>
+              <div 
+                key={idx}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "0.75rem",
+                  backgroundColor: "white",
+                  borderRadius: "4px",
+                  border: "1px solid #dee2e6",
+                  gap: "0.75rem"
+                }}
+              >
+                <div style={{ flex: "1 1 auto", minWidth: 0 }}>
+                  <div style={{ 
+                    fontWeight: 500, 
+                    fontSize: "0.875rem",
+                    color: "#212529",
+                    marginBottom: "0.25rem"
+                  }}>
+                    Document {idx + 1}
+                  </div>
+                  <div style={{ 
+                    fontSize: "0.75rem", 
+                    color: "#6c757d",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap"
+                  }}>
+                    {doc.split('/').pop() || 'Attachment'}
+                  </div>
+                </div>
                 <a 
                   href={doc} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   style={{ 
-                    color: "#007bff", 
+                    padding: "0.5rem 1rem",
+                    minHeight: "44px",
+                    backgroundColor: "#007bff",
+                    color: "white",
                     textDecoration: "none",
-                    fontSize: "1rem"
+                    borderRadius: "4px",
+                    fontSize: "0.875rem",
+                    fontWeight: 500,
+                    whiteSpace: "nowrap",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.5rem"
                   }}
                 >
-                  Document {idx + 1} ↗
+                  View ↗
                 </a>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
+
+      {/* Responsive CSS */}
+      <style>{`
+        /* Desktop: 2 columns */
+        @media (min-width: 769px) {
+          .info-grid {
+            grid-template-columns: 1fr 1fr !important;
+          }
+          .status-controls {
+            flex-direction: row !important;
+          }
+        }
+
+        /* Mobile: 1 column, stack status controls */
+        @media (max-width: 768px) {
+          .info-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .status-controls {
+            flex-direction: column !important;
+          }
+          .status-controls select,
+          .status-controls button {
+            width: 100% !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

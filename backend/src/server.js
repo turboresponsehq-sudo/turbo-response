@@ -64,7 +64,7 @@ app.use('/api/blueprint', blueprintRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/cases', casesRoutes);
+app.use('/api', casesRoutes);  // Mount at /api for admin case routes
 app.use('/api/upload', uploadRoutes);
 app.use('/api/admin/consumer', adminConsumerRoutes);
 
