@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getMyCases, getCaseById, getAllCases, getAdminCaseById, updateCaseStatus } = require('../controllers/casesController');
+const { getMyCases, getCaseById, getAllCases, getAdminCaseById, updateCaseStatus, runAIAnalysis, getAIAnalysis } = require('../controllers/casesController');
 const { authenticateToken } = require('../middleware/auth');
 
 /**
@@ -25,6 +25,12 @@ router.get('/case/:id', authenticateToken, requireAdmin, getAdminCaseById);
 
 // PATCH /api/case/:id - Update case status (admin only)
 router.patch('/case/:id', authenticateToken, requireAdmin, updateCaseStatus);
+
+// POST /api/case/:id/analyze - Run AI analysis with pricing (admin only)
+router.post('/case/:id/analyze', authenticateToken, requireAdmin, runAIAnalysis);
+
+// GET /api/case/:id/analysis - Get last saved AI analysis (admin only)
+router.get('/case/:id/analysis', authenticateToken, requireAdmin, getAIAnalysis);
 
 // User routes
 // GET /api/cases - Get all cases for current user

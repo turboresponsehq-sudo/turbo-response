@@ -40,6 +40,9 @@ export default function AdminCaseDetail() {
   const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [updating, setUpdating] = useState(false);
   const [updateMessage, setUpdateMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [aiAnalysis, setAiAnalysis] = useState<any>(null);
+  const [analyzingAI, setAnalyzingAI] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("admin_session");
@@ -311,6 +314,158 @@ export default function AdminCaseDetail() {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* AI Analysis Panel */}
+      <div style={{ 
+        backgroundColor: "#f8f9fa", 
+        padding: "1rem", 
+        borderRadius: "8px", 
+        marginBottom: "1rem",
+        border: "1px solid #dee2e6"
+      }}>
+        <h2 style={{ marginTop: 0, fontSize: "1.125rem", color: "#212529" }}>AI Analysis & Pricing</h2>
+        
+        {!aiAnalysis && (
+          <div>
+            <p style={{ margin: "0.5rem 0 1rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+              Run AI analysis to get pricing suggestion and case insights.
+            </p>
+            <button
+              onClick={async () => {
+                const storedToken = localStorage.getItem("admin_session");
+                setAnalyzingAI(true);
+                setAiError(null);
+                try {
+                  const res = await axios.post(
+                    `${API_URL}/api/case/${params?.id}/analyze`,
+                    {},
+                    { headers: { Authorization: `Bearer ${storedToken}` } }
+                  );
+                  setAiAnalysis(res.data.analysis);
+                } catch (err: any) {
+                  console.error(err);
+                  setAiError(err.response?.data?.error || "Failed to run AI analysis");
+                } finally {
+                  setAnalyzingAI(false);
+                }
+              }}
+              disabled={analyzingAI}
+              style={{
+                padding: "0.75rem 1.5rem",
+                minHeight: "48px",
+                backgroundColor: analyzingAI ? "#6c757d" : "#06b6d4",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: analyzingAI ? "not-allowed" : "pointer",
+                fontSize: "1rem",
+                fontWeight: 500,
+                width: "100%"
+              }}
+            >
+              {analyzingAI ? "Analyzing..." : "🤖 Run AI Analysis"}
+            </button>
+            {aiError && (
+              <p style={{ margin: "0.75rem 0 0 0", color: "#dc3545", fontSize: "0.875rem" }}>
+                {aiError}
+              </p>
+            )}
+          </div>
+        )}
+
+        {aiAnalysis && (
+          <div>
+            {/* Pricing Display */}
+            <div style={{
+              backgroundColor: "white",
+              padding: "1rem",
+              borderRadius: "6px",
+              border: "2px solid #06b6d4",
+              marginBottom: "1rem"
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
+                <div>
+                  <p style={{ margin: 0, color: "#6c757d", fontSize: "0.875rem" }}>Suggested Price</p>
+                  <p style={{ margin: "0.25rem 0 0 0", fontSize: "2rem", fontWeight: "bold", color: "#212529" }}>
+                    ${aiAnalysis.pricing?.amount || 0}
+                  </p>
+                </div>
+                <div>
+                  <span style={{
+                    padding: "0.5rem 1rem",
+                    borderRadius: "20px",
+                    fontSize: "0.875rem",
+                    fontWeight: 600,
+                    backgroundColor: 
+                      aiAnalysis.pricing?.tier === 'extreme' ? '#dc3545' :
+                      aiAnalysis.pricing?.tier === 'high' ? '#fd7e14' :
+                      '#28a745',
+                    color: "white",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px"
+                  }}>
+                    {aiAnalysis.pricing?.tier === 'extreme' && '⚡ EXTREME'}
+                    {aiAnalysis.pricing?.tier === 'high' && '🔥 HIGH'}
+                    {aiAnalysis.pricing?.tier === 'standard' && '✓ STANDARD'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Success Probability */}
+            {aiAnalysis.success_probability !== undefined && (
+              <div style={{ marginBottom: "1rem" }}>
+                <p style={{ margin: "0 0 0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                  <strong>Success Probability:</strong>
+                </p>
+                <div style={{
+                  backgroundColor: "#e9ecef",
+                  borderRadius: "4px",
+                  height: "24px",
+                  overflow: "hidden",
+                  position: "relative"
+                }}>
+                  <div style={{
+                    backgroundColor: "#28a745",
+                    height: "100%",
+                    width: `${(aiAnalysis.success_probability * 100).toFixed(0)}%`,
+                    transition: "width 0.3s ease"
+                  }} />
+                  <span style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    color: "#212529"
+                  }}>
+                    {(aiAnalysis.success_probability * 100).toFixed(0)}%
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Refresh Button */}
+            <button
+              onClick={() => setAiAnalysis(null)}
+              style={{
+                padding: "0.5rem 1rem",
+                minHeight: "40px",
+                backgroundColor: "#6c757d",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "0.875rem",
+                width: "100%"
+              }}
+            >
+              Run New Analysis
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Client Information Card */}

@@ -208,3 +208,188 @@ module.exports = {
   getAdminCaseById,
   updateCaseStatus
 };
+
+
+// ========================================
+// AI ANALYSIS & PRICING ENDPOINTS
+// ========================================
+
+const { generateComprehensiveAnalysis } = require('../services/aiAnalysis');
+
+/**
+ * Run AI analysis with deterministic pricing
+ * POST /api/case/:id/analyze
+ */
+const runAIAnalysis = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    
+    // Get case details
+    const caseResult = await query(
+      `SELECT * FROM cases WHERE id = $1`,
+      [id]
+    );
+    
+    if (caseResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'Case not found'
+      });
+    }
+    
+    const caseData = caseResult.rows[0];
+    
+    // Parse uploaded files if stored as JSON
+    let uploadedFiles = [];
+    if (caseData.uploaded_files) {
+      try {
+        uploadedFiles = typeof caseData.uploaded_files === 'string' 
+          ? JSON.parse(caseData.uploaded_files) 
+          : caseData.uploaded_files;
+      } catch (e) {
+        console.error('Error parsing uploaded_files:', e);
+      }
+    }
+    
+    // Run AI analysis with pricing
+    const analysis = await generateComprehensiveAnalysis({
+      category: caseData.category,
+      caseDescription: caseData.case_details,
+      amount: caseData.amount,
+      uploadedFiles: uploadedFiles
+    });
+    
+    // Save analysis to database
+    await query(
+      `INSERT INTO case_analyses 
+       (case_id, violations, laws_cited, recommended_actions, urgency_level, 
+        estimated_value, success_probability, pricing_suggestion, pricing_tier, summary, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW())
+       ON CONFLICT (case_id) 
+       DO UPDATE SET
+         violations = EXCLUDED.violations,
+         laws_cited = EXCLUDED.laws_cited,
+         recommended_actions = EXCLUDED.recommended_actions,
+         urgency_level = EXCLUDED.urgency_level,
+         estimated_value = EXCLUDED.estimated_value,
+         success_probability = EXCLUDED.success_probability,
+         pricing_suggestion = EXCLUDED.pricing_suggestion,
+         pricing_tier = EXCLUDED.pricing_tier,
+         summary = EXCLUDED.summary,
+         updated_at = NOW()`,
+      [
+        id,
+        JSON.stringify(analysis.violations),
+        JSON.stringify(analysis.laws_cited),
+        JSON.stringify(analysis.recommended_actions),
+        analysis.urgency_level,
+        analysis.estimated_value,
+        analysis.success_probability,
+        analysis.pricing_suggestion,
+        analysis.pricing_tier,
+        analysis.summary
+      ]
+    );
+    
+    // Log AI usage
+    if (analysis._usage) {
+      await query(
+        `INSERT INTO ai_usage_logs 
+         (case_id, tokens_used, estimated_cost, model, created_at)
+         VALUES ($1, $2, $3, $4, NOW())`,
+        [id, analysis._usage.tokens, analysis._usage.cost, analysis._usage.model]
+      );
+    }
+    
+    res.json({
+      success: true,
+      caseId: id,
+      analysis: {
+        violations: analysis.violations,
+        laws_cited: analysis.laws_cited,
+        recommended_actions: analysis.recommended_actions,
+        urgency_level: analysis.urgency_level,
+        estimated_value: analysis.estimated_value,
+        success_probability: analysis.success_probability,
+        pricing: {
+          amount: analysis.pricing_suggestion,
+          tier: analysis.pricing_tier,
+          breakdown: analysis.pricing_breakdown
+        },
+        summary: analysis.summary
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error running AI analysis:', error);
+    next(error);
+  }
+};
+
+/**
+ * Get last saved AI analysis
+ * GET /api/case/:id/analysis
+ */
+const getAIAnalysis = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    
+    const result = await query(
+      `SELECT * FROM case_analyses WHERE case_id = $1 ORDER BY created_at DESC LIMIT 1`,
+      [id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'No analysis found for this case'
+      });
+    }
+    
+    const analysis = result.rows[0];
+    
+    // Parse JSON fields
+    const violations = typeof analysis.violations === 'string' 
+      ? JSON.parse(analysis.violations) 
+      : analysis.violations;
+    const laws_cited = typeof analysis.laws_cited === 'string'
+      ? JSON.parse(analysis.laws_cited)
+      : analysis.laws_cited;
+    const recommended_actions = typeof analysis.recommended_actions === 'string'
+      ? JSON.parse(analysis.recommended_actions)
+      : analysis.recommended_actions;
+    
+    res.json({
+      success: true,
+      analysis: {
+        violations,
+        laws_cited,
+        recommended_actions,
+        urgency_level: analysis.urgency_level,
+        estimated_value: analysis.estimated_value,
+        success_probability: analysis.success_probability,
+        pricing: {
+          amount: analysis.pricing_suggestion,
+          tier: analysis.pricing_tier
+        },
+        summary: analysis.summary,
+        created_at: analysis.created_at,
+        updated_at: analysis.updated_at
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error getting AI analysis:', error);
+    next(error);
+  }
+};
+
+module.exports = {
+  getMyCases,
+  getCaseById,
+  getAllCases,
+  getAdminCaseById,
+  updateCaseStatus,
+  runAIAnalysis,
+  getAIAnalysis
+};

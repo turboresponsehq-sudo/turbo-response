@@ -158,3 +158,65 @@
 - [ ] Display draft letters
 - [ ] Add AI usage/cost tracker to Admin Settings
 
+
+
+---
+
+## 🚨 CRITICAL: PRICING ENGINE UPDATE (IMMEDIATE)
+
+- [ ] Update AI pricing ranges from $99-$499 to $149-$3,000+
+- [ ] Add sophistication-based pricing logic
+- [ ] Add violations count multiplier
+- [ ] Add document volume factor
+- [ ] Add strategy level factor
+- [ ] Add urgency multiplier
+- [ ] Add time investment calculation
+- [ ] Add escalation pathway factor
+- [ ] Enforce $149 minimum price floor
+- [ ] Test with simple debt case scenario
+- [ ] Test with complex eviction case scenario
+- [ ] Test with urgent repossession case scenario
+- [ ] Test with multi-agency compliance case scenario
+- [ ] Update all documentation with new pricing ranges
+
+
+---
+
+## 🚨 URGENT: DETERMINISTIC PRICING ENGINE v1.0 IMPLEMENTATION
+
+### Backend Implementation
+- [ ] Create /backend/src/services/pricingEngine.js with exact formula
+- [ ] Integrate pricingEngine into aiAnalysis.js
+- [ ] Replace AI-generated pricing with deterministic calculation
+- [ ] Add pricing_suggestion and pricing_tier to case_analyses table
+- [ ] Create database migration if needed
+
+### API Endpoints
+- [ ] Create POST /api/admin/case/:id/analyze endpoint
+- [ ] Create GET /api/admin/case/:id/analysis endpoint
+- [ ] Ensure auth middleware applied to all endpoints
+- [ ] Test endpoints with curl/Postman
+
+### Frontend Integration
+- [ ] Add "Run AI Analysis" button to AdminCaseDetail.tsx
+- [ ] Display pricing suggestion with tier badge
+- [ ] Show pricing breakdown (base, complexity, strategy, docs, urgency)
+- [ ] Display violations and laws cited
+- [ ] Add "Generate Letter" button
+- [ ] Make mobile responsive
+
+### Testing
+- [ ] Create /backend/tests/pricingEngine.test.js
+- [ ] Test floor at $149 minimum
+- [ ] Test eviction high complexity yields high tier
+- [ ] Test immediate urgency multiplier
+- [ ] Manual test: Simple debt case
+- [ ] Manual test: Complex eviction case
+- [ ] Manual test: Urgent repossession case
+
+### Deployment
+- [ ] Commit changes to GitHub
+- [ ] Deploy to Render (clear build cache)
+- [ ] Verify on production
+- [ ] Test on iPhone Safari (incognito)
+- [ ] Generate status report with screenshots
