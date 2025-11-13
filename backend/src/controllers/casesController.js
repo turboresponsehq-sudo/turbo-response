@@ -393,3 +393,58 @@ module.exports = {
   runAIAnalysis,
   getAIAnalysis
 };
+
+
+// Delete case (admin only)
+const deleteCase = async (req, res, next) => {
+  try {
+    const caseId = parseInt(req.params.id);
+
+    if (isNaN(caseId)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid case ID'
+      });
+    }
+
+    // Check if case exists
+    const checkResult = await query(
+      'SELECT id FROM cases WHERE id = $1',
+      [caseId]
+    );
+
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'Case not found'
+      });
+    }
+
+    // Delete related records first (foreign key constraints)
+    await query('DELETE FROM case_analyses WHERE case_id = $1', [caseId]);
+    await query('DELETE FROM draft_letters WHERE case_id = $1', [caseId]);
+    await query('DELETE FROM ai_usage_logs WHERE case_id = $1', [caseId]);
+    
+    // Delete the case
+    await query('DELETE FROM cases WHERE id = $1', [caseId]);
+
+    res.json({
+      success: true,
+      message: 'Case deleted successfully'
+    });
+  } catch (error) {
+    logger.error('Error deleting case:', error);
+    next(error);
+  }
+};
+
+module.exports = {
+  getMyCases,
+  getCaseById,
+  getAllCases,
+  getAdminCaseById,
+  updateCaseStatus,
+  runAIAnalysis,
+  getAIAnalysis,
+  deleteCase
+};
