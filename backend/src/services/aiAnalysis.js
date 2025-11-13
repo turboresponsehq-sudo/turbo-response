@@ -4,6 +4,7 @@
  */
 
 const OpenAI = require('openai');
+const { calculatePrice } = require('./pricingEngine');
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -15,16 +16,39 @@ const openai = new OpenAI({
  * This is the CORE AI analysis engine that powers the "Run AI Analysis" button
  */
 async function generateComprehensiveAnalysis(caseData) {
-  const systemPrompt = `You are an expert consumer rights analyst. Analyze this case and provide:
+  const systemPrompt = `You are an expert consumer rights strategist and case analyst for Turbo Response, a premium AI-powered consumer advocacy platform.
+
+Analyze this case and provide:
 
 1. VIOLATIONS: Specific violations of consumer protection laws (FDCPA, FCRA, TCPA, Fair Housing, state laws)
 2. LAWS_CITED: Exact statutes and sections that apply
-3. RECOMMENDED_ACTIONS: Specific actions we can take (letters, disputes, complaints)
+3. RECOMMENDED_ACTIONS: Specific strategic actions (letters, disputes, complaints, escalation pathways)
 4. URGENCY_LEVEL: low/medium/high/critical based on deadlines and severity
 5. ESTIMATED_VALUE: Potential case value based on statutory damages and violations
 6. SUCCESS_PROBABILITY: 0-1 probability of successful outcome
-7. PRICING_SUGGESTION: Recommended service fee ($99-$499 range)
-8. SUMMARY: Executive summary for admin
+7. CASE_SOPHISTICATION: Rate case complexity as 'standard', 'complex', or 'extreme' based on:
+   - Number of violations
+   - Document volume
+   - Strategic pathways required
+   - Time investment needed
+   - Escalation requirements
+8. PRICING_SUGGESTION: Recommended service fee using these ranges:
+   - Standard cases (1-2 violations, simple strategy): $149-$799
+   - Complex cases (3-5 violations, multi-step strategy): $799-$1,499
+   - Extreme cases (6+ violations, multi-agency, urgent): $1,500-$3,000+
+   
+   NEVER suggest below $149. Price reflects intellectual labor, strategic positioning, and case sophistication.
+   
+9. PRICING_FACTORS: JSON object explaining pricing:
+   {
+     "base_price": number,
+     "violations_multiplier": number,
+     "urgency_multiplier": number,
+     "document_factor": number,
+     "strategy_complexity": number,
+     "final_price": number
+   }
+10. SUMMARY: Executive summary for admin emphasizing strategic value
 
 Be specific, cite exact law sections, and base recommendations on actual violations found.
 
@@ -39,7 +63,7 @@ Documents: ${caseData.uploadedFiles?.length || 0} uploaded
 
   try {
     const response = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'gpt-4.1-mini', // Using Manus Forge API supported model
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: caseText },
@@ -57,14 +81,76 @@ Documents: ${caseData.uploadedFiles?.length || 0} uploaded
     
     // Track usage for cost monitoring
     const tokensUsed = response.usage?.total_tokens || 0;
-    const estimatedCost = calculateCost(tokensUsed, 'gpt-4o');
+    const estimatedCost = calculateCost(tokensUsed, 'gpt-4.1-mini');
     
     // Return usage data along with analysis
     analysis._usage = {
       tokens: tokensUsed,
       cost: estimatedCost,
-      model: 'gpt-4o'
+      model: 'gpt-4.1-mini'
     };
+    
+    // ========================================
+    // DETERMINISTIC PRICING ENGINE v1.0
+    // ========================================
+    // Calculate pricing using exact formula from specification
+    const violations = (analysis.violations || []).length;
+    const documents = caseData.uploadedFiles?.length || 0;
+    const amountAtStake = parseFloat(caseData.amount) || 0;
+    
+    // Map AI analysis to strategy level
+    let strategyLevel = 'basic';
+    const actions = analysis.recommended_actions || [];
+    if (actions.some(a => a.toLowerCase().includes('case-building') || a.toLowerCase().includes('timeline'))) {
+      strategyLevel = 'case_building';
+    } else if (actions.some(a => a.toLowerCase().includes('multi-agency') || a.toLowerCase().includes('escalate'))) {
+      strategyLevel = 'multi_agency';
+    } else if (actions.some(a => a.toLowerCase().includes('legal positioning') || a.toLowerCase().includes('statute'))) {
+      strategyLevel = 'legal_positioning';
+    } else if (actions.some(a => a.toLowerCase().includes('agency') || a.toLowerCase().includes('complaint'))) {
+      strategyLevel = 'agency_complaint';
+    } else if (actions.some(a => a.toLowerCase().includes('evidence') || a.toLowerCase().includes('review'))) {
+      strategyLevel = 'evidence_review';
+    } else if (actions.length > 2) {
+      strategyLevel = 'multi_step';
+    }
+    
+    // Map urgency level to urgency multiplier
+    const urgencyMap = {
+      'critical': 'immediate',
+      'high': 'few_days',
+      'medium': 'week_left',
+      'low': 'standard'
+    };
+    const urgency = urgencyMap[analysis.urgency_level] || 'standard';
+    
+    // Detect document types from file names (if available)
+    const documentTypes = [];
+    if (caseData.uploadedFiles) {
+      caseData.uploadedFiles.forEach(file => {
+        const fileName = (file.filename || file.name || '').toLowerCase();
+        if (fileName.includes('court') || fileName.includes('filing')) {
+          documentTypes.push('court');
+        } else if (fileName.includes('notice') || fileName.includes('government') || fileName.includes('irs')) {
+          documentTypes.push('gov_notice');
+        } else if (fileName.includes('medical') || fileName.includes('health')) {
+          documentTypes.push('medical');
+        } else if (fileName.includes('contract') || fileName.includes('agreement')) {
+          documentTypes.push('contract');
+        }
+      });
+    }
+    
+    // Calculate deterministic pricing
+    const pricing = calculatePrice({
+      category: caseData.category || 'consumer',
+      violations,
+      documents,
+      amountAtStake,
+      strategyLevel,
+      urgency,
+      documentTypes
+    });
     
     // Ensure all required fields exist with defaults
     return {
@@ -74,13 +160,26 @@ Documents: ${caseData.uploadedFiles?.length || 0} uploaded
       urgency_level: analysis.urgency_level || 'medium',
       estimated_value: analysis.estimated_value || 0,
       success_probability: analysis.success_probability || 0.5,
-      pricing_suggestion: analysis.pricing_suggestion || 199,
+      pricing_suggestion: pricing.finalPrice, // Deterministic pricing
+      pricing_tier: pricing.tier, // standard | high | extreme
+      pricing_breakdown: pricing.breakdown, // Detailed breakdown
       summary: analysis.summary || 'Case requires manual review',
+      _usage: analysis._usage
     };
   } catch (error) {
     console.error('Error in comprehensive analysis:', error);
     
-    // Return fallback analysis
+    // Return fallback analysis with deterministic pricing
+    const fallbackPricing = calculatePrice({
+      category: caseData.category || 'consumer',
+      violations: 0,
+      documents: caseData.uploadedFiles?.length || 0,
+      amountAtStake: parseFloat(caseData.amount) || 0,
+      strategyLevel: 'basic',
+      urgency: 'standard',
+      documentTypes: []
+    });
+    
     return {
       violations: ['Analysis pending - manual review required'],
       laws_cited: ['Review required'],
@@ -88,7 +187,9 @@ Documents: ${caseData.uploadedFiles?.length || 0} uploaded
       urgency_level: 'medium',
       estimated_value: 0,
       success_probability: 0.5,
-      pricing_suggestion: 199,
+      pricing_suggestion: fallbackPricing.finalPrice, // Deterministic pricing
+      pricing_tier: fallbackPricing.tier,
+      pricing_breakdown: fallbackPricing.breakdown,
       summary: 'Case requires manual review due to analysis error',
     };
   }
@@ -236,7 +337,7 @@ Create a formal, legally sound letter addressing the issues.`;
       .replace('{letter_type}', params.letterType);
 
     const response = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'gpt-4.1-mini', // Using Manus Forge API supported model
       messages: [
         {
           role: 'system',
