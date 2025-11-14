@@ -49,10 +49,13 @@ Analyze this case and provide:
      "final_price": number
    }
 10. SUMMARY: Executive summary for admin emphasizing strategic value
+11. POTENTIAL_VIOLATIONS: Array of potential law violations found, each with:
+   - label: Brief description of the violation (e.g., "FDCPA § 1692d - Harassment")
+   - citation: Optional statute citation (e.g., "15 U.S.C. § 1692d")
 
 Be specific, cite exact law sections, and base recommendations on actual violations found.
 
-Return as JSON with these exact field names.`;
+Return as JSON with these exact field names (use snake_case: potential_violations).`;
 
   const caseText = `
 Category: ${caseData.category || 'Not specified'}
@@ -164,6 +167,7 @@ Documents: ${caseData.uploadedFiles?.length || 0} uploaded
       pricing_tier: pricing.tier, // standard | high | extreme
       pricing_breakdown: pricing.breakdown, // Detailed breakdown
       summary: analysis.summary || 'Case requires manual review',
+      potential_violations: analysis.potential_violations || [],
       _usage: analysis._usage
     };
   } catch (error) {
@@ -191,6 +195,7 @@ Documents: ${caseData.uploadedFiles?.length || 0} uploaded
       pricing_tier: fallbackPricing.tier,
       pricing_breakdown: fallbackPricing.breakdown,
       summary: 'Case requires manual review due to analysis error',
+      potential_violations: [],
     };
   }
 }
