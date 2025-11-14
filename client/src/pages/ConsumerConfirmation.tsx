@@ -14,12 +14,7 @@ export default function ConsumerConfirmation() {
     
     setCaseId(id);
     setCategory(cat);
-
-    // If no caseId, redirect to home
-    if (!id) {
-      setLocation("/");
-    }
-  }, [setLocation]);
+  }, []);
 
   const getCategoryName = (cat: string) => {
     const categories: Record<string, string> = {
@@ -35,6 +30,74 @@ export default function ConsumerConfirmation() {
     return categories[cat] || cat;
   };
 
+  // If no case data, show fallback message
+  if (!caseId) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
+        <div className="max-w-2xl w-full bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8 md:p-12">
+          {/* Info Icon */}
+          <div className="flex justify-center mb-6">
+            <div className="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center">
+              <svg
+                className="w-12 h-12 text-blue-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+          </div>
+
+          {/* Title */}
+          <h1 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">
+            Looking for Your Case?
+          </h1>
+
+          {/* Message */}
+          <p className="text-lg text-gray-300 text-center mb-8">
+            If you already submitted your case, please check your email for confirmation. If not, you can start a new case below.
+          </p>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            <button
+              onClick={() => setLocation("/")}
+              className="flex-1 px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg border border-white/20 transition-all duration-200"
+            >
+              Return to Home
+            </button>
+            <button
+              onClick={() => setLocation("/intake")}
+              className="flex-1 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold rounded-lg shadow-lg transition-all duration-200"
+            >
+              Start New Case
+            </button>
+          </div>
+
+          {/* Contact Info */}
+          <div className="mt-8 text-center">
+            <p className="text-gray-400 text-sm">
+              Questions? Contact us at{" "}
+              <a
+                href="mailto:support@turboresponsehq.ai"
+                className="text-cyan-400 hover:text-cyan-300 underline"
+              >
+                support@turboresponsehq.ai
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show full confirmation with case details
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
       <div className="max-w-2xl w-full bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8 md:p-12">
