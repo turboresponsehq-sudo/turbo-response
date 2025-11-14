@@ -497,6 +497,26 @@ export default function AdminCaseDetail() {
               </div>
             )}
 
+            {/* Potential Violations */}
+            <div style={{ marginBottom: "1rem" }}>
+              <p style={{ margin: "0 0 0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                <strong>Potential Violations:</strong>
+              </p>
+              {aiAnalysis?.potential_violations?.length ? (
+                <ul style={{ margin: 0, paddingLeft: "1.5rem", color: "#212529" }}>
+                  {aiAnalysis.potential_violations.map((v: { label: string; citation?: string }, i: number) => (
+                    <li key={i} style={{ marginBottom: "0.25rem" }}>
+                      {v.label}{v.citation ? ` (${v.citation})` : ''}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p style={{ margin: 0, color: "#6c757d", fontSize: "0.875rem" }}>
+                  No specific laws flagged yet. Ask for more documents if needed.
+                </p>
+              )}
+            </div>
+
             {/* Refresh Button */}
             <button
               onClick={() => setAiAnalysis(null)}

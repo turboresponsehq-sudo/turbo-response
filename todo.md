@@ -40,6 +40,14 @@
 
 ---
 
+## 🎯 NEW FEATURE: AI Analysis Violations Display
+
+- [x] Add potential_violations field to AI analysis JSON schema
+- [x] Update AdminCaseDetail.tsx to render violations list with fallback message
+- [x] Update backend AI analysis to generate potential_violations data
+
+---
+
 ## 🚫 BLOCKED UNTIL STEP 1 COMPLETE
 
 - [ ] AI Analysis debugging
@@ -55,4 +63,5 @@
 /intake → DB → /admin list → /admin/case/:id → status update → AI analysis → delete case
 ```
 
-**Current Focus:** Step 1 - Case Detail Page backend-to-frontend alignment
+**Current Focus:** Step 1 - Case Detail Page backend-to-frontend alignment + AI Analysis Violations
+
