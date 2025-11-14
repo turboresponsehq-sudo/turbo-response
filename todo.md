@@ -65,3 +65,121 @@
 
 **Current Focus:** Step 1 - Case Detail Page backend-to-frontend alignment + AI Analysis Violations
 
+
+## 🎯 B3: Admin Core Page Testing & Fix Batch
+
+### B3.1 - /admin/login
+- [x] Page loads without redirect loops
+- [x] Login form displays correctly
+- [ ] Authentication flow works (backend API needed)
+- [ ] Error handling for invalid credentials (backend API needed)
+- [ ] Successful login redirects to dashboard (backend API needed)
+
+### B3.2 - /admin (dashboard)
+- [x] Page loads without redirect loops
+- [x] Admin session protection works
+- [x] API call structure correct
+- [x] Table structure verified (Case ID, Client Name, Category, Status, Created Date, Actions)
+- [x] "View Case" button navigation correct
+- [x] Logout functionality works
+- [x] No missing imports
+- [x] Mobile responsive design present
+- [ ] Case list displays correctly (blocked by backend CORS)
+- [ ] All fields render properly (blocked by backend CORS)
+
+### B3.3 - /admin/case/:id
+- [ ] Page loads without redirect loops
+- [ ] All case fields display properly
+- [ ] AI Analysis button works
+- [ ] Pricing engine displays correctly
+- [ ] Success probability bar works
+- [ ] Tier badge renders
+- [ ] Potential violations display works
+- [ ] Delete case flow works
+- [ ] File viewer works
+- [ ] Draft letter rendering works
+
+### B3.4 - /admin/consumer-cases
+- [ ] Page loads without redirect loops
+- [ ] Consumer case list displays
+- [ ] All fields render properly
+
+### B3.5 - /admin/consumer/case/:id
+- [ ] Page loads without redirect loops
+- [ ] All case fields display properly
+- [ ] Error boundary behavior works
+
+## 🚀 TURBO COMMAND INTERFACE + AI WORKFLOW
+
+### CORS Fix
+- [ ] Update backend CORS to allow dev server origin
+- [ ] Test /api/cases/admin/all loads on dev server
+
+### TurboHQ Interface
+- [ ] Add /turbo route in App.tsx
+- [ ] Create TurboHQ.tsx page with left sidebar (Turbo, Case Analyzer, Business Auditor, Market Scout)
+- [ ] Add center chat window (user messages right, Turbo left, loading state)
+- [ ] Add right panel (Last analysis, Estimated damages, Important alerts)
+
+### Backend Chat Endpoint
+- [ ] Add /api/turbo/chat endpoint
+- [ ] Accept { message: string }
+- [ ] Call OpenAI API with system prompt
+- [ ] Return { reply: string }
+
+### AI Analysis Workflow
+- [ ] Update intake submission to trigger AI analysis immediately
+- [ ] Store analysis results in database
+- [ ] Keep "Run AI Analysis" button for manual re-analysis only
+
+
+## 🎨 NEW PAGES - Homepage Branding
+
+### Services Page (/services)
+- [x] Create Services.tsx with homepage styling
+- [x] Add hero section
+- [x] Add 10 service cards (eviction, repo, IRS, debt collector, credit disputes, billing, fraud, CFPB, contract, general)
+- [x] Add "Start Your Case" CTA button
+
+### Pricing Page (/pricing)
+- [x] Create Pricing.tsx with homepage styling
+- [x] Add $349 standard tier card
+- [x] Add $499 urgent tier card
+- [x] Add $99/mo subscription (coming soon) card
+- [x] Match homepage layout exactly
+
+### Case Results Page (/results)
+- [x] Create Results.tsx with homepage styling
+- [x] Add hero section
+- [x] Add 9 case win cards (Problem → Action → Result → Savings)
+- [x] Use homepage card styling
+
+### Testimonials Page (/testimonials)
+- [x] Create Testimonials.tsx with homepage styling
+- [x] Add hero + subheadline
+- [x] Add 6 client testimonial cards
+- [x] Include avatars, text, and results
+
+### Intake Page Redesign
+- [x] Apply homepage styling to IntakeForm.tsx
+- [x] Dark navy background (#0f172a)
+- [x] Cyan-glow inputs (#06b6d4)
+- [x] Big centered title
+- [x] Matching buttons
+- [x] Keep all functionality intact (already styled correctly)
+
+### Global Updates
+- [x] Register all new routes in App.tsx
+- [x] Ensure consistent header/footer across all pages
+- [x] Verify all buttons match homepage style
+- [ ] Test navigation between all pages
+
+
+## 🧹 CLEANUP - Remove Old/Unused Files
+- [x] List all files in client/src/pages
+- [x] Delete unused page files (ChatInterface, TurboIntake, TurboIntakeOverrides, AdminSettings)
+- [x] List all files in client/src/components
+- [x] Delete unused component files (none found)
+- [x] List all CSS files
+- [x] Delete unused CSS files (ChatInterface.css, TurboIntake.css, AdminSettings.css)
+- [x] Verify no broken imports after cleanup (fixed App.tsx)

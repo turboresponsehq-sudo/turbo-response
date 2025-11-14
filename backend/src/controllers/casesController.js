@@ -242,7 +242,7 @@ const updateCaseStatus = async (req, res, next) => {
 
     res.json({
       success: true,
-      statu      message: 'Status updated successfully'
+      message: 'Status updated successfully'
     });
   } catch (error) {
     logger.error('Failed to update case status', {
@@ -256,13 +256,6 @@ const updateCaseStatus = async (req, res, next) => {
       error: error.message
     });
   }
-};
-
-// Run AI analysis on a caseyCases,
-  getCaseById,
-  getAllCases,
-  getAdminCaseById,
-  updateCaseStatus
 };
 
 
@@ -461,16 +454,6 @@ const getAIAnalysis = async (req, res, next) => {
       error: error.message
     });
   }
-};
-
-module.exports = {
-  getMyCases,
-  getCaseById,
-  getAllCases,
-  getAdminCaseById,
-  updateCaseStatus,
-  runAIAnalysis,
-  getAIAnalysis
 };
 
 
