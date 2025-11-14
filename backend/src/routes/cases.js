@@ -1,6 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const { getMyCases, getCaseById, getAllCases, getAdminCaseById, updateCaseStatus, runAIAnalysis, getAIAnalysis, deleteCase } = require('../controllers/casesController');
+const {
+  getMyCases,
+  getCaseById,
+  getAllCases,
+  getAdminCaseById,
+  updateCaseStatus,
+  runAIAnalysis,
+  getAIAnalysis,
+  deleteCase
+} = require('../controllers/casesController');
 const { authenticateToken } = require('../middleware/auth');
 
 /**

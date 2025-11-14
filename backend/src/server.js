@@ -8,7 +8,7 @@ const errorHandler = require('./middleware/errorHandler');
 const { initDatabase } = require('./services/database/init');
 const { seedAdminAccount } = require('./services/database/seed');
 
-// Import routes
+// Import routes (updated: 2025-11-14 07:45 UTC)
 const authRoutes = require('./routes/auth');
 const intakeRoutes = require('./routes/intake');
 // LEGACY_ROUTES_DISABLED – not used by React app (2025-11-13)
@@ -20,6 +20,7 @@ const casesRoutes = require('./routes/cases');
 const uploadRoutes = require('./routes/upload');
 const adminConsumerRoutes = require('./routes/adminConsumer');
 const turboIntakeRoutes = require('./routes/turboIntake');
+const turboRoutes = require('./routes/turbo');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -27,7 +28,29 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use( 
   cors({
-    origin: "https://turboresponsehq.ai",
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+      
+      // Check if origin matches allowed patterns
+      const allowedOrigins = [
+        "https://turboresponsehq.ai",
+        /\.manusvm\.computer$/  // Allow all Manus dev server domains
+      ];
+      
+      const isAllowed = allowedOrigins.some(pattern => {
+        if (typeof pattern === 'string') {
+          return origin === pattern;
+        }
+        return pattern.test(origin);
+      });
+      
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true
   })
 );
@@ -69,6 +92,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api', casesRoutes);  // Mount at /api for admin case routes
 app.use('/api/upload', uploadRoutes);
 app.use('/api/admin/consumer', adminConsumerRoutes);
+app.use('/api/turbo', turboRoutes);
 
 // 404 handler
 app.use((req, res) => {

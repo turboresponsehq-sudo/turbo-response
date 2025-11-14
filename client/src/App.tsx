@@ -5,13 +5,10 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
-import ChatInterface from "./pages/ChatInterface";
 import AdminDashboard from "./pages/AdminDashboard";
 import IntakeForm from "./pages/IntakeForm";
 import Payment from "./pages/Payment";
-import TurboIntake from "./pages/TurboIntake";
 import AdminLogin from "./pages/AdminLogin";
-import AdminSettings from "./pages/AdminSettings";
 import ClientContract from "./pages/ClientContract";
 import ServiceAgreement from "./pages/ServiceAgreement";
 import Disclaimer from "./pages/Disclaimer";
@@ -21,21 +18,28 @@ import AdminConsumerCases from "./pages/AdminConsumerCases";
 import AdminConsumerCaseDetail from "./pages/AdminConsumerCaseDetail";
 import AdminCaseDetail from "./pages/AdminCaseDetail";
 import ConsumerConfirmation from "./pages/ConsumerConfirmation";
+import TurboHQ from "./pages/TurboHQ";
+import Services from "./pages/Services";
+import Pricing from "./pages/Pricing";
+import Results from "./pages/Results";
+import Testimonials from "./pages/Testimonials";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path={"/"} component={Home} />
-      <Route path="/chat" component={ChatInterface} />
+      <Route path="/services" component={Services} />
+      <Route path="/pricing" component={Pricing} />
+      <Route path="/results" component={Results} />
+      <Route path="/testimonials" component={Testimonials} />
       <Route path="/intake" component={IntakeForm} />
       <Route path="/consumer/confirmation" component={ConsumerConfirmation} />
       
       {/* Payment route - NOT part of consumer intake flow, used for business audit workflow */}
       <Route path="/payment" component={Payment} />
-      <Route path="/turbo-intake" component={TurboIntake} />
+      <Route path="/turbo" component={TurboHQ} />
       <Route path="/admin/login" component={AdminLogin} />
-      <Route path="/admin/settings" component={AdminSettings} />
       {/* Admin workflow routes - restored to specification */}
       <Route path="/admin/case/:id" component={AdminCaseDetail} />
       <Route path="/admin" component={AdminDashboard} />
