@@ -10,11 +10,12 @@ CREATE TABLE IF NOT EXISTS ai_usage_logs (
   tokens_used INTEGER,
   estimated_cost DECIMAL(10, 4), -- Cost in USD
   model_used VARCHAR(50) DEFAULT 'gpt-4',
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  
-  INDEX idx_usage_created_at (created_at),
-  INDEX idx_usage_case_id (case_id)
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Create indexes after table creation
+CREATE INDEX IF NOT EXISTS idx_usage_created_at ON ai_usage_logs (created_at);
+CREATE INDEX IF NOT EXISTS idx_usage_case_id ON ai_usage_logs (case_id);
 
 -- Table: admin_settings
 -- Stores admin configuration like monthly spending cap

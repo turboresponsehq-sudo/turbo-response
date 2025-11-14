@@ -14,11 +14,22 @@ const getMyCases = async (req, res, next) => {
     );
 
     res.json({
-      cases: result.rows,
-      total: result.rows.length
+      success: true,
+      data: {
+        cases: result.rows,
+        total: result.rows.length
+      }
     });
   } catch (error) {
-    next(error);
+    logger.error('Failed to get user cases', {
+      error: error.message,
+      userId: req.user?.id
+    });
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve cases',
+      error: error.message
+    });
   }
 };
 
@@ -34,12 +45,29 @@ const getCaseById = async (req, res, next) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Case not found' });
+      logger.warn('Case not found', { caseId, userId: req.user?.id });
+      return res.status(404).json({
+        success: false,
+        message: 'Case not found',
+        error: 'No case found with the specified ID'
+      });
     }
 
-    res.json({ case: result.rows[0] });
+    res.json({
+      success: true,
+      data: { case: result.rows[0] }
+    });
   } catch (error) {
-    next(error);
+    logger.error('Failed to get case by ID', {
+      error: error.message,
+      caseId: req.params.case_id,
+      userId: req.user?.id
+    });
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve case',
+      error: error.message
+    });
   }
 };
 
@@ -71,7 +99,14 @@ const getAllCases = async (req, res, next) => {
       cases: result.rows
     });
   } catch (error) {
-    next(error);
+    logger.error('Failed to get all cases (admin)', {
+      error: error.message
+    });
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve cases',
+      error: error.message
+    });
   }
 };
 
@@ -88,7 +123,13 @@ const getAdminCaseById = async (req, res, next) => {
     }
 
     const result = await query(
-      'SELECT * FROM cases WHERE id = $1',
+      `SELECT 
+        id, user_id, case_number, category, status,
+        full_name, email, phone, address,
+        case_details, amount, deadline, documents,
+        created_at, updated_at
+      FROM cases 
+      WHERE id = $1`,
       [caseId]
     );
 
@@ -104,7 +145,15 @@ const getAdminCaseById = async (req, res, next) => {
       case: result.rows[0]
     });
   } catch (error) {
-    next(error);
+    logger.error('Failed to get admin case by ID', {
+      error: error.message,
+      caseId: req.params.id
+    });
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve case details',
+      error: error.message
+    });
   }
 };
 
@@ -193,16 +242,23 @@ const updateCaseStatus = async (req, res, next) => {
 
     res.json({
       success: true,
-      status,
-      message: 'Status updated successfully'
+      statu      message: 'Status updated successfully'
     });
   } catch (error) {
-    next(error);
+    logger.error('Failed to update case status', {
+      error: error.message,
+      caseId: req.params.id,
+      status: req.body.status
+    });
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to update case status',
+      error: error.message
+    });
   }
 };
 
-module.exports = {
-  getMyCases,
+// Run AI analysis on a caseyCases,
   getCaseById,
   getAllCases,
   getAdminCaseById,
@@ -291,14 +347,19 @@ const runAIAnalysis = async (req, res, next) => {
       ]
     );
     
-    // Log AI usage
+    // Log AI usage (optional - don't fail if table doesn't exist)
     if (analysis._usage) {
-      await query(
-        `INSERT INTO ai_usage_logs 
-         (case_id, tokens_used, estimated_cost, model, created_at)
-         VALUES ($1, $2, $3, $4, NOW())`,
-        [id, analysis._usage.tokens, analysis._usage.cost, analysis._usage.model]
-      );
+      try {
+        await query(
+          `INSERT INTO ai_usage_logs 
+           (case_id, tokens_used, estimated_cost, model, created_at)
+           VALUES ($1, $2, $3, $4, NOW())`,
+          [id, analysis._usage.tokens, analysis._usage.cost, analysis._usage.model]
+        );
+      } catch (usageLogError) {
+        console.warn('Failed to log AI usage (non-critical):', usageLogError.message);
+        // Continue execution - usage logging is optional
+      }
     }
     
     res.json({
@@ -321,8 +382,19 @@ const runAIAnalysis = async (req, res, next) => {
     });
     
   } catch (error) {
-    console.error('Error running AI analysis:', error);
-    next(error);
+    console.error('AI Analysis Error:', {
+      caseId: req.params.id,
+      error: error.message,
+      stack: error.stack,
+      code: error.code
+    });
+    
+    // Return user-friendly error instead of crashing
+    return res.status(500).json({
+      success: false,
+      error: 'AI analysis failed. This may be due to missing case data or a database error. Please ensure the case has complete information.',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
@@ -379,8 +451,15 @@ const getAIAnalysis = async (req, res, next) => {
     });
     
   } catch (error) {
-    console.error('Error getting AI analysis:', error);
-    next(error);
+    logger.error('Failed to get case analysis', {
+      error: error.message,
+      caseId: req.params.id
+    });
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve case analysis',
+      error: error.message
+    });
   }
 };
 
@@ -420,12 +499,52 @@ const deleteCase = async (req, res, next) => {
       });
     }
 
-    // Delete related records first (foreign key constraints)
-    await query('DELETE FROM case_analyses WHERE case_id = $1', [caseId]);
-    await query('DELETE FROM draft_letters WHERE case_id = $1', [caseId]);
-    await query('DELETE FROM ai_usage_logs WHERE case_id = $1', [caseId]);
+    // Get case data to find uploaded files
+    const caseData = await query('SELECT documents FROM cases WHERE id = $1', [caseId]);
+    const documents = caseData.rows[0]?.documents;
     
-    // Delete the case
+    // Delete uploaded files (optional - don't fail if files missing)
+    if (documents && Array.isArray(documents)) {
+      const fs = require('fs');
+      const path = require('path');
+      
+      for (const docUrl of documents) {
+        try {
+          // Extract filename from URL (e.g., /uploads/file.pdf -> file.pdf)
+          const filename = docUrl.split('/').pop();
+          const filePath = path.join(__dirname, '../../uploads', filename);
+          
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+            console.log(`Deleted file: ${filePath}`);
+          }
+        } catch (fileError) {
+          console.warn(`Failed to delete file (non-critical): ${fileError.message}`);
+        }
+      }
+    }
+    
+    // Delete related records first (foreign key constraints)
+    // Each deletion is wrapped to prevent failures if tables don't exist
+    try {
+      await query('DELETE FROM case_analyses WHERE case_id = $1', [caseId]);
+    } catch (e) {
+      console.warn('Failed to delete case_analyses (non-critical):', e.message);
+    }
+    
+    try {
+      await query('DELETE FROM draft_letters WHERE case_id = $1', [caseId]);
+    } catch (e) {
+      console.warn('Failed to delete draft_letters (non-critical):', e.message);
+    }
+    
+    try {
+      await query('DELETE FROM ai_usage_logs WHERE case_id = $1', [caseId]);
+    } catch (e) {
+      console.warn('Failed to delete ai_usage_logs (non-critical):', e.message);
+    }
+    
+    // Delete the case (this is the critical operation)
     await query('DELETE FROM cases WHERE id = $1', [caseId]);
 
     res.json({
@@ -433,8 +552,15 @@ const deleteCase = async (req, res, next) => {
       message: 'Case deleted successfully'
     });
   } catch (error) {
-    logger.error('Error deleting case:', error);
-    next(error);
+    logger.error('Failed to delete case', {
+      error: error.message,
+      caseId: req.params.id
+    });
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to delete case',
+      error: error.message
+    });
   }
 };
 

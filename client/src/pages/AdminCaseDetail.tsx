@@ -57,6 +57,10 @@ export default function AdminCaseDetail() {
         const res = await axios.get(`${API_URL}/api/case/${params?.id}`, {
           headers: { Authorization: `Bearer ${storedToken}` },
         });
+        console.log('🔍 API Response:', res.data);
+        console.log('🔍 Case Data:', res.data.case);
+        console.log('🔍 Case Number:', res.data.case?.case_number);
+        console.log('🔍 Full Name:', res.data.case?.full_name);
         setCaseData(res.data.case);
         setSelectedStatus(res.data.case.status);
       } catch (err: any) {
@@ -237,16 +241,16 @@ export default function AdminCaseDetail() {
             <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
               <strong>Case ID:</strong>
             </p>
-            <p style={{ margin: 0, fontFamily: "monospace", fontSize: "1rem" }}>
-              {caseData.case_number}
+            <p style={{ margin: 0, fontFamily: "monospace", fontSize: "1rem", color: "#212529" }}>
+              {caseData.case_number || 'N/A'}
             </p>
           </div>
           <div>
             <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
               <strong>Category:</strong>
             </p>
-            <p style={{ margin: 0, fontSize: "1rem" }}>
-              {CATEGORY_NAMES[caseData.category] || caseData.category}
+            <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>
+              {caseData.category ? (CATEGORY_NAMES[caseData.category] || caseData.category) : 'N/A'}
             </p>
           </div>
         </div>
@@ -256,14 +260,14 @@ export default function AdminCaseDetail() {
             <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
               <strong>Created:</strong>
             </p>
-            <p style={{ margin: 0, fontSize: "0.875rem" }}>
-              {new Date(caseData.created_at).toLocaleString('en-US', {
+            <p style={{ margin: 0, fontSize: "0.875rem", color: "#212529" }}>
+              {caseData.created_at ? new Date(caseData.created_at).toLocaleString('en-US', {
                 year: 'numeric',
                 month: 'short',
                 day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit'
-              })}
+              }) : 'N/A'}
             </p>
           </div>
           {caseData.updated_at && caseData.updated_at !== caseData.created_at && (
@@ -271,7 +275,7 @@ export default function AdminCaseDetail() {
               <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
                 <strong>Last Updated:</strong>
               </p>
-              <p style={{ margin: 0, fontSize: "0.875rem" }}>
+              <p style={{ margin: 0, fontSize: "0.875rem", color: "#212529" }}>
                 {new Date(caseData.updated_at).toLocaleString('en-US', {
                   year: 'numeric',
                   month: 'short',
@@ -434,7 +438,7 @@ export default function AdminCaseDetail() {
                 <div>
                   <p style={{ margin: 0, color: "#6c757d", fontSize: "0.875rem" }}>Suggested Price</p>
                   <p style={{ margin: "0.25rem 0 0 0", fontSize: "2rem", fontWeight: "bold", color: "#212529" }}>
-                    ${aiAnalysis.pricing?.amount || 0}
+                    ${aiAnalysis.pricing_suggestion || 0}
                   </p>
                 </div>
                 <div>
@@ -444,16 +448,16 @@ export default function AdminCaseDetail() {
                     fontSize: "0.875rem",
                     fontWeight: 600,
                     backgroundColor: 
-                      aiAnalysis.pricing?.tier === 'extreme' ? '#dc3545' :
-                      aiAnalysis.pricing?.tier === 'high' ? '#fd7e14' :
+                      aiAnalysis.pricing_tier === 'extreme' ? '#dc3545' :
+                      aiAnalysis.pricing_tier === 'high' ? '#fd7e14' :
                       '#28a745',
                     color: "white",
                     textTransform: "uppercase",
                     letterSpacing: "0.5px"
                   }}>
-                    {aiAnalysis.pricing?.tier === 'extreme' && '⚡ EXTREME'}
-                    {aiAnalysis.pricing?.tier === 'high' && '🔥 HIGH'}
-                    {aiAnalysis.pricing?.tier === 'standard' && '✓ STANDARD'}
+                    {aiAnalysis.pricing_tier === 'extreme' && '⚡ EXTREME'}
+                    {aiAnalysis.pricing_tier === 'high' && '🔥 HIGH'}
+                    {aiAnalysis.pricing_tier === 'standard' && '✓ STANDARD'}
                   </span>
                 </div>
               </div>
@@ -529,7 +533,7 @@ export default function AdminCaseDetail() {
             <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
               <strong>Full Name:</strong>
             </p>
-            <p style={{ margin: 0, fontSize: "1rem" }}>{caseData.full_name}</p>
+            <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>{caseData.full_name || 'N/A'}</p>
           </div>
           
           <div>
@@ -537,8 +541,8 @@ export default function AdminCaseDetail() {
               <strong>Email:</strong>
             </p>
             <p style={{ margin: 0, fontSize: "1rem", wordBreak: "break-word" }}>
-              <a href={`mailto:${caseData.email}`} style={{ color: "#007bff", textDecoration: "none" }}>
-                {caseData.email}
+              <a href={`mailto:${caseData.email || ''}`} style={{ color: "#007bff", textDecoration: "none" }}>
+                {caseData.email || 'N/A'}
               </a>
             </p>
           </div>
@@ -549,8 +553,8 @@ export default function AdminCaseDetail() {
                 <strong>Phone:</strong>
               </p>
               <p style={{ margin: 0, fontSize: "1rem" }}>
-                <a href={`tel:${caseData.phone}`} style={{ color: "#007bff", textDecoration: "none" }}>
-                  {caseData.phone}
+                <a href={`tel:${caseData.phone || ''}`} style={{ color: "#007bff", textDecoration: "none" }}>
+                  {caseData.phone || 'N/A'}
                 </a>
               </p>
             </div>
@@ -561,7 +565,7 @@ export default function AdminCaseDetail() {
               <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
                 <strong>Address:</strong>
               </p>
-              <p style={{ margin: 0, fontSize: "1rem" }}>{caseData.address}</p>
+              <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>{caseData.address || 'N/A'}</p>
             </div>
           )}
         </div>
@@ -585,9 +589,10 @@ export default function AdminCaseDetail() {
             margin: 0, 
             fontSize: "1rem", 
             whiteSpace: "pre-wrap",
-            lineHeight: "1.6"
+            lineHeight: "1.6",
+            color: "#212529"
           }}>
-            {caseData.case_details}
+            {caseData.case_details || 'No description provided'}
           </p>
         </div>
         
@@ -596,7 +601,7 @@ export default function AdminCaseDetail() {
             <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
               <strong>Amount:</strong>
             </p>
-            <p style={{ margin: 0, fontSize: "1rem" }}>
+            <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>
               ${parseFloat(caseData.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
           </div>
@@ -607,7 +612,7 @@ export default function AdminCaseDetail() {
             <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
               <strong>Deadline:</strong>
             </p>
-            <p style={{ margin: 0, fontSize: "1rem" }}>
+            <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>
               {new Date(caseData.deadline).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',

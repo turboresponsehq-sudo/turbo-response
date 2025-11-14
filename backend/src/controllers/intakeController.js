@@ -27,15 +27,23 @@ const submit = async (req, res, next) => {
 
     // Validate required fields
     if (!email || !full_name || !category || !case_details) {
+      logger.warn('Intake validation failed: missing required fields', { email, full_name, category });
       return res.status(400).json({
-        error: 'Missing required fields: email, full_name, category, case_details'
+        success: false,
+        message: 'Missing required fields',
+        error: 'email, full_name, category, and case_details are required'
       });
     }
 
     // Validate category
     const validCategories = ['eviction', 'debt', 'irs', 'wage', 'medical', 'benefits', 'auto', 'consumer'];
     if (!validCategories.includes(category)) {
-      return res.status(400).json({ error: 'Invalid category' });
+      logger.warn('Intake validation failed: invalid category', { category });
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid category',
+        error: `Category must be one of: ${validCategories.join(', ')}`
+      });
     }
 
     // Generate case number
@@ -92,13 +100,25 @@ const submit = async (req, res, next) => {
     });
 
     res.status(201).json({
+      success: true,
       message: 'Case submitted successfully',
-      case_id: newCase.id,
-      case_number: newCase.case_number,
-      case: newCase
+      data: {
+        case_id: newCase.id,
+        case_number: newCase.case_number,
+        case: newCase
+      }
     });
   } catch (error) {
-    next(error);
+    logger.error('Intake submission failed', {
+      error: error.message,
+      stack: error.stack,
+      body: req.body
+    });
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to submit case',
+      error: error.message
+    });
   }
 };
 

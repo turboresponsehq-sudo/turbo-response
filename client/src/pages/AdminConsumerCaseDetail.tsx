@@ -643,16 +643,16 @@ export default function AdminConsumerCaseDetail() {
               <p style={{ fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '1rem' }}>
                 You are about to run an AI analysis on this case using OpenAI GPT-4.
               </p>
-              <p style={{ color: '#94a3b8', marginBottom: '1rem' }}>
+              <p style={{ color: '#495057', marginBottom: '1rem' }}>
                 This will:
               </p>
-              <ul style={{ color: '#e2e8f0', marginLeft: '1.5rem', marginBottom: '1rem' }}>
+              <ul style={{ color: '#212529', marginLeft: '1.5rem', marginBottom: '1rem' }}>
                 <li>Analyze violations and applicable laws</li>
                 <li>Generate recommendations and success probability</li>
                 <li>Consume API tokens (estimated cost: $0.01-0.05)</li>
                 <li>Update the case analysis in the database</li>
               </ul>
-              <p style={{ color: '#fbbf24', fontWeight: 600 }}>
+              <p style={{ color: '#856404', fontWeight: 600 }}>
                 ⏱️ After running, there will be a 15-second cooldown before you can run another analysis.
               </p>
             </div>
