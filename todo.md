@@ -183,3 +183,14 @@
 - [x] List all CSS files
 - [x] Delete unused CSS files (ChatInterface.css, TurboIntake.css, AdminSettings.css)
 - [x] Verify no broken imports after cleanup (fixed App.tsx)
+
+
+## 🚀 PRODUCTION DEPLOYMENT
+- [ ] Run npm run build in client folder
+- [ ] Commit and push build artifacts
+- [ ] Trigger Render frontend deployment
+- [ ] Clear Render build cache
+- [ ] Verify /services on turboresponsehq.ai
+- [ ] Verify /pricing on turboresponsehq.ai
+- [ ] Verify /results on turboresponsehq.ai
+- [ ] Verify /testimonials on turboresponsehq.ai
