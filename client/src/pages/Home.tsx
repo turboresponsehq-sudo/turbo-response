@@ -23,6 +23,14 @@ export default function Home() {
             <div className="logo-icon">⚡</div>
             TURBO RESPONSE
           </Link>
+          <nav className="nav-menu">
+            <Link href="/" className="nav-link">Home</Link>
+            <Link href="/services" className="nav-link">Services</Link>
+            <Link href="/pricing" className="nav-link">Pricing</Link>
+            <Link href="/results" className="nav-link">Results</Link>
+            <Link href="/testimonials" className="nav-link">Testimonials</Link>
+            <Link href="/intake" className="nav-link nav-link-cta">Start Your Case</Link>
+          </nav>
         </div>
       </header>
 
