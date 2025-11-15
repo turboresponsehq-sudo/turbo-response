@@ -49,7 +49,7 @@ Please provide a comprehensive legal blueprint that this person can use to defen
 
     const client = getOpenAIClient();
     const response = await client.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
+      model: 'gpt-4o',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
@@ -101,7 +101,7 @@ const chat = async (messages, caseContext = null) => {
 
     const client = getOpenAIClient();
     const response = await client.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
+      model: 'gpt-4o',
       messages: chatMessages,
       temperature: 0.8,
       max_tokens: 1000
