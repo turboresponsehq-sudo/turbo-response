@@ -204,3 +204,11 @@
 - [ ] Push to GitHub
 - [ ] Clear CDN cache for turboresponsehq.ai
 - [ ] Verify testimonials appear on homepage
+
+
+## 🔧 OPENAI MODEL FIX - Switch to GPT-3.5-Turbo
+
+- [ ] Update openai.js model from gpt-4o to gpt-3.5-turbo
+- [ ] Commit and push changes to GitHub
+- [ ] Wait for Render backend deployment
+- [ ] Test Turbo AI chat to verify no rate limit errors
