@@ -66,7 +66,7 @@ Documents: ${caseData.uploadedFiles?.length || 0} uploaded
 
   try {
     const response = await openai.chat.completions.create({
-      model: 'gpt-4.1-mini', // Using Manus Forge API supported model
+      model: 'gpt-4.1', // Universal model for all Turbo Response agents
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: caseText },
@@ -84,13 +84,13 @@ Documents: ${caseData.uploadedFiles?.length || 0} uploaded
     
     // Track usage for cost monitoring
     const tokensUsed = response.usage?.total_tokens || 0;
-    const estimatedCost = calculateCost(tokensUsed, 'gpt-4.1-mini');
+    const estimatedCost = calculateCost(tokensUsed, 'gpt-4.1');
     
     // Return usage data along with analysis
     analysis._usage = {
       tokens: tokensUsed,
       cost: estimatedCost,
-      model: 'gpt-4.1-mini'
+      model: 'gpt-4.1'
     };
     
     // ========================================
@@ -342,7 +342,7 @@ Create a formal, legally sound letter addressing the issues.`;
       .replace('{letter_type}', params.letterType);
 
     const response = await openai.chat.completions.create({
-      model: 'gpt-4.1-mini', // Using Manus Forge API supported model
+      model: 'gpt-4.1', // Universal model for all Turbo Response agents
       messages: [
         {
           role: 'system',
@@ -381,9 +381,7 @@ Create a formal, legally sound letter addressing the issues.`;
  */
 function calculateCost(tokens, model) {
   const costPer1MTokens = {
-    'gpt-4o': 5.00,
-    'gpt-4': 45.00,
-    'gpt-3.5-turbo': 1.50,
+    'gpt-4.1': 3.00,
   };
   
   const rate = costPer1MTokens[model] || 5.00;

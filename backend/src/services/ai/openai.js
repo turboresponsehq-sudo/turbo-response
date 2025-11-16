@@ -17,6 +17,24 @@ const getOpenAIClient = () => {
   return openai;
 };
 
+// Retry helper with exponential backoff
+const retryWithBackoff = async (fn, maxRetries = 2) => {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      // Check if it's a rate limit error (429)
+      if (error.status === 429 && attempt < maxRetries) {
+        const waitTime = Math.pow(2, attempt) * 1000; // 1s, 2s, 4s
+        logger.warn(`Rate limit hit, retrying in ${waitTime}ms (attempt ${attempt + 1}/${maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        continue;
+      }
+      throw error;
+    }
+  }
+};
+
 // Generate legal blueprint using AI
 const generateBlueprint = async (caseData) => {
   try {
@@ -48,14 +66,16 @@ ${case_details}
 Please provide a comprehensive legal blueprint that this person can use to defend their rights.`;
 
     const client = getOpenAIClient();
-    const response = await client.chat.completions.create({
-      model: 'gpt-4o',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt }
-      ],
-      temperature: 0.7,
-      max_tokens: 3000
+    const response = await retryWithBackoff(async () => {
+      return await client.chat.completions.create({
+        model: 'gpt-4.1',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        temperature: 0.7,
+        max_tokens: 3000
+      });
     });
 
     const blueprint = response.choices[0].message.content;
@@ -100,11 +120,13 @@ const chat = async (messages, caseContext = null) => {
     ];
 
     const client = getOpenAIClient();
-    const response = await client.chat.completions.create({
-      model: 'gpt-4o',
-      messages: chatMessages,
-      temperature: 0.8,
-      max_tokens: 1000
+    const response = await retryWithBackoff(async () => {
+      return await client.chat.completions.create({
+        model: 'gpt-4.1',
+        messages: chatMessages,
+        temperature: 0.8,
+        max_tokens: 1000
+      });
     });
 
     const reply = response.choices[0].message.content;
