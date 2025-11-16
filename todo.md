@@ -194,3 +194,36 @@
 - [x] Verify /pricing on turboresponsehq.ai (Status: 200)
 - [x] Verify /results on turboresponsehq.ai (Status: 200)
 - [x] Verify /testimonials on turboresponsehq.ai (Status: 200)
+
+
+## 🎯 HOMEPAGE TESTIMONIALS SECTION
+- [ ] Add testimonials section to Home.tsx (after pricing section)
+- [ ] Include 6 client reviews with results
+- [ ] Match homepage styling (dark navy, cyan accents)
+- [ ] Rebuild frontend
+- [ ] Push to GitHub
+- [ ] Clear CDN cache for turboresponsehq.ai
+- [ ] Verify testimonials appear on homepage
+
+
+## 🔧 OPENAI MODEL FIX - Switch to GPT-3.5-Turbo
+
+- [x] Update openai.js model from gpt-4o to gpt-3.5-turbo
+- [x] Update aiAnalysis.js model from gpt-4.1-mini to gpt-3.5-turbo
+- [ ] Commit and push changes to GitHub
+- [ ] Wait for Render backend deployment
+- [ ] Test Turbo AI chat to verify no rate limit errors
+
+
+## 🔄 STANDARDIZE TO GPT-4.1 UNIVERSAL MODEL
+
+- [ ] Search codebase for all model references (gpt-3.5-turbo, gpt-4.1-mini, gpt-4o, gpt-4o-mini, gpt-4, gpt-4-turbo)
+- [x] Update backend/src/services/openai.js to use gpt-4.1
+- [x] Update backend/src/services/aiAnalysis.js to use gpt-4.1
+- [x] Update backend/src/routes/turbo.js to use gpt-4.1 (uses openai.js chat function)
+- [x] Update agent config files (N/A - agents use openai.js chat function with gpt-4.1)
+- [x] Add retry logic for rate limit handling (exponential backoff with 2 retries)
+- [x] Remove all legacy model references (replaced with gpt-4.1)
+- [ ] Verify Turbo Response Production API key is active in backend
+- [ ] Test all agents (Turbo, Case Analyzer, Business Auditor, Market Scout)
+- [ ] Commit and deploy GPT-4.1 standardization
