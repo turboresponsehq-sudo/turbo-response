@@ -19,7 +19,7 @@ async function generateComprehensiveAnalysis(caseData) {
   // Brain RAG retrieval DISABLED temporarily until /admin/brain UI is ready
   // TODO: Re-enable after Brain upload system is fully operational
   let brainContext = '';
-  console.log('[AI Analysis] Brain RAG disabled - using GPT-4o base knowledge only');
+  console.log('[AI Analysis] VERSION 2738b46-fix - Brain RAG disabled, using GPT-4o base knowledge only');
   
   const systemPrompt = `You are an expert consumer rights strategist and case analyst for Turbo Response, a premium AI-powered consumer advocacy platform.
 ${brainContext}
