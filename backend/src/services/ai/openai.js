@@ -112,8 +112,8 @@ const chat = async (messages, caseContext = null, options = {}) => {
         
         if (lastUserMessage && lastUserMessage.content) {
           // Import Brain context retrieval
-          const { generateQueryEmbedding } = require('../embeddingsService');
-          const { queryVectors } = require('../vectorStore');
+          const { generateQueryEmbedding } = require('./embeddingsService');
+          const { queryVectors } = require('./vectorStore');
           
           // Generate query embedding
           const queryEmbedding = await generateQueryEmbedding(lastUserMessage.content);

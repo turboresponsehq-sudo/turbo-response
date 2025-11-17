@@ -329,3 +329,24 @@ Transform uploaded documents into searchable, AI-accessible knowledge using vect
 - [ ] Test AI analysis with various outputs
 - [ ] Verify no more numeric parsing errors
 - [ ] Deploy to production
+
+
+## 🚨 URGENT: Module Import Path Error (Brain Retrieval)
+
+### Issue: Cannot find module '../embeddingsService'
+- Error in aiAnalysis.js Brain retrieval
+- Wrong relative path: '../embeddingsService' 
+- Correct path should be: './embeddingsService'
+
+### Phase 1: Fix aiAnalysis.js
+- [x] Change '../embeddingsService' to './embeddingsService'
+- [x] Change '../vectorStore' to './vectorStore'
+
+### Phase 2: Fix openai.js
+- [x] Check and fix import paths in openai.js
+- [x] Verify all Brain retrieval imports use correct paths
+
+### Phase 3: Deploy
+- [ ] Commit and push to GitHub
+- [ ] Verify Render deployment
+- [ ] Test AI analysis endpoint

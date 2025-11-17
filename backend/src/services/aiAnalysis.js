@@ -18,8 +18,7 @@ const openai = new OpenAI({
 async function generateComprehensiveAnalysis(caseData) {
   // Step 1: Retrieve relevant knowledge from Brain
   let brainContext = '';
-  try {
-    const { generateQueryEmbedding } = require('./embeddingsService');
+  try     const { generateQueryEmbedding } = require('./embeddingsService');
     const { queryVectors } = require('./vectorStore');
     
     // Build query from case data
