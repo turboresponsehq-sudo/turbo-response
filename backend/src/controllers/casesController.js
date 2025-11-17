@@ -374,20 +374,8 @@ const runAIAnalysis = async (req, res, next) => {
       ]
     );
     
-    // Log AI usage (optional - don't fail if table doesn't exist)
-    if (analysis._usage) {
-      try {
-        await query(
-          `INSERT INTO ai_usage_logs 
-           (case_id, tokens_used, estimated_cost, model, created_at)
-           VALUES ($1, $2, $3, $4, NOW())`,
-          [id, analysis._usage.tokens, analysis._usage.cost, analysis._usage.model]
-        );
-      } catch (usageLogError) {
-        console.warn('Failed to log AI usage (non-critical):', usageLogError.message);
-        // Continue execution - usage logging is optional
-      }
-    }
+    // AI usage logging disabled - table doesn't exist in production
+    // TODO: Re-enable after creating ai_usage_logs table
     
     res.json({
       success: true,

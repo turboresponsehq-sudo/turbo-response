@@ -67,3 +67,24 @@
 - ❌ File serving broken
 - ❌ ai_usage_logs missing model column
 - ⚠️ Brain page exists but needs verification
+
+
+---
+
+## 🚨 URGENT: HTTP 500 Error on AI Analysis (2024-11-17)
+
+### Issue Report
+- Endpoint: POST /api/case/16/analyze
+- Error: Internal Server Error (500)
+- Case: TR-60025193-483 (ID: 16)
+- Status: Pending Review
+
+### Debug Tasks
+- [x] OpenAI API key confirmed working
+- [x] Syntax fix deployed to production
+- [x] URGENT: Remove ALL ai_usage_logs calls (table doesn't exist)
+- [x] URGENT: Disable Brain RAG retrieval completely (temporary)
+- [x] URGENT: Verify analysis returns 8 fields (violations, laws, actions, pricing, tier, probability, urgency, summary)
+- [x] All fixes applied and ready for deployment
+- [ ] Deploy fix to production
+- [ ] Test on production with Case ID 16
