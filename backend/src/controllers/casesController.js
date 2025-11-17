@@ -308,6 +308,40 @@ const runAIAnalysis = async (req, res, next) => {
       uploadedFiles: uploadedFiles
     });
     
+    // Sanitize numeric values before database insertion
+    const parseNumericValue = (value) => {
+      if (value === null || value === undefined) return null;
+      
+      // If already a number, return it
+      if (typeof value === 'number') return value;
+      
+      // Convert to string and sanitize
+      let str = String(value);
+      
+      // Remove currency symbols, commas, and whitespace
+      str = str.replace(/[$,\s]/g, '');
+      
+      // Handle ranges (e.g., "1000-5000" or "1000–5000")
+      if (str.includes('-') || str.includes('–')) {
+        const parts = str.split(/[-–]/);
+        // Take the first value from range
+        str = parts[0];
+      }
+      
+      // Extract first number from text (e.g., "1000 (statutory damages)")
+      const match = str.match(/\d+\.?\d*/);
+      if (match) {
+        const parsed = parseFloat(match[0]);
+        return isNaN(parsed) ? null : parsed;
+      }
+      
+      return null;
+    };
+    
+    // Sanitize estimated_value and pricing_suggestion
+    const sanitizedEstimatedValue = parseNumericValue(analysis.estimated_value);
+    const sanitizedPricingSuggestion = parseNumericValue(analysis.pricing_suggestion);
+    
     // Save analysis to database
     await query(
       `INSERT INTO case_analyses 
@@ -332,9 +366,9 @@ const runAIAnalysis = async (req, res, next) => {
         JSON.stringify(analysis.laws_cited),
         JSON.stringify(analysis.recommended_actions),
         analysis.urgency_level,
-        analysis.estimated_value,
+        sanitizedEstimatedValue,
         analysis.success_probability,
-        analysis.pricing_suggestion,
+        sanitizedPricingSuggestion,
         analysis.pricing_tier,
         analysis.summary
       ]

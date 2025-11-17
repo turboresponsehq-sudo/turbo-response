@@ -278,3 +278,54 @@ Transform uploaded documents into searchable, AI-accessible knowledge using vect
 - [ ] Knowledge graph relationships
 - [ ] Multi-tenant knowledge isolation
 - [ ] Usage analytics and knowledge gaps detection
+
+
+## 🚨 URGENT: Database Schema Fix (AI Analysis Crash)
+
+### Issue: case_analyses table missing columns
+- Error: column "pricing_tier" of relation "case_analyses" does not exist
+- Error: column "pricing_suggestion" may also be missing
+- Impact: AI analysis endpoint returns 500 error
+
+### Phase 1: Check Schema
+- [ ] Query case_analyses table schema
+- [ ] Identify all missing columns
+
+### Phase 2: Add Missing Columns
+- [x] Add pricing_tier column (ALTER TABLE executed on production)
+- [x] Verified pricing_suggestion column exists
+- [x] Run migration on production database (Render PostgreSQL)
+
+### Phase 3: Verify Fix
+- [x] Connected to production database successfully
+- [x] Identified missing pricing_tier column
+- [x] Added pricing_tier VARCHAR(50) column
+- [x] Verified column exists in schema
+- [ ] Test /api/case/:id/analyze endpoint (Chief to verify)
+- [ ] Check Render logs for no more errors
+
+
+## 🚨 URGENT: Numeric Parsing Error in AI Analysis
+
+### Issue: AI returns formatted currency strings, database expects pure numbers
+- Error: "invalid input syntax for type numeric"
+- AI output: "$1,000–$5,000 (statutory damages...)"
+- Database column: estimated_value DECIMAL(10,2)
+
+### Phase 1: Create Sanitization Function
+- [x] Create parseNumericValue() function
+- [x] Handle currency symbols ($)
+- [x] Handle commas (1,000 → 1000)
+- [x] Handle ranges (take first value from range)
+- [x] Handle text descriptions (extract number or return null)
+
+### Phase 2: Apply Sanitization
+- [x] Sanitize estimated_value before database insert
+- [x] Sanitize pricing_suggestion before database insert
+- [x] Return null for invalid values (safe fallback)
+- [x] Integrated into runAIAnalysis function
+
+### Phase 3: Test & Deploy
+- [ ] Test AI analysis with various outputs
+- [ ] Verify no more numeric parsing errors
+- [ ] Deploy to production
