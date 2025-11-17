@@ -3,6 +3,9 @@ const logger = require('../utils/logger');
 const { storagePut } = require('../services/storage');
 const multer = require('multer');
 const path = require('path');
+const { processDocument } = require('../services/documentProcessor');
+const { generateEmbeddings } = require('../services/embeddingsService');
+const { upsertVectors, deleteVectorsByDocument } = require('../services/vectorStore');
 
 // Configure multer for file uploads
 const upload = multer({
@@ -134,11 +137,19 @@ const uploadDocument = async (req, res) => {
 
     logger.info('Document uploaded successfully', { documentId: document.id, title });
 
-    // TODO: Trigger background processing for text extraction (Phase 2)
+    // Trigger async document processing (don't wait for completion)
+    processDocumentAsync(document.id, fileUrl, document.file_type, {
+      title: document.title,
+      domain: document.domain,
+      category: document.category,
+      tags: document.tags
+    }).catch(error => {
+      logger.error('Async document processing failed', { documentId: document.id, error: error.message });
+    });
 
     res.status(201).json({
       success: true,
-      message: 'Document uploaded successfully',
+      message: 'Document uploaded successfully. Processing will begin shortly.',
       document
     });
 
@@ -420,8 +431,16 @@ const deleteDocument = async (req, res) => {
       });
     }
 
+    // Delete vectors from Pinecone
+    try {
+      await deleteVectorsByDocument(parseInt(id));
+      logger.info('Vectors deleted from Pinecone', { documentId: id });
+    } catch (error) {
+      logger.warn('Failed to delete vectors from Pinecone', { documentId: id, error: error.message });
+      // Continue with database deletion even if Pinecone deletion fails
+    }
+
     // TODO: Delete file from S3 (future enhancement)
-    // TODO: Delete embeddings from vector database (Phase 2)
 
     // Delete from database
     const deleteQuery = 'DELETE FROM brain_documents WHERE id = $1';
@@ -509,6 +528,88 @@ const getStats = async (req, res) => {
       message: 'Failed to fetch stats',
       error: error.message
     });
+  }
+};
+
+/**
+ * Async document processing function
+ * Extracts text, generates embeddings, and stores in vector database
+ */
+const processDocumentAsync = async (documentId, fileUrl, fileType, metadata) => {
+  try {
+    logger.info('Starting document processing', { documentId, fileType });
+
+    // Update status to processing
+    await pool.query(
+      'UPDATE brain_documents SET processing_status = $1 WHERE id = $2',
+      ['processing', documentId]
+    );
+
+    // Step 1: Extract text and chunk
+    const { text, chunks, totalTokens } = await processDocument(fileUrl, fileType);
+
+    // Update document with extracted text
+    await pool.query(
+      'UPDATE brain_documents SET content_text = $1 WHERE id = $2',
+      [text, documentId]
+    );
+
+    logger.info('Text extraction completed', { 
+      documentId, 
+      chunks: chunks.length,
+      totalTokens 
+    });
+
+    // Step 2: Generate embeddings for all chunks
+    const chunkTexts = chunks.map(c => c.text);
+    const { embeddings, tokens, cost } = await generateEmbeddings(chunkTexts);
+
+    logger.info('Embeddings generated', { 
+      documentId, 
+      embeddings: embeddings.length,
+      tokens,
+      cost 
+    });
+
+    // Step 3: Prepare vectors for Pinecone
+    const vectors = embeddings.map((embedding, index) => ({
+      id: `doc${documentId}_chunk${index}`,
+      values: embedding,
+      metadata: {
+        document_id: documentId,
+        chunk_index: index,
+        chunk_text: chunks[index].text.substring(0, 1000), // Store first 1000 chars in metadata
+        chunk_tokens: chunks[index].tokens,
+        document_title: metadata.title,
+        document_domain: metadata.domain,
+        document_category: metadata.category,
+        document_tags: metadata.tags || []
+      }
+    }));
+
+    // Step 4: Upsert to Pinecone
+    await upsertVectors(vectors);
+
+    logger.info('Vectors upserted to Pinecone', { documentId, vectors: vectors.length });
+
+    // Step 5: Update document status
+    await pool.query(
+      'UPDATE brain_documents SET processing_status = $1, chunk_count = $2 WHERE id = $3',
+      ['completed', chunks.length, documentId]
+    );
+
+    logger.info('Document processing completed', { documentId });
+
+  } catch (error) {
+    logger.error('Document processing failed', { documentId, error: error.message });
+
+    // Update status to failed
+    await pool.query(
+      'UPDATE brain_documents SET processing_status = $1 WHERE id = $2',
+      ['failed', documentId]
+    );
+
+    throw error;
   }
 };
 

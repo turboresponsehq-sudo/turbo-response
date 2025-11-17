@@ -9,6 +9,10 @@ const {
   deleteDocument,
   getStats
 } = require('../controllers/brainController');
+const {
+  semanticSearch,
+  getRelevantContext
+} = require('../controllers/searchController');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
 
 // All Brain routes require admin authentication
@@ -57,5 +61,21 @@ router.delete('/document/:id', deleteDocument);
  * @access  Admin only
  */
 router.get('/stats', getStats);
+
+/**
+ * @route   POST /api/brain/search
+ * @desc    Semantic search in Brain documents
+ * @access  Admin only
+ * @body    query, topK, domain, category, tags
+ */
+router.post('/search', semanticSearch);
+
+/**
+ * @route   POST /api/brain/context
+ * @desc    Get relevant context chunks for AI prompts
+ * @access  Admin only
+ * @body    query, maxChunks, domain
+ */
+router.post('/context', getRelevantContext);
 
 module.exports = router;

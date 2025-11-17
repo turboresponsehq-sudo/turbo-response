@@ -96,9 +96,69 @@ Please provide a comprehensive legal blueprint that this person can use to defen
   }
 };
 
-// AI Chat endpoint
-const chat = async (messages, caseContext = null) => {
+// AI Chat endpoint with Brain retrieval
+const chat = async (messages, caseContext = null, options = {}) => {
   try {
+    const { useBrain = true, brainDomain = null } = options;
+    
+    // Step 1: Get relevant context from Brain if enabled
+    let brainContext = '';
+    let brainSources = [];
+    
+    if (useBrain && messages.length > 0) {
+      try {
+        const axios = require('axios');
+        const lastUserMessage = messages.filter(m => m.role === 'user').pop();
+        
+        if (lastUserMessage && lastUserMessage.content) {
+          // Import Brain context retrieval
+          const { generateQueryEmbedding } = require('../embeddingsService');
+          const { queryVectors } = require('../vectorStore');
+          
+          // Generate query embedding
+          const queryEmbedding = await generateQueryEmbedding(lastUserMessage.content);
+          
+          // Query Brain for relevant context
+          const filter = brainDomain ? { document_domain: brainDomain } : {};
+          const matches = await queryVectors(queryEmbedding, {
+            topK: 3,
+            filter,
+            includeMetadata: true
+          });
+          
+          if (matches.length > 0) {
+            // Build context string
+            brainContext = '\n\n=== BRAIN KNOWLEDGE ===\n';
+            brainContext += 'I have access to relevant knowledge from the Brain system:\n\n';
+            
+            matches.forEach((match, index) => {
+              if (match.score > 0.7) { // Only include high-relevance matches
+                brainContext += `[Source ${index + 1}: ${match.metadata.document_title}]\n`;
+                brainContext += `${match.metadata.chunk_text.substring(0, 500)}...\n\n`;
+                
+                brainSources.push({
+                  documentId: match.metadata.document_id,
+                  title: match.metadata.document_title,
+                  domain: match.metadata.document_domain,
+                  relevance: match.score
+                });
+              }
+            });
+            
+            brainContext += 'Use this knowledge to enhance your response when relevant.\n';
+            brainContext += '=====================\n';
+            
+            logger.info('Brain context retrieved for chat', { 
+              sources: brainSources.length,
+              topRelevance: matches[0]?.score 
+            });
+          }
+        }
+      } catch (brainError) {
+        logger.warn('Brain retrieval failed, continuing without context', { error: brainError.message });
+        // Continue without Brain context if retrieval fails
+      }
+    }
     // TURBO IDENTITY ENGINE - Executive AI Commander System Prompt
     const turboIdentityEngine = `
 =====================
@@ -298,7 +358,7 @@ I deliver clarity, strategy, and dominance on every message."
       ? `\n\n=== CURRENT CASE CONTEXT ===\nYou are currently assisting with a ${caseContext.category} case.\n- Status: ${caseContext.status}\n- Blueprint Generated: ${caseContext.blueprint_generated ? 'Yes' : 'No'}\n\nApply your full strategic intelligence to this consumer defense battle. Protect the client, identify violations, and deliver a winning strategy.`
       : '';
 
-    const systemPrompt = turboIdentityEngine + caseContextAddendum;
+    const systemPrompt = turboIdentityEngine + caseContextAddendum + brainContext;
 
     const chatMessages = [
       { role: 'system', content: systemPrompt },
@@ -323,7 +383,8 @@ I deliver clarity, strategy, and dominance on every message."
 
     return {
       message: reply,
-      tokens_used: response.usage.total_tokens
+      tokens_used: response.usage.total_tokens,
+      brain_sources: brainSources.length > 0 ? brainSources : undefined
     };
   } catch (error) {
     logger.error('Chat generation failed', { error: error.message });
