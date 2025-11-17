@@ -16,40 +16,10 @@ const openai = new OpenAI({
  * This is the CORE AI analysis engine that powers the "Run AI Analysis" button
  */
 async function generateComprehensiveAnalysis(caseData) {
-  // Step 1: Retrieve relevant knowledge from Brain
+  // Brain RAG retrieval DISABLED temporarily until /admin/brain UI is ready
+  // TODO: Re-enable after Brain upload system is fully operational
   let brainContext = '';
-  try {
-    const { generateQueryEmbedding } = require('./embeddingsService');
-    const { queryVectors } = require('./vectorStore');
-    
-    // Build query from case data
-    const query = `${caseData.category} ${caseData.description || ''} consumer rights violations`;
-    
-    // Generate query embedding
-    const queryEmbedding = await generateQueryEmbedding(query);
-    
-    // Query Brain for consumer-rights domain knowledge
-    const matches = await queryVectors(queryEmbedding, {
-      topK: 5,
-      filter: { document_domain: 'consumer-rights' },
-      includeMetadata: true
-    });
-    
-    if (matches.length > 0 && matches[0].score > 0.7) {
-      brainContext = '\n\n=== RELEVANT LAWS AND REGULATIONS FROM BRAIN ===\n';
-      matches.forEach((match, index) => {
-        if (match.score > 0.7) {
-          brainContext += `[Source ${index + 1}: ${match.metadata.document_title}]\n`;
-          brainContext += `${match.metadata.chunk_text}\n\n`;
-        }
-      });
-      brainContext += 'Use this knowledge to identify specific violations and cite exact statutes.\n';
-      brainContext += '=====================\n';
-    }
-  } catch (error) {
-    console.warn('Brain retrieval failed for case analysis:', error.message);
-    // Continue without Brain context
-  }
+  console.log('[AI Analysis] Brain RAG disabled - using GPT-4o base knowledge only');
   
   const systemPrompt = `You are an expert consumer rights strategist and case analyst for Turbo Response, a premium AI-powered consumer advocacy platform.
 ${brainContext}
