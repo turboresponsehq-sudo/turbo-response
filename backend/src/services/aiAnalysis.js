@@ -66,7 +66,7 @@ Documents: ${caseData.uploadedFiles?.length || 0} uploaded
 
   try {
     const response = await openai.chat.completions.create({
-      model: 'gpt-4.1', // Universal model for all Turbo Response agents
+      model: 'gpt-4o', // Universal model for all Turbo Response agents
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: caseText },
@@ -84,13 +84,13 @@ Documents: ${caseData.uploadedFiles?.length || 0} uploaded
     
     // Track usage for cost monitoring
     const tokensUsed = response.usage?.total_tokens || 0;
-    const estimatedCost = calculateCost(tokensUsed, 'gpt-4.1');
+    const estimatedCost = calculateCost(tokensUsed, 'gpt-4o');
     
     // Return usage data along with analysis
     analysis._usage = {
       tokens: tokensUsed,
       cost: estimatedCost,
-      model: 'gpt-4.1'
+      model: 'gpt-4o'
     };
     
     // ========================================
@@ -172,8 +172,14 @@ Documents: ${caseData.uploadedFiles?.length || 0} uploaded
     };
   } catch (error) {
     console.error('Error in comprehensive analysis:', error);
+    console.error('Error details:', {
+      message: error.message,
+      status: error.status,
+      type: error.type,
+      model: 'gpt-4o'
+    });
     
-    // Return fallback analysis with deterministic pricing
+    // Return fallback analysis with deterministic pricing and error details
     const fallbackPricing = calculatePrice({
       category: caseData.category || 'consumer',
       violations: 0,
@@ -194,7 +200,12 @@ Documents: ${caseData.uploadedFiles?.length || 0} uploaded
       pricing_suggestion: fallbackPricing.finalPrice, // Deterministic pricing
       pricing_tier: fallbackPricing.tier,
       pricing_breakdown: fallbackPricing.breakdown,
-      summary: 'Case requires manual review due to analysis error',
+      summary: `Case requires manual review due to analysis error: ${error.message || 'Unknown error'}`,
+      _error: {
+        message: error.message,
+        status: error.status,
+        type: error.type
+      },
       potential_violations: [],
     };
   }
@@ -342,7 +353,7 @@ Create a formal, legally sound letter addressing the issues.`;
       .replace('{letter_type}', params.letterType);
 
     const response = await openai.chat.completions.create({
-      model: 'gpt-4.1', // Universal model for all Turbo Response agents
+      model: 'gpt-4o', // Universal model for all Turbo Response agents
       messages: [
         {
           role: 'system',
@@ -381,7 +392,7 @@ Create a formal, legally sound letter addressing the issues.`;
  */
 function calculateCost(tokens, model) {
   const costPer1MTokens = {
-    'gpt-4.1': 3.00,
+    'gpt-4o': 2.50, // GPT-4o pricing: $2.50 per 1M input tokens
   };
   
   const rate = costPer1MTokens[model] || 5.00;
