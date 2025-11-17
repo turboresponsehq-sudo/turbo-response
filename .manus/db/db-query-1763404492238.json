@@ -1,0 +1,37 @@
+{
+  "query": "SHOW TABLES;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute SHOW TABLES;",
+  "rows": [
+    {
+      "Tables_in_WQoqrgvAJmZqDJX9hYJoWw": "__drizzle_migrations"
+    },
+    {
+      "Tables_in_WQoqrgvAJmZqDJX9hYJoWw": "brain_embeddings"
+    },
+    {
+      "Tables_in_WQoqrgvAJmZqDJX9hYJoWw": "conversations"
+    },
+    {
+      "Tables_in_WQoqrgvAJmZqDJX9hYJoWw": "evidence_uploads"
+    },
+    {
+      "Tables_in_WQoqrgvAJmZqDJX9hYJoWw": "lead_notes"
+    },
+    {
+      "Tables_in_WQoqrgvAJmZqDJX9hYJoWw": "leads"
+    },
+    {
+      "Tables_in_WQoqrgvAJmZqDJX9hYJoWw": "messages"
+    },
+    {
+      "Tables_in_WQoqrgvAJmZqDJX9hYJoWw": "turbo_intake_submissions"
+    },
+    {
+      "Tables_in_WQoqrgvAJmZqDJX9hYJoWw": "users"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_WQoqrgvAJmZqDJX9hYJoWw\n__drizzle_migrations\nbrain_embeddings\nconversations\nevidence_uploads\nlead_notes\nleads\nmessages\nturbo_intake_submissions\nusers\n",
+  "stderr": "",
+  "execution_time_ms": 49
+}
