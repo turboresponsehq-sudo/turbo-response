@@ -218,3 +218,63 @@
 - [ ] Commit changes
 - [ ] Deploy to production
 - [ ] Verify AI analysis works on live site
+
+
+## 🧠 BRAIN UPLOAD SYSTEM - PHASE 2: RAG (IN PROGRESS)
+
+### Mission: Make Brain Queryable Intelligence
+Transform uploaded documents into searchable, AI-accessible knowledge using vector embeddings and semantic search.
+
+### Phase 2.1: Vector Database Setup
+- [x] Identified TiDB limitation (no pgvector support)
+- [x] Evaluated Pinecone option (requires external account)
+- [x] **PIVOT DECISION: Use PostgreSQL JSON storage instead**
+- [x] Create brain_embeddings table in PostgreSQL (JSON array storage)
+- [x] Implement cosine similarity function in Node.js
+- [x] Replace Pinecone vectorStore.js with PostgreSQL implementation
+- [x] Remove Pinecone package dependency
+
+### Phase 2.2: Document Processing Pipeline
+- [x] Install pdf-parse for PDF text extraction
+- [x] Create text extraction service (extractText function)
+- [x] Implement text chunking algorithm (1000 tokens, 200 overlap)
+- [x] Store extracted text in brain_documents.content_text
+- [x] Update processing_status (pending → processing → completed/failed)
+- [x] Create async processing function in brainController
+
+### Phase 2.3: Vector Embeddings Generation
+- [x] Create embeddings service using OpenAI text-embedding-3-small
+- [x] Generate embeddings for each text chunk
+- [x] Store embeddings in brain_embeddings table (PostgreSQL JSON)
+- [x] Update brain_documents.chunk_count
+- [x] Track embedding costs ($0.02 per 1M tokens)
+
+### Phase 2.4: Semantic Search API
+- [x] Create POST /api/brain/search endpoint
+- [x] Implement vector similarity search (cosine similarity)
+- [x] Return top-k relevant chunks with metadata
+- [x] Add re-ranking by document score
+- [x] Support domain/category/tag filtering in search
+- [x] Create POST /api/brain/context endpoint for AI prompts
+### Phase 2.5: AI Integration (RAG)
+- [x] Update Turbo AI chat to include retrieval layer
+- [x] Update Case Analyzer to search Brain before analysis
+- [x] Add citation tracking (show sources in responses)
+- [x] Implement context window management (3-5 chunks max)
+- [x] Add relevance threshold (only use chunks with score > 0.7)
+- [ ] Update Business Auditor to use Brain knowledge (future)# Phase 2.6: Testing & Optimization
+- [ ] Upload test PDF document
+- [ ] Verify text extraction works
+- [ ] Test embedding generation
+- [ ] Test semantic search accuracy
+- [ ] Test AI responses include Brain knowledge
+- [ ] Optimize chunk size and overlap
+- [ ] Deploy to production
+
+### Future Enhancements (Phase 3)
+- [ ] OCR for images (Tesseract or Google Vision)
+- [ ] Web scraping for URL documents
+- [ ] Document versioning and updates
+- [ ] Knowledge graph relationships
+- [ ] Multi-tenant knowledge isolation
+- [ ] Usage analytics and knowledge gaps detection
