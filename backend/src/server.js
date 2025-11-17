@@ -128,6 +128,7 @@ const startServer = async () => {
     app.listen(PORT, () => {
       logger.info(`🚀 Turbo Response API running on port ${PORT}`);
       logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+      logger.info(`✅ DEPLOYMENT VERSION: 2738b46-fix (AI usage logs disabled, Brain RAG disabled)`);
     });
   } catch (error) {
     logger.error('Failed to start server:', error);

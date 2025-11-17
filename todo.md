@@ -88,3 +88,20 @@
 - [x] All fixes applied and ready for deployment
 - [ ] Deploy fix to production
 - [ ] Test on production with Case ID 16
+
+
+---
+
+## 🚨 URGENT: Numeric Parsing Error (2024-11-17 19:49)
+
+### Root Cause
+AI returns estimated_value as text with explanation:
+`"$0-$1,000 (statutory damages if FDCPA applies; value may increase with improper collections or egregious conduct)"`
+
+Database expects plain numeric value, causing INSERT to fail with error code 22P02.
+
+### Fix Required
+- [ ] Apply parseNumericValue() sanitization to estimated_value (currently only applied to pricing_suggestion)
+- [ ] Test AI analysis with Case ID 16
+- [ ] Fix document view button URL generation
+- [ ] Deploy to production
