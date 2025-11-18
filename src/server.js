@@ -123,27 +123,41 @@ app.use(errorHandler);
 // Initialize database and start server
 const startServer = async () => {
   try {
+    console.log('[STARTUP] Starting server...');
+    console.log('[STARTUP] DATABASE_URL exists:', !!process.env.DATABASE_URL);
+    console.log('[STARTUP] PORT:', PORT);
+    
     // Initialize database schema
+    console.log('[STARTUP] Initializing database...');
     await initDatabase();
+    console.log('[STARTUP] Database initialized successfully');
     
     // Run pending migrations
     try {
+      console.log('[STARTUP] Running migrations...');
       const runMigrations = (await import('./migrations/run-migrations.mjs')).default;
       await runMigrations();
+      console.log('[STARTUP] Migrations completed');
     } catch (migrationError) {
+      console.log('[STARTUP] Migration error (non-fatal):', migrationError.message);
       logger.warn('Migration runner not available or failed:', migrationError.message);
     }
     
     // Seed admin account (auto-creates if not exists)
+    console.log('[STARTUP] Seeding admin account...');
     await seedAdminAccount();
+    console.log('[STARTUP] Admin account seeded');
     
     // Start server
+    console.log('[STARTUP] Starting Express server on port', PORT);
     app.listen(PORT, () => {
       logger.info(`🚀 Turbo Response API running on port ${PORT}`);
       logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
       logger.info(`✅ DEPLOYMENT VERSION: 2738b46-fix (AI usage logs disabled, Brain RAG disabled)`);
     });
   } catch (error) {
+    console.error('[STARTUP] FATAL ERROR:', error);
+    console.error('[STARTUP] Error stack:', error.stack);
     logger.error('Failed to start server:', error);
     process.exit(1);
   }
