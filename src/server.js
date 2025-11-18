@@ -83,6 +83,10 @@ app.get('/health', (req, res) => {
 });
 
 // API Routes
+// Test route to verify routing works
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'API routing works!', timestamp: new Date().toISOString() });
+});
 console.log('[ROUTES] Registering /api/auth with authRoutes:', !!authRoutes);
 app.use('/api/auth', authRoutes);
 console.log('[ROUTES] /api/auth registered successfully');
