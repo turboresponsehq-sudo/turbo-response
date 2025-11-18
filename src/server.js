@@ -22,6 +22,7 @@ const uploadRoutes = require('./routes/upload');
 const adminConsumerRoutes = require('./routes/adminConsumer');
 const turboIntakeRoutes = require('./routes/turboIntake');
 const turboRoutes = require('./routes/turbo');
+const resetAdminRoutes = require('./routes/resetAdmin'); // TEMPORARY - DELETE AFTER USE
 // Brain routes disabled - not yet implemented
 
 const app = express();
@@ -101,6 +102,7 @@ app.use('/api', casesRoutes);  // Mount at /api for admin case routes
 app.use('/api/upload', uploadRoutes);
 app.use('/api/admin/consumer', adminConsumerRoutes);
 app.use('/api/turbo', turboRoutes);
+app.use('/api/admin', resetAdminRoutes); // TEMPORARY - DELETE AFTER USE
 // app.use('/api/brain', brainRoutes); // Disabled - not yet implemented
 
 // Serve frontend static files (must be after API routes, before 404 handler)
