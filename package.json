@@ -1,11 +1,10 @@
 {
   "name": "turbo-response-live",
   "version": "1.0.0",
-  "type": "module",
   "license": "MIT",
   "scripts": {
     "dev": "NODE_ENV=development tsx watch server/_core/index.ts",
-    "build": "rm -rf dist && vite build && esbuild src/server.js --bundle --platform=node --packages=external --format=esm --outdir=dist",
+    "build": "rm -rf dist && vite build && esbuild src/server.js --bundle --platform=node --packages=external --format=cjs --outdir=dist --external:./migrations/*.mjs && cp -r src/migrations dist/migrations 2>/dev/null || true",
     "start": "node dist/server.js",
     "check": "tsc --noEmit",
     "format": "prettier --write .",
