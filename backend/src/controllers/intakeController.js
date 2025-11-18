@@ -25,6 +25,13 @@ const submit = async (req, res, next) => {
       documents
     } = req.body;
 
+    // DEBUG: Log received case_details
+    console.log('[INTAKE DEBUG] Received case_details:', {
+      length: case_details?.length || 0,
+      preview: case_details?.substring(0, 100) || 'EMPTY',
+      type: typeof case_details
+    });
+
     // Validate required fields
     if (!email || !full_name || !category || !case_details) {
       logger.warn('Intake validation failed: missing required fields', { email, full_name, category });
@@ -74,6 +81,15 @@ const submit = async (req, res, next) => {
     );
 
     const newCase = result.rows[0];
+
+    // DEBUG: Log what was inserted into database
+    console.log('[INTAKE DEBUG] Inserted into database:', {
+      case_id: newCase.id,
+      case_number: newCase.case_number,
+      category,
+      case_details_length: case_details?.length || 0,
+      case_details_preview: case_details?.substring(0, 100) || 'EMPTY'
+    });
 
     logger.info('New case submitted', {
       caseId: newCase.id,

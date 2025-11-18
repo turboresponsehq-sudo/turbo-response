@@ -21,7 +21,7 @@ const uploadRoutes = require('./routes/upload');
 const adminConsumerRoutes = require('./routes/adminConsumer');
 const turboIntakeRoutes = require('./routes/turboIntake');
 const turboRoutes = require('./routes/turbo');
-const brainRoutes = require('./routes/brain');
+// Brain routes disabled - not yet implemented
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -94,7 +94,7 @@ app.use('/api', casesRoutes);  // Mount at /api for admin case routes
 app.use('/api/upload', uploadRoutes);
 app.use('/api/admin/consumer', adminConsumerRoutes);
 app.use('/api/turbo', turboRoutes);
-app.use('/api/brain', brainRoutes);
+// app.use('/api/brain', brainRoutes); // Disabled - not yet implemented
 
 // 404 handler
 app.use((req, res) => {

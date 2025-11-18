@@ -20,18 +20,19 @@ interface CaseDetail {
   payment_method?: string;
   payment_confirmed_at?: string;
   payment_verified_at?: string;
-}
-
-interface Analysis {
+  // AI Analysis fields (now part of case object)
   violations: string[];
   laws_cited: string[];
   recommended_actions: string[];
-  urgency_level: string;
+  urgency_level?: string;
   estimated_value: number;
   success_probability: number;
-  pricing_suggestion: number;
+  pricing: {
+    amount: number;
+    tier: string;
+  };
   summary: string;
-  created_at: string;
+  analysis_created_at?: string;
 }
 
 interface Letter {
@@ -47,7 +48,6 @@ export default function AdminConsumerCaseDetail() {
   const [, setLocation] = useLocation();
   
   const [caseData, setCaseData] = useState<CaseDetail | null>(null);
-  const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [letters, setLetters] = useState<Letter[]>([]);
   
   const [loading, setLoading] = useState(true);
@@ -84,8 +84,8 @@ export default function AdminConsumerCaseDetail() {
       }
       
       const data = await response.json();
+      // Backend now returns everything in case object
       setCaseData(data.case);
-      setAnalysis(data.analysis);
       setLetters(data.letters || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load case');
@@ -141,12 +141,9 @@ export default function AdminConsumerCaseDetail() {
       }
       
       const data = await response.json();
-      setAnalysis(data.analysis);
       
-      // Update case status
-      if (caseData) {
-        setCaseData({ ...caseData, status: 'analyzed' });
-      }
+      // Refresh case details to get updated analysis
+      await fetchCaseDetails();
       
       // Start 15-second cooldown
       setLastAnalysisTime(Date.now());
@@ -503,47 +500,57 @@ export default function AdminConsumerCaseDetail() {
           </button>
         </div>
 
-        {analysis ? (
+        {caseData?.violations && caseData.violations.length > 0 ? (
           <div className="analysis-results">
             <div className="analysis-summary">
               <h3>Executive Summary</h3>
-              <p>{analysis.summary}</p>
+              <p>{caseData.summary || 'No summary available'}</p>
             </div>
 
             <div className="analysis-metrics">
-              <div className="metric-card">
-                <label>Urgency Level</label>
-                <div 
-                  className="metric-value urgency"
-                  style={{ color: getUrgencyColor(analysis.urgency_level) }}
-                >
-                  {analysis.urgency_level.toUpperCase()}
+              {caseData.urgency_level && (
+                <div className="metric-card">
+                  <label>Urgency Level</label>
+                  <div 
+                    className="metric-value urgency"
+                    style={{ color: getUrgencyColor(caseData.urgency_level) }}
+                  >
+                    {caseData.urgency_level.toUpperCase()}
+                  </div>
                 </div>
-              </div>
+              )}
               <div className="metric-card">
                 <label>Success Probability</label>
                 <div className="metric-value">
-                  {formatPercentage(analysis.success_probability)}
+                  {formatPercentage(caseData.success_probability)}
                 </div>
               </div>
               <div className="metric-card">
                 <label>Estimated Value</label>
                 <div className="metric-value">
-                  {formatCurrency(analysis.estimated_value)}
+                  {formatCurrency(caseData.estimated_value)}
                 </div>
               </div>
               <div className="metric-card">
                 <label>Pricing Suggestion</label>
                 <div className="metric-value">
-                  {formatCurrency(analysis.pricing_suggestion)}
+                  {formatCurrency(caseData.pricing?.amount || 0)}
                 </div>
               </div>
+              {caseData.pricing?.tier && (
+                <div className="metric-card">
+                  <label>Pricing Tier</label>
+                  <div className="metric-value">
+                    {caseData.pricing.tier}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="analysis-section">
               <h3>⚠️ Violations Found</h3>
               <ul className="violations-list">
-                {analysis.violations.map((violation, index) => (
+                {caseData.violations.map((violation: string, index: number) => (
                   <li key={index}>{violation}</li>
                 ))}
               </ul>
@@ -552,7 +559,7 @@ export default function AdminConsumerCaseDetail() {
             <div className="analysis-section">
               <h3>⚖️ Laws Cited</h3>
               <ul className="laws-list">
-                {analysis.laws_cited.map((law, index) => (
+                {caseData.laws_cited.map((law: string, index: number) => (
                   <li key={index}>{law}</li>
                 ))}
               </ul>
@@ -561,15 +568,17 @@ export default function AdminConsumerCaseDetail() {
             <div className="analysis-section">
               <h3>✅ Recommended Actions</h3>
               <ul className="actions-list">
-                {analysis.recommended_actions.map((action, index) => (
+                {caseData.recommended_actions.map((action: string, index: number) => (
                   <li key={index}>{action}</li>
                 ))}
               </ul>
             </div>
 
-            <div className="analysis-footer">
-              <small>Analysis generated: {new Date(analysis.created_at).toLocaleString()}</small>
-            </div>
+            {caseData.analysis_created_at && (
+              <div className="analysis-footer">
+                <small>Analysis generated: {new Date(caseData.analysis_created_at).toLocaleString()}</small>
+              </div>
+            )}
           </div>
         ) : (
           <div className="no-analysis">
@@ -580,7 +589,7 @@ export default function AdminConsumerCaseDetail() {
       </div>
 
       {/* Letter Generation Section */}
-      {analysis && (
+      {caseData?.violations && caseData.violations.length > 0 && (
         <div className="letter-card">
           <div className="card-header">
             <h2>📄 Letter Generation</h2>

@@ -1,6 +1,7 @@
 /**
  * AI Analysis Service for Consumer Defense Cases
  * Ported from Python letter_generation.py (commit 4f611d3)
+ * Version: 2.0.1 - Timeout parameter fix deployed
  */
 
 const OpenAI = require('openai');
@@ -21,47 +22,23 @@ async function generateComprehensiveAnalysis(caseData) {
   let brainContext = '';
   console.log('[AI Analysis] VERSION 2738b46-fix - Brain RAG disabled, using GPT-4o base knowledge only');
   
-  const systemPrompt = `You are an expert consumer rights strategist and case analyst for Turbo Response, a premium AI-powered consumer advocacy platform.
-${brainContext}
+  const systemPrompt = `You are Turbo Response's legal analysis engine. 
+Your ONLY job is to output a complete JSON object with the following exact keys:
 
-Analyze this case and provide:
+violations: an array of specific legal violations based on the case details
+laws_cited: an array of exact law citations (e.g., "26 U.S.C. § 6201(d)")
+recommended_actions: an array of next steps Turbo Response should take
+urgency_level: "low", "medium", "high", or "critical"
+estimated_value: a numeric estimate of case value
+success_probability: number between 0 and 1
+summary: a 2–3 sentence summary of the case
+potential_violations: array of objects with:
+  { "label": "...", "citation": "..." }
 
-1. VIOLATIONS: Specific violations of consumer protection laws (FDCPA, FCRA, TCPA, Fair Housing, state laws)
-2. LAWS_CITED: Exact statutes and sections that apply
-3. RECOMMENDED_ACTIONS: Specific strategic actions (letters, disputes, complaints, escalation pathways)
-4. URGENCY_LEVEL: low/medium/high/critical based on deadlines and severity
-5. ESTIMATED_VALUE: Potential case value based on statutory damages and violations
-6. SUCCESS_PROBABILITY: 0-1 probability of successful outcome
-7. CASE_SOPHISTICATION: Rate case complexity as 'standard', 'complex', or 'extreme' based on:
-   - Number of violations
-   - Document volume
-   - Strategic pathways required
-   - Time investment needed
-   - Escalation requirements
-8. PRICING_SUGGESTION: Recommended service fee using these ranges:
-   - Standard cases (1-2 violations, simple strategy): $149-$799
-   - Complex cases (3-5 violations, multi-step strategy): $799-$1,499
-   - Extreme cases (6+ violations, multi-agency, urgent): $1,500-$3,000+
-   
-   NEVER suggest below $149. Price reflects intellectual labor, strategic positioning, and case sophistication.
-   
-9. PRICING_FACTORS: JSON object explaining pricing:
-   {
-     "base_price": number,
-     "violations_multiplier": number,
-     "urgency_multiplier": number,
-     "document_factor": number,
-     "strategy_complexity": number,
-     "final_price": number
-   }
-10. SUMMARY: Executive summary for admin emphasizing strategic value
-11. POTENTIAL_VIOLATIONS: Array of potential law violations found, each with:
-   - label: Brief description of the violation (e.g., "FDCPA § 1692d - Harassment")
-   - citation: Optional statute citation (e.g., "15 U.S.C. § 1692d")
-
-Be specific, cite exact law sections, and base recommendations on actual violations found.
-
-Return as JSON with these exact field names (use snake_case: potential_violations).`;
+Rules:
+- ALWAYS include at least 1 violation if any possibility exists.
+- ALWAYS cite at least 1 law if the issue involves IRS, debt, housing, or consumer law.
+- NEVER return empty violations or empty laws_cited unless the case is truly blank.`;
 
   const caseText = `
 Category: ${caseData.category || 'Not specified'}
@@ -71,7 +48,17 @@ Documents: ${caseData.uploadedFiles?.length || 0} uploaded
 `;
 
   try {
-    const response = await openai.chat.completions.create({
+    console.log('[AI Analysis] Starting OpenAI API call with GPT-4o...');
+    console.log('[AI Analysis] Case category:', caseData.category);
+    console.log('[AI Analysis] Case details length:', caseData.caseDescription?.length || 0);
+    console.log('[AI Analysis] Case description preview:', caseData.caseDescription?.substring(0, 100) || 'EMPTY');
+    
+    // Add timeout wrapper to prevent hanging
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('OpenAI API timeout after 60 seconds')), 60000)
+    );
+    
+    const apiPromise = openai.chat.completions.create({
       model: 'gpt-4o', // Universal model for all Turbo Response agents
       messages: [
         { role: 'system', content: systemPrompt },
@@ -80,6 +67,10 @@ Documents: ${caseData.uploadedFiles?.length || 0} uploaded
       response_format: { type: 'json_object' },
       temperature: 0.3,
     });
+    
+    const response = await Promise.race([apiPromise, timeoutPromise]);
+    console.log('[AI Analysis] OpenAI API call completed successfully');
+    console.log('[AI Analysis] Tokens used:', response.usage?.total_tokens || 0);
 
     const content = response.choices[0].message.content;
     if (!content) {
@@ -162,7 +153,7 @@ Documents: ${caseData.uploadedFiles?.length || 0} uploaded
     });
     
     // Ensure all required fields exist with defaults
-    return {
+    const finalResult = {
       violations: analysis.violations || ['Analysis pending'],
       laws_cited: analysis.laws_cited || ['Review required'],
       recommended_actions: analysis.recommended_actions || ['Manual review needed'],
@@ -176,13 +167,25 @@ Documents: ${caseData.uploadedFiles?.length || 0} uploaded
       potential_violations: analysis.potential_violations || [],
       _usage: analysis._usage
     };
+    
+    console.log('[AI Analysis] ✅ Analysis completed successfully');
+    console.log('[AI Analysis] Violations found:', finalResult.violations?.length || 0);
+    console.log('[AI Analysis] Laws cited:', finalResult.laws_cited?.length || 0);
+    console.log('[AI Analysis] Pricing:', finalResult.pricing_suggestion);
+    
+    return finalResult;
   } catch (error) {
-    console.error('Error in comprehensive analysis:', error);
-    console.error('Error details:', {
+    console.error('[AI Analysis] ❌ CRITICAL ERROR in comprehensive analysis');
+    console.error('[AI Analysis] Error message:', error.message);
+    console.error('[AI Analysis] Error stack:', error.stack);
+    console.error('[AI Analysis] Error details:', {
       message: error.message,
       status: error.status,
       type: error.type,
-      model: 'gpt-4o'
+      code: error.code,
+      model: 'gpt-4o',
+      caseId: caseData.id,
+      category: caseData.category
     });
     
     // Return fallback analysis with deterministic pricing and error details

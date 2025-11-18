@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS brain_embeddings (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  document_id INT NOT NULL,\n  chunk_index INT NOT NULL,\n  chunk_text TEXT NOT NULL,\n  chunk_tokens INT,\n  embedding JSON NOT NULL,\n  document_title TEXT,\n  document_domain VARCHAR(100),\n  document_category VARCHAR(100),\n  document_tags TEXT,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  UNIQUE KEY unique_doc_chunk (document_id, chunk_index),\n  INDEX idx_embeddings_document (document_id),\n  INDEX idx_embeddings_domain (document_domain),\n  INDEX idx_embeddings_category (document_category)\n);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute CREATE TABLE IF NOT EXISTS brain_embeddings (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  document_id INT NOT NULL,\n  chunk_index INT NOT NULL,\n  chunk_text TEXT NOT NULL,\n  chunk_tokens INT,\n  embedding JSON NOT NULL,\n  document_title TEXT,\n  document_domain VARCHAR(100),\n  document_category VARCHAR(100),\n  document_tags TEXT,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  UNIQUE KEY unique_doc_chunk (document_id, chunk_index),\n  INDEX idx_embeddings_document (document_id),\n  INDEX idx_embeddings_domain (document_domain),\n  INDEX idx_embeddings_category (document_category)\n);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 54
-}

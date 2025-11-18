@@ -124,12 +124,18 @@ const getAdminCaseById = async (req, res, next) => {
 
     const result = await query(
       `SELECT 
-        id, user_id, case_number, category, status,
-        full_name, email, phone, address,
-        case_details, amount, deadline, documents,
-        created_at, updated_at
-      FROM cases 
-      WHERE id = $1`,
+        c.id, c.user_id, c.case_number, c.category, c.status,
+        c.full_name, c.email, c.phone, c.address,
+        c.case_details, c.amount, c.deadline, c.documents,
+        c.created_at, c.updated_at,
+        a.violations, a.laws_cited, a.recommended_actions,
+        a.urgency_level, a.estimated_value, a.success_probability,
+        a.pricing_suggestion, a.pricing_tier, a.summary
+      FROM cases c
+      LEFT JOIN case_analyses a ON a.case_id = c.id
+      WHERE c.id = $1
+      ORDER BY a.created_at DESC
+      LIMIT 1`,
       [caseId]
     );
 
@@ -288,6 +294,22 @@ const runAIAnalysis = async (req, res, next) => {
     
     const caseData = caseResult.rows[0];
     
+    // 🔥 FIX CHECK — Verify case_details field exists
+    console.log("🔥 FIX CHECK — case_details field:", {
+      raw: caseData.case_details,
+      length: caseData.case_details?.length,
+    });
+    
+    // DEBUG: Log what we got from database
+    console.log('[AI Analysis DEBUG] Retrieved from database:', {
+      case_id: caseData.id,
+      category: caseData.category,
+      case_details_exists: !!caseData.case_details,
+      case_details_length: caseData.case_details?.length || 0,
+      case_details_preview: caseData.case_details?.substring(0, 100) || 'EMPTY',
+      all_fields: Object.keys(caseData)
+    });
+    
     // Parse uploaded files if stored as JSON
     let uploadedFiles = [];
     if (caseData.uploaded_files) {
@@ -301,9 +323,17 @@ const runAIAnalysis = async (req, res, next) => {
     }
     
     // Run AI analysis with pricing
+    console.log('[AI Analysis DEBUG] Calling generateComprehensiveAnalysis with:', {
+      category: caseData.category,
+      caseDescription_length: caseData.case_details?.length || 0,
+      caseDescription_preview: caseData.case_details?.substring(0, 100) || 'EMPTY',
+      amount: caseData.amount,
+      uploadedFiles_count: uploadedFiles.length
+    });
+    
     const analysis = await generateComprehensiveAnalysis({
       category: caseData.category,
-      caseDescription: caseData.case_details,
+      caseDescription: caseData.case_details || '',
       amount: caseData.amount,
       uploadedFiles: uploadedFiles
     });
