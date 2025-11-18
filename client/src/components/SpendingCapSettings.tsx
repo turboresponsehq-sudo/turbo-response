@@ -16,7 +16,7 @@ export default function SpendingCapSettings() {
   const fetchCurrentCap = async () => {
     try {
       const response = await fetch(
-        'https://turbo-response-backend.onrender.com/api/admin/consumer/settings/spending-cap'
+        '/api/admin/consumer/settings/spending-cap'
       );
       
       if (!response.ok) {
@@ -50,7 +50,7 @@ export default function SpendingCapSettings() {
       }
 
       const response = await fetch(
-        'https://turbo-response-backend.onrender.com/api/admin/consumer/settings/spending-cap',
+        '/api/admin/consumer/settings/spending-cap',
         {
           method: 'PUT',
           headers: {
@@ -86,7 +86,7 @@ export default function SpendingCapSettings() {
       setSuccess('');
 
       const response = await fetch(
-        'https://turbo-response-backend.onrender.com/api/admin/consumer/settings/spending-cap',
+        '/api/admin/consumer/settings/spending-cap',
         {
           method: 'PUT',
           headers: {

@@ -1,5 +1,5 @@
 // API Configuration
-export const API_BASE_URL = 'https://turbo-response-backend.onrender.com';
+export const API_BASE_URL = '';
 
 // API Helper Functions
 export const api = {
