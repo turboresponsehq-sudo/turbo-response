@@ -30,8 +30,8 @@ export default function AdminConsumerCases() {
     try {
       setLoading(true);
       const url = filter === 'all' 
-        ? 'https://turbo-response-backend.onrender.com/api/admin/consumer/cases'
-        : `https://turbo-response-backend.onrender.com/api/admin/consumer/cases?status=${filter}`;
+        ? '/api/admin/consumer/cases'
+        : `/api/admin/consumer/cases?status=${filter}`;
       
       const response = await fetch(url);
       

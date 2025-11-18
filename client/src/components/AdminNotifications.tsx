@@ -27,7 +27,7 @@ export default function AdminNotifications() {
   const fetchNotifications = async () => {
     try {
       const response = await fetch(
-        'https://turbo-response-backend.onrender.com/api/admin/consumer/notifications'
+        '/api/admin/consumer/notifications'
       );
       
       if (!response.ok) {

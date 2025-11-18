@@ -76,7 +76,7 @@ export default function AdminConsumerCaseDetail() {
     try {
       setLoading(true);
       const response = await fetch(
-        `https://turbo-response-backend.onrender.com/api/admin/consumer/case/${caseId}`
+        `/api/admin/consumer/case/${caseId}`
       );
       
       if (!response.ok) {
@@ -126,7 +126,7 @@ export default function AdminConsumerCaseDetail() {
       const startTime = Date.now();
       
       const response = await fetch(
-        `https://turbo-response-backend.onrender.com/api/admin/consumer/analyze-case/${caseId}`,
+        `/api/admin/consumer/analyze-case/${caseId}`,
         {
           method: 'POST',
           headers: {
@@ -172,7 +172,7 @@ export default function AdminConsumerCaseDetail() {
     try {
       setVerifyingPayment(true);
       const response = await fetch(
-        `https://turbo-response-backend.onrender.com/api/payment/verify/${caseId}`,
+        `/api/payment/verify/${caseId}`,
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -201,7 +201,7 @@ export default function AdminConsumerCaseDetail() {
     try {
       setVerifyingPayment(true);
       const response = await fetch(
-        `https://turbo-response-backend.onrender.com/api/payment/verify/${caseId}`,
+        `/api/payment/verify/${caseId}`,
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -230,7 +230,7 @@ export default function AdminConsumerCaseDetail() {
       setError('');
       
       const response = await fetch(
-        `https://turbo-response-backend.onrender.com/api/admin/consumer/generate-letter/${caseId}`,
+        `/api/admin/consumer/generate-letter/${caseId}`,
         {
           method: 'POST',
           headers: {

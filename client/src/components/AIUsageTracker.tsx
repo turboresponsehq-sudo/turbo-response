@@ -26,7 +26,7 @@ export default function AIUsageTracker() {
   const fetchUsageStats = async () => {
     try {
       const response = await fetch(
-        'https://turbo-response-backend.onrender.com/api/admin/consumer/usage-stats'
+        '/api/admin/consumer/usage-stats'
       );
       
       if (!response.ok) {

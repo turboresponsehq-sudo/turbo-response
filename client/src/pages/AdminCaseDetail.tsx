@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { useRoute, useLocation } from "wouter";
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL || "https://turbo-response-backend.onrender.com";
+const API_URL = import.meta.env.VITE_API_URL || "";
 
 const STATUS_OPTIONS = [
   'Pending Review',
