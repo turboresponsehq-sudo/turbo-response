@@ -23,7 +23,6 @@ import Services from "./pages/Services";
 import Pricing from "./pages/Pricing";
 import Results from "./pages/Results";
 import Testimonials from "./pages/Testimonials";
-import AdminBrain from "./pages/AdminBrain";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -42,7 +41,6 @@ function Router() {
       <Route path="/turbo" component={TurboHQ} />
       <Route path="/admin/login" component={AdminLogin} />
       {/* Admin workflow routes - restored to specification */}
-      <Route path="/admin/brain" component={AdminBrain} />
       <Route path="/admin/case/:id" component={AdminCaseDetail} />
       <Route path="/admin" component={AdminDashboard} />
       

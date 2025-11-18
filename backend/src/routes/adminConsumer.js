@@ -53,39 +53,81 @@ router.get('/case/:id', async (req, res) => {
   try {
     const caseId = parseInt(req.params.id);
 
-    const caseResult = await query(
-      'SELECT * FROM cases WHERE id = $1',
-      [caseId]
-    );
-
-    if (caseResult.rows.length === 0) {
-      return res.status(404).json({
+    if (isNaN(caseId)) {
+      return res.status(400).json({
         success: false,
-        error: 'Case not found',
+        error: "Invalid case ID"
       });
     }
 
-    const analysisResult = await query(
-      'SELECT * FROM case_analyses WHERE case_id = $1',
+    // Get case + latest AI analysis in single query
+    const result = await query(
+      `
+      SELECT 
+        c.*,
+        a.violations,
+        a.laws_cited,
+        a.recommended_actions,
+        a.estimated_value,
+        a.success_probability,
+        a.pricing_suggestion,
+        a.pricing_tier,
+        a.summary,
+        a.created_at AS analysis_created_at
+      FROM cases c
+      LEFT JOIN case_analyses a ON a.case_id = c.id
+      WHERE c.id = $1
+      ORDER BY a.created_at DESC NULLS LAST
+      LIMIT 1
+      `,
       [caseId]
     );
 
-    const lettersResult = await query(
-      'SELECT * FROM draft_letters WHERE case_id = $1 ORDER BY created_at DESC',
-      [caseId]
-    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: "Case not found"
+      });
+    }
+
+    const row = result.rows[0];
+
+    // Convert numeric text → real numbers
+    const parseNumber = (val) => {
+      if (!val) return 0;
+      const cleaned = String(val).replace(/[$,]/g, "");
+      const num = parseFloat(cleaned);
+      return isNaN(num) ? 0 : num;
+    };
 
     res.json({
       success: true,
-      case: caseResult.rows[0],
-      analysis: analysisResult.rows[0] || null,
-      letters: lettersResult.rows,
+      case: {
+        ...row,
+
+        // JSON fields
+        violations: row.violations ? JSON.parse(row.violations) : [],
+        laws_cited: row.laws_cited ? JSON.parse(row.laws_cited) : [],
+        recommended_actions: row.recommended_actions ? JSON.parse(row.recommended_actions) : [],
+
+        // Numeric fields
+        estimated_value: parseNumber(row.estimated_value),
+        success_probability: parseFloat(row.success_probability) || 0,
+        pricing: {
+          amount: parseNumber(row.pricing_suggestion),
+          tier: row.pricing_tier || ""
+        },
+
+        summary: row.summary || ""
+      }
     });
+
   } catch (error) {
-    console.error('Error fetching case details:', error);
-    res.status(500).json({
+    console.error("ADMIN CASE ERROR:", error);
+    return res.status(500).json({
       success: false,
-      error: 'Failed to fetch case details',
+      message: "Failed to retrieve case details",
+      error: error.message
     });
   }
 });

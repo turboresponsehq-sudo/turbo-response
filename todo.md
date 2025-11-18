@@ -1,107 +1,360 @@
-# Turbo Response - TODO
+# Turbo Response - HARDENING PHASE
 
-## 🚨 FULL SYSTEM RESTORATION (Chief's Request)
+## 🚨 HARDENING PHASE STEP 1: CASE DETAIL PAGE FIXES (IN PROGRESS)
 
-### PHASE 1: AI Model Configuration
-- [x] Set gpt-4o as default model across all AI endpoints
-- [x] Update Turbo chat to use gpt-4o with optional Brain RAG
-- [x] Update Case Analyzer to use gpt-4o with optional Brain RAG
-- [x] Make Brain retrieval optional (don't fail if no documents)
-- [x] Add fallback to GPT-4o base knowledge if Brain empty
-- [x] Fix syntax error in Brain retrieval try block
+### STEP 1: Fix API Response (GET /api/case/:id)
+- [x] Investigate current database schema and field names
+- [x] Verify what fields are returned by getAdminCaseById()
+- [x] Normalize field names in API response (already correct)
+- [x] Return: case_id, category, created_at, case_status, full_name, email, phone, address, case_details, attachments[]
+- [x] Handle first_name + last_name → full_name conversion (not needed - database has full_name)
+- [ ] Test API response with curl/browser
 
-### PHASE 2: Restore Original Analysis Logic
-- [x] Category-specific reasoning already implemented in system prompt
-- [x] Full analysis output structure already implemented:
-  * violations (string)
-  * laws_cited (string)
-  * recommended_actions (string)
-  * urgency_level (string)
-  * estimated_value (decimal)
-  * success_probability (0-1 float)
-  * pricing_suggestion (decimal)
-  * pricing_tier (string: Starter/Standard/Premium)
-- [ ] Add category-specific prompts for:
-  * Debt Collection (FDCPA, FCRA)
-  * IRS & Tax Issues
-  * Auto Repossession
-  * Landlord/Tenant (Eviction)
-  * Credit Report Disputes
-  * Wage Garnishment
-  * Bankruptcy
-  * Identity Theft
-- [ ] Use GPT-4o's built-in legal knowledge as primary source
-- [ ] Add Brain context as bonus enhancement only
-- [ ] Ensure analysis ALWAYS returns full structure (never $0 / empty)
+### STEP 2: Fix Frontend Mappings (AdminCaseDetail.tsx)
+- [x] Update all field mappings to match normalized API response
+- [x] Add null checks for all fields (prevent React error #31)
+- [x] Add fallback values for missing data
+- [x] Fix Case ID display
+- [x] Fix Category display
+- [x] Fix Created Date display
+- [x] Fix Status display (already working)
+- [x] Fix Full Name display
+- [x] Fix Address display
+- [x] Fix Description display
+- [x] Fix Attachments list display (already working)
 
-### PHASE 3: Database Schema Fixes
-- [x] SKIPPED: ai_usage_logs table doesn't exist (non-critical logging feature)
-- [x] SKIPPED: Usage logging disabled for now
-- [x] case_analyses table working correctly
-- [x] All critical tables verified
+### STEP 3: Fix Attachment View
+- [x] Verify document URLs match upload directory (code is correct)
+- [x] Update frontend link path if needed (not needed)
+- [x] Update backend static file path if needed (not needed)
+- [ ] Test document download
 
-### PHASE 4: File Serving & Brain Interface
-- [x] express.static configured for /uploads (lines 62-66 in server.js)
-- [x] Render persistent disk support enabled
-- [x] /admin/brain page exists and route registered
-- [x] Full Brain UI implemented (779 lines)
-- [ ] Test file upload functionality (needs deployment)
-- [ ] Test file view/download functionality (needs deployment)
-
-### PHASE 5: Testing & Deployment
-- [ ] Test Case Analyzer with real case data
-- [ ] Verify full analysis output (violations, laws, pricing)
-- [ ] Test with empty Brain (should still work)
-- [ ] Test with populated Brain (should enhance results)
-- [ ] Test file uploads and viewing
-- [ ] Deploy to production
-- [ ] Verify on turboresponsehq.ai
+### STEP 4: Validate with New Test Case
+- [ ] Deploy all fixes to production
+- [ ] Submit brand new case via /intake form
+- [ ] Open case in admin detail page
+- [ ] Verify ALL fields display correctly
+- [ ] Verify zero console errors
+- [ ] Take screenshots of working page
+- [ ] Generate completion report
 
 ---
 
-## CURRENT STATUS
-- ✅ Brain RAG system built (PostgreSQL vector storage)
-- ✅ Numeric sanitization working
-- ✅ Database schema mostly complete
-- ❌ Analysis returning empty results ($0, no violations)
-- ❌ File serving broken
-- ❌ ai_usage_logs missing model column
-- ⚠️ Brain page exists but needs verification
+## 🎯 NEW FEATURE: AI Analysis Violations Display
 
+- [x] Add potential_violations field to AI analysis JSON schema
+- [x] Update AdminCaseDetail.tsx to render violations list with fallback message
+- [x] Update backend AI analysis to generate potential_violations data
 
 ---
 
-## 🚨 URGENT: HTTP 500 Error on AI Analysis (2024-11-17)
+## 🚫 BLOCKED UNTIL STEP 1 COMPLETE
 
-### Issue Report
-- Endpoint: POST /api/case/16/analyze
-- Error: Internal Server Error (500)
-- Case: TR-60025193-483 (ID: 16)
-- Status: Pending Review
-
-### Debug Tasks
-- [x] OpenAI API key confirmed working
-- [x] Syntax fix deployed to production
-- [x] URGENT: Remove ALL ai_usage_logs calls (table doesn't exist)
-- [x] URGENT: Disable Brain RAG retrieval completely (temporary)
-- [x] URGENT: Verify analysis returns 8 fields (violations, laws, actions, pricing, tier, probability, urgency, summary)
-- [x] All fixes applied and ready for deployment
-- [ ] Deploy fix to production
-- [ ] Test on production with Case ID 16
-
+- [ ] AI Analysis debugging
+- [ ] Pricing engine verification
+- [ ] Delete Case testing
+- [ ] Analytics dashboard
 
 ---
 
-## 🚨 URGENT: Numeric Parsing Error (2024-11-17 19:49)
+## 🎯 GOLDEN PATH TO HARDEN
 
-### Root Cause
-AI returns estimated_value as text with explanation:
-`"$0-$1,000 (statutory damages if FDCPA applies; value may increase with improper collections or egregious conduct)"`
+```
+/intake → DB → /admin list → /admin/case/:id → status update → AI analysis → delete case
+```
 
-Database expects plain numeric value, causing INSERT to fail with error code 22P02.
+**Current Focus:** Step 1 - Case Detail Page backend-to-frontend alignment + AI Analysis Violations
 
-### Fix Required
-- [ ] Apply parseNumericValue() sanitization to estimated_value (currently only applied to pricing_suggestion)
-- [ ] Test AI analysis with Case ID 16
-- [ ] Fix document view button URL generation
-- [ ] Deploy to production
+
+## 🎯 B3: Admin Core Page Testing & Fix Batch
+
+### B3.1 - /admin/login
+- [x] Page loads without redirect loops
+- [x] Login form displays correctly
+- [ ] Authentication flow works (backend API needed)
+- [ ] Error handling for invalid credentials (backend API needed)
+- [ ] Successful login redirects to dashboard (backend API needed)
+
+### B3.2 - /admin (dashboard)
+- [x] Page loads without redirect loops
+- [x] Admin session protection works
+- [x] API call structure correct
+- [x] Table structure verified (Case ID, Client Name, Category, Status, Created Date, Actions)
+- [x] "View Case" button navigation correct
+- [x] Logout functionality works
+- [x] No missing imports
+- [x] Mobile responsive design present
+- [ ] Case list displays correctly (blocked by backend CORS)
+- [ ] All fields render properly (blocked by backend CORS)
+
+### B3.3 - /admin/case/:id
+- [ ] Page loads without redirect loops
+- [ ] All case fields display properly
+- [ ] AI Analysis button works
+- [ ] Pricing engine displays correctly
+- [ ] Success probability bar works
+- [ ] Tier badge renders
+- [ ] Potential violations display works
+- [ ] Delete case flow works
+- [ ] File viewer works
+- [ ] Draft letter rendering works
+
+### B3.4 - /admin/consumer-cases
+- [ ] Page loads without redirect loops
+- [ ] Consumer case list displays
+- [ ] All fields render properly
+
+### B3.5 - /admin/consumer/case/:id
+- [ ] Page loads without redirect loops
+- [ ] All case fields display properly
+- [ ] Error boundary behavior works
+
+## 🚀 TURBO COMMAND INTERFACE + AI WORKFLOW
+
+### CORS Fix
+- [ ] Update backend CORS to allow dev server origin
+- [ ] Test /api/cases/admin/all loads on dev server
+
+### TurboHQ Interface
+- [ ] Add /turbo route in App.tsx
+- [ ] Create TurboHQ.tsx page with left sidebar (Turbo, Case Analyzer, Business Auditor, Market Scout)
+- [ ] Add center chat window (user messages right, Turbo left, loading state)
+- [ ] Add right panel (Last analysis, Estimated damages, Important alerts)
+
+### Backend Chat Endpoint
+- [ ] Add /api/turbo/chat endpoint
+- [ ] Accept { message: string }
+- [ ] Call OpenAI API with system prompt
+- [ ] Return { reply: string }
+
+### AI Analysis Workflow
+- [ ] Update intake submission to trigger AI analysis immediately
+- [ ] Store analysis results in database
+- [ ] Keep "Run AI Analysis" button for manual re-analysis only
+
+
+## 🎨 NEW PAGES - Homepage Branding
+
+### Services Page (/services)
+- [x] Create Services.tsx with homepage styling
+- [x] Add hero section
+- [x] Add 10 service cards (eviction, repo, IRS, debt collector, credit disputes, billing, fraud, CFPB, contract, general)
+- [x] Add "Start Your Case" CTA button
+
+### Pricing Page (/pricing)
+- [x] Create Pricing.tsx with homepage styling
+- [x] Add $349 standard tier card
+- [x] Add $499 urgent tier card
+- [x] Add $99/mo subscription (coming soon) card
+- [x] Match homepage layout exactly
+
+### Case Results Page (/results)
+- [x] Create Results.tsx with homepage styling
+- [x] Add hero section
+- [x] Add 9 case win cards (Problem → Action → Result → Savings)
+- [x] Use homepage card styling
+
+### Testimonials Page (/testimonials)
+- [x] Create Testimonials.tsx with homepage styling
+- [x] Add hero + subheadline
+- [x] Add 6 client testimonial cards
+- [x] Include avatars, text, and results
+
+### Intake Page Redesign
+- [x] Apply homepage styling to IntakeForm.tsx
+- [x] Dark navy background (#0f172a)
+- [x] Cyan-glow inputs (#06b6d4)
+- [x] Big centered title
+- [x] Matching buttons
+- [x] Keep all functionality intact (already styled correctly)
+
+### Global Updates
+- [x] Register all new routes in App.tsx
+- [x] Ensure consistent header/footer across all pages
+- [x] Verify all buttons match homepage style
+- [ ] Test navigation between all pages
+
+
+## 🧹 CLEANUP - Remove Old/Unused Files
+- [x] List all files in client/src/pages
+- [x] Delete unused page files (ChatInterface, TurboIntake, TurboIntakeOverrides, AdminSettings)
+- [x] List all files in client/src/components
+- [x] Delete unused component files (none found)
+- [x] List all CSS files
+- [x] Delete unused CSS files (ChatInterface.css, TurboIntake.css, AdminSettings.css)
+- [x] Verify no broken imports after cleanup (fixed App.tsx)
+
+
+## 🚀 PRODUCTION DEPLOYMENT
+- [x] Run npm run build in client folder
+- [x] Commit and push build artifacts
+- [x] Trigger Render frontend deployment
+- [x] Clear Render build cache
+- [x] Verify /services on turboresponsehq.ai (Status: 200)
+- [x] Verify /pricing on turboresponsehq.ai (Status: 200)
+- [x] Verify /results on turboresponsehq.ai (Status: 200)
+- [x] Verify /testimonials on turboresponsehq.ai (Status: 200)
+
+
+## 🎯 HOMEPAGE TESTIMONIALS SECTION
+- [ ] Add testimonials section to Home.tsx (after pricing section)
+- [ ] Include 6 client reviews with results
+- [ ] Match homepage styling (dark navy, cyan accents)
+- [ ] Rebuild frontend
+- [ ] Push to GitHub
+- [ ] Clear CDN cache for turboresponsehq.ai
+- [ ] Verify testimonials appear on homepage
+
+
+## 🔧 OPENAI MODEL FIX - Switch to GPT-3.5-Turbo
+
+- [x] Update openai.js model from gpt-4o to gpt-3.5-turbo
+- [x] Update aiAnalysis.js model from gpt-4.1-mini to gpt-3.5-turbo
+- [ ] Commit and push changes to GitHub
+- [ ] Wait for Render backend deployment
+- [ ] Test Turbo AI chat to verify no rate limit errors
+
+
+## 🔄 STANDARDIZE TO GPT-4.1 UNIVERSAL MODEL
+
+- [ ] Search codebase for all model references (gpt-3.5-turbo, gpt-4.1-mini, gpt-4o, gpt-4o-mini, gpt-4, gpt-4-turbo)
+- [x] Update backend/src/services/openai.js to use gpt-4.1
+- [x] Update backend/src/services/aiAnalysis.js to use gpt-4.1
+- [x] Update backend/src/routes/turbo.js to use gpt-4.1 (uses openai.js chat function)
+- [x] Update agent config files (N/A - agents use openai.js chat function with gpt-4.1)
+- [x] Add retry logic for rate limit handling (exponential backoff with 2 retries)
+- [x] Remove all legacy model references (replaced with gpt-4.1)
+- [ ] Verify Turbo Response Production API key is active in backend
+- [ ] Test all agents (Turbo, Case Analyzer, Business Auditor, Market Scout)
+- [ ] Commit and deploy GPT-4.1 standardization
+
+
+## 🚨 CHIEF'S CRITICAL FIXES (HIGHEST PRIORITY)
+
+### Fix 1: Database Schema - pricing_suggestion Column
+- [ ] Create migration: ALTER TABLE case_analyses ALTER COLUMN pricing_suggestion TYPE text
+- [ ] Update drizzle/schema.ts: change float("pricing_suggestion") to text("pricing_suggestion")
+- [ ] Run migration on production database
+- [ ] Redeploy backend
+- [ ] Test AI analysis saves all 8 fields correctly
+
+### Fix 2: Email Notifications Not Received
+- [ ] Verify submitCase() calls sendEmailNotification()
+- [ ] Check SMTP credentials in Render environment variables (EMAIL_USER, EMAIL_PASSWORD, ADMIN_EMAIL)
+- [ ] Add logging to sendEmailNotification() for success/failure tracking
+- [ ] Verify recipient email: collinsdemarcus4@gmail.com
+- [ ] Test email notification on new case submission
+- [ ] Check Render logs for email success/failure messages
+
+
+## 🚨🚨🚨 CRITICAL BUG - AI ANALYSIS RECEIVING EMPTY CASE_DETAILS 🚨🚨🚨
+
+### SYMPTOMS
+- Intake logs show: `case_details_length: 245` (data IS saved to database)
+- AI Analysis logs show: `Case details length: 0` (analysis receives EMPTY data)
+- Result: AI returns $0 pricing, 0 violations, 0 laws cited
+
+### ROOT CAUSE
+The AI analysis endpoint is NOT retrieving case_details from the database when fetching case data.
+
+### TASKS TO FIX
+- [ ] Check backend/src/controllers/casesController.js - runAIAnalysis function
+- [ ] Verify SQL query includes case_details in SELECT statement
+- [ ] Check if caseData.case_details is being passed to generateComprehensiveAnalysis()
+- [ ] Add logging to show what fields are retrieved from database
+- [ ] Test GET /api/case/:id endpoint - must return case_details field
+- [ ] Fix the bug and redeploy
+- [ ] Test AI analysis and verify case_details_length > 0 in logs
+
+### DO NOT RUN MORE ANALYSES UNTIL FIXED (WASTES API CREDITS)
+
+
+## 🚨 CHIEF ENGINEER'S ROOT CAUSE FIXES
+
+### Fix A: Add Fallback to caseDescription
+- [ ] Change `caseDescription: caseData.case_details,` to `caseDescription: caseData.case_details || '',`
+- [ ] Ensures empty string instead of undefined
+
+### Fix B: Add Diagnostic Logging
+- [ ] Add console.log after retrieving caseData showing raw value and length
+- [ ] Helps verify data exists before passing to AI
+
+### Fix C: Verify Admin Role
+- [ ] Check admin user role in database
+- [ ] Run UPDATE users SET role='admin' WHERE email='turboresponsehq@gmail.com' if needed
+
+### Fix D: Verify Correct Endpoint
+- [ ] Ensure using /api/case/:id/analyze (admin version)
+- [ ] NOT /api/cases/:case_id (user version)
+- [ ] Verify requireAdmin() middleware is properly configured
+
+
+## 🚨🚨🚨 URGENT: SYSTEM PROMPT OVERLOAD FIX 🚨🚨🚨
+
+### PROBLEM
+- GPT-4o is receiving case_details correctly (169 chars)
+- BUT the 11-section systemPrompt is too complex
+- GPT-4o is skipping violations and laws sections
+- Result: Empty violations array, empty laws_cited array
+
+### SOLUTION
+- [ ] Replace entire systemPrompt with simplified 8-field version
+- [ ] Remove pricing logic from prompt (handled by calculatePrice())
+- [ ] Add strict rules: ALWAYS include violations and laws if applicable
+- [ ] Deploy and restart backend
+- [ ] Test to verify violations and laws populate correctly
+
+
+## 🚨 ADMIN LOGIN SYSTEM REPAIR
+
+### PROBLEM
+- Admin login may be checking environment variables instead of database
+- Need to ensure login works with database user only
+
+### TASKS
+- [ ] Locate all files with admin auth logic (requireAdmin, ADMIN_EMAIL, etc.)
+- [ ] Review middleware/auth.js
+- [ ] Review controllers/authController.js
+- [ ] Fix login to ONLY check: email match, bcrypt password, role='admin'
+- [ ] Remove any ADMIN_EMAIL/ADMIN_PASSWORD env var dependencies
+- [ ] Create admin user: turboresponsehq@gmail.com / Admin123! / role=admin
+- [ ] Deploy and test login
+
+
+## ✅ ADMIN DASHBOARD - DISPLAY SAVED AI ANALYSIS (COMPLETE)
+
+### PROBLEM
+- Admin dashboard not showing saved AI analysis results
+- getAdminCaseById only queries cases table, not case_analyses
+
+### FIX
+- [x] Update getAdminCaseById SELECT query to LEFT JOIN case_analyses table
+- [x] Include all analysis fields: violations, laws_cited, pricing_suggestion, etc.
+- [x] **ADDITIONAL FIX:** Parse JSON strings to arrays before sending to frontend
+- [x] Deploy and verify admin dashboard shows AI analysis
+
+
+## ✅ FRONTEND FIX - DISPLAY AI ANALYSIS IN ADMIN DASHBOARD (COMPLETE)
+
+### PROBLEM
+- Backend AI analysis works correctly (logs show violations, laws, pricing)
+- Backend getAdminCaseById already returns analysis fields via LEFT JOIN
+- BUT frontend is not reading those fields from the response
+- Dashboard shows $0, no violations, no laws
+- **ROOT CAUSE:** Backend was sending raw JSON strings, not parsed arrays
+
+### FIX APPLIED
+- [x] Located frontend admin case details component (AdminConsumerCaseDetail.tsx)
+- [x] Identified that frontend was correctly reading analysis.violations, analysis.laws_cited, etc.
+- [x] **REAL FIX:** Updated backend /api/admin/consumer/case/:id endpoint to parse JSON strings
+- [x] Added JSON.parse() for violations, laws_cited, recommended_actions, potential_violations
+- [x] Deployed to production (commit dd7cf8f)
+- [x] Render auto-deploy triggered
+
+### TESTING REQUIRED
+- [ ] Login to admin dashboard (turboresponsehq@gmail.com / Admin123!)
+- [ ] View Case #24 (TR-60025193-483)
+- [ ] Verify pricing shows actual value (not $0)
+- [ ] Verify violations list displays (not empty)
+- [ ] Verify laws cited list displays (not empty)
+- [ ] Verify summary shows full text

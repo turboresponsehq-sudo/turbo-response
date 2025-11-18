@@ -37,11 +37,19 @@ async function sendNewCaseNotification(caseData) {
   const transport = getTransporter();
   
   if (!transport) {
+    console.log('[EMAIL DEBUG] ⚠️ Email transporter not available - missing EMAIL_USER or EMAIL_PASSWORD');
     logger.warn('Email transporter not available. Skipping notification.');
     return false;
   }
 
-  const adminEmail = process.env.ADMIN_EMAIL || 'turboresponsehq@gmail.com';
+  const adminEmail = process.env.ADMIN_EMAIL || 'collinsdemarcus4@gmail.com';
+  
+  console.log('[EMAIL DEBUG] Preparing to send new case notification:', {
+    to: adminEmail,
+    caseId: caseData.id,
+    caseNumber: caseData.case_number,
+    category: caseData.category
+  });
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
@@ -95,7 +103,12 @@ async function sendNewCaseNotification(caseData) {
   };
 
   try {
-    await transport.sendMail(mailOptions);
+    const info = await transport.sendMail(mailOptions);
+    console.log('[EMAIL DEBUG] ✅ Email sent successfully:', {
+      messageId: info.messageId,
+      to: adminEmail,
+      caseId: caseData.id
+    });
     logger.info('New case notification email sent', {
       caseId: caseData.id,
       caseNumber: caseData.case_number,
@@ -103,6 +116,12 @@ async function sendNewCaseNotification(caseData) {
     });
     return true;
   } catch (error) {
+    console.error('[EMAIL DEBUG] ❌ Email failed:', {
+      error: error.message,
+      code: error.code,
+      command: error.command,
+      caseId: caseData.id
+    });
     logger.error('Failed to send new case notification email', {
       error: error.message,
       caseId: caseData.id,
@@ -123,7 +142,7 @@ async function sendPaymentConfirmationNotification(paymentData) {
     return false;
   }
 
-  const adminEmail = process.env.ADMIN_EMAIL || 'turboresponsehq@gmail.com';
+  const adminEmail = process.env.ADMIN_EMAIL || 'collinsdemarcus4@gmail.com';
 
   const mailOptions = {
     from: process.env.EMAIL_USER,

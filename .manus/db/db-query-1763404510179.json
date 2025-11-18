@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS case_analyses (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  case_id INT NOT NULL UNIQUE,\n  violations TEXT,\n  laws_cited TEXT,\n  recommended_actions TEXT,\n  urgency_level VARCHAR(50),\n  estimated_value DECIMAL(10, 2),\n  success_probability DECIMAL(3, 2),\n  pricing_suggestion DECIMAL(10, 2),\n  pricing_tier VARCHAR(50),\n  summary TEXT,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  INDEX idx_case_id (case_id)\n);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute CREATE TABLE IF NOT EXISTS case_analyses (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  case_id INT NOT NULL UNIQUE,\n  violations TEXT,\n  laws_cited TEXT,\n  recommended_actions TEXT,\n  urgency_level VARCHAR(50),\n  estimated_value DECIMAL(10, 2),\n  success_probability DECIMAL(3, 2),\n  pricing_suggestion DECIMAL(10, 2),\n  pricing_tier VARCHAR(50),\n  summary TEXT,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  INDEX idx_case_id (case_id)\n);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 318
-}
