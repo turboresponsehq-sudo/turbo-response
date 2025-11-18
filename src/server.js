@@ -101,16 +101,18 @@ app.use('/api/turbo', turboRoutes);
 
 // Serve frontend static files (must be after API routes, before 404 handler)
 const frontendPath = path.join(__dirname, '../dist/public');
-app.use(express.static(frontendPath));
 
 // Serve index.html for all non-API routes (client-side routing)
-app.get('*', (req, res, next) => {
-  // Skip API routes
-  if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/')) {
+app.use((req, res, next) => {
+  // Skip API routes and file requests
+  if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/') || req.path.includes('.')) {
     return next();
   }
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
+
+// Serve static files
+app.use(express.static(frontendPath));
 
 // 404 handler for API routes
 app.use((req, res) => {
