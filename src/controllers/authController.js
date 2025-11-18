@@ -70,16 +70,44 @@ const login = async (req, res, next) => {
       [email]
     );
 
+    // DEBUG: Log query result
+    logger.info('🔍 Login attempt', { 
+      email, 
+      userFound: result.rows.length > 0,
+      rowCount: result.rows.length 
+    });
+
     if (result.rows.length === 0) {
+      logger.warn('❌ User not found in database', { email });
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
     const user = result.rows[0];
+    
+    // DEBUG: Log user details (without password hash)
+    logger.info('✅ User found', { 
+      userId: user.id, 
+      email: user.email, 
+      role: user.role,
+      hasPasswordHash: !!user.password_hash,
+      passwordHashLength: user.password_hash ? user.password_hash.length : 0
+    });
 
     // Verify password
+    logger.info('🔐 Comparing password...', { 
+      providedPasswordLength: password.length,
+      storedHashLength: user.password_hash.length 
+    });
+    
     const isValidPassword = await bcrypt.compare(password, user.password_hash);
+    
+    logger.info('🔐 Password comparison result', { 
+      isValid: isValidPassword,
+      email: user.email 
+    });
 
     if (!isValidPassword) {
+      logger.warn('❌ Password comparison failed', { email: user.email });
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
