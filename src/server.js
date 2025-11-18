@@ -102,7 +102,7 @@ app.use('/api', casesRoutes);  // Mount at /api for admin case routes
 app.use('/api/upload', uploadRoutes);
 app.use('/api/admin/consumer', adminConsumerRoutes);
 app.use('/api/turbo', turboRoutes);
-app.use('/api/admin', resetAdminRoutes); // TEMPORARY - DELETE AFTER USE
+app.use('/api', resetAdminRoutes); // TEMPORARY - DELETE AFTER USE (mounted on /api to bypass auth)
 // app.use('/api/brain', brainRoutes); // Disabled - not yet implemented
 
 // Serve frontend static files (must be after API routes, before 404 handler)
