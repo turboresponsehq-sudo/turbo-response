@@ -10,6 +10,7 @@ const { seedAdminAccount } = require('./services/database/seed');
 
 // Import routes (updated: 2025-11-14 07:45 UTC)
 const authRoutes = require('./routes/auth');
+console.log('[ROUTES] authRoutes loaded:', !!authRoutes, typeof authRoutes);
 const intakeRoutes = require('./routes/intake');
 // LEGACY_ROUTES_DISABLED – not used by React app (2025-11-13)
 // const blueprintRoutes = require('./routes/blueprint');
@@ -82,7 +83,9 @@ app.get('/health', (req, res) => {
 });
 
 // API Routes
+console.log('[ROUTES] Registering /api/auth with authRoutes:', !!authRoutes);
 app.use('/api/auth', authRoutes);
+console.log('[ROUTES] /api/auth registered successfully');
 app.use('/api/intake', intakeRoutes);
 app.use('/api/turbo-intake', turboIntakeRoutes);
 // LEGACY_ROUTES_DISABLED – not used by React app (2025-11-13)
