@@ -96,7 +96,20 @@ app.use('/api/admin/consumer', adminConsumerRoutes);
 app.use('/api/turbo', turboRoutes);
 // app.use('/api/brain', brainRoutes); // Disabled - not yet implemented
 
-// 404 handler
+// Serve frontend static files (must be after API routes, before 404 handler)
+const frontendPath = path.join(__dirname, '../dist/public');
+app.use(express.static(frontendPath));
+
+// Serve index.html for all non-API routes (client-side routing)
+app.get('*', (req, res, next) => {
+  // Skip API routes
+  if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/')) {
+    return next();
+  }
+  res.sendFile(path.join(frontendPath, 'index.html'));
+});
+
+// 404 handler for API routes
 app.use((req, res) => {
   res.status(404).json({ 
     error: 'Not Found',
