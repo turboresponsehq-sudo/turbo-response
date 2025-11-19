@@ -84,15 +84,30 @@ app.use('/api/turbo', turboRoutes);
 app.use('/api', resetAdminRoutes); // TEMPORARY - DELETE AFTER USE (mounted on /api to bypass auth)
 // app.use('/api/brain', brainRoutes); // Disabled - not yet implemented
 
-// Frontend serving removed - Render handles frontend as separate service
-// Backend is API-only
+// Serve frontend static files (React app)
+const publicPath = path.join(__dirname, 'public');
+app.use(express.static(publicPath));
 
-// 404 handler for API routes
-app.use((req, res) => {
-  res.status(404).json({ 
-    error: 'Not Found',
-    message: `Route ${req.method} ${req.path} not found`
-  });
+// SPA fallback - serve index.html for all non-API routes
+// This MUST come after API routes but before error handler
+app.get('*', (req, res, next) => {
+  // Only serve index.html for non-API routes
+  if (req.path.startsWith('/api/')) {
+    return next(); // Let 404 handler catch it
+  }
+  res.sendFile(path.join(publicPath, 'index.html'));
+});
+
+// 404 handler for API routes only
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api/')) {
+    res.status(404).json({ 
+      error: 'Not Found',
+      message: `Route ${req.method} ${req.path} not found`
+    });
+  } else {
+    next();
+  }
 });
 
 // Error handling middleware (must be last)
