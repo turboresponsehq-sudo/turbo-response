@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import './AdminConsumerCases.css';
 
+const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turbo-response-backend.onrender.com";
+
 interface Case {
   id: number;
   name: string;
@@ -30,8 +32,8 @@ export default function AdminConsumerCases() {
     try {
       setLoading(true);
       const url = filter === 'all' 
-        ? '/api/admin/consumer/cases'
-        : `/api/admin/consumer/cases?status=${filter}`;
+        ? `${API_URL}/api/admin/consumer/cases`
+        : `${API_URL}/api/admin/consumer/cases?status=${filter}`;
       
       const response = await fetch(url);
       
