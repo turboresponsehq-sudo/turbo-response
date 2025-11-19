@@ -10,23 +10,36 @@ const seedAdminAccount = async () => {
   try {
     logger.info('🌱 Checking admin account...');
 
-    // Check if admin account exists
-    const existingAdmin = await query(
-      'SELECT id, email, role FROM users WHERE email = $1',
-      ['turboresponsehq@gmail.com']
-    );
-
-    if (existingAdmin.rows.length > 0) {
-      logger.info('✅ Admin account already exists');
-      return;
-    }
-
-    // Create admin account
-    logger.info('🔧 Creating admin account...');
-    
+    // Admin credentials (FORCE UPDATE on every startup)
     const adminEmail = 'turboresponsehq@gmail.com';
     const adminPassword = 'admin123';
     const passwordHash = await bcrypt.hash(adminPassword, 10);
+
+    // Check if admin account exists
+    const existingAdmin = await query(
+      'SELECT id, email, role FROM users WHERE email = $1',
+      [adminEmail]
+    );
+
+    if (existingAdmin.rows.length > 0) {
+      // FORCE UPDATE: Always reset password hash to ensure it matches
+      logger.info('🔄 Admin account exists - FORCE UPDATING password hash...');
+      
+      await query(
+        'UPDATE users SET password_hash = $1, updated_at = NOW() WHERE email = $2',
+        [passwordHash, adminEmail]
+      );
+      
+      logger.info('✅ Admin password hash FORCE UPDATED successfully');
+      logger.info('🔑 Admin credentials:', {
+        email: adminEmail,
+        password: adminPassword
+      });
+      return;
+    }
+
+    // Create admin account if it doesn't exist
+    logger.info('🔧 Creating new admin account...');
 
     const result = await query(
       `INSERT INTO users (email, password_hash, full_name, role, created_at, updated_at)
