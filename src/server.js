@@ -28,35 +28,14 @@ const resetAdminRoutes = require('./routes/resetAdmin'); // TEMPORARY - DELETE A
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use( 
+// Middleware - PERMISSIVE CORS (temporary fix for production)
+app.use(
   cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl)
-      if (!origin) return callback(null, true);
-      
-      // Check if origin matches allowed patterns
-      const allowedOrigins = [
-        "https://turboresponsehq.ai",
-        /\.manusvm\.computer$/  // Allow all Manus dev server domains
-      ];
-      
-      const isAllowed = allowedOrigins.some(pattern => {
-        if (typeof pattern === 'string') {
-          return origin === pattern;
-        }
-        return pattern.test(origin);
-      });
-      
-      if (isAllowed) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true
+    origin: true,        // Reflect request Origin; allows any origin
+    credentials: true    // Allow cookies / auth headers
   })
 );
+app.options("*", cors()); // Enable pre-flight for all routes
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -164,7 +143,7 @@ const startServer = async () => {
     app.listen(PORT, () => {
       logger.info(`🚀 Turbo Response API running on port ${PORT}`);
       logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
-      logger.info(`✅ DEPLOYMENT VERSION: 2738b46-fix (AI usage logs disabled, Brain RAG disabled)`);
+      logger.info(`✅ DEPLOYMENT VERSION: ADMIN-RESET-FIX-1 (CORS permissive, force-upsert admin password)`);
     });
   } catch (error) {
     console.error('[STARTUP] FATAL ERROR:', error);
