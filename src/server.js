@@ -84,19 +84,9 @@ app.use('/api/turbo', turboRoutes);
 app.use('/api', resetAdminRoutes); // TEMPORARY - DELETE AFTER USE (mounted on /api to bypass auth)
 // app.use('/api/brain', brainRoutes); // Disabled - not yet implemented
 
-// Serve frontend static files (React app)
-const publicPath = path.join(__dirname, 'public');
-app.use(express.static(publicPath));
-
-// SPA fallback - serve index.html for all non-API routes
-// This MUST come after API routes but before error handler
-app.get('*', (req, res, next) => {
-  // Only serve index.html for non-API routes
-  if (req.path.startsWith('/api/')) {
-    return next(); // Let 404 handler catch it
-  }
-  res.sendFile(path.join(publicPath, 'index.html'));
-});
+// Serve frontend static files and SPA fallback
+const { serveFrontend } = require('../serve-frontend');
+serveFrontend(app);
 
 // 404 handler for API routes only
 app.use((req, res, next) => {
