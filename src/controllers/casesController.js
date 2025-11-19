@@ -417,12 +417,15 @@ const runAIAnalysis = async (req, res, next) => {
         urgency_level: analysis.urgency_level,
         estimated_value: analysis.estimated_value,
         success_probability: analysis.success_probability,
+        pricing_suggestion: analysis.pricing_suggestion, // Frontend expects this field
+        pricing_tier: analysis.pricing_tier, // Frontend expects this field
         pricing: {
           amount: analysis.pricing_suggestion,
           tier: analysis.pricing_tier,
           breakdown: analysis.pricing_breakdown
         },
-        summary: analysis.summary
+        summary: analysis.summary,
+        potential_violations: analysis.potential_violations || [] // Frontend expects this field
       }
     });
     
