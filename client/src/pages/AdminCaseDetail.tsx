@@ -183,8 +183,16 @@ export default function AdminCaseDetail() {
   
   // Helper function to ensure document URLs are absolute
   const getDocumentUrl = (doc: string) => {
-    // If already absolute URL, return as-is
-    if (doc.startsWith('http://') || doc.startsWith('https://')) {
+    // If localhost URL, replace with production backend URL
+    if (doc.includes('localhost')) {
+      // Extract the path after localhost:PORT
+      const match = doc.match(/localhost:\d+(\/.*)/)
+      if (match) {
+        return `${API_URL}${match[1]}`;
+      }
+    }
+    // If already absolute production URL, return as-is
+    if (doc.startsWith('https://') && !doc.includes('localhost')) {
       return doc;
     }
     // If relative path, prepend backend URL
