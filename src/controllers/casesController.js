@@ -94,9 +94,33 @@ const getAllCases = async (req, res, next) => {
       ORDER BY created_at DESC
     `);
 
+    // Normalize document URLs before returning
+    const backendUrl = process.env.BACKEND_URL || 'https://turbo-response-backend.onrender.com';
+    
+    const normalizedCases = result.rows.map(caseData => {
+      if (caseData.documents && Array.isArray(caseData.documents)) {
+        caseData.documents = caseData.documents.map(doc => {
+          // If localhost URL, replace with production backend
+          if (doc.includes('localhost')) {
+            const match = doc.match(/localhost:\d+(\/.*)/)
+            if (match) {
+              return `${backendUrl}${match[1]}`;
+            }
+          }
+          // If relative path, prepend backend URL
+          if (doc.startsWith('/')) {
+            return `${backendUrl}${doc}`;
+          }
+          // If already absolute production URL, return as-is
+          return doc;
+        });
+      }
+      return caseData;
+    });
+
     res.json({
       success: true,
-      cases: result.rows
+      cases: normalizedCases
     });
   } catch (error) {
     logger.error('Failed to get all cases (admin)', {
@@ -146,9 +170,31 @@ const getAdminCaseById = async (req, res, next) => {
       });
     }
 
+    // Normalize document URLs before returning
+    const caseData = result.rows[0];
+    const backendUrl = process.env.BACKEND_URL || 'https://turbo-response-backend.onrender.com';
+    
+    if (caseData.documents && Array.isArray(caseData.documents)) {
+      caseData.documents = caseData.documents.map(doc => {
+        // If localhost URL, replace with production backend
+        if (doc.includes('localhost')) {
+          const match = doc.match(/localhost:\d+(\/.*)/)
+          if (match) {
+            return `${backendUrl}${match[1]}`;
+          }
+        }
+        // If relative path, prepend backend URL
+        if (doc.startsWith('/')) {
+          return `${backendUrl}${doc}`;
+        }
+        // If already absolute production URL, return as-is
+        return doc;
+      });
+    }
+
     res.json({
       success: true,
-      case: result.rows[0]
+      case: caseData
     });
   } catch (error) {
     logger.error('Failed to get admin case by ID', {
