@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "NODE_ENV=development tsx watch server/_core/index.ts",
     "build": "rm -rf dist && vite build && esbuild src/server.js --bundle --platform=node --packages=external --format=cjs --outdir=dist --external:./migrations/*.mjs && cp -r src/migrations dist/migrations 2>/dev/null || true",
+    "build:frontend": "rm -rf dist && vite build",
     "start": "node dist/server.js",
     "check": "tsc --noEmit",
     "format": "prettier --write .",
@@ -46,6 +47,7 @@
     "@trpc/server": "^11.6.0",
     "@types/cors": "^2.8.19",
     "axios": "^1.12.0",
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
