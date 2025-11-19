@@ -84,20 +84,8 @@ app.use('/api/turbo', turboRoutes);
 app.use('/api', resetAdminRoutes); // TEMPORARY - DELETE AFTER USE (mounted on /api to bypass auth)
 // app.use('/api/brain', brainRoutes); // Disabled - not yet implemented
 
-// Serve frontend static files (must be after API routes, before 404 handler)
-const frontendPath = path.join(__dirname, '../dist/public');
-
-// Serve index.html for all non-API routes (client-side routing)
-app.use((req, res, next) => {
-  // Skip API routes and file requests
-  if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/') || req.path.includes('.')) {
-    return next();
-  }
-  res.sendFile(path.join(frontendPath, 'index.html'));
-});
-
-// Serve static files
-app.use(express.static(frontendPath));
+// Frontend serving removed - Render handles frontend as separate service
+// Backend is API-only
 
 // 404 handler for API routes
 app.use((req, res) => {
