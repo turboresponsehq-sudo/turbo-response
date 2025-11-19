@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: turbo-response-static
+    env: static
+    buildCommand: pnpm install && pnpm run build:frontend
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
