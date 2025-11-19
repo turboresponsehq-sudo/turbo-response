@@ -4,10 +4,10 @@
   "license": "MIT",
   "scripts": {
     "dev": "NODE_ENV=development tsx watch server/_core/index.ts",
-    "build": "rm -rf dist && vite build && esbuild src/server.js --bundle --platform=node --packages=external --format=cjs --outdir=dist --external:./migrations/*.mjs && cp -r src/migrations dist/migrations 2>/dev/null || true",
+    "build": "./build.sh",
     "build:frontend": "rm -rf dist-frontend && vite build",
     "build:backend": "rm -rf dist && esbuild src/server.js --bundle --platform=node --packages=external --format=cjs --outdir=dist --external:./migrations/*.mjs && cp -r src/migrations dist/migrations 2>/dev/null || true",
-    "build:full": "pnpm run build:frontend && pnpm run build:backend && mkdir -p dist/public && cp -r dist-frontend/* dist/public/ && rm -rf dist-frontend",
+    "build:full": "./build.sh",
     "start": "node dist/server.js",
     "check": "tsc --noEmit",
     "format": "prettier --write .",
