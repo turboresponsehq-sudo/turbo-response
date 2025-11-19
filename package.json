@@ -6,7 +6,7 @@
     "dev": "NODE_ENV=development tsx watch server/_core/index.ts",
     "build": "rm -rf dist && vite build && esbuild src/server.js --bundle --platform=node --packages=external --format=cjs --outdir=dist --external:./migrations/*.mjs && cp -r src/migrations dist/migrations 2>/dev/null || true",
     "build:frontend": "rm -rf dist && vite build",
-    "build:full": "rm -rf dist && rm -rf src/public && vite build && mkdir -p src/public && cp -r dist/* src/public/ && esbuild src/server.js --bundle --platform=node --packages=external --format=cjs --outdir=dist --external:./migrations/*.mjs && cp -r src/migrations dist/migrations 2>/dev/null || true && cp -r src/public dist/public",
+    "build:full": "rm -rf dist && vite build && mkdir -p dist-frontend && cp -r dist/* dist-frontend/ && rm -rf dist && esbuild src/server.js --bundle --platform=node --packages=external --format=cjs --outdir=dist --external:./migrations/*.mjs && cp -r src/migrations dist/migrations 2>/dev/null || true && cp -r dist-frontend dist/public && rm -rf dist-frontend",
     "start": "node dist/server.js",
     "check": "tsc --noEmit",
     "format": "prettier --write .",
