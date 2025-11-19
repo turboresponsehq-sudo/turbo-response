@@ -180,6 +180,16 @@ export default function AdminCaseDetail() {
 
   // documents is already parsed by pg driver (JSONB type)
   const documents = Array.isArray(caseData.documents) ? caseData.documents : [];
+  
+  // Helper function to ensure document URLs are absolute
+  const getDocumentUrl = (doc: string) => {
+    // If already absolute URL, return as-is
+    if (doc.startsWith('http://') || doc.startsWith('https://')) {
+      return doc;
+    }
+    // If relative path, prepend backend URL
+    return `${API_URL}${doc.startsWith('/') ? '' : '/'}${doc}`;
+  };
 
   return (
     <div style={{ 
@@ -689,7 +699,7 @@ export default function AdminCaseDetail() {
                   </div>
                 </div>
                 <a 
-                  href={doc} 
+                  href={getDocumentUrl(doc)} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   style={{ 
