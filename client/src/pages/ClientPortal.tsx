@@ -157,6 +157,207 @@ export default function ClientPortal() {
 
   const documents = caseData?.documents || [];
 
+  // Payment Gating: Check if payment is required
+  const isPaymentRequired = !caseData?.payment_verified;
+  const isPaymentPending = caseData?.funnel_stage === 'Payment Pending';
+  const hasPaymentLink = caseData?.payment_link;
+
+  // If payment not verified, show payment required screen
+  if (isPaymentRequired && !loading) {
+    return (
+      <div style={{
+        minHeight: "100vh",
+        background: "linear-gradient(135deg, #0a1628 0%, #1e293b 50%, #334155 100%)",
+        padding: "2rem 1rem",
+        fontFamily: "system-ui, -apple-system, sans-serif",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center"
+      }}>
+        {/* Animated Background Grid */}
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundImage: `
+            linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px)
+          `,
+          backgroundSize: "50px 50px",
+          opacity: 0.3,
+          pointerEvents: "none"
+        }} />
+
+        <div style={{
+          maxWidth: "600px",
+          width: "100%",
+          position: "relative",
+          zIndex: 1
+        }}>
+          {/* Header */}
+          <div style={{
+            backgroundColor: "white",
+            borderRadius: "12px",
+            padding: "1.5rem",
+            marginBottom: "1.5rem",
+            boxShadow: "0 10px 40px rgba(0, 0, 0, 0.2)",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center"
+          }}>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem" }}>
+                <div style={{ fontSize: "2rem" }}>⚡</div>
+                <h1 style={{
+                  fontSize: "1.5rem",
+                  fontWeight: 700,
+                  background: "linear-gradient(135deg, #06b6d4, #0284c7)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  margin: 0
+                }}>
+                  Client Portal
+                </h1>
+              </div>
+              <p style={{ color: "#64748b", fontSize: "0.875rem", margin: 0 }}>
+                Case: <strong>{caseData?.case_number}</strong>
+              </p>
+            </div>
+            <button
+              onClick={handleLogout}
+              style={{
+                padding: "0.5rem 1rem",
+                backgroundColor: "#f1f5f9",
+                color: "#475569",
+                border: "1px solid #e2e8f0",
+                borderRadius: "8px",
+                cursor: "pointer",
+                fontSize: "0.875rem",
+                fontWeight: 600
+              }}
+            >
+              Logout
+            </button>
+          </div>
+
+          {/* Payment Required Card */}
+          <div style={{
+            backgroundColor: "white",
+            borderRadius: "12px",
+            padding: "2rem",
+            boxShadow: "0 10px 40px rgba(0, 0, 0, 0.2)",
+            textAlign: "center"
+          }}>
+            {isPaymentPending ? (
+              // Payment Pending State
+              <>
+                <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>⏳</div>
+                <h2 style={{
+                  fontSize: "1.5rem",
+                  fontWeight: 700,
+                  color: "#f59e0b",
+                  marginBottom: "1rem"
+                }}>
+                  Payment Verification in Progress
+                </h2>
+                <p style={{ color: "#64748b", marginBottom: "1.5rem", lineHeight: "1.6" }}>
+                  Thank you for submitting your payment! Our team is verifying your payment and will unlock your portal access within 24 hours.
+                </p>
+                <div style={{
+                  padding: "1rem",
+                  backgroundColor: "#fef3c7",
+                  border: "1px solid #fbbf24",
+                  borderRadius: "8px",
+                  marginBottom: "1.5rem"
+                }}>
+                  <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "#92400e", marginBottom: "0.5rem" }}>
+                    📧 We'll notify you via email once verified
+                  </div>
+                  <div style={{ color: "#78350f", fontSize: "0.875rem" }}>
+                    Case: {caseData?.case_number}
+                  </div>
+                </div>
+              </>
+            ) : (
+              // Payment Required State
+              <>
+                <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>💳</div>
+                <h2 style={{
+                  fontSize: "1.5rem",
+                  fontWeight: 700,
+                  color: "#dc2626",
+                  marginBottom: "1rem"
+                }}>
+                  Payment Required
+                </h2>
+                <p style={{ color: "#64748b", marginBottom: "1.5rem", lineHeight: "1.6" }}>
+                  Your case has been reviewed and pricing has been assigned. Please complete payment to unlock full portal access.
+                </p>
+
+                {/* Pricing Display */}
+                {caseData?.pricing_tier_name && (
+                  <div style={{
+                    padding: "1.5rem",
+                    background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
+                    borderRadius: "12px",
+                    marginBottom: "1.5rem",
+                    color: "white"
+                  }}>
+                    <div style={{ fontSize: "0.875rem", color: "#06b6d4", marginBottom: "0.5rem", fontWeight: 600 }}>
+                      Your Package
+                    </div>
+                    <div style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.5rem" }}>
+                      {caseData.pricing_tier_name}
+                    </div>
+                    <div style={{ fontSize: "2.5rem", fontWeight: 700, color: "#06b6d4" }}>
+                      ${caseData.pricing_tier_amount}
+                    </div>
+                  </div>
+                )}
+
+                {hasPaymentLink ? (
+                  <a
+                    href={caseData.payment_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "inline-block",
+                      padding: "1rem 2rem",
+                      background: "linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "8px",
+                      fontSize: "1.125rem",
+                      fontWeight: 700,
+                      textDecoration: "none",
+                      cursor: "pointer",
+                      boxShadow: "0 10px 30px rgba(6, 182, 212, 0.3)"
+                    }}
+                  >
+                    💳 Complete Payment →
+                  </a>
+                ) : (
+                  <div style={{
+                    padding: "1rem",
+                    backgroundColor: "#fef3c7",
+                    border: "1px solid #fbbf24",
+                    borderRadius: "8px"
+                  }}>
+                    <div style={{ color: "#78350f", fontSize: "0.875rem" }}>
+                      Payment link will be provided by our team shortly. Please check back soon or contact us for assistance.
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{
       minHeight: "100vh",

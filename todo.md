@@ -594,3 +594,40 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 - [ ] Test: Client portal displays correct tier name and amount
 
 - [x] Fix Pricing page to use correct brand colors (dark navy/gray background with cyan accents instead of purple)
+
+
+## 🚀 PHASE F: COMPLETE FUNNEL FLOW INTEGRATION (IN PROGRESS)
+
+### Phase F.1: Client Portal Pricing Display
+- [x] Update ClientPortal.tsx to display pricing_tier_name
+- [x] Display pricing_tier_amount formatted as currency
+- [x] Add pricing card/section to portal dashboard
+- [x] Show tier badge (Foundation/Premium/Executive/Retainer)
+
+### Phase F.2: Portal Access Gating
+- [x] Check payment_verified status in client portal
+- [x] Show "Payment Required" message if not verified
+- [x] Display payment link button if payment_link exists
+- [x] Hide case details until payment verified
+- [x] Show payment pending status if funnel_stage = "Payment Pending"
+
+### Phase F.3: Funnel Stage Transitions
+- [x] Update intake submission to set funnel_stage = "Lead Submitted"
+- [x] Admin assigns pricing → funnel_stage = "Awaiting Payment"
+- [x] Client clicks "I Paid" → funnel_stage = "Payment Pending"
+- [x] Admin verifies payment → funnel_stage = "Active Case"
+- [x] Add status messaging for each stage
+
+### Phase F.4: Payment Confirmation Flow
+- [x] Update payment page to redirect to /client/case/:id after "I Paid"
+- [x] Add success message on client portal after payment submission
+- [x] Show "Payment verification in progress" status
+
+### Phase F.5: End-to-End Testing
+- [ ] Test: Submit intake form
+- [ ] Test: Admin assigns pricing tier
+- [ ] Test: Client receives payment link
+- [ ] Test: Client submits payment
+- [ ] Test: Admin verifies payment
+- [ ] Test: Client portal unlocks
+- [ ] Deploy to production

@@ -321,6 +321,13 @@ const updateCaseStatus = async (req, res, next) => {
       values.push(pricing_tier_name);
     }
 
+    // Auto-update funnel_stage when pricing is assigned
+    if ((pricing_tier !== undefined || pricing_tier_amount !== undefined || pricing_tier_name !== undefined) &&
+        (pricing_tier || pricing_tier_amount || pricing_tier_name)) {
+      updates.push(`funnel_stage = $${paramCount++}`);
+      values.push('Awaiting Payment');
+    }
+
     // Always update timestamp
     updates.push('updated_at = CURRENT_TIMESTAMP');
     values.push(caseId);
