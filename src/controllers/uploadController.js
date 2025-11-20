@@ -1,4 +1,5 @@
 const { uploadFile } = require('../services/storage/local');
+const { convertToPDF } = require('../services/pdfConverter');
 const logger = require('../utils/logger');
 
 /**
@@ -12,8 +13,12 @@ const uploadSingleFile = async (req, res, next) => {
 
     const { buffer, originalname, mimetype } = req.file;
 
-    // Upload to S3
-    const fileUrl = await uploadFile(buffer, originalname, mimetype);
+    // Convert to PDF
+    logger.info('Converting file to PDF', { originalname, mimetype });
+    const { pdfBuffer, filename } = await convertToPDF(buffer, mimetype, originalname);
+    
+    // Upload PDF to S3
+    const fileUrl = await uploadFile(pdfBuffer, filename, 'application/pdf');
 
     logger.info('File uploaded successfully', {
       originalName: originalname,
@@ -23,7 +28,10 @@ const uploadSingleFile = async (req, res, next) => {
     res.status(200).json({
       success: true,
       file_url: fileUrl,
-      file_name: originalname
+      file_name: filename,
+      original_name: originalname,
+      mime_type: 'application/pdf',
+      file_size: pdfBuffer.length
     });
   } catch (error) {
     logger.error('Upload error', { error: error.message });
@@ -40,19 +48,31 @@ const uploadMultipleFiles = async (req, res, next) => {
       return res.status(400).json({ error: 'No files uploaded' });
     }
 
-    // Upload all files to S3
-    const uploadPromises = req.files.map(file =>
-      uploadFile(file.buffer, file.originalname, file.mimetype)
-    );
+    // Convert all files to PDF and upload to S3
+    const uploadPromises = req.files.map(async (file) => {
+      logger.info('Converting file to PDF', { 
+        originalname: file.originalname, 
+        mimetype: file.mimetype 
+      });
+      
+      const { pdfBuffer, filename } = await convertToPDF(
+        file.buffer, 
+        file.mimetype, 
+        file.originalname
+      );
+      
+      const fileUrl = await uploadFile(pdfBuffer, filename, 'application/pdf');
+      
+      return {
+        file_url: fileUrl,
+        file_name: filename,
+        original_name: file.originalname,
+        file_size: pdfBuffer.length,
+        mime_type: 'application/pdf'
+      };
+    });
 
-    const fileUrls = await Promise.all(uploadPromises);
-
-    const uploadedFiles = req.files.map((file, index) => ({
-      file_url: fileUrls[index],
-      file_name: file.originalname,
-      file_size: file.size,
-      mime_type: file.mimetype
-    }));
+    const uploadedFiles = await Promise.all(uploadPromises);
 
     logger.info('Multiple files uploaded', {
       count: uploadedFiles.length

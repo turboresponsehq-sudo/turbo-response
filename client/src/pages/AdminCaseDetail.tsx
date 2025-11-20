@@ -706,27 +706,49 @@ export default function AdminCaseDetail() {
                     {doc.split('/').pop() || 'Attachment'}
                   </div>
                 </div>
-                <a 
-                  href={getDocumentUrl(doc)} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  style={{ 
-                    padding: "0.5rem 1rem",
-                    minHeight: "44px",
-                    backgroundColor: "#007bff",
-                    color: "white",
-                    textDecoration: "none",
-                    borderRadius: "4px",
-                    fontSize: "0.875rem",
-                    fontWeight: 500,
-                    whiteSpace: "nowrap",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "0.5rem"
-                  }}
-                >
-                  View ↗
-                </a>
+                <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                  <a 
+                    href={getDocumentUrl(doc)} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{ 
+                      padding: "0.5rem 1rem",
+                      minHeight: "44px",
+                      backgroundColor: "#007bff",
+                      color: "white",
+                      textDecoration: "none",
+                      borderRadius: "4px",
+                      fontSize: "0.875rem",
+                      fontWeight: 500,
+                      whiteSpace: "nowrap",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.5rem"
+                    }}
+                  >
+                    📄 View PDF
+                  </a>
+                  <a 
+                    href={getDocumentUrl(doc)}
+                    download
+                    style={{ 
+                      padding: "0.5rem 1rem",
+                      minHeight: "44px",
+                      backgroundColor: "#28a745",
+                      color: "white",
+                      textDecoration: "none",
+                      borderRadius: "4px",
+                      fontSize: "0.875rem",
+                      fontWeight: 500,
+                      whiteSpace: "nowrap",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.5rem"
+                    }}
+                  >
+                    ⬇️ Download
+                  </a>
+                </div>
               </div>
             ))}
           </div>
