@@ -21,6 +21,7 @@ interface CaseItem {
   status: string;
   funnel_stage?: string;
   payment_verified?: boolean;
+  unread_messages_count?: number;
   created_at: string;
 }
 
@@ -284,11 +285,31 @@ export default function AdminDashboard() {
                         </span>
                       </td>
                       <td style={{ padding: "1rem", fontSize: "0.875rem", color: "#212529" }}>
-                        <div>
-                          <div style={{ fontWeight: 500 }}>{c.full_name}</div>
-                          <div style={{ fontSize: "0.75rem", color: "#6c757d", marginTop: "0.25rem" }}>
-                            {c.email}
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                          <div>
+                            <div style={{ fontWeight: 500 }}>{c.full_name}</div>
+                            <div style={{ fontSize: "0.75rem", color: "#6c757d", marginTop: "0.25rem" }}>
+                              {c.email}
+                            </div>
                           </div>
+                          {c.unread_messages_count && c.unread_messages_count > 0 && (
+                            <span style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              minWidth: "1.5rem",
+                              height: "1.5rem",
+                              padding: "0 0.4rem",
+                              backgroundColor: "#dc3545",
+                              color: "white",
+                              borderRadius: "12px",
+                              fontSize: "0.75rem",
+                              fontWeight: 600,
+                              marginLeft: "auto"
+                            }}>
+                              {c.unread_messages_count}
+                            </span>
+                          )}
                         </div>
                       </td>
                       <td style={{ padding: "1rem", fontSize: "0.875rem", color: "#495057" }}>

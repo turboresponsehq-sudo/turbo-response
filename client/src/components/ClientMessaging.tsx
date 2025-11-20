@@ -31,7 +31,9 @@ export default function ClientMessaging({ caseId, clientName }: ClientMessagingP
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Fetch messages on mount
   useEffect(() => {
@@ -88,6 +90,58 @@ export default function ClientMessaging({ caseId, clientName }: ClientMessagingP
       setError(err.response?.data?.message || "Failed to send message");
     } finally {
       setSending(false);
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    setError(null);
+
+    try {
+      // Upload file to get PDF URL
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const uploadResponse = await axios.post(
+        `${API_URL}/api/upload/single`,
+        formData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          withCredentials: true
+        }
+      );
+
+      const fileUrl = uploadResponse.data.url;
+      const fileName = file.name;
+
+      // Send message with file attachment
+      const messageResponse = await axios.post(
+        `${API_URL}/api/case/${caseId}/messages`,
+        {
+          sender: "client",
+          senderName: clientName,
+          messageText: `Sent a file: ${fileName}`,
+          filePath: fileUrl,
+          fileName: fileName,
+          fileType: 'application/pdf'
+        },
+        { withCredentials: true }
+      );
+
+      setMessages([...messages, messageResponse.data.message]);
+      
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    } catch (err: any) {
+      console.error("Failed to upload file:", err);
+      setError(err.response?.data?.message || "Failed to upload file");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -235,42 +289,83 @@ export default function ClientMessaging({ caseId, clientName }: ClientMessagingP
       </div>
 
       {/* Message Input */}
-      <form onSubmit={handleSendMessage} style={{ display: "flex", gap: "0.75rem" }}>
-        <input
-          type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Type your message..."
-          disabled={sending}
-          style={{
-            flex: 1,
-            padding: "0.75rem 1rem",
-            border: "1px solid #e2e8f0",
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+        {uploading && (
+          <div style={{
+            padding: "0.75rem",
+            backgroundColor: "#f0f9ff",
+            border: "1px solid #06b6d4",
             borderRadius: "8px",
+            color: "#0284c7",
             fontSize: "0.875rem",
-            outline: "none",
-            backgroundColor: "white",
-            color: "#1e293b"
-          }}
-        />
-        <button
-          type="submit"
-          disabled={sending || !newMessage.trim()}
-          style={{
-            padding: "0.75rem 1.5rem",
-            backgroundColor: sending || !newMessage.trim() ? "#cbd5e1" : "#06b6d4",
-            color: "white",
-            border: "none",
-            borderRadius: "8px",
-            fontSize: "0.875rem",
-            fontWeight: 600,
-            cursor: sending || !newMessage.trim() ? "not-allowed" : "pointer",
-            whiteSpace: "nowrap"
-          }}
-        >
-          {sending ? "Sending..." : "Send"}
-        </button>
-      </form>
+            textAlign: "center"
+          }}>
+            📤 Uploading file...
+          </div>
+        )}
+        <form onSubmit={handleSendMessage} style={{ display: "flex", gap: "0.75rem" }}>
+          <input
+            type="text"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            placeholder="Type your message..."
+            disabled={sending || uploading}
+            style={{
+              flex: 1,
+              padding: "0.75rem 1rem",
+              border: "1px solid #e2e8f0",
+              borderRadius: "8px",
+              fontSize: "0.875rem",
+              outline: "none",
+              backgroundColor: "white",
+              color: "#1e293b"
+            }}
+          />
+          <input
+            ref={fileInputRef}
+            type="file"
+            onChange={handleFileUpload}
+            accept=".pdf,.jpg,.jpeg,.png,.heic,.webp,.tiff,.bmp"
+            style={{ display: "none" }}
+            disabled={uploading}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            style={{
+              padding: "0.75rem 1rem",
+              backgroundColor: uploading ? "#cbd5e1" : "#f1f5f9",
+              color: "#475569",
+              border: "1px solid #e2e8f0",
+              borderRadius: "8px",
+              fontSize: "0.875rem",
+              fontWeight: 600,
+              cursor: uploading ? "not-allowed" : "pointer",
+              whiteSpace: "nowrap"
+            }}
+          >
+            📎
+          </button>
+          <button
+            type="submit"
+            disabled={sending || !newMessage.trim() || uploading}
+            style={{
+              padding: "0.75rem 1.5rem",
+              backgroundColor: sending || !newMessage.trim() || uploading ? "#cbd5e1" : "#06b6d4",
+              color: "white",
+              border: "none",
+              borderRadius: "8px",
+              fontSize: "0.875rem",
+              fontWeight: 600,
+              cursor: sending || !newMessage.trim() || uploading ? "not-allowed" : "pointer",
+              whiteSpace: "nowrap"
+            }}
+          >
+            {sending ? "Sending..." : "Send"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

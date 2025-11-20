@@ -698,3 +698,21 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 - [x] Test: Admin receives and replies
 - [x] Test: File uploads work
 - [x] Deploy to production
+
+
+## 📎 FILE ATTACHMENTS IN MESSAGES
+- [x] Add file upload button to ClientMessaging component
+- [x] Add file upload button to AdminMessaging component
+- [x] Integrate with existing /api/upload/single endpoint
+- [x] Auto-convert uploaded images to PDF
+- [x] Send file metadata with message (file_path, file_name, file_type)
+- [x] Display file attachments as clickable "View PDF" links in chat
+- [x] Show file upload progress indicator
+
+## 🔔 UNREAD MESSAGE BADGES
+- [x] Ensure unread_messages_count column exists in cases table
+- [x] Update backend to increment count when client sends message
+- [x] Update backend to reset count when admin opens case messages
+- [x] Add visual badge indicator to admin case list
+- [x] Style badge with count number (e.g., "3 new")
+- [x] Test badge appears/disappears correctly
