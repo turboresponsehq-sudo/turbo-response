@@ -18,7 +18,7 @@ const logger = require('../utils/logger');
 async function verifyPayment(req, res) {
   try {
     const caseId = parseInt(req.params.id);
-    const adminId = req.user?.id; // From auth middleware
+    const adminId = req.user?.id || null; // From auth middleware (optional)
 
     if (isNaN(caseId)) {
       return res.status(400).json({
@@ -71,7 +71,7 @@ async function verifyPayment(req, res) {
 
     logger.info('Payment verified by admin', {
       caseId,
-      adminId,
+      adminId: adminId || 'unknown',
       funnel_stage: 'Active Case'
     });
 
