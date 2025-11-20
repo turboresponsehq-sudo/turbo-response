@@ -47,32 +47,75 @@ export default function Pricing() {
   ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
+    <div style={{ 
+      minHeight: "100vh", 
+      background: "linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)",
+      position: "relative",
+      overflow: "hidden"
+    }}>
+      {/* Animated background grid */}
+      <div style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundImage: "linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px)",
+        backgroundSize: "50px 50px",
+        opacity: 0.3,
+        zIndex: 0
+      }} />
+
       {/* Navigation */}
       <nav style={{
         padding: "1rem 2rem",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        background: "rgba(255, 255, 255, 0.1)",
-        backdropFilter: "blur(10px)"
+        background: "rgba(15, 23, 42, 0.8)",
+        backdropFilter: "blur(10px)",
+        position: "relative",
+        zIndex: 10
       }}>
-        <Link href="/" style={{ color: "white", fontSize: "1.5rem", fontWeight: 700, textDecoration: "none" }}>
-          Turbo Response
+        <Link href="/" style={{ 
+          color: "white", 
+          fontSize: "1.5rem", 
+          fontWeight: 700, 
+          textDecoration: "none",
+          display: "flex",
+          alignItems: "center",
+          gap: "0.5rem"
+        }}>
+          ⚡ TURBO RESPONSE
         </Link>
         <div style={{ display: "flex", gap: "2rem" }}>
           <Link href="/" style={{ color: "white", textDecoration: "none" }}>Home</Link>
-          <Link href="/pricing" style={{ color: "white", textDecoration: "none", fontWeight: 600 }}>Pricing</Link>
+          <Link href="/pricing" style={{ color: "#06b6d4", textDecoration: "none", fontWeight: 600 }}>Pricing</Link>
           <Link href="/intake" style={{ color: "white", textDecoration: "none" }}>Get Started</Link>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <div style={{ textAlign: "center", padding: "4rem 2rem 2rem 2rem", color: "white" }}>
-        <h1 style={{ fontSize: "3rem", fontWeight: 700, margin: 0, marginBottom: "1rem" }}>
+      <div style={{ 
+        textAlign: "center", 
+        padding: "4rem 2rem 2rem 2rem", 
+        color: "white",
+        position: "relative",
+        zIndex: 1
+      }}>
+        <h1 style={{ 
+          fontSize: "3rem", 
+          fontWeight: 700, 
+          margin: 0, 
+          marginBottom: "1rem",
+          background: "linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          backgroundClip: "text"
+        }}>
           Simple, Transparent Pricing
         </h1>
-        <p style={{ fontSize: "1.25rem", opacity: 0.9, maxWidth: "600px", margin: "0 auto" }}>
+        <p style={{ fontSize: "1.25rem", opacity: 0.9, maxWidth: "600px", margin: "0 auto", color: "#e0e6ed" }}>
           Choose the package that fits your case complexity. Final pricing depends on case details.
         </p>
       </div>
@@ -84,18 +127,20 @@ export default function Pricing() {
         padding: "2rem",
         display: "grid",
         gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-        gap: "2rem"
+        gap: "2rem",
+        position: "relative",
+        zIndex: 1
       }}>
         {tiers.map((tier, index) => (
           <div
             key={index}
             style={{
-              background: "white",
+              background: tier.popular ? "linear-gradient(135deg, #1e293b 0%, #334155 100%)" : "#0f1e35",
               borderRadius: "16px",
               padding: "2rem",
-              boxShadow: tier.popular ? "0 20px 60px rgba(0,0,0,0.3)" : "0 10px 30px rgba(0,0,0,0.2)",
+              boxShadow: tier.popular ? "0 20px 60px rgba(6, 182, 212, 0.3)" : "0 10px 30px rgba(0,0,0,0.3)",
               transform: tier.popular ? "scale(1.05)" : "scale(1)",
-              border: tier.popular ? "3px solid #fbbf24" : "none",
+              border: tier.popular ? "2px solid #06b6d4" : "1px solid rgba(6, 182, 212, 0.2)",
               position: "relative"
             }}
           >
@@ -105,8 +150,8 @@ export default function Pricing() {
                 top: "-12px",
                 left: "50%",
                 transform: "translateX(-50%)",
-                background: "#fbbf24",
-                color: "#000",
+                background: "#06b6d4",
+                color: "#0f172a",
                 padding: "0.5rem 1.5rem",
                 borderRadius: "20px",
                 fontWeight: 700,
@@ -116,18 +161,33 @@ export default function Pricing() {
               </div>
             )}
 
-            <h3 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#212529", marginTop: tier.popular ? "1rem" : 0 }}>
+            <h3 style={{ 
+              fontSize: "1.5rem", 
+              fontWeight: 700, 
+              color: "white", 
+              marginTop: tier.popular ? "1rem" : 0 
+            }}>
               {tier.name}
             </h3>
-            <div style={{ fontSize: "3rem", fontWeight: 700, color: "#667eea", margin: "1rem 0" }}>
+            <div style={{ 
+              fontSize: "3rem", 
+              fontWeight: 700, 
+              color: "#06b6d4", 
+              margin: "1rem 0" 
+            }}>
               {tier.price}
             </div>
-            <p style={{ color: "#6c757d", marginBottom: "1.5rem" }}>{tier.description}</p>
+            <p style={{ color: "#94a3b8", marginBottom: "1.5rem" }}>{tier.description}</p>
 
             <ul style={{ listStyle: "none", padding: 0, margin: "1.5rem 0" }}>
               {tier.features.map((feature, i) => (
-                <li key={i} style={{ padding: "0.5rem 0", color: "#212529", display: "flex", alignItems: "flex-start" }}>
-                  <span style={{ color: "#10b981", marginRight: "0.5rem", fontSize: "1.25rem" }}>✓</span>
+                <li key={i} style={{ 
+                  padding: "0.5rem 0", 
+                  color: "#e0e6ed", 
+                  display: "flex", 
+                  alignItems: "flex-start" 
+                }}>
+                  <span style={{ color: "#06b6d4", marginRight: "0.5rem", fontSize: "1.25rem" }}>✓</span>
                   {feature}
                 </li>
               ))}
@@ -137,9 +197,11 @@ export default function Pricing() {
               <button style={{
                 width: "100%",
                 padding: "1rem",
-                background: tier.popular ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" : "#667eea",
+                background: tier.popular 
+                  ? "linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)" 
+                  : "rgba(6, 182, 212, 0.1)",
                 color: "white",
-                border: "none",
+                border: tier.popular ? "none" : "2px solid #06b6d4",
                 borderRadius: "8px",
                 fontSize: "1rem",
                 fontWeight: 700,
@@ -158,19 +220,22 @@ export default function Pricing() {
         maxWidth: "800px",
         margin: "3rem auto",
         padding: "2rem",
-        background: "rgba(255, 255, 255, 0.1)",
+        background: "rgba(15, 30, 53, 0.8)",
         backdropFilter: "blur(10px)",
         borderRadius: "16px",
+        border: "2px solid rgba(6, 182, 212, 0.3)",
         color: "white",
-        textAlign: "center"
+        textAlign: "center",
+        position: "relative",
+        zIndex: 1
       }}>
-        <h3 style={{ fontSize: "1.75rem", fontWeight: 700, marginBottom: "1rem" }}>
+        <h3 style={{ fontSize: "1.75rem", fontWeight: 700, marginBottom: "1rem", color: "#06b6d4" }}>
           Corporate Monthly Retainer
         </h3>
         <div style={{ fontSize: "2.5rem", fontWeight: 700, marginBottom: "0.5rem" }}>
           $297/month or $3,000/year
         </div>
-        <p style={{ fontSize: "1.125rem", opacity: 0.9, marginBottom: "1.5rem" }}>
+        <p style={{ fontSize: "1.125rem", opacity: 0.9, marginBottom: "1.5rem", color: "#94a3b8" }}>
           For entrepreneurs or clients with recurring issues
         </p>
         <ul style={{ listStyle: "none", padding: 0, margin: "1.5rem auto", maxWidth: "500px", textAlign: "left" }}>
@@ -182,7 +247,7 @@ export default function Pricing() {
             "Ongoing case tracking"
           ].map((feature, i) => (
             <li key={i} style={{ padding: "0.5rem 0", display: "flex", alignItems: "flex-start" }}>
-              <span style={{ color: "#fbbf24", marginRight: "0.5rem", fontSize: "1.25rem" }}>✓</span>
+              <span style={{ color: "#06b6d4", marginRight: "0.5rem", fontSize: "1.25rem" }}>✓</span>
               {feature}
             </li>
           ))}
@@ -190,8 +255,8 @@ export default function Pricing() {
         <div style={{
           display: "inline-block",
           padding: "0.75rem 2rem",
-          background: "rgba(251, 191, 36, 0.2)",
-          border: "2px solid #fbbf24",
+          background: "rgba(6, 182, 212, 0.1)",
+          border: "2px solid #06b6d4",
           borderRadius: "8px",
           fontWeight: 700,
           fontSize: "1rem"
@@ -201,21 +266,27 @@ export default function Pricing() {
       </div>
 
       {/* Footer */}
-      <div style={{ textAlign: "center", padding: "3rem 2rem", color: "white" }}>
-        <p style={{ fontSize: "1.125rem", opacity: 0.9, marginBottom: "1.5rem" }}>
+      <div style={{ 
+        textAlign: "center", 
+        padding: "3rem 2rem", 
+        color: "white",
+        position: "relative",
+        zIndex: 1
+      }}>
+        <p style={{ fontSize: "1.125rem", opacity: 0.9, marginBottom: "1.5rem", color: "#e0e6ed" }}>
           Ready to defend your rights?
         </p>
         <Link href="/intake">
           <button style={{
             padding: "1rem 3rem",
-            background: "white",
-            color: "#667eea",
+            background: "linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)",
+            color: "white",
             border: "none",
             borderRadius: "8px",
             fontSize: "1.125rem",
             fontWeight: 700,
             cursor: "pointer",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.2)"
+            boxShadow: "0 10px 30px rgba(6, 182, 212, 0.3)"
           }}>
             Start Your Case Now →
           </button>
