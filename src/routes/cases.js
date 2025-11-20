@@ -10,6 +10,7 @@ const {
   getAIAnalysis,
   deleteCase
 } = require('../controllers/casesController');
+const { verifyPayment } = require('../controllers/paymentVerificationController');
 const { authenticateToken } = require('../middleware/auth');
 
 /**
@@ -43,6 +44,9 @@ router.get('/case/:id/analysis', authenticateToken, requireAdmin, getAIAnalysis)
 
 // DELETE /api/case/:id - Delete case (admin only)
 router.delete('/case/:id', authenticateToken, requireAdmin, deleteCase);
+
+// PATCH /api/case/:id/verify-payment - Admin verifies payment (admin only)
+router.patch('/case/:id/verify-payment', authenticateToken, requireAdmin, verifyPayment);
 
 // User routes
 // GET /api/cases - Get all cases for current user

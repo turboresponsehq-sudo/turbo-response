@@ -731,6 +731,136 @@ export default function AdminCaseDetail() {
         </div>
       </div>
 
+      {/* Payment Verification Card */}
+      <div style={{ 
+        backgroundColor: "#fff3cd", 
+        padding: "1.5rem", 
+        borderRadius: "8px", 
+        marginBottom: "1rem",
+        border: "2px solid #ffc107"
+      }}>
+        <h2 style={{ marginTop: 0, fontSize: "1.125rem", color: "#856404" }}>💳 Payment Verification</h2>
+        
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          {/* Funnel Stage Display */}
+          <div>
+            <p style={{ margin: 0, fontSize: "0.875rem", color: "#856404" }}>Current Stage:</p>
+            <p style={{ 
+              margin: "0.5rem 0 0 0", 
+              fontSize: "1.125rem", 
+              fontWeight: 700,
+              color: "#212529"
+            }}>
+              {caseData.funnel_stage || 'Lead Submitted'}
+            </p>
+          </div>
+
+          {/* Payment Method Display */}
+          {caseData.payment_method && (
+            <div>
+              <p style={{ margin: 0, fontSize: "0.875rem", color: "#856404" }}>Payment Method:</p>
+              <p style={{ margin: "0.5rem 0 0 0", fontSize: "1rem", color: "#212529", textTransform: "capitalize" }}>
+                {caseData.payment_method}
+              </p>
+            </div>
+          )}
+
+          {/* Payment Status */}
+          <div>
+            <p style={{ margin: 0, fontSize: "0.875rem", color: "#856404" }}>Payment Status:</p>
+            <p style={{ 
+              margin: "0.5rem 0 0 0", 
+              fontSize: "1rem",
+              fontWeight: 600,
+              color: caseData.payment_verified ? "#28a745" : "#dc3545"
+            }}>
+              {caseData.payment_verified ? "✅ Verified" : "❌ Not Verified"}
+            </p>
+          </div>
+
+          {/* Mark as Paid Button */}
+          {!caseData.payment_verified && (
+            <button
+              onClick={async () => {
+                if (!window.confirm('Are you sure you want to mark this payment as verified? This will activate the case and create a client account.')) {
+                  return;
+                }
+                try {
+                  const token = localStorage.getItem('admin_session');
+                  await axios.patch(
+                    `${API_URL}/api/case/${params?.id}/verify-payment`,
+                    {},
+                    { headers: { Authorization: `Bearer ${token}` } }
+                  );
+                  alert('Payment verified successfully! Case is now active.');
+                  window.location.reload();
+                } catch (err: any) {
+                  alert(err.response?.data?.message || 'Failed to verify payment');
+                }
+              }}
+              style={{
+                padding: "1rem",
+                fontSize: "1rem",
+                fontWeight: 700,
+                color: "white",
+                backgroundColor: "#28a745",
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer",
+                transition: "all 0.2s",
+                width: "100%"
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#218838")}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#28a745")}
+            >
+              ✓ Mark as Paid (Verify Manually)
+            </button>
+          )}
+
+          {/* Payment Link for Client */}
+          <div style={{
+            marginTop: "0.5rem",
+            padding: "1rem",
+            background: "#ffffff",
+            borderRadius: "8px",
+            border: "1px solid #ffc107"
+          }}>
+            <p style={{ margin: "0 0 0.5rem 0", fontSize: "0.875rem", color: "#856404", fontWeight: 600 }}>
+              Payment Link for Client:
+            </p>
+            <code style={{
+              display: "block",
+              padding: "0.5rem",
+              background: "#f8f9fa",
+              borderRadius: "4px",
+              fontSize: "0.875rem",
+              wordBreak: "break-all",
+              color: "#007bff"
+            }}>
+              {`https://turboresponsehq.ai/pay/${caseData.id}`}
+            </code>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(`https://turboresponsehq.ai/pay/${caseData.id}`);
+                alert('Payment link copied to clipboard!');
+              }}
+              style={{
+                marginTop: "0.5rem",
+                padding: "0.5rem 1rem",
+                fontSize: "0.875rem",
+                color: "#007bff",
+                backgroundColor: "white",
+                border: "1px solid #007bff",
+                borderRadius: "4px",
+                cursor: "pointer"
+              }}
+            >
+              📋 Copy Link
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Client Information Card */}
       <div style={{ 
         backgroundColor: "#f8f9fa", 

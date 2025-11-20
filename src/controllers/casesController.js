@@ -152,6 +152,8 @@ const getAdminCaseById = async (req, res, next) => {
         c.full_name, c.email, c.phone, c.address,
         c.case_details, c.amount, c.deadline, c.documents,
         c.client_status, c.client_notes, c.payment_link, c.portal_enabled,
+        c.funnel_stage, c.payment_method, c.payment_verified, 
+        c.payment_verified_at, c.payment_verified_by,
         c.created_at, c.updated_at,
         a.violations, a.laws_cited, a.recommended_actions,
         a.urgency_level, a.estimated_value, a.success_probability,
