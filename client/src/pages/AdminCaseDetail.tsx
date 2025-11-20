@@ -9,6 +9,7 @@
 import { useEffect, useState } from "react";
 import { useRoute, useLocation } from "wouter";
 import axios from "axios";
+import AdminMessaging from "../components/AdminMessaging";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turbo-response-backend.onrender.com";
 
@@ -1206,6 +1207,16 @@ export default function AdminCaseDetail() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Messaging Section */}
+      {caseData && (
+        <div style={{ marginBottom: "2rem" }}>
+          <AdminMessaging 
+            caseId={parseInt(params?.id || "0")} 
+            clientName={caseData?.full_name || "Client"}
+          />
         </div>
       )}
 

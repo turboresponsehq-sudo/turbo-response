@@ -161,3 +161,29 @@ export const leads = mysqlTable("leads", {
 
 export type Lead = typeof leads.$inferSelect;
 export type InsertLead = typeof leads.$inferInsert;
+
+/**
+ * Case Messages table - client-admin communication
+ * Structured for future AI analysis and summarization
+ */
+export const caseMessages = mysqlTable("case_messages", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Foreign key to conversations table (case_id maps to conversation_id) */
+  caseId: int("caseId").notNull(),
+  /** Sender type: 'client' or 'admin' */
+  sender: varchar("sender", { length: 20 }).notNull(),
+  /** Name of the person who sent the message */
+  senderName: varchar("senderName", { length: 255 }),
+  /** Text content of the message, nullable if only file is sent */
+  messageText: text("messageText"),
+  /** S3 URL or file path, nullable if only text message */
+  filePath: text("filePath"),
+  /** Original filename for display */
+  fileName: varchar("fileName", { length: 255 }),
+  /** MIME type (e.g., 'application/pdf', 'image/jpeg') */
+  fileType: varchar("fileType", { length: 50 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type CaseMessage = typeof caseMessages.$inferSelect;
+export type InsertCaseMessage = typeof caseMessages.$inferInsert;
