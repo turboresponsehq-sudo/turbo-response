@@ -31,7 +31,9 @@ export default function AdminMessaging({ caseId, clientName }: AdminMessagingPro
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Fetch messages on mount
   useEffect(() => {
@@ -56,6 +58,16 @@ export default function AdminMessaging({ caseId, clientName }: AdminMessagingPro
       });
       setMessages(response.data.messages || []);
       setError(null);
+      
+      // Mark messages as read when admin opens them
+      try {
+        await axios.post(`${API_URL}/api/case/${caseId}/messages/mark-read`, {}, {
+          withCredentials: true
+        });
+      } catch (markReadErr) {
+        console.error("Failed to mark messages as read:", markReadErr);
+        // Don't show error to user, this is a background operation
+      }
     } catch (err: any) {
       console.error("Failed to fetch messages:", err);
       setError(err.response?.data?.message || "Failed to load messages");
@@ -102,6 +114,58 @@ export default function AdminMessaging({ caseId, clientName }: AdminMessagingPro
       setError(err.response?.data?.message || "Failed to send message");
     } finally {
       setSending(false);
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    setError(null);
+
+    try {
+      // Upload file to get PDF URL
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const uploadResponse = await axios.post(
+        `${API_URL}/api/upload/single`,
+        formData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          withCredentials: true
+        }
+      );
+
+      const fileUrl = uploadResponse.data.url;
+      const fileName = file.name;
+
+      // Send message with file attachment
+      const messageResponse = await axios.post(
+        `${API_URL}/api/case/${caseId}/messages`,
+        {
+          sender: "admin",
+          senderName: "Turbo Response Team",
+          messageText: `Sent a file: ${fileName}`,
+          filePath: fileUrl,
+          fileName: fileName,
+          fileType: 'application/pdf'
+        },
+        { withCredentials: true }
+      );
+
+      setMessages([...messages, messageResponse.data.message]);
+      
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    } catch (err: any) {
+      console.error("Failed to upload file:", err);
+      setError(err.response?.data?.message || "Failed to upload file");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -249,42 +313,83 @@ export default function AdminMessaging({ caseId, clientName }: AdminMessagingPro
       </div>
 
       {/* Message Input */}
-      <form onSubmit={handleSendMessage} style={{ display: "flex", gap: "0.75rem" }}>
-        <input
-          type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Type your message..."
-          disabled={sending}
-          style={{
-            flex: 1,
-            padding: "0.75rem 1rem",
-            border: "1px solid #d1d5db",
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+        {uploading && (
+          <div style={{
+            padding: "0.75rem",
+            backgroundColor: "#eff6ff",
+            border: "1px solid #3b82f6",
             borderRadius: "6px",
+            color: "#1e40af",
             fontSize: "0.875rem",
-            outline: "none",
-            backgroundColor: "white",
-            color: "#111827"
-          }}
-        />
-        <button
-          type="submit"
-          disabled={sending || !newMessage.trim()}
-          style={{
-            padding: "0.75rem 1.5rem",
-            backgroundColor: sending || !newMessage.trim() ? "#9ca3af" : "#3b82f6",
-            color: "white",
-            border: "none",
-            borderRadius: "6px",
-            fontSize: "0.875rem",
-            fontWeight: 600,
-            cursor: sending || !newMessage.trim() ? "not-allowed" : "pointer",
-            whiteSpace: "nowrap"
-          }}
-        >
-          {sending ? "Sending..." : "Send"}
-        </button>
-      </form>
+            textAlign: "center"
+          }}>
+            📤 Uploading file...
+          </div>
+        )}
+        <form onSubmit={handleSendMessage} style={{ display: "flex", gap: "0.75rem" }}>
+          <input
+            type="text"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            placeholder="Type your message..."
+            disabled={sending || uploading}
+            style={{
+              flex: 1,
+              padding: "0.75rem 1rem",
+              border: "1px solid #d1d5db",
+              borderRadius: "6px",
+              fontSize: "0.875rem",
+              outline: "none",
+              backgroundColor: "white",
+              color: "#111827"
+            }}
+          />
+          <input
+            ref={fileInputRef}
+            type="file"
+            onChange={handleFileUpload}
+            accept=".pdf,.jpg,.jpeg,.png,.heic,.webp,.tiff,.bmp"
+            style={{ display: "none" }}
+            disabled={uploading}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            style={{
+              padding: "0.75rem 1rem",
+              backgroundColor: uploading ? "#9ca3af" : "#f3f4f6",
+              color: "#374151",
+              border: "1px solid #d1d5db",
+              borderRadius: "6px",
+              fontSize: "0.875rem",
+              fontWeight: 600,
+              cursor: uploading ? "not-allowed" : "pointer",
+              whiteSpace: "nowrap"
+            }}
+          >
+            📎
+          </button>
+          <button
+            type="submit"
+            disabled={sending || !newMessage.trim() || uploading}
+            style={{
+              padding: "0.75rem 1.5rem",
+              backgroundColor: sending || !newMessage.trim() || uploading ? "#9ca3af" : "#3b82f6",
+              color: "white",
+              border: "none",
+              borderRadius: "6px",
+              fontSize: "0.875rem",
+              fontWeight: 600,
+              cursor: sending || !newMessage.trim() || uploading ? "not-allowed" : "pointer",
+              whiteSpace: "nowrap"
+            }}
+          >
+            {sending ? "Sending..." : "Send"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
