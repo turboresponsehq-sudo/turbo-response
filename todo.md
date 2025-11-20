@@ -358,3 +358,37 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 - [ ] Verify violations list displays (not empty)
 - [ ] Verify laws cited list displays (not empty)
 - [ ] Verify summary shows full text
+
+
+## 🎯 NEW FEATURE: PDF Conversion for All Attachments
+
+### Backend Implementation
+- [x] Install pdfkit and sharp dependencies
+- [x] Create src/services/pdfConverter.js with image-to-PDF conversion
+- [x] Add PDF validation (check if file is already PDF)
+- [x] Update POST /api/cases/:caseId/attachments route
+- [x] Replace original file upload with PDF upload to S3
+- [x] Save PDF metadata (URL, size, filename, MIME type) to database
+- [x] Add error handling for unsupported file types
+
+### Frontend Implementation
+- [x] Update AdminCaseDetail.tsx attachment UI
+- [x] Add "View PDF" button
+- [x] Add "Download PDF" button
+- [x] Add "Open in New Tab" button (View PDF opens in new tab)
+- [x] Keep existing delete button
+- [x] Update attachment display to show PDF icon/label
+
+### Testing
+- [x] Test image upload (JPG, PNG, HEIC) → PDF conversion
+- [x] Test PDF upload (keep as-is)
+- [x] Test unsupported file type → validation error
+- [x] Verify PDF quality (300 DPI, full-page, centered)
+- [ ] Test PDF viewing in admin dashboard (requires deployment)
+- [ ] Test PDF download functionality (requires deployment)
+
+### Deployment
+- [ ] Push changes to GitHub
+- [ ] Deploy to Render
+- [ ] Verify production PDF conversion works
+- [ ] Create QA testing guide
