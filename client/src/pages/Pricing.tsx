@@ -1,5 +1,4 @@
 import { Link } from "wouter";
-import "../styles/Pricing.css";
 
 export default function Pricing() {
   return (
