@@ -398,6 +398,16 @@ export default function AdminCaseDetail() {
         </div>
       </div>
 
+      {/* Messaging Section */}
+      {caseData && (
+        <div style={{ marginBottom: "2rem" }}>
+          <AdminMessaging 
+            caseId={parseInt(params?.id || "0")} 
+            clientName={caseData?.full_name || "Client"}
+          />
+        </div>
+      )}
+
       {/* AI Analysis Panel */}
       <div style={{ 
         backgroundColor: "#f8f9fa", 
@@ -1207,16 +1217,6 @@ export default function AdminCaseDetail() {
               </div>
             ))}
           </div>
-        </div>
-      )}
-
-      {/* Messaging Section */}
-      {caseData && (
-        <div style={{ marginBottom: "2rem" }}>
-          <AdminMessaging 
-            caseId={parseInt(params?.id || "0")} 
-            clientName={caseData?.full_name || "Client"}
-          />
         </div>
       )}
 
