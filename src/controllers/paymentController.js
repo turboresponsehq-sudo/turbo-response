@@ -3,7 +3,7 @@
  * Handles public payment page and "I Paid" workflow
  */
 
-const { query } = require('../db/client');
+const { query } = require('../services/database/db');
 const logger = require('../utils/logger');
 
 /**
