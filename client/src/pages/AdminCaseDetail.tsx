@@ -556,6 +556,175 @@ export default function AdminCaseDetail() {
         )}
       </div>
 
+      {/* Client Portal Controls Card */}
+      <div style={{ 
+        backgroundColor: "#e7f3ff", 
+        padding: "1rem", 
+        borderRadius: "8px", 
+        marginBottom: "1rem",
+        border: "2px solid #007bff"
+      }}>
+        <h2 style={{ marginTop: 0, fontSize: "1.125rem", color: "#007bff" }}>🔐 Client Portal Settings</h2>
+        
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          {/* Portal Enabled Toggle */}
+          <div>
+            <label style={{ 
+              display: "flex", 
+              alignItems: "center", 
+              gap: "0.5rem",
+              cursor: "pointer",
+              fontSize: "0.875rem",
+              fontWeight: 600,
+              color: "#495057"
+            }}>
+              <input 
+                type="checkbox" 
+                checked={caseData.portal_enabled !== false}
+                onChange={(e) => {
+                  setCaseData({ ...caseData, portal_enabled: e.target.checked });
+                  // TODO: Add API call to update portal_enabled
+                }}
+                style={{ width: "20px", height: "20px" }}
+              />
+              Enable Client Portal Access
+            </label>
+            <p style={{ margin: "0.25rem 0 0 1.75rem", fontSize: "0.75rem", color: "#6c757d" }}>
+              When enabled, client can log in with email + verification code
+            </p>
+          </div>
+
+          {/* Client Status */}
+          <div>
+            <label style={{ 
+              display: "block", 
+              marginBottom: "0.5rem", 
+              fontWeight: 600,
+              color: "#495057",
+              fontSize: "0.875rem"
+            }}>
+              Client-Facing Status:
+            </label>
+            <input
+              type="text"
+              value={caseData.client_status || ''}
+              onChange={(e) => setCaseData({ ...caseData, client_status: e.target.value })}
+              placeholder="e.g., Under Review, Documents Received, Awaiting Payment"
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                fontSize: "1rem",
+                borderRadius: "4px",
+                border: "1px solid #ced4da",
+                boxSizing: "border-box"
+              }}
+            />
+            <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.75rem", color: "#6c757d" }}>
+              This status is shown to the client in their portal
+            </p>
+          </div>
+
+          {/* Client Notes */}
+          <div>
+            <label style={{ 
+              display: "block", 
+              marginBottom: "0.5rem", 
+              fontWeight: 600,
+              color: "#495057",
+              fontSize: "0.875rem"
+            }}>
+              Notes for Client:
+            </label>
+            <textarea
+              value={caseData.client_notes || ''}
+              onChange={(e) => setCaseData({ ...caseData, client_notes: e.target.value })}
+              placeholder="Updates, next steps, or messages for the client..."
+              rows={4}
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                fontSize: "1rem",
+                borderRadius: "4px",
+                border: "1px solid #ced4da",
+                fontFamily: "inherit",
+                resize: "vertical",
+                boxSizing: "border-box"
+              }}
+            />
+            <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.75rem", color: "#6c757d" }}>
+              These notes will be visible to the client in their portal
+            </p>
+          </div>
+
+          {/* Payment Link */}
+          <div>
+            <label style={{ 
+              display: "block", 
+              marginBottom: "0.5rem", 
+              fontWeight: 600,
+              color: "#495057",
+              fontSize: "0.875rem"
+            }}>
+              Payment Link:
+            </label>
+            <input
+              type="url"
+              value={caseData.payment_link || ''}
+              onChange={(e) => setCaseData({ ...caseData, payment_link: e.target.value })}
+              placeholder="https://cash.app/$turboresponsehq or Stripe link"
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                fontSize: "1rem",
+                borderRadius: "4px",
+                border: "1px solid #ced4da",
+                boxSizing: "border-box"
+              }}
+            />
+            <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.75rem", color: "#6c757d" }}>
+              If provided, client will see a "Pay Now" button in their portal
+            </p>
+          </div>
+
+          {/* Save Button */}
+          <button
+            onClick={async () => {
+              const storedToken = localStorage.getItem("admin_session");
+              try {
+                await axios.patch(
+                  `${API_URL}/api/case/${params?.id}`,
+                  {
+                    client_status: caseData.client_status,
+                    client_notes: caseData.client_notes,
+                    payment_link: caseData.payment_link,
+                    portal_enabled: caseData.portal_enabled
+                  },
+                  { headers: { Authorization: `Bearer ${storedToken}` } }
+                );
+                setUpdateMessage({ type: 'success', text: 'Client portal settings saved' });
+                setTimeout(() => setUpdateMessage(null), 3000);
+              } catch (err: any) {
+                setUpdateMessage({ type: 'error', text: 'Failed to save portal settings' });
+              }
+            }}
+            style={{
+              padding: "0.75rem 1rem",
+              minHeight: "48px",
+              backgroundColor: "#007bff",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "1rem",
+              fontWeight: 600,
+              width: "100%"
+            }}
+          >
+            💾 Save Portal Settings
+          </button>
+        </div>
+      </div>
+
       {/* Client Information Card */}
       <div style={{ 
         backgroundColor: "#f8f9fa", 

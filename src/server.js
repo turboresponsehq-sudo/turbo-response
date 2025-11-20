@@ -3,6 +3,7 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const logger = require('./utils/logger');
 const errorHandler = require('./middleware/errorHandler');
 const { initDatabase } = require('./services/database/init');
@@ -23,6 +24,7 @@ const adminConsumerRoutes = require('./routes/adminConsumer');
 const turboIntakeRoutes = require('./routes/turboIntake');
 const turboRoutes = require('./routes/turbo');
 const resetAdminRoutes = require('./routes/resetAdmin'); // TEMPORARY - DELETE AFTER USE
+const clientRoutes = require('./routes/client'); // Client portal authentication
 // Brain routes disabled - not yet implemented
 
 const app = express();
@@ -36,6 +38,7 @@ app.use(
   })
 );
 app.options("*", cors()); // Enable pre-flight for all routes
+app.use(cookieParser()); // Parse cookies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -82,6 +85,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/admin/consumer', adminConsumerRoutes);
 app.use('/api/turbo', turboRoutes);
 app.use('/api', resetAdminRoutes); // TEMPORARY - DELETE AFTER USE (mounted on /api to bypass auth)
+app.use('/api/client', clientRoutes); // Client portal routes
 // app.use('/api/brain', brainRoutes); // Disabled - not yet implemented
 
 // Serve frontend static files and SPA fallback

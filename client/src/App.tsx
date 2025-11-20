@@ -23,6 +23,8 @@ import Services from "./pages/Services";
 import Pricing from "./pages/Pricing";
 import Results from "./pages/Results";
 import Testimonials from "./pages/Testimonials";
+import ClientLogin from "./pages/ClientLogin";
+import ClientPortal from "./pages/ClientPortal";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -39,6 +41,11 @@ function Router() {
       {/* Payment route - NOT part of consumer intake flow, used for business audit workflow */}
       <Route path="/payment" component={Payment} />
       <Route path="/turbo" component={TurboHQ} />
+      
+      {/* Client Portal Routes */}
+      <Route path="/client/login" component={ClientLogin} />
+      <Route path="/client/case/:id" component={ClientPortal} />
+      
       <Route path="/admin/login" component={AdminLogin} />
       {/* Admin workflow routes - restored to specification */}
       <Route path="/admin/case/:id" component={AdminCaseDetail} />

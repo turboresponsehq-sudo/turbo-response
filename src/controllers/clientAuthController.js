@@ -1,0 +1,272 @@
+const db = require('../services/database/db');
+const emailService = require('../services/emailService');
+const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
+
+// Store verification codes temporarily (in production, use Redis)
+const verificationCodes = new Map();
+
+/**
+ * Step 1: Client requests login with email + case ID
+ * Generate 6-digit code and email it
+ */
+async function requestLogin(req, res) {
+  try {
+    const { email, caseId } = req.body;
+
+    if (!email || !caseId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email and case ID are required'
+      });
+    }
+
+    // Check if case exists and matches email
+    const result = await db.query(
+      'SELECT id, case_number, email, portal_enabled FROM cases WHERE id = $1 AND email = $2',
+      [caseId, email.toLowerCase()]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No case found with that email and case ID'
+      });
+    }
+
+    const caseData = result.rows[0];
+
+    // Check if portal is enabled
+    if (!caseData.portal_enabled) {
+      return res.status(403).json({
+        success: false,
+        message: 'Client portal access is disabled for this case'
+      });
+    }
+
+    // Generate 6-digit verification code
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Store code with 10-minute expiration
+    const key = `${email.toLowerCase()}-${caseId}`;
+    verificationCodes.set(key, {
+      code,
+      expiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
+      attempts: 0
+    });
+
+    // Send verification email
+    await emailService.sendEmail({
+      to: email,
+      subject: `Turbo Response - Verification Code for Case ${caseData.case_number}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #06b6d4;">Turbo Response - Client Portal Access</h2>
+          <p>Your verification code is:</p>
+          <div style="background: #0a1628; color: #06b6d4; font-size: 32px; font-weight: bold; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
+            ${code}
+          </div>
+          <p>This code will expire in 10 minutes.</p>
+          <p>Case Number: <strong>${caseData.case_number}</strong></p>
+          <p style="color: #666; font-size: 12px; margin-top: 30px;">
+            If you didn't request this code, please ignore this email.
+          </p>
+        </div>
+      `
+    });
+
+    res.json({
+      success: true,
+      message: 'Verification code sent to your email',
+      caseNumber: caseData.case_number
+    });
+
+  } catch (error) {
+    console.error('❌ Client login request error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to send verification code'
+    });
+  }
+}
+
+/**
+ * Step 2: Client submits verification code
+ * Verify code and issue JWT token
+ */
+async function verifyCode(req, res) {
+  try {
+    const { email, caseId, code } = req.body;
+
+    if (!email || !caseId || !code) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email, case ID, and verification code are required'
+      });
+    }
+
+    const key = `${email.toLowerCase()}-${caseId}`;
+    const stored = verificationCodes.get(key);
+
+    if (!stored) {
+      return res.status(400).json({
+        success: false,
+        message: 'No verification code found. Please request a new code.'
+      });
+    }
+
+    // Check expiration
+    if (Date.now() > stored.expiresAt) {
+      verificationCodes.delete(key);
+      return res.status(400).json({
+        success: false,
+        message: 'Verification code expired. Please request a new code.'
+      });
+    }
+
+    // Check attempts (max 3)
+    if (stored.attempts >= 3) {
+      verificationCodes.delete(key);
+      return res.status(429).json({
+        success: false,
+        message: 'Too many failed attempts. Please request a new code.'
+      });
+    }
+
+    // Verify code
+    if (stored.code !== code) {
+      stored.attempts++;
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid verification code',
+        attemptsRemaining: 3 - stored.attempts
+      });
+    }
+
+    // Code is valid - delete it and issue JWT
+    verificationCodes.delete(key);
+
+    // Get case data
+    const result = await db.query(
+      'SELECT id, case_number, email, full_name FROM cases WHERE id = $1',
+      [caseId]
+    );
+
+    const caseData = result.rows[0];
+
+    // Generate JWT token (expires in 24 hours)
+    const token = jwt.sign(
+      {
+        caseId: caseData.id,
+        email: caseData.email,
+        type: 'client'
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    // Set httpOnly cookie
+    res.cookie('client_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
+
+    res.json({
+      success: true,
+      message: 'Login successful',
+      caseId: caseData.id,
+      caseNumber: caseData.case_number,
+      clientName: caseData.full_name
+    });
+
+  } catch (error) {
+    console.error('❌ Client verification error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Verification failed'
+    });
+  }
+}
+
+/**
+ * Get client's case data
+ * Requires valid client token
+ */
+async function getClientCase(req, res) {
+  try {
+    const { id } = req.params;
+    const clientCaseId = req.clientAuth.caseId;
+
+    // Ensure client can only access their own case
+    if (parseInt(id) !== clientCaseId) {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied'
+      });
+    }
+
+    // Get case data
+    const result = await db.query(`
+      SELECT 
+        id,
+        case_number,
+        category,
+        status,
+        client_status,
+        client_notes,
+        payment_link,
+        full_name,
+        email,
+        phone,
+        case_details,
+        amount,
+        deadline,
+        documents,
+        created_at,
+        updated_at
+      FROM cases
+      WHERE id = $1 AND portal_enabled = TRUE
+    `, [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Case not found or portal access disabled'
+      });
+    }
+
+    const caseData = result.rows[0];
+
+    res.json({
+      success: true,
+      case: caseData
+    });
+
+  } catch (error) {
+    console.error('❌ Get client case error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve case data'
+    });
+  }
+}
+
+/**
+ * Logout client
+ */
+function logout(req, res) {
+  res.clearCookie('client_token');
+  res.json({
+    success: true,
+    message: 'Logged out successfully'
+  });
+}
+
+module.exports = {
+  requestLogin,
+  verifyCode,
+  getClientCase,
+  logout
+};
