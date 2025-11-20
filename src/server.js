@@ -26,6 +26,7 @@ const turboRoutes = require('./routes/turbo');
 const resetAdminRoutes = require('./routes/resetAdmin'); // TEMPORARY - DELETE AFTER USE
 const clientRoutes = require('./routes/client'); // Client portal authentication
 const messagingRoutes = require('./routes/messaging'); // Client-admin messaging
+const contractRoutes = require('./routes/contract'); // Contract signing
 // Brain routes disabled - not yet implemented
 
 const app = express();
@@ -88,6 +89,7 @@ app.use('/api/turbo', turboRoutes);
 app.use('/api', resetAdminRoutes); // TEMPORARY - DELETE AFTER USE (mounted on /api to bypass auth)
 app.use('/api/client', clientRoutes); // Client portal routes
 app.use('/api/case', messagingRoutes); // Messaging routes
+app.use('/api', contractRoutes); // Contract routes
 // app.use('/api/brain', brainRoutes); // Disabled - not yet implemented
 
 // Serve frontend static files and SPA fallback

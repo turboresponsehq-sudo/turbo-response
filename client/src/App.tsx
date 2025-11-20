@@ -26,6 +26,7 @@ import Testimonials from "./pages/Testimonials";
 import ClientLogin from "./pages/ClientLogin";
 import ClientPortal from "./pages/ClientPortal";
 import PaymentPage from "./pages/PaymentPage";
+import SignContract from "./pages/SignContract";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -46,6 +47,9 @@ function Router() {
       {/* Client Portal Routes */}
       <Route path="/client/login" component={ClientLogin} />
       <Route path="/client/case/:id" component={ClientPortal} />
+      
+      {/* Contract Signing */}
+      <Route path="/sign-contract/:caseId" component={SignContract} />
       
       {/* Public Payment Page */}
       <Route path="/pay/:caseId" component={PaymentPage} />

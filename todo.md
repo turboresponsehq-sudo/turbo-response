@@ -732,3 +732,33 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 - [x] Add "View Full Pricing" link to /pricing page
 - [x] Position after hero section
 - [ ] Deploy changes
+
+
+## 📝 CONTRACT SIGNING + PAYMENT FLOW
+- [ ] Create client_contracts database table (id, case_id, client_email, client_name, ip_address, signed_at, agreement_text)
+- [ ] Add contract_signed boolean field to cases table
+- [ ] Build contract signing page with 6 confirmations (5 checkboxes + 1 signature field)
+- [ ] Capture IP address and timestamp on signature
+- [ ] Store full agreement text snapshot in database
+- [ ] Add "Proceed to Payment" button in client portal that shows contract first
+- [ ] Validate all checkboxes and signature before allowing submission
+- [ ] Save signature to database and update case.contract_signed = true
+- [ ] Auto-redirect to /payment/:caseId after contract signed
+- [ ] Update payment page to show 3 payment options (PayPal, CashApp, Venmo)
+- [ ] Verify contract is signed before allowing payment verification
+- [ ] Add "Signed Contract" section to client portal
+- [ ] Generate downloadable PDF of signed contract
+- [ ] Test complete flow: intake → pricing → contract → payment → verification → portal unlock
+- [ ] Deploy all changes
+
+## 📝 CONTRACT SIGNING + PAYMENT FLOW
+- [x] Create client_contracts database table
+- [x] Build contract signing page with IP capture
+- [x] Integrate contract requirement before payment
+- [x] Store signatures in database
+- [x] Update case.contract_signed flag
+- [x] Auto-redirect to payment after signing
+- [x] Add signed contract view in client portal
+- [x] Add PDF download for signed contracts
+- [ ] Test complete flow
+- [ ] Deploy changes
