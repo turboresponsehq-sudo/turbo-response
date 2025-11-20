@@ -269,6 +269,27 @@ export default function ClientPortal() {
             </div>
           </div>
 
+          {/* Pricing Tier Display */}
+          {caseData?.pricing_tier_name && (
+            <div style={{
+              padding: "1rem",
+              background: "linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1))",
+              border: "2px solid rgba(102, 126, 234, 0.3)",
+              borderRadius: "8px",
+              marginBottom: "1rem"
+            }}>
+              <div style={{ fontSize: "0.875rem", color: "#667eea", marginBottom: "0.5rem", fontWeight: 600 }}>
+                Your Package
+              </div>
+              <div style={{ fontSize: "1.125rem", fontWeight: 700, color: "#212529", marginBottom: "0.25rem" }}>
+                {caseData.pricing_tier_name}
+              </div>
+              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "#667eea" }}>
+                ${caseData.pricing_tier_amount}
+              </div>
+            </div>
+          )}
+
           {caseData?.client_notes && (
             <div style={{
               padding: "1rem",
