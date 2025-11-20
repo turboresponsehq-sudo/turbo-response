@@ -628,6 +628,35 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 - [ ] Test: Admin assigns pricing tier
 - [ ] Test: Client receives payment link
 - [ ] Test: Client submits payment
-- [ ] Test: Admin verifies payment
+- [x] Test: Admin verifies payment
 - [ ] Test: Client portal unlocks
+- [ ] Deploy to production
+
+
+## 🔐 PHASE 4: AUTO-CREATE CLIENT ACCOUNTS (IN PROGRESS)
+
+### Phase 4.1: Review Existing System
+- [x] Review client_portal_users table schema
+- [x] Review existing client auth flow (magic code system)
+- [x] Review payment verification controller
+
+### Phase 4.2: Auto-Create Accounts on Payment Verification
+- [x] Update verifyPayment endpoint to auto-create client account
+- [x] Generate unique client portal user tied to case_id
+- [x] Set portal_enabled = true automatically
+- [x] Link client account to case record
+- [x] Generate magic code for first login
+
+### Phase 4.3: Email Notification
+- [x] Create "Portal Activated" email template
+- [x] Include magic code login link
+- [x] Send email after account creation
+- [x] Add email sending to verifyPayment flow
+
+### Phase 4.4: Testing
+- [x] Test: Admin verifies payment
+- [x] Test: Client account auto-created
+- [x] Test: Email sent with login link
+- [x] Test: Client can log in with magic code
+- [x] Test: Client sees their case in portal
 - [ ] Deploy to production
