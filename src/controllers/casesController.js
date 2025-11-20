@@ -154,6 +154,7 @@ const getAdminCaseById = async (req, res, next) => {
         c.client_status, c.client_notes, c.payment_link, c.portal_enabled,
         c.funnel_stage, c.payment_method, c.payment_verified, 
         c.payment_verified_at, c.payment_verified_by,
+        c.pricing_tier, c.pricing_tier_amount, c.pricing_tier_name,
         c.created_at, c.updated_at,
         a.violations, a.laws_cited, a.recommended_actions,
         a.urgency_level, a.estimated_value, a.success_probability,
@@ -216,7 +217,7 @@ const getAdminCaseById = async (req, res, next) => {
 const updateCaseStatus = async (req, res, next) => {
   try {
     const caseId = parseInt(req.params.id);
-    const { status, client_status, client_notes, payment_link, portal_enabled } = req.body;
+    const { status, client_status, client_notes, payment_link, portal_enabled, pricing_tier, pricing_tier_amount, pricing_tier_name } = req.body;
 
     if (isNaN(caseId)) {
       return res.status(400).json({
@@ -306,6 +307,18 @@ const updateCaseStatus = async (req, res, next) => {
     if (portal_enabled !== undefined) {
       updates.push(`portal_enabled = $${paramCount++}`);
       values.push(portal_enabled);
+    }
+    if (pricing_tier !== undefined) {
+      updates.push(`pricing_tier = $${paramCount++}`);
+      values.push(pricing_tier);
+    }
+    if (pricing_tier_amount !== undefined) {
+      updates.push(`pricing_tier_amount = $${paramCount++}`);
+      values.push(pricing_tier_amount);
+    }
+    if (pricing_tier_name !== undefined) {
+      updates.push(`pricing_tier_name = $${paramCount++}`);
+      values.push(pricing_tier_name);
     }
 
     // Always update timestamp
