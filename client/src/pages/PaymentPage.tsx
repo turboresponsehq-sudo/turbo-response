@@ -17,6 +17,9 @@ interface CaseData {
   category: string;
   amount?: string;
   funnel_stage: string;
+  pricing_tier?: string;
+  pricing_tier_amount?: number;
+  pricing_tier_name?: string;
 }
 
 export default function PaymentPage() {
@@ -155,27 +158,32 @@ export default function PaymentPage() {
     );
   }
 
+  // Use pricing_tier_amount if available, otherwise fall back to amount or default
+  const displayAmount = caseData?.pricing_tier_amount 
+    ? `$${caseData.pricing_tier_amount}` 
+    : (caseData?.amount || "$349");
+  
   const paymentMethods = [
     {
       id: "paypal",
       name: "PayPal",
       icon: "💳",
       instructions: "Send payment to: payments@turboresponsehq.com",
-      amount: caseData?.amount || "$349"
+      amount: displayAmount
     },
     {
       id: "cashapp",
       name: "Cash App",
       icon: "💵",
       instructions: "Send payment to: $TurboResponseHQ",
-      amount: caseData?.amount || "$349"
+      amount: displayAmount
     },
     {
       id: "venmo",
       name: "Venmo",
       icon: "💰",
       instructions: "Send payment to: @TurboResponseHQ",
-      amount: caseData?.amount || "$349"
+      amount: displayAmount
     }
   ];
 
@@ -207,7 +215,7 @@ export default function PaymentPage() {
 
         {/* Case Info */}
         <div style={{ padding: "2rem", borderBottom: "1px solid #e9ecef" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.5rem" }}>
             <div>
               <p style={{ margin: 0, fontSize: "0.875rem", color: "#6c757d" }}>Client Name</p>
               <p style={{ margin: "0.25rem 0 0 0", fontWeight: 600, color: "#212529" }}>{caseData?.full_name}</p>
@@ -217,6 +225,24 @@ export default function PaymentPage() {
               <p style={{ margin: "0.25rem 0 0 0", fontWeight: 600, color: "#212529" }}>{caseData?.category}</p>
             </div>
           </div>
+          
+          {/* Pricing Tier Display */}
+          {caseData?.pricing_tier_name && (
+            <div style={{ 
+              padding: "1rem", 
+              background: "linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1))",
+              borderRadius: "8px",
+              border: "2px solid rgba(102, 126, 234, 0.3)"
+            }}>
+              <p style={{ margin: 0, fontSize: "0.875rem", color: "#667eea", fontWeight: 600 }}>Selected Package</p>
+              <p style={{ margin: "0.5rem 0 0 0", fontSize: "1.25rem", fontWeight: 700, color: "#212529" }}>
+                {caseData.pricing_tier_name}
+              </p>
+              <p style={{ margin: "0.25rem 0 0 0", fontSize: "1.5rem", fontWeight: 700, color: "#667eea" }}>
+                {displayAmount}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Payment Methods */}

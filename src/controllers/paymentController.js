@@ -22,7 +22,8 @@ async function getPaymentInfo(req, res) {
     }
 
     const result = await query(
-      `SELECT id, case_number, full_name, email, category, amount, funnel_stage
+      `SELECT id, case_number, full_name, email, category, amount, funnel_stage,
+              pricing_tier, pricing_tier_amount, pricing_tier_name
        FROM cases
        WHERE id = $1`,
       [caseId]
