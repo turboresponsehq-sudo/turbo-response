@@ -3,7 +3,7 @@
  * Admin marks payment as verified and activates case
  */
 
-const { query } = require('../services/database/client');
+const { query } = require('../db/client');
 const logger = require('../utils/logger');
 
 /**
