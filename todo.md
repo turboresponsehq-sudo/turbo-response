@@ -549,6 +549,6 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 
 ## 🐛 BUG FIXES
 
-- [ ] Fix verify-payment endpoint - req.user is undefined (authentication middleware issue)
-- [ ] Check if admin_session token is being sent correctly from frontend
-- [ ] Verify authenticateToken middleware is working properly
+- [x] Fix database import path in paymentController.js and paymentVerificationController.js
+- [x] Changed from '../services/database/client' to '../db/client'
+- [ ] Test verify-payment endpoint after Render build completes
