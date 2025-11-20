@@ -319,10 +319,8 @@ export default function ClientPortal() {
                 )}
 
                 {hasPaymentLink ? (
-                  <a
-                    href={caseData.payment_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    onClick={() => setLocation(`/sign-contract/${caseData.id}`)}
                     style={{
                       display: "inline-block",
                       padding: "1rem 2rem",
@@ -337,8 +335,8 @@ export default function ClientPortal() {
                       boxShadow: "0 10px 30px rgba(6, 182, 212, 0.3)"
                     }}
                   >
-                    💳 Complete Payment →
-                  </a>
+                    📝 Sign Contract & Proceed to Payment →
+                  </button>
                 ) : (
                   <div style={{
                     padding: "1rem",
@@ -564,6 +562,74 @@ export default function ClientPortal() {
             )}
           </div>
         </div>
+
+        {/* Signed Contract */}
+        {caseData?.contract_signed && (
+          <div style={{
+            backgroundColor: "white",
+            borderRadius: "12px",
+            padding: "1.5rem",
+            marginBottom: "1.5rem",
+            boxShadow: "0 10px 40px rgba(0, 0, 0, 0.2)"
+          }}>
+            <h2 style={{
+              fontSize: "1.25rem",
+              fontWeight: 600,
+              color: "#1e293b",
+              marginBottom: "1rem",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem"
+            }}>
+              📝 Signed Contract
+            </h2>
+            <div style={{
+              padding: "1rem",
+              backgroundColor: "#f0fdf4",
+              border: "1px solid #86efac",
+              borderRadius: "8px",
+              marginBottom: "1rem"
+            }}>
+              <div style={{ color: "#166534", fontSize: "0.875rem", marginBottom: "0.5rem" }}>
+                ✅ Contract signed on {new Date(caseData.contract_signed_at).toLocaleDateString()}
+              </div>
+              <div style={{ color: "#64748b", fontSize: "0.875rem" }}>
+                Your signed service agreement is stored securely and can be downloaded at any time.
+              </div>
+            </div>
+            <button
+              onClick={async () => {
+                try {
+                  const response = await axios.get(`${API_URL}/api/case/${caseData.id}/contract`, {
+                    responseType: 'blob'
+                  });
+                  const url = window.URL.createObjectURL(new Blob([response.data]));
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.setAttribute('download', `Contract-${caseData.case_number}.pdf`);
+                  document.body.appendChild(link);
+                  link.click();
+                  link.remove();
+                } catch (error) {
+                  alert('Failed to download contract');
+                }
+              }}
+              style={{
+                padding: "0.75rem 1.5rem",
+                background: "linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)",
+                color: "white",
+                border: "none",
+                borderRadius: "8px",
+                fontSize: "0.875rem",
+                fontWeight: 600,
+                cursor: "pointer",
+                boxShadow: "0 4px 12px rgba(6, 182, 212, 0.3)"
+              }}
+            >
+              💾 Download Contract PDF
+            </button>
+          </div>
+        )}
 
         {/* Documents */}
         <div style={{
