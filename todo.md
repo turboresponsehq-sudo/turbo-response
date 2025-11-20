@@ -445,3 +445,99 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 - [ ] Password reset flow for clients
 - [ ] Client case history view
 - [ ] Client messaging system (chat with admin)
+
+
+## 🎯 PAYMENT-GATED CLIENT PORTAL WORKFLOW (New System - 2025-11-19)
+
+### Phase 1: Database Schema + Funnel Stages
+- [x] Add client_status, client_notes, payment_link, portal_enabled to cases table
+- [x] Create migration file 003_add_client_portal_columns.sql
+- [x] Run migration on production database
+- [x] Verify columns exist in production
+- [ ] Create case_timeline table (id, case_id, event_type, description, created_at, created_by)
+- [ ] Create migration file 004_payment_gated_portal.mjs for funnel stages
+- [ ] Update admin dashboard to show funnel_stage instead of old status
+- [ ] Deploy client portal pages to production
+
+### Phase 2: Public Payment Page
+- [x] Create /pay/:caseId route in App.tsx
+- [x] Create PaymentPage.tsx component
+- [x] Display case details (case number, amount, category)
+- [x] Add payment method selection (PayPal, CashApp, Venmo)
+- [x] Show payment instructions for each method
+- [x] Add "I Paid" button
+- [x] "I Paid" updates funnel_stage to "Payment Pending"
+- [x] "I Paid" creates timeline event
+- [x] Add payment page styling (match homepage design)
+- [x] Create backend payment controller
+- [x] Add payment routes to API
+
+### Phase 3: Admin Mark as Paid Workflow
+- [ ] Add "Mark as Paid" button to AdminCaseDetail.tsx
+- [ ] Create PATCH /api/case/:id/verify-payment endpoint
+- [ ] Update funnel_stage to "Active Case"
+- [ ] Set payment_verified = true
+- [ ] Set payment_verified_at timestamp
+- [ ] Set payment_verified_by to admin ID
+- [ ] Create timeline event for payment verification
+- [ ] Show success message to admin
+
+### Phase 4: Auto-Create Client Accounts
+- [ ] Create POST /api/client/create-account endpoint
+- [ ] Generate random secure password for client
+- [ ] Create client user record in database
+- [ ] Link client user to case
+- [ ] Send welcome email with login credentials
+- [ ] Include portal URL in email
+- [ ] Create timeline event for account creation
+- [ ] Set client_account_created = true
+
+### Phase 5: Client Portal Pages
+- [ ] Update /client/login to use username/password (not verification code)
+- [ ] Create /client/home dashboard page
+- [ ] Show all cases for logged-in client
+- [ ] Create /client/case/:id detail page
+- [ ] Display case status and timeline
+- [ ] Display uploaded documents with view/download
+- [ ] Add file upload functionality
+- [ ] Display admin messages/notes
+- [ ] Add logout functionality
+- [ ] Mobile-responsive design
+
+### Phase 6: Admin Enhancements
+- [ ] Replace status dropdown with funnel_stage dropdown
+- [ ] Add case timeline display in AdminCaseDetail
+- [ ] Add internal notes section (admin-only, not visible to client)
+- [ ] Add client upload logs section
+- [ ] Add "Send Portal Login" button (resend credentials)
+- [ ] Show payment verification status
+- [ ] Show payment method used
+- [ ] Add document history section
+
+### Phase 7: Automated Emails
+- [ ] Email #1: After intake submission (payment link)
+- [ ] Email #2: After "I Paid" clicked (pending verification)
+- [ ] Email #3: After admin marks paid (portal unlock + credentials)
+- [ ] Email #4: On status updates (optional)
+- [ ] Create email templates for each type
+- [ ] Add email service integration
+- [ ] Test all email triggers
+- [ ] Add email logs to timeline
+
+### Testing & Deployment
+- [ ] Test full funnel flow end-to-end
+- [ ] Test payment page with all 3 methods
+- [ ] Test admin verification workflow
+- [ ] Test client account creation
+- [ ] Test client portal login
+- [ ] Test document upload/download
+- [ ] Test all email triggers
+- [ ] Deploy to production
+- [ ] Run database migration
+- [ ] Verify production functionality
+
+
+## 🐛 URGENT UI FIXES
+
+- [x] Fix AdminCaseDetail client portal input fields - change text color from white to dark for visibility
+- [x] Ensure all input fields (client_status, client_notes, payment_link) have readable text color

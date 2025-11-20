@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../services/database/db');
+const { getPaymentInfo, markPaymentPending } = require('../controllers/paymentController');
 
 /**
  * Client Payment Confirmation
@@ -172,5 +173,9 @@ router.get('/status/:case_id', async (req, res) => {
     });
   }
 });
+
+// New payment-gated workflow routes
+router.get('/case/:caseId/payment-info', getPaymentInfo);
+router.post('/case/:caseId/mark-payment-pending', markPaymentPending);
 
 module.exports = router;

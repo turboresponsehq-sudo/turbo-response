@@ -25,6 +25,7 @@ import Results from "./pages/Results";
 import Testimonials from "./pages/Testimonials";
 import ClientLogin from "./pages/ClientLogin";
 import ClientPortal from "./pages/ClientPortal";
+import PaymentPage from "./pages/PaymentPage";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -45,6 +46,9 @@ function Router() {
       {/* Client Portal Routes */}
       <Route path="/client/login" component={ClientLogin} />
       <Route path="/client/case/:id" component={ClientPortal} />
+      
+      {/* Public Payment Page */}
+      <Route path="/pay/:caseId" component={PaymentPage} />
       
       <Route path="/admin/login" component={AdminLogin} />
       {/* Admin workflow routes - restored to specification */}

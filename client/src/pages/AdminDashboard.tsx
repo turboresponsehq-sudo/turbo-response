@@ -19,6 +19,8 @@ interface CaseItem {
   phone?: string;
   category: string;
   status: string;
+  funnel_stage?: string;
+  payment_verified?: boolean;
   created_at: string;
 }
 
@@ -62,19 +64,17 @@ export default function AdminDashboard() {
     setLocation("/admin/login");
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Completed':
-        return { bg: '#d4edda', color: '#155724' };
-      case 'Rejected':
-        return { bg: '#f8d7da', color: '#721c24' };
-      case 'In Review':
-        return { bg: '#fff3cd', color: '#856404' };
-      case 'Awaiting Client':
-        return { bg: '#cce5ff', color: '#004085' };
-      case 'Pending Review':
+  const getFunnelStageColor = (stage: string) => {
+    switch (stage) {
+      case 'Active Case':
+        return { bg: '#d4edda', color: '#155724', icon: '✅' };
+      case 'Payment Pending':
+        return { bg: '#fff3cd', color: '#856404', icon: '⏳' };
+      case 'Awaiting Payment':
+        return { bg: '#cce5ff', color: '#004085', icon: '💳' };
+      case 'Lead Submitted':
       default:
-        return { bg: '#d1ecf1', color: '#0c5460' };
+        return { bg: '#d1ecf1', color: '#0c5460', icon: '📝' };
     }
   };
 
@@ -267,7 +267,7 @@ export default function AdminDashboard() {
               </thead>
               <tbody>
                 {cases.map((c, index) => {
-                  const statusColors = getStatusColor(c.status);
+                  const stageInfo = getFunnelStageColor(c.funnel_stage || c.status);
                   return (
                     <tr
                       key={c.id}
@@ -301,12 +301,12 @@ export default function AdminDashboard() {
                           borderRadius: "12px",
                           fontSize: "0.75rem",
                           fontWeight: 600,
-                          backgroundColor: statusColors.bg,
-                          color: statusColors.color,
+                          backgroundColor: stageInfo.bg,
+                          color: stageInfo.color,
                           textTransform: "uppercase",
                           letterSpacing: "0.5px"
                         }}>
-                          {c.status}
+                          {stageInfo.icon} {c.funnel_stage || c.status}
                         </span>
                       </td>
                       <td style={{ padding: "1rem", fontSize: "0.875rem", color: "#495057" }}>
@@ -346,7 +346,7 @@ export default function AdminDashboard() {
           {/* Mobile Card Layout (hidden on desktop) */}
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }} className="mobile-cards">
             {cases.map((c) => {
-              const statusColors = getStatusColor(c.status);
+                  const stageInfo = getFunnelStageColor(c.funnel_stage || c.status);
               return (
                 <div
                   key={c.id}
@@ -395,12 +395,12 @@ export default function AdminDashboard() {
                       borderRadius: "12px",
                       fontSize: "0.75rem",
                       fontWeight: 600,
-                      backgroundColor: statusColors.bg,
-                      color: statusColors.color,
+                      backgroundColor: stageInfo.bg,
+                      color: stageInfo.color,
                       textTransform: "uppercase",
                       letterSpacing: "0.5px"
                     }}>
-                      {c.status}
+                      {stageInfo.icon} {c.funnel_stage || c.status}
                     </span>
                   </div>
 
