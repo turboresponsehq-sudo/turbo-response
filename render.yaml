@@ -1,0 +1,27 @@
+services:
+  # Backend service (serves both API and static frontend)
+  - type: web
+    name: turbo-response-backend
+    env: node
+    region: oregon
+    plan: starter
+    buildCommand: pnpm install && pnpm run build
+    startCommand: node dist/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD_HASH
+        sync: false
+    # Health check
+    healthCheckPath: /__version
+    # Auto-deploy on push to main
+    autoDeploy: true
+    branch: main
