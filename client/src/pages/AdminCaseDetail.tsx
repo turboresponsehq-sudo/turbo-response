@@ -616,7 +616,9 @@ export default function AdminCaseDetail() {
                 fontSize: "1rem",
                 borderRadius: "4px",
                 border: "1px solid #ced4da",
-                boxSizing: "border-box"
+                boxSizing: "border-box",
+                color: "#212529",
+                backgroundColor: "#ffffff"
               }}
             />
             <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.75rem", color: "#6c757d" }}>
@@ -648,7 +650,9 @@ export default function AdminCaseDetail() {
                 border: "1px solid #ced4da",
                 fontFamily: "inherit",
                 resize: "vertical",
-                boxSizing: "border-box"
+                boxSizing: "border-box",
+                color: "#212529",
+                backgroundColor: "#ffffff"
               }}
             />
             <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.75rem", color: "#6c757d" }}>
@@ -678,7 +682,9 @@ export default function AdminCaseDetail() {
                 fontSize: "1rem",
                 borderRadius: "4px",
                 border: "1px solid #ced4da",
-                boxSizing: "border-box"
+                boxSizing: "border-box",
+                color: "#212529",
+                backgroundColor: "#ffffff"
               }}
             />
             <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.75rem", color: "#6c757d" }}>
