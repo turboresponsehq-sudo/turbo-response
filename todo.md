@@ -724,3 +724,11 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 - [x] Ensure messaging is visible without scrolling excessively
 - [ ] Test integrated view
 - [ ] Deploy changes
+
+
+## 💰 ADD PRICING SECTION TO HOMEPAGE
+- [x] Add pricing preview section showing 4 tiers
+- [x] Match brand colors (dark navy with cyan accents)
+- [x] Add "View Full Pricing" link to /pricing page
+- [x] Position after hero section
+- [ ] Deploy changes

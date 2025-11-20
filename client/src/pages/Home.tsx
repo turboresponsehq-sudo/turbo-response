@@ -96,37 +96,53 @@ export default function Home() {
       {/* Pricing Section */}
       <section className="pricing">
         <h2 className="pricing-title">Choose Your Case Defense Package</h2>
-        <div className="pricing-grid">
+        <div className="pricing-grid pricing-grid-four">
           <div className="pricing-card">
-            <div className="pricing-price">$149</div>
-            <div className="pricing-name">Case Starter Plan</div>
+            <div className="pricing-price">$349</div>
+            <div className="pricing-name">Foundation Case Strategy</div>
             <div className="pricing-description">
-              For light disputes or single-notice responses. One case review + AI-assisted response, personalized legal strategy outline, email follow-up + one revision
+              Perfect for straightforward consumer disputes. AI-powered case analysis, custom response letter, legal strategy outline, one round of revisions
             </div>
             <Link href="/intake" className="cta-button">
-              Start Your Case
+              Get Started
             </Link>
           </div>
           <div className="pricing-card featured">
-            <div className="pricing-price">$349</div>
-            <div className="pricing-name">Standard Defense Plan</div>
+            <div className="pricing-badge">Most Popular</div>
+            <div className="pricing-price">$997+</div>
+            <div className="pricing-name">Premium Case Architecture</div>
             <div className="pricing-description">
-              For multi-step disputes or recurring issues. Full AI + expert-reviewed case defense, 30-day follow-up & resubmission support, document prep + escalation guidance
+              For complex disputes requiring multi-stage defense. Complete case buildout, multiple response letters, escalation strategy, 60-day support
             </div>
             <Link href="/intake" className="cta-button">
-              Most Popular
+              Get Started
             </Link>
           </div>
           <div className="pricing-card">
-            <div className="pricing-price">Starting at $699</div>
-            <div className="pricing-name">Comprehensive Case Management</div>
+            <div className="pricing-price">$2,500+</div>
+            <div className="pricing-name">Executive Case Buildout</div>
             <div className="pricing-description">
-              For complex or high-value cases. End-to-end case handling, multi-stage dispute letters + appeals, ongoing updates + analytics dashboard access, priority support
+              For high-stakes cases with significant financial impact. Full legal team coordination, expert witness preparation, court-ready documentation, priority 24/7 support
             </div>
             <Link href="/intake" className="cta-button">
-              Start Your Case
+              Get Started
             </Link>
           </div>
+          <div className="pricing-card">
+            <div className="pricing-price">$297/mo</div>
+            <div className="pricing-name">Corporate Monthly Retainer</div>
+            <div className="pricing-description">
+              Ongoing protection for businesses. Unlimited case consultations, priority response times, dedicated account manager, quarterly strategy reviews
+            </div>
+            <Link href="/intake" className="cta-button">
+              Get Started
+            </Link>
+          </div>
+        </div>
+        <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+          <Link href="/pricing" className="cta-button" style={{ background: 'transparent', border: '2px solid #06b6d4', color: '#06b6d4' }}>
+            View Full Pricing Details →
+          </Link>
         </div>
       </section>
 
