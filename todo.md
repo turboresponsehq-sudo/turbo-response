@@ -536,7 +536,7 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 - [ ] Test client portal login
 - [ ] Test document upload/download
 - [ ] Test all email triggers
-- [ ] Deploy to production
+- [x] Deploy to production
 - [ ] Run database migration
 - [ ] Verify production functionality
 
@@ -630,7 +630,7 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 - [ ] Test: Client submits payment
 - [x] Test: Admin verifies payment
 - [ ] Test: Client portal unlocks
-- [ ] Deploy to production
+- [x] Deploy to production
 
 
 ## 🔐 PHASE 4: AUTO-CREATE CLIENT ACCOUNTS (IN PROGRESS)
@@ -659,4 +659,42 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 - [x] Test: Email sent with login link
 - [x] Test: Client can log in with magic code
 - [x] Test: Client sees their case in portal
-- [ ] Deploy to production
+- [x] Deploy to production
+
+
+## 💬 CLIENT MESSAGING SYSTEM (IN PROGRESS)
+
+### Phase 1: Database Schema
+- [x] Create case_messages table (id, case_id, sender, message_text, file_path, created_at)
+- [x] Add migration script
+- [x] Add indexes for case_id and created_at
+
+### Phase 2: Backend API
+- [x] POST /api/case/:id/messages - Send message (client or admin)
+- [x] GET /api/case/:id/messages - Get all messages for case
+- [x] POST /api/case/:id/messages/upload - Upload file with message
+- [x] Add authentication checks (client can only access their case, admin can access all)
+
+### Phase 3: Client Portal Messaging
+- [x] Add messaging section to ClientPortal.tsx
+- [x] Chat-style message display (client messages right, admin messages left)
+- [x] Text input with send button
+- [x] File upload button (PDF/images)
+- [x] Auto-scroll to latest message
+- [x] Show timestamps
+
+### Phase 4: Admin Dashboard Messaging
+- [x] Add messaging tab to admin case detail page
+- [x] Chat-style message display
+- [x] Reply input with send button
+- [x] File upload for admin
+- [x] Show client/admin distinction clearly
+
+### Phase 5: Unread Indicators & Testing
+- [x] Add unread_messages_count to cases table
+- [x] Update count when new message arrives
+- [x] Show badge on admin case list
+- [x] Test: Client sends message
+- [x] Test: Admin receives and replies
+- [x] Test: File uploads work
+- [x] Deploy to production

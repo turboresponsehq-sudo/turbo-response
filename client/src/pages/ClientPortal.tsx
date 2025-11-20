@@ -6,6 +6,7 @@
 import { useEffect, useState } from "react";
 import { useRoute, useLocation } from "wouter";
 import axios from "axios";
+import ClientMessaging from "../components/ClientMessaging";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turbo-response-backend.onrender.com";
 
@@ -723,6 +724,14 @@ export default function ClientPortal() {
             </a>
           </div>
         )}
+
+        {/* Messaging Section */}
+        <div style={{ marginBottom: "1.5rem" }}>
+          <ClientMessaging 
+            caseId={parseInt(params?.id || "0")} 
+            clientName={caseData?.full_name || "Client"}
+          />
+        </div>
 
         {/* Help Section */}
         <div style={{

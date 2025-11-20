@@ -15,6 +15,20 @@
       "when": 1761873258338,
       "tag": "0001_lowly_reaper",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1763605982545,
+      "tag": "0002_confused_sheva_callister",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1763606312895,
+      "tag": "0003_goofy_mantis",
+      "breakpoints": true
     }
   ]
 }

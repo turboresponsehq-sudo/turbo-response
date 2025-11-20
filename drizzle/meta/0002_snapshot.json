@@ -1,11 +1,11 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "22984f52-fca9-491b-b54e-a586710b5574",
-  "prevId": "71b0a61f-a8fd-4752-864f-f3a71387dd57",
+  "id": "adb42ba0-d421-45e7-adf3-c9aaa1190aaa",
+  "prevId": "0db9e785-c393-478d-b432-560f16c4cf5d",
   "tables": {
-    "admin_sessions": {
-      "name": "admin_sessions",
+    "case_messages": {
+      "name": "case_messages",
       "columns": {
         "id": {
           "name": "id",
@@ -14,25 +14,53 @@
           "notNull": true,
           "autoincrement": true
         },
-        "token": {
-          "name": "token",
+        "caseId": {
+          "name": "caseId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "sender": {
+          "name": "sender",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "senderName": {
+          "name": "senderName",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
-        "username": {
-          "name": "username",
-          "type": "varchar(100)",
+        "messageText": {
+          "name": "messageText",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
-        "expiresAt": {
-          "name": "expiresAt",
-          "type": "timestamp",
+        "filePath": {
+          "name": "filePath",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "fileName": {
+          "name": "fileName",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "fileType": {
+          "name": "fileType",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "createdAt": {
@@ -47,21 +75,14 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "admin_sessions_id": {
-          "name": "admin_sessions_id",
+        "case_messages_id": {
+          "name": "case_messages_id",
           "columns": [
             "id"
           ]
         }
       },
-      "uniqueConstraints": {
-        "admin_sessions_token_unique": {
-          "name": "admin_sessions_token_unique",
-          "columns": [
-            "token"
-          ]
-        }
-      },
+      "uniqueConstraints": {},
       "checkConstraint": {}
     },
     "conversations": {
