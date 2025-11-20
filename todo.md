@@ -473,8 +473,12 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 - [x] Add payment routes to API
 
 ### Phase 3: Admin Mark as Paid Workflow
-- [ ] Add "Mark as Paid" button to AdminCaseDetail.tsx
-- [ ] Create PATCH /api/case/:id/verify-payment endpoint
+- [x] Add "Mark as Paid" button to AdminCaseDetail.tsx
+- [x] Create PATCH /api/case/:id/verify-payment endpoint
+- [x] Display funnel_stage, payment_method, payment_verified in admin UI
+- [x] Add payment link copy button
+- [x] Update funnel_stage to Active Case on verification
+- [x] Create timeline event for payment verification
 - [ ] Update funnel_stage to "Active Case"
 - [ ] Set payment_verified = true
 - [ ] Set payment_verified_at timestamp
@@ -541,3 +545,10 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 
 - [x] Fix AdminCaseDetail client portal input fields - change text color from white to dark for visibility
 - [x] Ensure all input fields (client_status, client_notes, payment_link) have readable text color
+
+
+## 🐛 BUG FIXES
+
+- [ ] Fix verify-payment endpoint - req.user is undefined (authentication middleware issue)
+- [ ] Check if admin_session token is being sent correctly from frontend
+- [ ] Verify authenticateToken middleware is working properly
