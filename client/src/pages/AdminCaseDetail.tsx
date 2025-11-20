@@ -44,6 +44,12 @@ export default function AdminCaseDetail() {
   const [analyzingAI, setAnalyzingAI] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  
+  // Pricing tier state
+  const [pricingTier, setPricingTier] = useState<string>('foundation');
+  const [pricingAmount, setPricingAmount] = useState<string>('349');
+  const [pricingName, setPricingName] = useState<string>('Foundation Case Strategy');
+  const [customAmount, setCustomAmount] = useState<string>('');
 
   useEffect(() => {
     const storedToken = localStorage.getItem("admin_session");
@@ -63,6 +69,13 @@ export default function AdminCaseDetail() {
         console.log('🔍 Full Name:', res.data.case?.full_name);
         setCaseData(res.data.case);
         setSelectedStatus(res.data.case.status);
+        
+        // Initialize pricing tier state from case data
+        if (res.data.case.pricing_tier) {
+          setPricingTier(res.data.case.pricing_tier);
+          setPricingAmount(res.data.case.pricing_tier_amount?.toString() || '349');
+          setPricingName(res.data.case.pricing_tier_name || 'Foundation Case Strategy');
+        }
       } catch (err: any) {
         console.error(err);
         setError(err.response?.data?.error || "Could not load case details");
@@ -727,6 +740,142 @@ export default function AdminCaseDetail() {
             }}
           >
             💾 Save Portal Settings
+          </button>
+        </div>
+      </div>
+
+      {/* Pricing Tier Selection Card */}
+      <div style={{ 
+        backgroundColor: "#e7f3ff", 
+        padding: "1.5rem", 
+        borderRadius: "8px", 
+        marginBottom: "1rem",
+        border: "2px solid #0066cc"
+      }}>
+        <h2 style={{ marginTop: 0, fontSize: "1.125rem", color: "#004085" }}>💰 Pricing Tier Assignment</h2>
+        
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          {/* Current Pricing Display */}
+          <div style={{ 
+            padding: "1rem", 
+            backgroundColor: "#fff", 
+            borderRadius: "6px",
+            border: "1px solid #cce5ff"
+          }}>
+            <p style={{ margin: 0, fontSize: "0.875rem", color: "#004085", fontWeight: 600 }}>Current Pricing:</p>
+            <p style={{ 
+              margin: "0.5rem 0 0 0", 
+              fontSize: "1.5rem", 
+              fontWeight: 700,
+              color: "#0066cc"
+            }}>
+              ${caseData.pricing_tier_amount || 349}
+            </p>
+            <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.875rem", color: "#666" }}>
+              {caseData.pricing_tier_name || 'Foundation Case Strategy'}
+            </p>
+          </div>
+
+          {/* Pricing Tier Dropdown */}
+          <div>
+            <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.875rem", fontWeight: 600, color: "#004085" }}>
+              Select Pricing Tier:
+            </label>
+            <select
+              value={pricingTier}
+              onChange={(e) => {
+                setPricingTier(e.target.value);
+                // Auto-set amount and name based on tier
+                const tiers: Record<string, { amount: number; name: string }> = {
+                  foundation: { amount: 349, name: 'Foundation Case Strategy' },
+                  premium: { amount: 997, name: 'Premium Case Architecture' },
+                  executive: { amount: 2500, name: 'Executive Case Buildout' },
+                  retainer: { amount: 297, name: 'Corporate Monthly Retainer' },
+                  custom: { amount: parseInt(customAmount) || 0, name: 'Custom Pricing' }
+                };
+                if (e.target.value !== 'custom') {
+                  setPricingAmount(tiers[e.target.value].amount.toString());
+                  setPricingName(tiers[e.target.value].name);
+                }
+              }}
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                fontSize: "1rem",
+                borderRadius: "4px",
+                border: "2px solid #cce5ff",
+                backgroundColor: "#fff",
+                color: "#212529"
+              }}
+            >
+              <option value="foundation">$349 - Foundation Case Strategy</option>
+              <option value="premium">$997 - Premium Case Architecture</option>
+              <option value="executive">$2,500 - Executive Case Buildout</option>
+              <option value="retainer">$297/mo - Corporate Retainer</option>
+              <option value="custom">Custom Amount</option>
+            </select>
+          </div>
+
+          {/* Custom Amount Input */}
+          {pricingTier === 'custom' && (
+            <div>
+              <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.875rem", fontWeight: 600, color: "#004085" }}>
+                Custom Amount ($):
+              </label>
+              <input
+                type="number"
+                value={customAmount}
+                onChange={(e) => {
+                  setCustomAmount(e.target.value);
+                  setPricingAmount(e.target.value);
+                }}
+                placeholder="Enter custom amount"
+                style={{
+                  width: "100%",
+                  padding: "0.75rem",
+                  fontSize: "1rem",
+                  borderRadius: "4px",
+                  border: "2px solid #cce5ff",
+                  backgroundColor: "#fff",
+                  color: "#212529"
+                }}
+              />
+            </div>
+          )}
+
+          {/* Save Pricing Button */}
+          <button
+            onClick={async () => {
+              try {
+                const token = localStorage.getItem('admin_session');
+                await axios.patch(
+                  `${API_URL}/api/case/${params?.id}/status`,
+                  {
+                    pricing_tier: pricingTier,
+                    pricing_tier_amount: parseInt(pricingAmount),
+                    pricing_tier_name: pricingName
+                  },
+                  { headers: { Authorization: `Bearer ${token}` } }
+                );
+                alert('Pricing tier updated successfully!');
+                window.location.reload();
+              } catch (err: any) {
+                alert(err.response?.data?.message || 'Failed to update pricing tier');
+              }
+            }}
+            style={{
+              padding: "1rem",
+              backgroundColor: "#0066cc",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "1rem",
+              fontWeight: 600,
+              width: "100%"
+            }}
+          >
+            💾 Save Pricing Tier
           </button>
         </div>
       </div>
