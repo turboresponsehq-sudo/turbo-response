@@ -63,6 +63,10 @@ export default function PaymentPage() {
         payment_method: selectedMethod
       });
       setSuccess(true);
+      // Redirect to client portal after 2 seconds
+      setTimeout(() => {
+        setLocation(`/client/case/${params?.caseId}`);
+      }, 2000);
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to submit payment confirmation");
     } finally {
@@ -141,7 +145,7 @@ export default function PaymentPage() {
             Thank you! Your payment confirmation has been submitted. Our team will verify your payment and activate your case within 24 hours.
           </p>
           <p style={{ color: "#6c757d", lineHeight: 1.6, marginTop: "1.5rem" }}>
-            You will receive an email with your client portal login credentials once payment is verified.
+            Redirecting you to your client portal...
           </p>
           <p style={{ 
             marginTop: "2rem", 
