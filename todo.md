@@ -593,4 +593,4 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 - [ ] Test: Admin assigns Custom amount → Payment page shows custom amount
 - [ ] Test: Client portal displays correct tier name and amount
 
-- [ ] Fix Pricing page to use correct brand colors (dark navy/gray background with cyan accents instead of purple)
+- [x] Fix Pricing page to use correct brand colors (dark navy/gray background with cyan accents instead of purple)
