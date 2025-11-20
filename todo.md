@@ -716,3 +716,11 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 - [x] Add visual badge indicator to admin case list
 - [x] Style badge with count number (e.g., "3 new")
 - [x] Test badge appears/disappears correctly
+
+
+## 📍 INTEGRATE MESSAGING INTO CASE DETAIL PAGE
+- [x] Verify AdminMessaging component is in AdminCaseDetail.tsx
+- [x] Move messaging panel to position right after Case Info section
+- [x] Ensure messaging is visible without scrolling excessively
+- [ ] Test integrated view
+- [ ] Deploy changes
