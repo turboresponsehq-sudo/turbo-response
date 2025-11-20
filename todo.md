@@ -392,3 +392,56 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 - [ ] Deploy to Render
 - [ ] Verify production PDF conversion works
 - [ ] Create QA testing guide
+
+
+## 🚀 CLIENT PORTAL SYSTEM (Added 2025-11-19)
+
+### Database & Backend
+- [x] Database migration - Add client portal columns (client_status, client_notes, payment_link, portal_enabled)
+- [x] Backend authentication controller (clientAuthController.js)
+- [x] Client authentication middleware (clientAuth.js)
+- [x] Client API routes (/api/client/login, /api/client/verify, /api/client/case/:id, /api/client/logout)
+- [x] Cookie-parser middleware installed and configured
+- [x] Migration file created (003_add_client_portal_columns.mjs)
+- [x] Backend case controller - Update to handle client portal fields
+- [x] Admin case query - Include client portal fields
+
+### Admin UI Enhancements
+- [x] Client portal settings card in case detail page
+- [x] Portal enabled toggle
+- [x] Client-facing status input
+- [x] Client notes textarea
+- [x] Payment link input
+- [x] Save portal settings button
+
+### Client Portal Frontend
+- [x] Client login page (/client/login) - Email + Case ID authentication
+- [x] Client login page - Verification code entry (6-digit)
+- [x] Client portal dashboard (/client/case/:id) - Case status display
+- [x] Client portal dashboard - Admin notes display
+- [x] Client portal dashboard - Document list with view buttons
+- [x] Client portal dashboard - File upload functionality
+- [x] Client portal dashboard - Payment link button (conditional)
+- [x] Client portal dashboard - Logout functionality
+- [x] Frontend routes registered in App.tsx
+
+### Testing & Deployment
+- [x] Test file created (tests/client-auth.test.js)
+- [ ] Run database migration on production (003_add_client_portal_columns.mjs)
+- [ ] Test email verification code delivery
+- [ ] Test client login flow end-to-end
+- [ ] Test admin portal settings save
+- [ ] Test client file upload
+- [ ] Test payment link display
+- [ ] Verify mobile responsiveness
+
+### Future Enhancements
+- [ ] Redis integration for verification code storage (currently in-memory)
+- [ ] Client portal analytics (track logins, document views)
+- [ ] SMS verification option (alternative to email)
+- [ ] Client notification system (email alerts for status updates)
+- [ ] Multi-language support for client portal
+- [ ] Client portal mobile app
+- [ ] Password reset flow for clients
+- [ ] Client case history view
+- [ ] Client messaging system (chat with admin)

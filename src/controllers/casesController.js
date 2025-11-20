@@ -151,6 +151,7 @@ const getAdminCaseById = async (req, res, next) => {
         c.id, c.user_id, c.case_number, c.category, c.status,
         c.full_name, c.email, c.phone, c.address,
         c.case_details, c.amount, c.deadline, c.documents,
+        c.client_status, c.client_notes, c.payment_link, c.portal_enabled,
         c.created_at, c.updated_at,
         a.violations, a.laws_cited, a.recommended_actions,
         a.urgency_level, a.estimated_value, a.success_probability,
@@ -213,7 +214,7 @@ const getAdminCaseById = async (req, res, next) => {
 const updateCaseStatus = async (req, res, next) => {
   try {
     const caseId = parseInt(req.params.id);
-    const { status } = req.body;
+    const { status, client_status, client_notes, payment_link, portal_enabled } = req.body;
 
     if (isNaN(caseId)) {
       return res.status(400).json({
@@ -279,11 +280,43 @@ const updateCaseStatus = async (req, res, next) => {
       });
     }
 
-    // Update status
-    await query(
-      'UPDATE cases SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
-      [status, caseId]
-    );
+    // Build dynamic UPDATE query for all provided fields
+    const updates = [];
+    const values = [];
+    let paramCount = 1;
+
+    if (status !== undefined) {
+      updates.push(`status = $${paramCount++}`);
+      values.push(status);
+    }
+    if (client_status !== undefined) {
+      updates.push(`client_status = $${paramCount++}`);
+      values.push(client_status);
+    }
+    if (client_notes !== undefined) {
+      updates.push(`client_notes = $${paramCount++}`);
+      values.push(client_notes);
+    }
+    if (payment_link !== undefined) {
+      updates.push(`payment_link = $${paramCount++}`);
+      values.push(payment_link);
+    }
+    if (portal_enabled !== undefined) {
+      updates.push(`portal_enabled = $${paramCount++}`);
+      values.push(portal_enabled);
+    }
+
+    // Always update timestamp
+    updates.push('updated_at = CURRENT_TIMESTAMP');
+    values.push(caseId);
+
+    // Execute update if there are fields to update
+    if (updates.length > 1) { // More than just updated_at
+      await query(
+        `UPDATE cases SET ${updates.join(', ')} WHERE id = $${paramCount}`,
+        values
+      );
+    }
 
     logger.info('Case status updated', {
       caseId,
