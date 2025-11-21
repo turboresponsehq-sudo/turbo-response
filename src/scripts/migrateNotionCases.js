@@ -5,7 +5,6 @@
  * Usage: node src/scripts/migrateNotionCases.js
  */
 
-const { Client } = require('@notionhq/client');
 const { query } = require('../services/database/db');
 const axios = require('axios');
 const fs = require('fs');
@@ -17,11 +16,7 @@ const NOTION_DATABASE_ID = '27b5fd7e0bd580e09b1aff26ae100b82';
 const CLIENT_EMAIL = 'collinsdemarcus4@gmail.com';
 const CLIENT_NAME = 'Demarcus Collins';
 const CLIENT_PHONE = '404-759-9635';
-
-// Initialize Notion client
-const notion = new Client({
-  auth: process.env.NOTION_API_KEY
-});
+const NOTION_VERSION = '2022-06-28';
 
 // Case type mapping: Notion → Website
 const CASE_TYPE_MAP = {
@@ -41,6 +36,29 @@ function generateCaseNumber() {
   const timestamp = Date.now().toString().slice(-8);
   const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
   return `TR-60025193-${random}`;
+}
+
+/**
+ * Query Notion database using REST API
+ */
+async function queryNotionDatabase() {
+  try {
+    const response = await axios.post(
+      `https://api.notion.com/v1/databases/${NOTION_DATABASE_ID}/query`,
+      {},
+      {
+        headers: {
+          'Authorization': `Bearer ${process.env.NOTION_API_KEY}`,
+          'Notion-Version': NOTION_VERSION,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    return response.data.results;
+  } catch (error) {
+    console.error('Error querying Notion:', error.response?.data || error.message);
+    throw error;
+  }
 }
 
 /**
@@ -127,8 +145,8 @@ async function processCase(page) {
   const priority = extractSelect(properties['Priority']?.select);
   const status = extractSelect(properties['Status']?.select);
   const nextSteps = extractText(properties['Next steps']?.rich_text);
-  const email = extractText(properties['Email']?.email) || CLIENT_EMAIL;
-  const phone = extractText(properties['Phone number']?.phone_number) || CLIENT_PHONE;
+  const email = extractText(properties['Email']?.rich_text) || CLIENT_EMAIL;
+  const phone = extractText(properties['Phone number']?.rich_text) || CLIENT_PHONE;
   const deadline = extractDate(properties['Deadline']?.date);
   const createdDate = extractDate(properties['Date']?.date) || new Date().toISOString();
   
@@ -160,7 +178,11 @@ async function processCase(page) {
     }
     
     // Clean up temp file
-    fs.unlinkSync(localPath);
+    try {
+      fs.unlinkSync(localPath);
+    } catch (e) {
+      // Ignore cleanup errors
+    }
   }
   
   // Generate case number
@@ -218,15 +240,13 @@ async function migrate() {
   try {
     // Query Notion database
     console.log('📥 Fetching cases from Notion...');
-    const response = await notion.databases.query({
-      database_id: NOTION_DATABASE_ID
-    });
+    const pages = await queryNotionDatabase();
     
-    console.log(`✓ Found ${response.results.length} cases\n`);
+    console.log(`✓ Found ${pages.length} cases\n`);
     
     // Process each case
     const migratedCases = [];
-    for (const page of response.results) {
+    for (const page of pages) {
       try {
         const caseData = await processCase(page);
         migratedCases.push(caseData);
