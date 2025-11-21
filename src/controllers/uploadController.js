@@ -7,18 +7,40 @@ const logger = require('../utils/logger');
  */
 const uploadSingleFile = async (req, res, next) => {
   try {
+    logger.info('📤 Upload request received', {
+      hasFile: !!req.file,
+      headers: req.headers,
+      contentType: req.headers['content-type'],
+      userAgent: req.headers['user-agent']
+    });
+
     if (!req.file) {
+      logger.error('❌ No file in request');
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
     const { buffer, originalname, mimetype } = req.file;
+    
+    logger.info('📁 File received', {
+      originalname,
+      mimetype,
+      size: buffer.length,
+      sizeKB: (buffer.length / 1024).toFixed(2)
+    });
 
     // Convert to PDF
     logger.info('Converting file to PDF', { originalname, mimetype });
     const { pdfBuffer, filename } = await convertToPDF(buffer, mimetype, originalname);
     
-    // Upload PDF to S3
+    // Upload PDF to storage
+    logger.info('☁️ Uploading to storage', { filename });
     const fileUrl = await uploadFile(pdfBuffer, filename, 'application/pdf');
+    
+    logger.info('✅ Upload successful', {
+      fileUrl,
+      isLocalhost: fileUrl.includes('localhost'),
+      isProduction: fileUrl.includes('onrender.com')
+    });
 
     logger.info('File uploaded successfully', {
       originalName: originalname,
@@ -34,8 +56,18 @@ const uploadSingleFile = async (req, res, next) => {
       file_size: pdfBuffer.length
     });
   } catch (error) {
-    logger.error('Upload error', { error: error.message });
-    next(error);
+    logger.error('❌ Upload error', {
+      error: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+    
+    // Return detailed error to client
+    res.status(500).json({
+      error: 'Upload failed',
+      message: error.message,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 };
 
