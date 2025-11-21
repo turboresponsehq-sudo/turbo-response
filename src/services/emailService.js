@@ -189,7 +189,46 @@ async function sendPaymentConfirmationNotification(paymentData) {
   }
 }
 
+/**
+ * Generic send email function
+ * @param {Object} options - Email options {to, subject, html, text}
+ */
+async function sendEmail(options) {
+  const transport = getTransporter();
+  
+  if (!transport) {
+    logger.warn('Email transporter not available. Skipping email.');
+    return false;
+  }
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: options.to,
+    subject: options.subject,
+    html: options.html || undefined,
+    text: options.text || undefined,
+  };
+
+  try {
+    const info = await transport.sendMail(mailOptions);
+    logger.info('Email sent successfully', {
+      to: options.to,
+      subject: options.subject,
+      messageId: info.messageId,
+    });
+    return true;
+  } catch (error) {
+    logger.error('Failed to send email', {
+      error: error.message,
+      to: options.to,
+      subject: options.subject,
+    });
+    return false;
+  }
+}
+
 module.exports = {
+  sendEmail,
   sendNewCaseNotification,
   sendPaymentConfirmationNotification,
 };
