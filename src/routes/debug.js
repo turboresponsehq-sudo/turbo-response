@@ -53,4 +53,25 @@ router.get('/debug/login-test/:caseNumber/:email', async (req, res) => {
   }
 });
 
+// GET /api/debug/case-full/:id - Get full case data by ID
+router.get('/debug/case-full/:id', async (req, res) => {
+  try {
+    const result = await query(
+      'SELECT * FROM cases WHERE id = $1',
+      [req.params.id]
+    );
+    
+    res.json({
+      success: true,
+      found: result.rows.length > 0,
+      case: result.rows[0] || null
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;
