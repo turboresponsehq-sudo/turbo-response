@@ -29,10 +29,43 @@ const upload = multer({
   }
 });
 
+// Error handler for multer errors
+const handleMulterError = (err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    // Multer-specific errors
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({
+        error: 'File too large',
+        message: 'File size exceeds 10MB limit',
+        code: err.code
+      });
+    }
+    if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+      return res.status(400).json({
+        error: 'Unexpected field',
+        message: 'Unexpected file field in upload',
+        code: err.code
+      });
+    }
+    return res.status(400).json({
+      error: 'Upload error',
+      message: err.message,
+      code: err.code
+    });
+  } else if (err) {
+    // Other errors (e.g., file type validation)
+    return res.status(400).json({
+      error: 'Upload error',
+      message: err.message
+    });
+  }
+  next();
+};
+
 // POST /api/upload/single - Upload single file
-router.post('/single', upload.single('file'), uploadSingleFile);
+router.post('/single', upload.single('file'), handleMulterError, uploadSingleFile);
 
 // POST /api/upload/multiple - Upload multiple files
-router.post('/multiple', upload.array('files', 5), uploadMultipleFiles);
+router.post('/multiple', upload.array('files', 5), handleMulterError, uploadMultipleFiles);
 
 module.exports = router;

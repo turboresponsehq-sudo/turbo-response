@@ -815,3 +815,24 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 - [ ] Fix authentication or endpoint issue
 - [ ] Deploy fix to production
 - [ ] Test client portal upload end-to-end
+
+
+## 🚨 CRITICAL: MOBILE UPLOAD FIX - PRODUCTION BLOCKER
+
+### Chief's Requirements
+1. [ ] Add detailed error logging to uploadController.js
+2. [ ] Verify BACKEND_URL is being used (never falls back to localhost)
+3. [ ] Print BACKEND_URL value during upload for confirmation
+4. [ ] Check Multer file size limits for mobile compatibility
+5. [ ] Verify mobile MIME types are accepted
+6. [ ] Ensure CORS configured for mobile file uploads
+7. [ ] Fix file URLs to point to https://turbo-response-backend.onrender.com/uploads/...
+8. [ ] Test upload from desktop (working baseline)
+9. [ ] Test upload from Android (currently failing)
+10. [ ] Confirm both work before deployment
+11. [ ] Document final patch and explanation
+
+### Current Status
+- Desktop upload: ✅ Working
+- Mobile upload: ❌ "Upload failed" error
+- File URLs: ❌ Showing localhost:5000 instead of production URL

@@ -30,15 +30,35 @@ const uploadFile = async (fileBuffer, fileName, mimeType) => {
     const filePath = path.join(UPLOADS_DIR, uniqueFileName);
     fs.writeFileSync(filePath, fileBuffer);
     
-    // Return public URL (Railway backend URL + /uploads/filename)
-    const baseUrl = process.env.BACKEND_URL || 'http://localhost:5000';
+    // CRITICAL: Never fall back to localhost - throw error if BACKEND_URL not set
+    const baseUrl = process.env.BACKEND_URL;
+    
+    if (!baseUrl) {
+      logger.error('❌ BACKEND_URL environment variable not set!');
+      throw new Error('BACKEND_URL environment variable is required for file uploads');
+    }
+    
+    if (baseUrl.includes('localhost')) {
+      logger.error('⚠️ BACKEND_URL contains localhost!', { baseUrl });
+      throw new Error('BACKEND_URL must not contain localhost in production');
+    }
+    
     const fileUrl = `${baseUrl}/uploads/${uniqueFileName}`;
     
-    logger.info('File uploaded locally', {
+    logger.info('🔗 Generated file URL', {
+      baseUrl,
+      uniqueFileName,
+      fileUrl,
+      env: process.env.NODE_ENV
+    });
+    
+    logger.info('✅ File uploaded locally', {
       fileName: uniqueFileName,
       originalName: fileName,
       size: fileBuffer.length,
-      path: filePath
+      sizeKB: (fileBuffer.length / 1024).toFixed(2),
+      path: filePath,
+      url: fileUrl
     });
 
     return fileUrl;
