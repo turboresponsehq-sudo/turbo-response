@@ -878,3 +878,40 @@ Provides legal proof that client agreed to no-refund policy with timestamp and I
 - [ ] Update authorization middleware to allow clients to update their own cases
 - [ ] Test PATCH request from client portal
 - [ ] Verify document URLs save correctly
+
+
+## 🔄 NOTION MIGRATION - Demarcus Collins Personal Cases
+
+### Phase 1: Setup & Connection
+- [ ] Install @notionhq/client package
+- [ ] Create migration script at src/scripts/migrateNotionCases.js
+- [ ] Test Notion API connection with NOTION_API_KEY
+- [ ] Verify database ID: 27b5fd7e0bd580e09b1aff26ae100b82
+
+### Phase 2: Document Handling
+- [ ] Build function to download Notion file attachments
+- [ ] Implement S3 upload for downloaded documents
+- [ ] Generate production URLs for uploaded files
+
+### Phase 3: Data Mapping
+- [ ] Map Notion fields to PostgreSQL schema
+- [ ] Handle case type conversion (Credit→Debt Collection, etc.)
+- [ ] Set client info (Demarcus Collins, collinsdemarcus4@gmail.com, 404-759-9635)
+- [ ] Generate case numbers (TR-XXXXXXX-XXX format)
+
+### Phase 4: Testing
+- [ ] Test migration on 1 case first
+- [ ] Verify all fields populated correctly
+- [ ] Verify documents uploaded and linked
+- [ ] Check client portal access
+
+### Phase 5: Full Migration
+- [ ] Run migration for all 5 cases
+- [ ] Log results and any errors
+- [ ] Verify all cases in database
+
+### Phase 6: Verification
+- [ ] Test client portal login (collinsdemarcus4@gmail.com)
+- [ ] Verify all 5 cases visible
+- [ ] Verify documents viewable
+- [ ] Generate completion report

@@ -22,6 +22,9 @@ importers:
       '@aws-sdk/s3-request-presigner':
         specifier: ^3.693.0
         version: 3.933.0
+      '@notionhq/client':
+        specifier: ^5.4.0
+        version: 5.4.0
       '@radix-ui/react-accordion':
         specifier: ^1.2.12
         version: 1.2.12(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -1193,6 +1196,10 @@ packages:
 
   '@medv/finder@4.0.2':
     resolution: {integrity: sha512-RraNY9SCcx4KZV0Dh6BEW6XEW2swkqYca74pkFFRw6hHItSHiy+O/xMnpbofjYbzXj0tSpBGthUF1hHTsr3vIQ==}
+
+  '@notionhq/client@5.4.0':
+    resolution: {integrity: sha512-SJsprS26S0Wi9CoTQp4vC8/nPpAIo1gMB4H7aJ2E/k0fWnNGIEAg984KwtzK6h9ZGaPcEaryVRSz1VVClJcVUw==}
+    engines: {node: '>=18'}
 
   '@pdf-lib/standard-fonts@1.0.0':
     resolution: {integrity: sha512-hU30BK9IUN/su0Mn9VdlVKsWBS6GyhVfqjwl1FjZN4TxP6cCw0jP2w7V3Hf5uX7M0AZJ16vey9yE0ny7Sa59ZA==}
@@ -5316,6 +5323,8 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.5
 
   '@medv/finder@4.0.2': {}
+
+  '@notionhq/client@5.4.0': {}
 
   '@pdf-lib/standard-fonts@1.0.0':
     dependencies:
