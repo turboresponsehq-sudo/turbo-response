@@ -765,4 +765,4 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 
 ## 🐛 UI BUG FIXES
 
-- [x] Fix invisible text in client portal login input fields (text color matches background)
+- [x] Fix invisible text in client portal login input fields - changed to BLACK (#000000) (text color matches background)
