@@ -23,4 +23,34 @@ router.get('/debug/cases/:email', async (req, res) => {
   }
 });
 
+// GET /api/debug/login-test/:caseNumber/:email - Test login query
+router.get('/debug/login-test/:caseNumber/:email', async (req, res) => {
+  try {
+    const { caseNumber, email } = req.params;
+    const emailLower = email.toLowerCase();
+    
+    const result = await query(
+      'SELECT id, case_number, email, portal_enabled FROM cases WHERE case_number = $1 AND email = $2',
+      [caseNumber, emailLower]
+    );
+    
+    res.json({
+      success: true,
+      query: {
+        case_number: caseNumber,
+        email: emailLower,
+        sql: 'SELECT id, case_number, email, portal_enabled FROM cases WHERE case_number = $1 AND email = $2'
+      },
+      found: result.rows.length > 0,
+      count: result.rows.length,
+      case: result.rows[0] || null
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;
