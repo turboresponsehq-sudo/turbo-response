@@ -64,7 +64,8 @@ export default function ClientPortal() {
       formData.append('file', files[0]);
 
       const response = await axios.post(`${API_URL}/api/upload/single`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        withCredentials: true
+        // Don't set Content-Type manually - let axios set it with boundary
       });
 
       // Update case documents
