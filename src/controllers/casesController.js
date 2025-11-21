@@ -732,7 +732,12 @@ const updateCaseDocuments = async (req, res, next) => {
     const caseData = caseResult.rows[0];
     
     // Check if client owns this case
-    if (req.user.type === 'client' && req.user.email !== caseData.email) {
+    // Support both client auth (req.clientAuth) and regular user auth (req.user)
+    const userEmail = req.clientAuth?.email || req.user?.email;
+    const isClient = !!req.clientAuth || req.user?.type === 'client';
+    const isAdmin = req.user?.role === 'admin';
+    
+    if (isClient && !isAdmin && userEmail !== caseData.email) {
       return res.status(403).json({
         success: false,
         error: 'You can only update your own cases'
