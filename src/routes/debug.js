@@ -61,10 +61,25 @@ router.get('/debug/case-full/:id', async (req, res) => {
       [req.params.id]
     );
     
+    const caseData = result.rows[0];
+    let caseNumberAnalysis = null;
+    
+    if (caseData && caseData.case_number) {
+      const cn = caseData.case_number;
+      caseNumberAnalysis = {
+        value: cn,
+        length: cn.length,
+        charCodes: Array.from(cn).map(c => c.charCodeAt(0)),
+        trimmed: cn.trim(),
+        trimmedLength: cn.trim().length
+      };
+    }
+    
     res.json({
       success: true,
       found: result.rows.length > 0,
-      case: result.rows[0] || null
+      case: caseData || null,
+      caseNumberAnalysis
     });
   } catch (error) {
     res.status(500).json({
