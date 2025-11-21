@@ -23,7 +23,7 @@ async function requestLogin(req, res) {
 
     // Check if case exists and matches email
     const result = await db.query(
-      'SELECT id, case_number, email, portal_enabled FROM cases WHERE id = $1 AND email = $2',
+      'SELECT id, case_number, email, portal_enabled FROM cases WHERE case_number = $1 AND email = $2',
       [caseId, email.toLowerCase()]
     );
 
@@ -148,7 +148,7 @@ async function verifyCode(req, res) {
 
     // Get case data
     const result = await db.query(
-      'SELECT id, case_number, email, full_name FROM cases WHERE id = $1',
+      'SELECT id, case_number, email, full_name FROM cases WHERE case_number = $1',
       [caseId]
     );
 
