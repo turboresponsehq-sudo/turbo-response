@@ -836,3 +836,18 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 - Desktop upload: ✅ Working
 - Mobile upload: ❌ "Upload failed" error
 - File URLs: ❌ Showing localhost:5000 instead of production URL
+
+
+## 🛡️ CHARGEBACK PROTECTION: TERMS ACCEPTANCE TRACKING
+
+### Requirements
+- [ ] Create database migration to add terms_accepted_at and terms_accepted_ip columns
+- [ ] Add checkbox to intake form requiring terms acceptance
+- [ ] Link checkbox to existing /terms-of-service page
+- [ ] Capture client IP address on form submission
+- [ ] Store acceptance timestamp and IP in database
+- [ ] Test terms acceptance flow end-to-end
+- [ ] Deploy to production
+
+### Purpose
+Provides legal proof that client agreed to no-refund policy with timestamp and IP address for chargeback disputes.
