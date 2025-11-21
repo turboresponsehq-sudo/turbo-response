@@ -6,6 +6,7 @@ const {
   getAllCases,
   getAdminCaseById,
   updateCaseStatus,
+  updateCaseDocuments,
   runAIAnalysis,
   getAIAnalysis,
   deleteCase
@@ -54,5 +55,8 @@ router.get('/cases', authenticateToken, getMyCases);
 
 // GET /api/cases/:case_id - Get single case details
 router.get('/cases/:case_id', authenticateToken, getCaseById);
+
+// PATCH /api/case/:id/documents - Update case documents (client can update their own)
+router.patch('/case/:id/documents', authenticateToken, updateCaseDocuments);
 
 module.exports = router;
