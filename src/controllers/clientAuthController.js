@@ -22,12 +22,18 @@ async function requestLogin(req, res) {
     }
 
     // Check if case exists and matches email
+    const emailLower = email.toLowerCase();
+    console.log('[CLIENT AUTH] Login attempt:', { caseId, email: emailLower });
+    
     const result = await db.query(
       'SELECT id, case_number, email, portal_enabled FROM cases WHERE case_number = $1 AND email = $2',
-      [caseId, email.toLowerCase()]
+      [caseId, emailLower]
     );
+    
+    console.log('[CLIENT AUTH] Query result:', { rowCount: result.rows.length, rows: result.rows });
 
     if (result.rows.length === 0) {
+      console.log('[CLIENT AUTH] No case found for:', { caseId, email: emailLower });
       return res.status(404).json({
         success: false,
         message: 'No case found with that email and case ID'
