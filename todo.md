@@ -883,21 +883,21 @@ Provides legal proof that client agreed to no-refund policy with timestamp and I
 ## 🔄 NOTION MIGRATION - Demarcus Collins Personal Cases
 
 ### Phase 1: Setup & Connection
-- [ ] Install @notionhq/client package
-- [ ] Create migration script at src/scripts/migrateNotionCases.js
+- [x] Install @notionhq/client package
+- [x] Create migration script at src/scripts/migrateNotionCases.js
 - [ ] Test Notion API connection with NOTION_API_KEY
 - [ ] Verify database ID: 27b5fd7e0bd580e09b1aff26ae100b82
 
 ### Phase 2: Document Handling
-- [ ] Build function to download Notion file attachments
-- [ ] Implement S3 upload for downloaded documents
-- [ ] Generate production URLs for uploaded files
+- [x] Build function to download Notion file attachments
+- [x] Implement S3 upload for downloaded documents
+- [x] Generate production URLs for uploaded files
 
 ### Phase 3: Data Mapping
-- [ ] Map Notion fields to PostgreSQL schema
-- [ ] Handle case type conversion (Credit→Debt Collection, etc.)
-- [ ] Set client info (Demarcus Collins, collinsdemarcus4@gmail.com, 404-759-9635)
-- [ ] Generate case numbers (TR-XXXXXXX-XXX format)
+- [x] Map Notion fields to PostgreSQL schema
+- [x] Handle case type conversion (Credit→Debt Collection, etc.)
+- [x] Set client info (Demarcus Collins, collinsdemarcus4@gmail.com, 404-759-9635)
+- [x] Generate case numbers (TR-XXXXXXX-XXX format)
 
 ### Phase 4: Testing
 - [ ] Test migration on 1 case first

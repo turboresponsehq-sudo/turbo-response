@@ -8,7 +8,6 @@
 const { Client } = require('@notionhq/client');
 const { query } = require('../services/database/db');
 const axios = require('axios');
-const FormData = require('form-data');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -71,14 +70,17 @@ async function downloadNotionFile(url, filename) {
  */
 async function uploadToBackend(filePath) {
   try {
-    const formData = new FormData();
-    formData.append('file', fs.createReadStream(filePath));
+    const fileBuffer = fs.readFileSync(filePath);
+    const fileName = path.basename(filePath);
     
     const response = await axios.post(
       `${process.env.BACKEND_URL || 'http://localhost:10000'}/api/upload/single`,
-      formData,
+      fileBuffer,
       {
-        headers: formData.getHeaders()
+        headers: {
+          'Content-Type': 'application/octet-stream',
+          'X-File-Name': fileName
+        }
       }
     );
     
