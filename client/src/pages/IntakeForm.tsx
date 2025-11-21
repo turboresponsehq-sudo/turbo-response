@@ -31,6 +31,7 @@ export default function IntakeForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [caseNumber, setCaseNumber] = useState<string | null>(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -148,12 +149,23 @@ export default function IntakeForm() {
     setIsSubmitting(true);
 
     try {
+      // Capture client IP address for terms acceptance proof
+      let clientIP = null;
+      try {
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipResponse.json();
+        clientIP = ipData.ip;
+      } catch (ipError) {
+        console.warn('Failed to capture IP address:', ipError);
+        // Continue without IP - not critical
+      }
+
       // Get already-uploaded file URLs from state
       const documentUrls = uploadedFiles
         .filter(f => f.url) // Only include successfully uploaded files
         .map(f => f.url!);
 
-      // Submit intake form to backend with document URLs
+      // Submit intake form to backend with document URLs and terms acceptance
       const response = await api.post('/api/intake', {
         email: formData.email,
         full_name: formData.fullName,
@@ -164,6 +176,8 @@ export default function IntakeForm() {
         amount: formData.amount ? parseFloat(formData.amount) : null,
         deadline: formData.deadline || null,
         documents: documentUrls,
+        terms_accepted_at: new Date().toISOString(),
+        terms_accepted_ip: clientIP,
       });
 
       // Show success message
@@ -434,10 +448,60 @@ export default function IntakeForm() {
             </div>
           </div>
 
+          {/* Terms of Service Acceptance */}
+          <div className="form-section">
+            <div className="terms-acceptance" style={{
+              padding: '1.5rem',
+              backgroundColor: '#f9fafb',
+              border: '2px solid #e5e7eb',
+              borderRadius: '12px',
+              marginBottom: '1.5rem'
+            }}>
+              <label style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '0.75rem',
+                cursor: 'pointer',
+                fontSize: '0.95rem',
+                lineHeight: '1.6'
+              }}>
+                <input
+                  type="checkbox"
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  required
+                  style={{
+                    marginTop: '0.25rem',
+                    width: '18px',
+                    height: '18px',
+                    cursor: 'pointer',
+                    accentColor: '#10b981'
+                  }}
+                />
+                <span style={{ color: '#374151' }}>
+                  I agree to the{' '}
+                  <a
+                    href="/terms-of-service"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: '#10b981',
+                      textDecoration: 'underline',
+                      fontWeight: '600'
+                    }}
+                  >
+                    Terms of Service
+                  </a>
+                  {' '}and understand that all sales are final with no refunds.
+                </span>
+              </label>
+            </div>
+          </div>
+
           <button
             type="submit"
             className="submit-button"
-            disabled={!isFormComplete || isSubmitting}
+            disabled={!isFormComplete || isSubmitting || !termsAccepted}
           >
             {isSubmitting
               ? "🤖 AI Analyzing..."

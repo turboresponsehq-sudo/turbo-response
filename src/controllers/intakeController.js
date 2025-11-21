@@ -22,7 +22,9 @@ const submit = async (req, res, next) => {
       case_details,
       amount,
       deadline,
-      documents
+      documents,
+      terms_accepted_at,
+      terms_accepted_ip
     } = req.body;
 
     // DEBUG: Log received case_details
@@ -60,8 +62,9 @@ const submit = async (req, res, next) => {
     const result = await query(
       `INSERT INTO cases (
         user_id, case_number, category, email, full_name, phone, address, 
-        case_details, amount, deadline, documents, status, payment_status, funnel_stage
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+        case_details, amount, deadline, documents, status, payment_status, funnel_stage,
+        terms_accepted_at, terms_accepted_ip
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
       RETURNING id, case_number, category, status, created_at`,
       [
         req.user?.id || null,
@@ -77,7 +80,9 @@ const submit = async (req, res, next) => {
         JSON.stringify(documents || []),
         'Pending Review',
         'unpaid',
-        'Lead Submitted'
+        'Lead Submitted',
+        terms_accepted_at || null,
+        terms_accepted_ip || null
       ]
     );
 
