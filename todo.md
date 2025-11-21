@@ -768,3 +768,4 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 - [x] Fix invisible text in client portal login input fields - changed to BLACK (#000000) (text color matches background)
 
 - [x] Configure email service (Gmail SMTP) for client portal verification codes
+- [x] Fix client login to accept case_number instead of case id
