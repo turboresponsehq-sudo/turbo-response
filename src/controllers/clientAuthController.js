@@ -168,8 +168,8 @@ async function verifyCode(req, res) {
     // Set httpOnly cookie
     res.cookie('client_token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: true, // Always use secure in production
+      sameSite: 'none', // Allow cross-site cookies (frontend on different domain)
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
     });
 
