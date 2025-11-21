@@ -27,6 +27,7 @@ const resetAdminRoutes = require('./routes/resetAdmin'); // TEMPORARY - DELETE A
 const clientRoutes = require('./routes/client'); // Client portal authentication
 const messagingRoutes = require('./routes/messaging'); // Client-admin messaging
 const contractRoutes = require('./routes/contract'); // Contract signing
+const debugRoutes = require('./routes/debug'); // Debug/check endpoints
 // Brain routes disabled - not yet implemented
 
 const app = express();
@@ -90,6 +91,7 @@ app.use('/api', resetAdminRoutes); // TEMPORARY - DELETE AFTER USE (mounted on /
 app.use('/api/client', clientRoutes); // Client portal routes
 app.use('/api/case', messagingRoutes); // Messaging routes
 app.use('/api', contractRoutes); // Contract routes
+app.use('/api', debugRoutes); // Debug routes
 // app.use('/api/brain', brainRoutes); // Disabled - not yet implemented
 
 // Serve frontend static files and SPA fallback
