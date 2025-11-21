@@ -13,6 +13,7 @@ const {
 } = require('../controllers/casesController');
 const { verifyPayment } = require('../controllers/paymentVerificationController');
 const { authenticateToken } = require('../middleware/auth');
+const { authenticateClient } = require('../middleware/clientAuth');
 
 /**
  * Middleware to check if user is admin
@@ -57,6 +58,6 @@ router.get('/cases', authenticateToken, getMyCases);
 router.get('/cases/:case_id', authenticateToken, getCaseById);
 
 // PATCH /api/case/:id/documents - Update case documents (client can update their own)
-router.patch('/case/:id/documents', authenticateToken, updateCaseDocuments);
+router.patch('/case/:id/documents', authenticateClient, updateCaseDocuments);
 
 module.exports = router;
