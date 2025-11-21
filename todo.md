@@ -773,3 +773,24 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 - [x] Fix 401 Unauthorized - changed sameSite from strict to none for cross-domain cookies
 - [x] Add client confirmation email after case submission with case number and portal link
 - [x] Portal toggle already exists - was just hard to see
+- [ ] Fix client confirmation email going to admin instead of client
+
+
+## 🚨 CLIENT PORTAL PAYMENT VERIFICATION BUG
+
+### Issue
+- Admin marks payment as verified → database updates correctly (payment_verified = true, funnel_stage = "Active Case")
+- Client portal still shows "Payment Required" screen
+- Client cannot access case details even after payment verification
+
+### Root Cause
+- getClientCase() API endpoint (clientAuthController.js line 211-234) does NOT select payment_verified or funnel_stage fields
+- Client portal checks caseData.payment_verified (ClientPortal.tsx line 162)
+- Since field is missing from API response, it's undefined → evaluates to false → shows payment required screen
+
+### Fix Required
+- [ ] Add payment_verified to SELECT query in getClientCase() (line 211-234)
+- [ ] Add funnel_stage to SELECT query in getClientCase()
+- [ ] Test client portal access after admin marks payment as verified
+- [ ] Deploy fix to production
+- [ ] Verify end-to-end flow: mark paid → client refreshes → portal unlocks
