@@ -68,7 +68,7 @@ export default function ClientPortal() {
       });
 
       // Update case documents
-      const updatedDocuments = [...(caseData.documents || []), response.data.url];
+      const updatedDocuments = [...(caseData.documents || []), response.data.file_url];
       
       // Update case in database
       await axios.patch(

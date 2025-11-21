@@ -794,3 +794,24 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 - [ ] Test client portal access after admin marks payment as verified
 - [ ] Deploy fix to production
 - [ ] Verify end-to-end flow: mark paid → client refreshes → portal unlocks
+
+
+## 🚨 CLIENT PORTAL DOCUMENT UPLOAD FAILURE
+
+### Issue
+- Client clicks "📎 Upload Document" in client portal
+- File picker opens and client selects file
+- Upload shows "Upload failed" error in red text
+- Document does not appear in documents list
+
+### Root Cause
+- TBD - need to check upload endpoint and client-side code
+
+### Fix Required
+- [ ] Check ClientPortal.tsx handleFileUpload function (line 55-87)
+- [ ] Verify POST /api/upload/single endpoint exists and works
+- [ ] Check if authentication is required for upload endpoint
+- [ ] Test upload endpoint directly with curl/Postman
+- [ ] Fix authentication or endpoint issue
+- [ ] Deploy fix to production
+- [ ] Test client portal upload end-to-end
