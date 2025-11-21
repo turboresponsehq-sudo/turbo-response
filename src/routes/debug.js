@@ -89,4 +89,24 @@ router.get('/debug/case-full/:id', async (req, res) => {
   }
 });
 
+// GET /api/debug/all-cases - List all case numbers
+router.get('/debug/all-cases', async (req, res) => {
+  try {
+    const result = await query(
+      'SELECT id, case_number, email, full_name, category, portal_enabled FROM cases ORDER BY id'
+    );
+    
+    res.json({
+      success: true,
+      count: result.rows.length,
+      cases: result.rows
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;
