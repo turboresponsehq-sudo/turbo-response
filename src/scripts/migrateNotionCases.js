@@ -201,11 +201,9 @@ async function processCase(page) {
       documents,
       funnel_stage,
       client_notes,
-      priority,
-      deadline,
       created_at,
       portal_enabled
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
     RETURNING id, case_number
   `, [
     caseNumber,
@@ -218,8 +216,6 @@ async function processCase(page) {
     JSON.stringify(documents),
     status || 'Lead Submitted',
     nextSteps || '',
-    priority || 'Medium',
-    deadline,
     createdDate,
     true // Enable portal access
   ]);
