@@ -105,10 +105,11 @@ async function processCase(page) {
       case_details,
       documents,
       funnel_stage,
+      status,
       client_notes,
       created_at,
       portal_enabled
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
     RETURNING id, case_number
   `, [
     caseNumber,
@@ -120,6 +121,7 @@ async function processCase(page) {
     nextSteps || `${caseType} case - migrated from Notion`,
     JSON.stringify([]), // documents - skip file downloads for now
     'Lead Submitted',
+    'Pending Review', // status - must match CHECK constraint
     nextSteps || '',
     createdDate,
     true // Enable portal access
