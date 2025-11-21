@@ -762,3 +762,7 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 - [x] Add PDF download for signed contracts
 - [ ] Test complete flow
 - [ ] Deploy changes
+
+## 🐛 UI BUG FIXES
+
+- [x] Fix invisible text in client portal login input fields (text color matches background)
