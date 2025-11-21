@@ -73,7 +73,7 @@ export default function ClientPortal() {
       
       // Update case in database
       await axios.patch(
-        `${API_URL}/api/case/${params?.id}`,
+        `${API_URL}/api/case/${params?.id}/documents`,
         { documents: updatedDocuments },
         { withCredentials: true }
       );

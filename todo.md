@@ -863,5 +863,18 @@ Provides legal proof that client agreed to no-refund policy with timestamp and I
 ### Fix
 - [x] Update upload controller to use ${process.env.BACKEND_URL}/uploads/${filename}
 - [x] Set BACKEND_URL=https://turbo-response-backend.onrender.com in Render
-- [ ] Update database to replace localhost URLs with production URLs
-- [ ] Test document viewer
+- [x] Update database to replace localhost URLs with production URLs (migration 007)
+- [ ] Test document viewer after deployment
+
+
+## 🚨 CRITICAL: CLIENT CASE UPDATE AUTHORIZATION
+
+### Issue
+- PATCH /api/case/:id returns 401 Unauthorized for clients
+- Uploaded file URLs never get saved to database
+- "Upload failed" message persists even though upload succeeds
+
+### Fix
+- [ ] Update authorization middleware to allow clients to update their own cases
+- [ ] Test PATCH request from client portal
+- [ ] Verify document URLs save correctly

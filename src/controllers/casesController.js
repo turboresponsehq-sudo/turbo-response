@@ -703,12 +703,78 @@ const deleteCase = async (req, res, next) => {
   }
 };
 
+// Update case documents (client only)
+const updateCaseDocuments = async (req, res, next) => {
+  try {
+    const caseId = parseInt(req.params.id);
+    const { documents } = req.body;
+
+    if (isNaN(caseId)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid case ID'
+      });
+    }
+
+    // Verify case belongs to client
+    const caseResult = await query(
+      'SELECT id, email FROM cases WHERE id = $1',
+      [caseId]
+    );
+
+    if (caseResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'Case not found'
+      });
+    }
+
+    const caseData = caseResult.rows[0];
+    
+    // Check if client owns this case
+    if (req.user.type === 'client' && req.user.email !== caseData.email) {
+      return res.status(403).json({
+        success: false,
+        error: 'You can only update your own cases'
+      });
+    }
+
+    // Update documents
+    await query(
+      'UPDATE cases SET documents = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
+      [JSON.stringify(documents), caseId]
+    );
+
+    logger.info('Case documents updated', {
+      caseId,
+      documentCount: documents.length,
+      userId: req.user.id || req.user.email
+    });
+
+    res.json({
+      success: true,
+      message: 'Documents updated successfully'
+    });
+  } catch (error) {
+    logger.error('Failed to update case documents', {
+      error: error.message,
+      caseId: req.params.id
+    });
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to update case documents',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   getMyCases,
   getCaseById,
   getAllCases,
   getAdminCaseById,
   updateCaseStatus,
+  updateCaseDocuments,
   runAIAnalysis,
   getAIAnalysis,
   deleteCase
