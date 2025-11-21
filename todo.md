@@ -841,13 +841,27 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 ## 🛡️ CHARGEBACK PROTECTION: TERMS ACCEPTANCE TRACKING
 
 ### Requirements
-- [ ] Create database migration to add terms_accepted_at and terms_accepted_ip columns
-- [ ] Add checkbox to intake form requiring terms acceptance
-- [ ] Link checkbox to existing /terms-of-service page
-- [ ] Capture client IP address on form submission
-- [ ] Store acceptance timestamp and IP in database
+- [x] Create database migration to add terms_accepted_at and terms_accepted_ip columns
+- [x] Add checkbox to intake form requiring terms acceptance
+- [x] Link checkbox to existing /terms-of-service page
+- [x] Capture client IP address on form submission
+- [x] Store acceptance timestamp and IP in database
 - [ ] Test terms acceptance flow end-to-end
 - [ ] Deploy to production
 
 ### Purpose
 Provides legal proof that client agreed to no-refund policy with timestamp and IP address for chargeback disputes.
+
+
+## 🚨 CRITICAL: FILE UPLOAD URL FIX
+
+### Issue
+- ✅ Backend now generates production URLs correctly
+- ❌ Old documents in database still have localhost:5000 URLs
+- Document viewer broken for old uploads
+
+### Fix
+- [x] Update upload controller to use ${process.env.BACKEND_URL}/uploads/${filename}
+- [x] Set BACKEND_URL=https://turbo-response-backend.onrender.com in Render
+- [ ] Update database to replace localhost URLs with production URLs
+- [ ] Test document viewer
