@@ -227,8 +227,103 @@ async function sendEmail(options) {
   }
 }
 
+/**
+ * Send case confirmation email to client
+ * @param {Object} caseData - Case information
+ */
+async function sendClientCaseConfirmation(caseData) {
+  const transport = getTransporter();
+  
+  if (!transport) {
+    logger.warn('Email transporter not available. Skipping client confirmation.');
+    return false;
+  }
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: caseData.email,
+    subject: `✅ Case Submitted Successfully - ${caseData.case_number}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #06b6d4, #0284c7); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+          <h1 style="color: white; margin: 0; font-size: 28px;">⚡ Turbo Response HQ</h1>
+          <p style="color: #e0f2fe; margin: 10px 0 0 0;">Consumer Defense Platform</p>
+        </div>
+
+        <div style="background-color: #f8fafc; padding: 30px; border-radius: 0 0 8px 8px;">
+          <h2 style="color: #0f172a; margin-top: 0;">Thank You, ${caseData.full_name}!</h2>
+          <p style="color: #475569; font-size: 16px; line-height: 1.6;">
+            Your case has been successfully submitted and is now under review by our legal team.
+          </p>
+
+          <div style="background-color: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #06b6d4;">
+            <h3 style="margin-top: 0; color: #0f172a;">📋 Your Case Information</h3>
+            <p style="margin: 8px 0;"><strong>Case Number:</strong> <span style="color: #06b6d4; font-size: 18px; font-weight: bold;">${caseData.case_number}</span></p>
+            <p style="margin: 8px 0;"><strong>Category:</strong> ${caseData.category.charAt(0).toUpperCase() + caseData.category.slice(1)}</p>
+            <p style="margin: 8px 0; color: #64748b; font-size: 14px;">⚠️ Save this case number - you'll need it to access your client portal</p>
+          </div>
+
+          <div style="background-color: #dbeafe; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #0f172a;">🔐 Access Your Client Portal</h3>
+            <p style="color: #475569; margin-bottom: 15px;">Track your case status, communicate with our team, and upload documents securely:</p>
+            <a href="https://turboresponsehq.ai/client/login" 
+               style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #06b6d4, #0284c7); color: white; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">
+              Access Client Portal →
+            </a>
+            <p style="color: #64748b; font-size: 14px; margin-top: 15px;">You'll need your email address and case number (${caseData.case_number}) to log in.</p>
+          </div>
+
+          <div style="background-color: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #0f172a;">📅 What Happens Next?</h3>
+            <ol style="color: #475569; line-height: 1.8; padding-left: 20px;">
+              <li><strong>Case Review</strong> - Our team will analyze your case within 24-48 hours</li>
+              <li><strong>AI Analysis</strong> - We'll run an AI-powered assessment to identify legal violations</li>
+              <li><strong>Pricing & Strategy</strong> - You'll receive a customized action plan and pricing</li>
+              <li><strong>Portal Access</strong> - Once enabled, you can access your portal to view updates</li>
+            </ol>
+          </div>
+
+          <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <p style="margin: 0; color: #92400e;"><strong>💡 Pro Tip:</strong> Add ${process.env.EMAIL_USER} to your contacts to ensure you receive all updates about your case.</p>
+          </div>
+
+          <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 14px;">
+            <p style="margin: 5px 0;"><strong>Need Help?</strong></p>
+            <p style="margin: 5px 0;">Email: ${process.env.EMAIL_USER}</p>
+            <p style="margin: 5px 0;">Website: <a href="https://turboresponsehq.ai" style="color: #06b6d4;">turboresponsehq.ai</a></p>
+          </div>
+
+          <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 12px; text-align: center;">
+            <p>This is an automated confirmation from Turbo Response HQ.</p>
+            <p>Case ID: ${caseData.id} | Submitted: ${new Date(caseData.created_at).toLocaleString()}</p>
+          </div>
+        </div>
+      </div>
+    `,
+  };
+
+  try {
+    const info = await transport.sendMail(mailOptions);
+    logger.info('Client case confirmation email sent', {
+      caseId: caseData.id,
+      caseNumber: caseData.case_number,
+      to: caseData.email,
+      messageId: info.messageId,
+    });
+    return true;
+  } catch (error) {
+    logger.error('Failed to send client case confirmation email', {
+      error: error.message,
+      caseId: caseData.id,
+      email: caseData.email,
+    });
+    return false;
+  }
+}
+
 module.exports = {
   sendEmail,
   sendNewCaseNotification,
   sendPaymentConfirmationNotification,
+  sendClientCaseConfirmation,
 };

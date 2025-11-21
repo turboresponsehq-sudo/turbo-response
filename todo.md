@@ -771,3 +771,5 @@ The AI analysis endpoint is NOT retrieving case_details from the database when f
 - [x] Fix client login to accept case_number instead of case id
 - [x] Fix Access Portal button not working - was only 5 digits entered
 - [x] Fix 401 Unauthorized - changed sameSite from strict to none for cross-domain cookies
+- [x] Add client confirmation email after case submission with case number and portal link
+- [x] Portal toggle already exists - was just hard to see

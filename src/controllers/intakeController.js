@@ -1,6 +1,6 @@
 const { query } = require('../services/database/db');
 const logger = require('../utils/logger');
-const { sendNewCaseNotification } = require('../services/emailService');
+const { sendNewCaseNotification, sendClientCaseConfirmation } = require('../services/emailService');
 
 // Generate unique case number
 const generateCaseNumber = () => {
@@ -114,6 +114,18 @@ const submit = async (req, res, next) => {
       created_at: newCase.created_at,
     }).catch(err => {
       logger.error('Failed to send new case notification email', { error: err.message });
+    });
+
+    // Send confirmation email to client (non-blocking)
+    sendClientCaseConfirmation({
+      id: newCase.id,
+      case_number: newCase.case_number,
+      category,
+      email,
+      full_name,
+      created_at: newCase.created_at,
+    }).catch(err => {
+      logger.error('Failed to send client confirmation email', { error: err.message });
     });
 
     res.status(201).json({
