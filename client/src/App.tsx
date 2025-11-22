@@ -17,6 +17,7 @@ import FloatingChatWidget from "./components/FloatingChatWidget";
 import AdminConsumerCases from "./pages/AdminConsumerCases";
 import AdminConsumerCaseDetail from "./pages/AdminConsumerCaseDetail";
 import AdminCaseDetail from "./pages/AdminCaseDetail";
+import AdminBrainUpload from "./pages/AdminBrainUpload";
 import ConsumerConfirmation from "./pages/ConsumerConfirmation";
 import TurboHQ from "./pages/TurboHQ";
 import Services from "./pages/Services";
@@ -56,6 +57,7 @@ function Router() {
       
       <Route path="/admin/login" component={AdminLogin} />
       {/* Admin workflow routes - restored to specification */}
+      <Route path="/admin/brain" component={AdminBrainUpload} />
       <Route path="/admin/case/:id" component={AdminCaseDetail} />
       <Route path="/admin" component={AdminDashboard} />
       
