@@ -66,21 +66,27 @@ router.get('/setup', accessToken, async (req, res) => {
     const supabase = getSupabaseDB();
     const bucket = getBrainBucket();
 
-    // Check if table exists
+    // Check if table exists and has correct schema
     try {
+      // Try to select all required columns
       const { data, error } = await supabase
         .from('brain_documents')
-        .select('id')
+        .select('id, title, description, file_url, mime_type, size_bytes, source, is_archived, created_at, updated_at')
         .limit(1);
       
       if (error && error.code === '42P01') {
         results.database.exists = false;
         results.database.error = 'Table does not exist';
         results.actions.push('Need to create brain_documents table');
+      } else if (error && error.message.includes('column')) {
+        results.database.exists = true;
+        results.database.error = `Schema incomplete: ${error.message}`;
+        results.actions.push('Table exists but schema is incomplete - need to recreate or alter table');
       } else if (error) {
         results.database.error = error.message;
       } else {
         results.database.exists = true;
+        results.database.schema_valid = true;
         results.database.count = data ? data.length : 0;
       }
     } catch (err) {
