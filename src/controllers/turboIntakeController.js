@@ -1,5 +1,6 @@
 const { query } = require('../services/database/db');
 const logger = require('../utils/logger');
+const { sendBusinessIntakeNotification } = require('../services/emailService');
 
 // Submit new business intake form
 const submit = async (req, res, next) => {
@@ -72,6 +73,32 @@ const submit = async (req, res, next) => {
       intakeId: newIntake.id,
       email: newIntake.email,
       businessName
+    });
+
+    // Send email notification to admin (non-blocking)
+    sendBusinessIntakeNotification({
+      id: newIntake.id,
+      full_name: newIntake.full_name,
+      email: newIntake.email,
+      phone: phone || null,
+      business_name: businessName || null,
+      website_url: websiteUrl || null,
+      instagram_url: instagramUrl || null,
+      tiktok_url: tiktokUrl || null,
+      facebook_url: facebookUrl || null,
+      youtube_url: youtubeUrl || null,
+      link_in_bio: linkInBio || null,
+      what_you_sell: whatYouSell || null,
+      ideal_customer: idealCustomer || null,
+      biggest_struggle: biggestStruggle || null,
+      short_term_goal: shortTermGoal || null,
+      long_term_vision: longTermVision || null,
+      created_at: newIntake.created_at,
+    }).catch(err => {
+      logger.error('Failed to send business intake notification email', {
+        error: err.message,
+        intakeId: newIntake.id,
+      });
     });
 
     res.status(200).json({

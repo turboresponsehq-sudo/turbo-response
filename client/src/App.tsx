@@ -28,6 +28,7 @@ import ClientLogin from "./pages/ClientLogin";
 import ClientPortal from "./pages/ClientPortal";
 import PaymentPage from "./pages/PaymentPage";
 import SignContract from "./pages/SignContract";
+import TurboIntakeForm from "./pages/TurboIntakeForm";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -44,6 +45,9 @@ function Router() {
       {/* Payment route - NOT part of consumer intake flow, used for business audit workflow */}
       <Route path="/payment" component={Payment} />
       <Route path="/turbo" component={TurboHQ} />
+      
+      {/* Business Intake Form */}
+      <Route path="/turbo-intake" component={TurboIntakeForm} />
       
       {/* Client Portal Routes */}
       <Route path="/client/login" component={ClientLogin} />
