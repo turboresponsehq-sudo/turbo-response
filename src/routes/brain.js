@@ -10,6 +10,7 @@ const router = express.Router();
 const multer = require('multer');
 const { getBrainBucket, getSupabaseDB } = require('../services/supabase/client');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
+const accessToken = require('../middleware/accessToken');
 
 // Configure multer for file uploads (memory storage)
 const upload = multer({
@@ -43,7 +44,7 @@ const upload = multer({
  * - title: Document title (optional, defaults to filename)
  * - description: Document description (optional)
  */
-router.post('/upload', authenticateToken, requireAdmin, upload.single('file'), async (req, res) => {
+router.post('/upload', accessToken, authenticateToken, requireAdmin, upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({
@@ -145,7 +146,7 @@ router.post('/upload', authenticateToken, requireAdmin, upload.single('file'), a
  * - limit: Items per page (default: 20, max: 100)
  * - archived: Include archived documents (default: false)
  */
-router.get('/list', authenticateToken, requireAdmin, async (req, res) => {
+router.get('/list', accessToken, authenticateToken, requireAdmin, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = Math.min(parseInt(req.query.limit) || 20, 100);
@@ -196,6 +197,90 @@ router.get('/list', authenticateToken, requireAdmin, async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to list documents',
+      details: error.message
+    });
+  }
+});
+
+module.exports = router;
+
+/**
+ * DELETE /api/brain/delete/:id
+ * Delete a document from the Brain System
+ * 
+ * Params:
+ * - id: Document ID
+ */
+router.delete('/delete/:id', accessToken, authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id || isNaN(parseInt(id))) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid document ID'
+      });
+    }
+
+    const supabase = getSupabaseDB();
+
+    // Get document metadata first
+    const { data: doc, error: fetchError } = await supabase
+      .from('brain_documents')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (fetchError || !doc) {
+      return res.status(404).json({
+        success: false,
+        error: 'Document not found'
+      });
+    }
+
+    console.log(`[Brain Delete] Deleting document ID ${id}: ${doc.title}`);
+
+    // Extract filename from URL
+    const urlParts = doc.file_url.split('/');
+    const filename = urlParts[urlParts.length - 1];
+
+    // Delete from storage
+    const bucket = getBrainBucket();
+    const { error: storageError } = await bucket.remove([filename]);
+
+    if (storageError) {
+      console.error('[Brain Delete] Storage error:', storageError);
+      // Continue with database deletion even if storage fails
+    }
+
+    // Delete from database
+    const { error: dbError } = await supabase
+      .from('brain_documents')
+      .delete()
+      .eq('id', id);
+
+    if (dbError) {
+      console.error('[Brain Delete] Database error:', dbError);
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to delete document',
+        details: dbError.message
+      });
+    }
+
+    console.log(`[Brain Delete] Document ${id} deleted successfully`);
+
+    res.json({
+      success: true,
+      message: 'Document deleted successfully',
+      deleted_id: parseInt(id)
+    });
+
+  } catch (error) {
+    console.error('[Brain Delete] Error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Delete failed',
       details: error.message
     });
   }
