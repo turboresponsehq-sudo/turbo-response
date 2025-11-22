@@ -321,9 +321,129 @@ async function sendClientCaseConfirmation(caseData) {
   }
 }
 
+/**
+ * Send business intake notification to admin
+ * @param {Object} intakeData - Business intake information
+ */
+async function sendBusinessIntakeNotification(intakeData) {
+  const transport = getTransporter();
+  
+  if (!transport) {
+    logger.warn('Email transporter not available. Skipping business intake notification.');
+    return false;
+  }
+
+  const adminEmail = process.env.ADMIN_EMAIL || 'collinsdemarcus4@gmail.com';
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: adminEmail,
+    subject: `🚀 New Business Audit Request: ${intakeData.business_name || intakeData.full_name}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #06b6d4, #0284c7); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+          <h1 style="color: white; margin: 0; font-size: 28px;">⚡ New Business Audit Request</h1>
+          <p style="color: #e0f2fe; margin: 10px 0 0 0;">Turbo Intake Submission</p>
+        </div>
+
+        <div style="background-color: #ffffff; padding: 30px; border-radius: 0 0 8px 8px;">
+          <div style="background-color: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #06b6d4;">
+            <h3 style="margin-top: 0; color: #0c4a6e;">Contact Information</h3>
+            <p style="margin: 8px 0;"><strong>Name:</strong> ${intakeData.full_name}</p>
+            <p style="margin: 8px 0;"><strong>Email:</strong> ${intakeData.email}</p>
+            ${intakeData.phone ? `<p style="margin: 8px 0;"><strong>Phone:</strong> ${intakeData.phone}</p>` : ''}
+          </div>
+
+          <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+            <h3 style="margin-top: 0; color: #78350f;">Business Information</h3>
+            ${intakeData.business_name ? `<p style="margin: 8px 0;"><strong>Business Name:</strong> ${intakeData.business_name}</p>` : ''}
+            ${intakeData.website_url ? `<p style="margin: 8px 0;"><strong>Website:</strong> <a href="${intakeData.website_url}" style="color: #06b6d4;">${intakeData.website_url}</a></p>` : ''}
+          </div>
+
+          ${(intakeData.instagram_url || intakeData.tiktok_url || intakeData.facebook_url || intakeData.youtube_url || intakeData.link_in_bio) ? `
+            <div style="background-color: #f3e8ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #a855f7;">
+              <h3 style="margin-top: 0; color: #581c87;">Social Media</h3>
+              ${intakeData.instagram_url ? `<p style="margin: 8px 0;"><strong>Instagram:</strong> <a href="${intakeData.instagram_url}" style="color: #06b6d4;">${intakeData.instagram_url}</a></p>` : ''}
+              ${intakeData.tiktok_url ? `<p style="margin: 8px 0;"><strong>TikTok:</strong> <a href="${intakeData.tiktok_url}" style="color: #06b6d4;">${intakeData.tiktok_url}</a></p>` : ''}
+              ${intakeData.facebook_url ? `<p style="margin: 8px 0;"><strong>Facebook:</strong> <a href="${intakeData.facebook_url}" style="color: #06b6d4;">${intakeData.facebook_url}</a></p>` : ''}
+              ${intakeData.youtube_url ? `<p style="margin: 8px 0;"><strong>YouTube:</strong> <a href="${intakeData.youtube_url}" style="color: #06b6d4;">${intakeData.youtube_url}</a></p>` : ''}
+              ${intakeData.link_in_bio ? `<p style="margin: 8px 0;"><strong>Link-in-Bio:</strong> <a href="${intakeData.link_in_bio}" style="color: #06b6d4;">${intakeData.link_in_bio}</a></p>` : ''}
+            </div>
+          ` : ''}
+
+          <div style="background-color: #ecfdf5; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981;">
+            <h3 style="margin-top: 0; color: #064e3b;">Business Snapshot</h3>
+            ${intakeData.what_you_sell ? `
+              <div style="margin-bottom: 16px;">
+                <p style="margin: 0; font-weight: 600; color: #065f46;">What They Sell:</p>
+                <p style="margin: 8px 0; white-space: pre-wrap;">${intakeData.what_you_sell}</p>
+              </div>
+            ` : ''}
+            ${intakeData.ideal_customer ? `
+              <div style="margin-bottom: 16px;">
+                <p style="margin: 0; font-weight: 600; color: #065f46;">Ideal Customer:</p>
+                <p style="margin: 8px 0; white-space: pre-wrap;">${intakeData.ideal_customer}</p>
+              </div>
+            ` : ''}
+            ${intakeData.biggest_struggle ? `
+              <div style="margin-bottom: 16px;">
+                <p style="margin: 0; font-weight: 600; color: #065f46;">Biggest Struggle:</p>
+                <p style="margin: 8px 0; white-space: pre-wrap;">${intakeData.biggest_struggle}</p>
+              </div>
+            ` : ''}
+            ${intakeData.short_term_goal ? `
+              <div style="margin-bottom: 16px;">
+                <p style="margin: 0; font-weight: 600; color: #065f46;">Short-Term Goal:</p>
+                <p style="margin: 8px 0; white-space: pre-wrap;">${intakeData.short_term_goal}</p>
+              </div>
+            ` : ''}
+            ${intakeData.long_term_vision ? `
+              <div style="margin-bottom: 16px;">
+                <p style="margin: 0; font-weight: 600; color: #065f46;">Long-Term Vision:</p>
+                <p style="margin: 8px 0; white-space: pre-wrap;">${intakeData.long_term_vision}</p>
+              </div>
+            ` : ''}
+          </div>
+
+          <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #06b6d4, #0284c7); border-radius: 8px; text-align: center;">
+            <p style="margin: 0 0 15px 0; color: white; font-weight: 600;">⚡ Action Required</p>
+            <a href="https://turboresponsehq.ai/admin" 
+               style="display: inline-block; padding: 14px 32px; background-color: white; color: #0284c7; text-decoration: none; border-radius: 6px; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+              View in Admin Dashboard
+            </a>
+          </div>
+
+          <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 12px; text-align: center;">
+            <p>This is an automated notification from Turbo Response HQ.</p>
+            <p>Intake ID: ${intakeData.id} | Submitted: ${new Date(intakeData.created_at).toLocaleString()}</p>
+          </div>
+        </div>
+      </div>
+    `,
+  };
+
+  try {
+    const info = await transport.sendMail(mailOptions);
+    logger.info('Business intake notification email sent', {
+      intakeId: intakeData.id,
+      businessName: intakeData.business_name,
+      to: adminEmail,
+      messageId: info.messageId,
+    });
+    return true;
+  } catch (error) {
+    logger.error('Failed to send business intake notification email', {
+      error: error.message,
+      intakeId: intakeData.id,
+    });
+    return false;
+  }
+}
+
 module.exports = {
   sendEmail,
   sendNewCaseNotification,
   sendPaymentConfirmationNotification,
   sendClientCaseConfirmation,
+  sendBusinessIntakeNotification,
 };
