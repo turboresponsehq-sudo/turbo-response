@@ -291,6 +291,7 @@ router.post('/upload', accessToken, upload.single('file'), async (req, res) => {
         title: title || file.originalname,
         description: description || null,
         file_name: filename,
+        file_path: filename,
         file_url: fileUrl,
         mime_type: file.mimetype,
         size_bytes: file.size,
