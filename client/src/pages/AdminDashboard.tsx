@@ -1,322 +1,486 @@
-import { useState, useEffect } from "react";
+/**
+ * Admin Dashboard - Consumer Defense Cases
+ * Restored to match authoritative specification
+ * Simple case list only - no AI features, no pricing, no analysis
+ * PHASE 1: Mobile responsive with proper breakpoints
+ */
+
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { trpc } from "@/lib/trpc";
-import "./AdminDashboard.css";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Loader2, Eye, Mail, Phone, Calendar } from "lucide-react";
-import { toast } from "sonner";
-import { getLoginUrl } from "@/const";
+import axios from "axios";
+
+const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turbo-response-backend.onrender.com";
+
+interface CaseItem {
+  id: number;
+  case_number: string;
+  full_name: string;
+  email: string;
+  phone?: string;
+  category: string;
+  status: string;
+  funnel_stage?: string;
+  payment_verified?: boolean;
+  unread_messages_count?: number;
+  created_at: string;
+}
 
 export default function AdminDashboard() {
   const [, setLocation] = useLocation();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [authLoading, setAuthLoading] = useState(true);
-  const [selectedLeadId, setSelectedLeadId] = useState<number | null>(null);
+  const [cases, setCases] = useState<CaseItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check for simple admin session
-    const session = localStorage.getItem("admin_session");
-    if (session) {
-      setIsAuthenticated(true);
+    const storedToken = localStorage.getItem("admin_session");
+    if (!storedToken) {
+      window.location.replace("/admin/login");
+      return;
     }
-    setAuthLoading(false);
+
+    const fetchCases = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/api/cases/admin/all`, {
+          headers: { Authorization: `Bearer ${storedToken}` },
+        });
+        setCases(res.data.cases || []);
+      } catch (err) {
+        console.error(err);
+        setError("Could not load cases");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCases();
   }, []);
 
-  const { data: leads, isLoading: leadsLoading } = trpc.admin.getLeads.useQuery();
-  const { data: leadDetails } = trpc.admin.getLeadDetails.useQuery(
-    { leadId: selectedLeadId! },
-    { enabled: !!selectedLeadId }
-  );
-  const updateStatusMutation = trpc.admin.updateLeadStatus.useMutation();
+  const handleCaseClick = (caseId: number) => {
+    setLocation(`/admin/case/${caseId}`);
+  };
 
-  const handleStatusChange = async (leadId: number, status: string) => {
-    try {
-      await updateStatusMutation.mutateAsync({
-        leadId,
-        status: status as any,
-      });
-      toast.success("Status updated");
-      window.location.reload(); // Refresh data
-    } catch (error) {
-      toast.error("Failed to update status");
+  const handleLogout = () => {
+    localStorage.removeItem("admin_session");
+    localStorage.removeItem("admin_user");
+    setLocation("/admin/login");
+  };
+
+  const getFunnelStageColor = (stage: string) => {
+    switch (stage) {
+      case 'Active Case':
+        return { bg: '#d4edda', color: '#155724', icon: '✅' };
+      case 'Payment Pending':
+        return { bg: '#fff3cd', color: '#856404', icon: '⏳' };
+      case 'Awaiting Payment':
+        return { bg: '#cce5ff', color: '#004085', icon: '💳' };
+      case 'Lead Submitted':
+      default:
+        return { bg: '#d1ecf1', color: '#0c5460', icon: '📝' };
     }
   };
 
-  // Auth check
-  if (authLoading) {
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div style={{ padding: "1rem", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+        <p>Loading cases...</p>
       </div>
     );
   }
 
-  // Redirect if not authenticated
-  useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
-      setLocation("/admin/login");
-    }
-  }, [authLoading, isAuthenticated, setLocation]);
-
-  if (!isAuthenticated) {
-    return null;
+  if (error) {
+    return (
+      <div style={{ padding: "1rem", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+        <p style={{ color: "red" }}>{error}</p>
+        <button
+          onClick={() => setLocation("/admin/login")}
+          style={{
+            marginTop: "1rem",
+            padding: "0.75rem 1.5rem",
+            minHeight: "48px",
+            backgroundColor: "#007bff",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontSize: "1rem"
+          }}
+        >
+          Back to Login
+        </button>
+      </div>
+    );
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "new":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
-      case "contacted":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
-      case "qualified":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200";
-      case "converted":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
-      case "closed":
-        return "bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200";
-      default:
-        return "bg-slate-100 text-slate-800";
-    }
-  };
-
-  const getCategoryLabel = (category: string | null) => {
-    if (!category) return "Unknown";
-    return category
-      .split("_")
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
-
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-      <div className="container max-w-7xl py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Manage leads and conversations</p>
+    <div style={{ 
+      padding: "1rem", 
+      fontFamily: "system-ui, -apple-system, sans-serif",
+      maxWidth: "1200px",
+      margin: "0 auto"
+    }}>
+      {/* Header */}
+      <div style={{ 
+        display: "flex", 
+        flexDirection: "column",
+        gap: "1rem",
+        marginBottom: "1.5rem",
+        borderBottom: "2px solid #e9ecef",
+        paddingBottom: "1rem"
+      }}>
+        <div style={{ 
+          display: "flex", 
+          justifyContent: "space-between", 
+          alignItems: "flex-start",
+          flexWrap: "wrap",
+          gap: "1rem"
+        }}>
+          <div>
+            <h1 style={{ margin: 0, fontSize: "1.5rem", color: "#212529" }}>
+              Admin Dashboard
+            </h1>
+            <p style={{ margin: "0.5rem 0 0 0", color: "#6c757d", fontSize: "0.875rem" }}>
+              Consumer Defense Cases
+            </p>
+          </div>
+          <button
+            onClick={handleLogout}
+            style={{
+              padding: "0.5rem 1rem",
+              minHeight: "48px",
+              backgroundColor: "#6c757d",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "0.875rem",
+              whiteSpace: "nowrap"
+            }}
+          >
+            Logout
+          </button>
         </div>
-
-        {/* Stats Cards */}
-        <div className="grid md:grid-cols-4 gap-4 mb-8">
-          <Card className="p-4">
-            <p className="text-sm text-muted-foreground mb-1">Total Leads</p>
-            <p className="text-2xl font-bold">{leads?.length || 0}</p>
-          </Card>
-          <Card className="p-4">
-            <p className="text-sm text-muted-foreground mb-1">New</p>
-            <p className="text-2xl font-bold">
-              {leads?.filter(l => l.status === "new").length || 0}
-            </p>
-          </Card>
-          <Card className="p-4">
-            <p className="text-sm text-muted-foreground mb-1">Contacted</p>
-            <p className="text-2xl font-bold">
-              {leads?.filter(l => l.status === "contacted").length || 0}
-            </p>
-          </Card>
-          <Card className="p-4">
-            <p className="text-sm text-muted-foreground mb-1">Converted</p>
-            <p className="text-2xl font-bold">
-              {leads?.filter(l => l.status === "converted").length || 0}
-            </p>
-          </Card>
-        </div>
-
-        {/* Leads Table */}
-        <Card className="p-6">
-          <h2 className="text-xl font-bold mb-4">All Leads</h2>
-
-          {leadsLoading ? (
-            <div className="flex justify-center py-8">
-              <Loader2 className="h-8 w-8 animate-spin" />
-            </div>
-          ) : !leads || leads.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">No leads yet</div>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Phone</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {leads.map(lead => (
-                    <TableRow key={lead.id}>
-                      <TableCell className="font-medium">{lead.name}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Mail className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm">{lead.email}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {lead.phone ? (
-                          <div className="flex items-center gap-2">
-                            <Phone className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-sm">{lead.phone}</span>
-                          </div>
-                        ) : (
-                          <span className="text-sm text-muted-foreground">-</span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{getCategoryLabel(lead.category)}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <select
-                          value={lead.status}
-                          onChange={e => handleStatusChange(lead.id, e.target.value)}
-                          className={`text-xs px-2 py-1 rounded-md border-0 ${getStatusColor(
-                            lead.status
-                          )}`}
-                        >
-                          <option value="new">New</option>
-                          <option value="contacted">Contacted</option>
-                          <option value="qualified">Qualified</option>
-                          <option value="converted">Converted</option>
-                          <option value="closed">Closed</option>
-                        </select>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Calendar className="h-4 w-4" />
-                          {new Date(lead.createdAt).toLocaleDateString()}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setSelectedLeadId(lead.id)}
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
-                            <DialogHeader>
-                              <DialogTitle>Lead Details: {lead.name}</DialogTitle>
-                            </DialogHeader>
-
-                            {leadDetails && (
-                              <div className="space-y-6">
-                                {/* Contact Info */}
-                                <div>
-                                  <h3 className="font-semibold mb-2">Contact Information</h3>
-                                  <div className="space-y-1 text-sm">
-                                    <p>
-                                      <strong>Email:</strong> {leadDetails.lead.email}
-                                    </p>
-                                    <p>
-                                      <strong>Phone:</strong> {leadDetails.lead.phone || "N/A"}
-                                    </p>
-                                    <p>
-                                      <strong>Best Time:</strong>{" "}
-                                      {leadDetails.lead.bestTimeToCall || "N/A"}
-                                    </p>
-                                  </div>
-                                </div>
-
-                                {/* Case Summary */}
-                                {leadDetails.conversation?.summary && (
-                                  <div>
-                                    <h3 className="font-semibold mb-2">Case Summary</h3>
-                                    <p className="text-sm bg-slate-50 dark:bg-slate-800 p-3 rounded">
-                                      {leadDetails.conversation.summary}
-                                    </p>
-                                  </div>
-                                )}
-
-                                {/* Conversation History */}
-                                <div>
-                                  <h3 className="font-semibold mb-2">Conversation History</h3>
-                                  <div className="space-y-2 max-h-60 overflow-y-auto">
-                                    {leadDetails.messages?.map((msg, idx) => (
-                                      <div
-                                        key={idx}
-                                        className={`text-sm p-2 rounded ${
-                                          msg.role === "user"
-                                            ? "bg-blue-50 dark:bg-blue-900/20"
-                                            : msg.role === "system"
-                                            ? "bg-green-50 dark:bg-green-900/20"
-                                            : "bg-slate-50 dark:bg-slate-800"
-                                        }`}
-                                      >
-                                        <p className="font-medium text-xs mb-1">
-                                          {msg.role === "user"
-                                            ? "User"
-                                            : msg.role === "system"
-                                            ? "System"
-                                            : "AI"}
-                                        </p>
-                                        <p className="whitespace-pre-wrap">{msg.content}</p>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-
-                                {/* Evidence Files */}
-                                {leadDetails.evidence && leadDetails.evidence.length > 0 && (
-                                  <div>
-                                    <h3 className="font-semibold mb-2">Evidence Files</h3>
-                                    <div className="space-y-2">
-                                      {leadDetails.evidence.map((file, idx) => (
-                                        <div
-                                          key={idx}
-                                          className="flex items-center justify-between text-sm bg-slate-50 dark:bg-slate-800 p-2 rounded"
-                                        >
-                                          <span>{file.filename || "Unnamed file"}</span>
-                                          <Button
-                                            variant="link"
-                                            size="sm"
-                                            onClick={() => window.open(file.fileUrl, "_blank")}
-                                          >
-                                            View
-                                          </Button>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                          </DialogContent>
-                        </Dialog>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </Card>
       </div>
+
+      {/* Case Count */}
+      <div style={{ marginBottom: "1.5rem" }}>
+        <p style={{ margin: 0, fontSize: "1rem", color: "#495057" }}>
+          <strong>Total Cases:</strong> {cases.length}
+        </p>
+      </div>
+
+      {/* Cases - Desktop Table / Mobile Cards */}
+      {cases.length === 0 ? (
+        <div style={{
+          padding: "2rem 1rem",
+          textAlign: "center",
+          backgroundColor: "#f8f9fa",
+          borderRadius: "8px",
+          border: "1px solid #dee2e6"
+        }}>
+          <p style={{ margin: 0, color: "#6c757d", fontSize: "1rem" }}>
+            No cases submitted yet.
+          </p>
+        </div>
+      ) : (
+        <>
+          {/* Desktop Table (hidden on mobile) */}
+          <div style={{ 
+            display: "none",
+            border: "1px solid #dee2e6", 
+            borderRadius: "8px",
+            overflow: "hidden",
+            backgroundColor: "white"
+          }}
+          className="desktop-table">
+            <table style={{ 
+              width: "100%", 
+              borderCollapse: "collapse"
+            }}>
+              <thead>
+                <tr style={{ backgroundColor: "#f8f9fa", borderBottom: "2px solid #dee2e6" }}>
+                  <th style={{ 
+                    padding: "0.75rem", 
+                    textAlign: "left", 
+                    fontWeight: 600,
+                    color: "#495057",
+                    fontSize: "0.875rem",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px"
+                  }}>
+                    Case ID
+                  </th>
+                  <th style={{ 
+                    padding: "0.75rem", 
+                    textAlign: "left", 
+                    fontWeight: 600,
+                    color: "#495057",
+                    fontSize: "0.875rem",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px"
+                  }}>
+                    Client Name
+                  </th>
+                  <th style={{ 
+                    padding: "0.75rem", 
+                    textAlign: "left", 
+                    fontWeight: 600,
+                    color: "#495057",
+                    fontSize: "0.875rem",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px"
+                  }}>
+                    Category
+                  </th>
+                  <th style={{ 
+                    padding: "0.75rem", 
+                    textAlign: "left", 
+                    fontWeight: 600,
+                    color: "#495057",
+                    fontSize: "0.875rem",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px"
+                  }}>
+                    Status
+                  </th>
+                  <th style={{ 
+                    padding: "0.75rem", 
+                    textAlign: "left", 
+                    fontWeight: 600,
+                    color: "#495057",
+                    fontSize: "0.875rem",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px"
+                  }}>
+                    Created
+                  </th>
+                  <th style={{ 
+                    padding: "0.75rem", 
+                    textAlign: "center", 
+                    fontWeight: 600,
+                    color: "#495057",
+                    fontSize: "0.875rem",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px"
+                  }}>
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {cases.map((c, index) => {
+                  const stageInfo = getFunnelStageColor(c.funnel_stage || c.status);
+                  return (
+                    <tr
+                      key={c.id}
+                      style={{
+                        borderBottom: index < cases.length - 1 ? "1px solid #dee2e6" : "none",
+                        transition: "background-color 0.15s ease"
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f8f9fa")}
+                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "white")}
+                    >
+                      <td style={{ padding: "1rem", fontSize: "0.875rem", color: "#212529" }}>
+                        <span style={{ fontFamily: "monospace", fontWeight: 500 }}>
+                          {c.case_number}
+                        </span>
+                      </td>
+                      <td style={{ padding: "1rem", fontSize: "0.875rem", color: "#212529" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                          <div>
+                            <div style={{ fontWeight: 500 }}>{c.full_name}</div>
+                            <div style={{ fontSize: "0.75rem", color: "#6c757d", marginTop: "0.25rem" }}>
+                              {c.email}
+                            </div>
+                          </div>
+                          {c.unread_messages_count && c.unread_messages_count > 0 && (
+                            <span style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              minWidth: "1.5rem",
+                              height: "1.5rem",
+                              padding: "0 0.4rem",
+                              backgroundColor: "#dc3545",
+                              color: "white",
+                              borderRadius: "12px",
+                              fontSize: "0.75rem",
+                              fontWeight: 600,
+                              marginLeft: "auto"
+                            }}>
+                              {c.unread_messages_count}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td style={{ padding: "1rem", fontSize: "0.875rem", color: "#495057" }}>
+                        {c.category}
+                      </td>
+                      <td style={{ padding: "1rem" }}>
+                        <span style={{
+                          display: "inline-block",
+                          padding: "0.25rem 0.75rem",
+                          borderRadius: "12px",
+                          fontSize: "0.75rem",
+                          fontWeight: 600,
+                          backgroundColor: stageInfo.bg,
+                          color: stageInfo.color,
+                          textTransform: "uppercase",
+                          letterSpacing: "0.5px"
+                        }}>
+                          {stageInfo.icon} {c.funnel_stage || c.status}
+                        </span>
+                      </td>
+                      <td style={{ padding: "1rem", fontSize: "0.875rem", color: "#495057" }}>
+                        {new Date(c.created_at).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
+                      </td>
+                      <td style={{ padding: "1rem", textAlign: "center" }}>
+                        <button
+                          onClick={() => handleCaseClick(c.id)}
+                          style={{
+                            padding: "0.375rem 0.75rem",
+                            backgroundColor: "#007bff",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "4px",
+                            cursor: "pointer",
+                            fontSize: "0.875rem",
+                            fontWeight: 500,
+                            transition: "background-color 0.15s ease"
+                          }}
+                          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#0056b3")}
+                          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#007bff")}
+                        >
+                          View Case
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Card Layout (hidden on desktop) */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }} className="mobile-cards">
+            {cases.map((c) => {
+                  const stageInfo = getFunnelStageColor(c.funnel_stage || c.status);
+              return (
+                <div
+                  key={c.id}
+                  style={{
+                    backgroundColor: "white",
+                    border: "1px solid #dee2e6",
+                    borderRadius: "8px",
+                    padding: "1rem",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.75rem"
+                  }}
+                >
+                  {/* Case Number */}
+                  <div style={{ 
+                    fontFamily: "monospace", 
+                    fontWeight: 600, 
+                    fontSize: "0.875rem",
+                    color: "#495057"
+                  }}>
+                    {c.case_number}
+                  </div>
+
+                  {/* Client Name */}
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: "1rem", color: "#212529" }}>
+                      {c.full_name}
+                    </div>
+                    <div style={{ fontSize: "0.875rem", color: "#6c757d", marginTop: "0.25rem" }}>
+                      {c.email}
+                    </div>
+                  </div>
+
+                  {/* Category & Status */}
+                  <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
+                    <span style={{ 
+                      fontSize: "0.875rem", 
+                      color: "#495057",
+                      fontWeight: 500
+                    }}>
+                      {c.category}
+                    </span>
+                    <span style={{ color: "#dee2e6" }}>•</span>
+                    <span style={{
+                      padding: "0.25rem 0.75rem",
+                      borderRadius: "12px",
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      backgroundColor: stageInfo.bg,
+                      color: stageInfo.color,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px"
+                    }}>
+                      {stageInfo.icon} {c.funnel_stage || c.status}
+                    </span>
+                  </div>
+
+                  {/* Created Date */}
+                  <div style={{ fontSize: "0.875rem", color: "#6c757d" }}>
+                    {new Date(c.created_at).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })}
+                  </div>
+
+                  {/* View Button */}
+                  <button
+                    onClick={() => handleCaseClick(c.id)}
+                    style={{
+                      padding: "0.75rem",
+                      minHeight: "48px",
+                      backgroundColor: "#007bff",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      fontSize: "1rem",
+                      fontWeight: 500,
+                      width: "100%"
+                    }}
+                  >
+                    View Case Details
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Responsive CSS */}
+          <style>{`
+            /* Desktop: Show table, hide cards */
+            @media (min-width: 769px) {
+              .desktop-table {
+                display: block !important;
+              }
+              .mobile-cards {
+                display: none !important;
+              }
+            }
+
+            /* Mobile: Show cards, hide table */
+            @media (max-width: 768px) {
+              .desktop-table {
+                display: none !important;
+              }
+              .mobile-cards {
+                display: flex !important;
+              }
+            }
+          `}</style>
+        </>
+      )}
     </div>
   );
 }
-
