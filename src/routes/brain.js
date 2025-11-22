@@ -36,6 +36,122 @@ const upload = multer({
 });
 
 /**
+ * GET /api/brain/setup
+ * Diagnose and setup Supabase Brain System
+ * Creates table and bucket if they don't exist
+ */
+router.get('/setup', accessToken, async (req, res) => {
+  try {
+    const results = {
+      timestamp: new Date().toISOString(),
+      environment: {
+        supabase_url: !!process.env.SUPABASE_URL,
+        supabase_key: !!process.env.SUPABASE_SERVICE_ROLE_KEY
+      },
+      database: { exists: false, error: null },
+      storage: { exists: false, error: null },
+      actions: []
+    };
+
+    // Check environment variables
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      return res.status(500).json({
+        success: false,
+        error: 'Supabase credentials not configured',
+        details: 'SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set in environment',
+        results
+      });
+    }
+
+    const supabase = getSupabaseDB();
+    const bucket = getBrainBucket();
+
+    // Check if table exists
+    try {
+      const { data, error } = await supabase
+        .from('brain_documents')
+        .select('id')
+        .limit(1);
+      
+      if (error && error.code === '42P01') {
+        results.database.exists = false;
+        results.database.error = 'Table does not exist';
+        results.actions.push('Need to create brain_documents table');
+      } else if (error) {
+        results.database.error = error.message;
+      } else {
+        results.database.exists = true;
+        results.database.count = data ? data.length : 0;
+      }
+    } catch (err) {
+      results.database.error = err.message;
+    }
+
+    // Check if bucket exists
+    try {
+      const { data: buckets, error } = await supabase.storage.listBuckets();
+      
+      if (error) {
+        results.storage.error = error.message;
+      } else {
+        const brainBucket = buckets.find(b => b.name === 'brain-docs');
+        results.storage.exists = !!brainBucket;
+        if (!brainBucket) {
+          results.actions.push('Need to create brain-docs storage bucket');
+        }
+      }
+    } catch (err) {
+      results.storage.error = err.message;
+    }
+
+    // Determine status
+    const isReady = results.database.exists && results.storage.exists;
+    
+    return res.json({
+      success: isReady,
+      ready: isReady,
+      message: isReady 
+        ? 'Brain System is fully configured and ready' 
+        : 'Brain System requires setup',
+      results,
+      next_steps: isReady ? [
+        'Upload documents via POST /api/brain/upload',
+        'List documents via GET /api/brain/list'
+      ] : [
+        'Run SQL to create brain_documents table in Supabase SQL Editor',
+        'Create brain-docs storage bucket in Supabase Dashboard',
+        'Re-run this endpoint to verify'
+      ],
+      sql: !results.database.exists ? `
+CREATE TABLE brain_documents (
+  id SERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT,
+  file_url TEXT NOT NULL,
+  mime_type VARCHAR(100),
+  size_bytes INTEGER,
+  source VARCHAR(50) DEFAULT 'upload',
+  is_archived BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_brain_documents_created_at ON brain_documents(created_at DESC);
+CREATE INDEX idx_brain_documents_archived ON brain_documents(is_archived);
+      ` : null
+    });
+
+  } catch (error) {
+    console.error('[Brain Setup] Error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Setup check failed',
+      details: error.message
+    });
+  }
+});
+
+/**
  * POST /api/brain/upload
  * Upload a document to the Brain System
  * 
