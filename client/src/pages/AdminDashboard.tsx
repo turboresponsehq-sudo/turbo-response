@@ -142,12 +142,29 @@ export default function AdminDashboard() {
               Consumer Defense Cases
             </p>
           </div>
-          <button
-            onClick={handleLogout}
-            style={{
-              padding: "0.5rem 1rem",
-              minHeight: "48px",
-              backgroundColor: "#6c757d",
+          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+            <button
+              onClick={() => setLocation("/admin/brain")}
+              style={{
+                padding: "0.5rem 1rem",
+                minHeight: "48px",
+                backgroundColor: "#0066cc",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "0.875rem",
+                fontWeight: "500"
+              }}
+            >
+              🧠 Brain Upload
+            </button>
+            <button
+              onClick={handleLogout}
+              style={{
+                padding: "0.5rem 1rem",
+                minHeight: "48px",
+                backgroundColor: "#6c757d",
               color: "white",
               border: "none",
               borderRadius: "4px",
@@ -158,6 +175,7 @@ export default function AdminDashboard() {
           >
             Logout
           </button>
+          </div>
         </div>
       </div>
 
