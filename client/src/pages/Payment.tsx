@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
+import { PaymentSkeleton } from "@/components/Skeleton";
+import { api } from "@/lib/api";
 import "./Payment.css";
 
 export default function Payment() {
+  const [isLoading, setIsLoading] = useState(true);
   const [caseData, setCaseData] = useState({
     caseId: "Loading...",
     clientName: "Loading...",
@@ -28,17 +31,21 @@ export default function Payment() {
     const caseId = `CASE-${Date.now()}`;
     const today = new Date().toLocaleDateString();
 
-    setCaseData({
-      caseId,
-      clientName: name,
-      clientEmail: email,
-      caseCategory: category.toUpperCase(),
-      submissionDate: today,
-      contractSignature: name,
-      contractDate: today,
-      contractIp: "Recorded",
-      totalAmount: "$349.00", // Default price
-    });
+    // Simulate loading
+    setTimeout(() => {
+      setCaseData({
+        caseId,
+        clientName: name,
+        clientEmail: email,
+        caseCategory: category.toUpperCase(),
+        submissionDate: today,
+        contractSignature: name,
+        contractDate: today,
+        contractIp: "Recorded",
+        totalAmount: "$349.00", // Default price
+      });
+      setIsLoading(false);
+    }, 800);
   }, []);
 
   const copyToClipboard = (text: string) => {
@@ -47,18 +54,41 @@ export default function Payment() {
     });
   };
 
-  const confirmPayment = () => {
+  const confirmPayment = async () => {
     if (!confirm("Have you completed the payment? Click OK to confirm.")) {
       return;
     }
 
-    setShowSuccess(true);
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const caseId = urlParams.get("caseId");
 
-    // Redirect after 3 seconds
-    setTimeout(() => {
-      window.location.href = "/";
-    }, 3000);
+      if (caseId) {
+        // Submit payment confirmation to backend
+        await api.post('/api/payment/confirm', {
+          case_id: caseId,
+          payment_method: 'manual', // Cash App or Venmo
+        });
+      }
+
+      setShowSuccess(true);
+
+      // Redirect after 3 seconds
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 3000);
+    } catch (error: any) {
+      alert(`Payment confirmation failed: ${error.message}`);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="payment-page">
+        <PaymentSkeleton />
+      </div>
+    );
+  }
 
   return (
     <div className="payment-page">

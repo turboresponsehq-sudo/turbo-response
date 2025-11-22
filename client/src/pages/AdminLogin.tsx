@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { api } from "@/lib/api";
 import "./AdminLogin.css";
 
 export default function AdminLogin() {
   const [, setLocation] = useLocation();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -22,12 +23,21 @@ export default function AdminLogin() {
     setError("");
     setIsLoading(true);
 
-    // Simple demo login - replace with real authentication
-    if (username === "admin" && password === "admin123") {
-      localStorage.setItem("admin_session", "demo-token");
+    try {
+      // Authenticate with backend
+      const response = await api.post('/api/auth/login', {
+        email,
+        password,
+      });
+
+      // Store session token and user info
+      localStorage.setItem("admin_session", response.token);
+      if (response.user) {
+        localStorage.setItem("admin_user", JSON.stringify(response.user));
+      }
       setLocation("/admin");
-    } else {
-      setError("❌ Invalid credentials");
+    } catch (error: any) {
+      setError(`❌ ${error.message}`);
       setIsLoading(false);
     }
   };
@@ -54,18 +64,18 @@ export default function AdminLogin() {
 
         <form onSubmit={handleLogin}>
           <div className="form-group">
-            <label className="form-label" htmlFor="username">
-              Username
+            <label className="form-label" htmlFor="email">
+              Email
             </label>
             <input
-              type="text"
-              id="username"
+              type="email"
+              id="email"
               className="form-input"
-              placeholder="Enter username"
+              placeholder="Enter email"
               required
-              autoComplete="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="form-group">

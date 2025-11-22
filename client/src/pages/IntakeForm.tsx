@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { IntakeFormSkeleton } from "@/components/Skeleton";
+import { api } from "@/lib/api";
 import "./IntakeForm.css";
 
 interface FileUpload {
   file: File;
   name: string;
+  url?: string; // URL from backend after upload
+  uploading?: boolean; // Upload in progress
 }
 
 const categories = [
@@ -20,10 +24,14 @@ const categories = [
 
 export default function IntakeForm() {
   const [, setLocation] = useLocation();
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [uploadedFiles, setUploadedFiles] = useState<FileUpload[]>([]);
   const [progress, setProgress] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [caseNumber, setCaseNumber] = useState<string | null>(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -35,10 +43,18 @@ export default function IntakeForm() {
     deadline: "",
   });
 
+  // Simulate initial loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Calculate progress
   useEffect(() => {
     let filledFields = 0;
-    const totalFields = 8; // 7 form fields + 1 category
+    const totalFields = 6; // 5 required fields + 1 category (amount and deadline are optional)
 
     if (formData.email.trim()) filledFields++;
     if (formData.fullName.trim()) filledFields++;
@@ -58,13 +74,64 @@ export default function IntakeForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('🔥 handleFileUpload FIRED');
     const files = Array.from(e.target.files || []);
+    console.log('📁 Files selected:', files.length, files.map(f => f.name));
+    
+    if (files.length === 0) {
+      console.log('⚠️ No files selected');
+      return;
+    }
+    
+    // Add files to state with uploading status
     const newFiles = files.map((file) => ({
       file,
       name: file.name,
+      uploading: true,
     }));
     setUploadedFiles((prev) => [...prev, ...newFiles]);
+    console.log('✅ Files added to state');
+
+    // Upload each file immediately
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const fileIndex = uploadedFiles.length + i;
+      console.log(`📤 Uploading file ${i+1}/${files.length}: ${file.name}`);
+      
+      try {
+        const formData = new FormData();
+        formData.append('files', file);
+        console.log('📦 FormData created');
+
+        console.log('🌐 Calling api.uploadFile...');
+        const uploadResponse = await api.uploadFile('/api/upload/multiple', formData);
+        console.log('✅ Upload response:', uploadResponse);
+        
+        const fileUrl = uploadResponse.files[0].file_url;
+        console.log('🔗 File URL:', fileUrl);
+
+        // Update file with URL and remove uploading status
+        setUploadedFiles((prev) => 
+          prev.map((f, idx) => 
+            idx === fileIndex ? { ...f, url: fileUrl, uploading: false } : f
+          )
+        );
+        console.log(`✅ File ${i+1} uploaded successfully`);
+      } catch (error: any) {
+        console.error('❌ File upload failed:', error);
+        console.error('❌ Error details:', {
+          message: error.message,
+          name: error.name,
+          stack: error.stack
+        });
+        alert(`Failed to upload ${file.name}: ${error.message}`);
+        
+        // Remove failed file from list
+        setUploadedFiles((prev) => prev.filter((_, idx) => idx !== fileIndex));
+      }
+    }
+    console.log('🎉 All uploads complete');
   };
 
   const removeFile = (index: number) => {
@@ -81,20 +148,76 @@ export default function IntakeForm() {
 
     setIsSubmitting(true);
 
-    // Simulate AI processing
-    setTimeout(() => {
-      const params = new URLSearchParams({
+    try {
+      // Capture client IP address for terms acceptance proof
+      let clientIP = null;
+      try {
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipResponse.json();
+        clientIP = ipData.ip;
+      } catch (ipError) {
+        console.warn('Failed to capture IP address:', ipError);
+        // Continue without IP - not critical
+      }
+
+      // Get already-uploaded file URLs from state
+      const documentUrls = uploadedFiles
+        .filter(f => f.url) // Only include successfully uploaded files
+        .map(f => f.url!);
+
+      // Submit intake form to backend with document URLs and terms acceptance
+      const response = await api.post('/api/intake', {
         email: formData.email,
-        name: formData.fullName,
+        full_name: formData.fullName,
+        phone: formData.phone,
+        address: formData.address,
         category: selectedCategory,
-        status: "form_submitted",
+        case_details: formData.caseDescription,
+        amount: formData.amount ? parseFloat(formData.amount) : null,
+        deadline: formData.deadline || null,
+        documents: documentUrls,
+        terms_accepted_at: new Date().toISOString(),
+        terms_accepted_ip: clientIP,
       });
 
-      setLocation(`/payment?${params.toString()}`);
-    }, 3000);
+      // Show success message
+      setSubmitSuccess(true);
+      setCaseNumber(response.case_number);
+      
+      // Wait 3 seconds before redirecting to consumer confirmation
+      setTimeout(() => {
+        const params = new URLSearchParams({
+          caseId: response.case_id,
+          category: selectedCategory,
+        });
+        setLocation(`/consumer/confirmation?${params.toString()}`);
+      }, 3000);
+    } catch (error: any) {
+      alert(`Submission failed: ${error.message}`);
+      setIsSubmitting(false);
+    }
   };
 
   const isFormComplete = progress === 100;
+
+  if (isLoading) {
+    return (
+      <div className="intake-page">
+        <div className="bg-animation">
+          <div className="bg-grid"></div>
+        </div>
+        <header className="header">
+          <div className="nav-container">
+            <a href="/" className="logo">
+              <div className="logo-icon">⚡</div>
+              TURBO RESPONSE
+            </a>
+          </div>
+        </header>
+        <IntakeFormSkeleton />
+      </div>
+    );
+  }
 
   return (
     <div className="intake-page">
@@ -307,11 +430,14 @@ export default function IntakeForm() {
                 <div className="file-list">
                   {uploadedFiles.map((file, index) => (
                     <div key={index} className="file-item">
-                      <span className="file-name">📄 {file.name}</span>
+                      <span className="file-name">
+                        {file.uploading ? "⏳" : "✅"} {file.name}
+                      </span>
                       <button
                         type="button"
                         className="file-remove"
                         onClick={() => removeFile(index)}
+                        disabled={file.uploading}
                       >
                         ×
                       </button>
@@ -322,10 +448,60 @@ export default function IntakeForm() {
             </div>
           </div>
 
+          {/* Terms of Service Acceptance */}
+          <div className="form-section">
+            <div className="terms-acceptance" style={{
+              padding: '1.5rem',
+              backgroundColor: '#f9fafb',
+              border: '2px solid #e5e7eb',
+              borderRadius: '12px',
+              marginBottom: '1.5rem'
+            }}>
+              <label style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '0.75rem',
+                cursor: 'pointer',
+                fontSize: '0.95rem',
+                lineHeight: '1.6'
+              }}>
+                <input
+                  type="checkbox"
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  required
+                  style={{
+                    marginTop: '0.25rem',
+                    width: '18px',
+                    height: '18px',
+                    cursor: 'pointer',
+                    accentColor: '#10b981'
+                  }}
+                />
+                <span style={{ color: '#374151' }}>
+                  I agree to the{' '}
+                  <a
+                    href="/terms-of-service"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: '#10b981',
+                      textDecoration: 'underline',
+                      fontWeight: '600'
+                    }}
+                  >
+                    Terms of Service
+                  </a>
+                  {' '}and understand that all sales are final with no refunds.
+                </span>
+              </label>
+            </div>
+          </div>
+
           <button
             type="submit"
             className="submit-button"
-            disabled={!isFormComplete || isSubmitting}
+            disabled={!isFormComplete || isSubmitting || !termsAccepted}
           >
             {isSubmitting
               ? "🤖 AI Analyzing..."
@@ -334,6 +510,84 @@ export default function IntakeForm() {
               : `🚀 Complete Form (${Math.round(progress)}%)`}
           </button>
         </form>
+
+        {/* Success Message Overlay */}
+        {submitSuccess && (
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(0, 0, 0, 0.8)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 9999,
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: "#ffffff",
+                padding: "3rem",
+                borderRadius: "16px",
+                maxWidth: "500px",
+                width: "90%",
+                textAlign: "center",
+                boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "4rem",
+                  marginBottom: "1rem",
+                  animation: "bounce 0.6s ease-in-out",
+                }}
+              >
+                ✅
+              </div>
+              <h2
+                style={{
+                  fontSize: "1.8rem",
+                  fontWeight: "bold",
+                  color: "#10b981",
+                  marginBottom: "1rem",
+                }}
+              >
+                Form Submitted Successfully!
+              </h2>
+              {caseNumber && (
+                <p
+                  style={{
+                    fontSize: "1.1rem",
+                    color: "#374151",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  <strong>Case Number:</strong> {caseNumber}
+                </p>
+              )}
+              <p
+                style={{
+                  fontSize: "1rem",
+                  color: "#6b7280",
+                  marginBottom: "1.5rem",
+                }}
+              >
+                Your case has been received and is being processed by our AI system.
+              </p>
+              <p
+                style={{
+                  fontSize: "0.9rem",
+                  color: "#9ca3af",
+                }}
+              >
+                Redirecting to payment page...
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
