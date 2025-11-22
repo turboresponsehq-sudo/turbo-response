@@ -44,7 +44,7 @@ const upload = multer({
  * - title: Document title (optional, defaults to filename)
  * - description: Document description (optional)
  */
-router.post('/upload', accessToken, authenticateToken, requireAdmin, upload.single('file'), async (req, res) => {
+router.post('/upload', accessToken, upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({
@@ -146,7 +146,7 @@ router.post('/upload', accessToken, authenticateToken, requireAdmin, upload.sing
  * - limit: Items per page (default: 20, max: 100)
  * - archived: Include archived documents (default: false)
  */
-router.get('/list', accessToken, authenticateToken, requireAdmin, async (req, res) => {
+router.get('/list', accessToken, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = Math.min(parseInt(req.query.limit) || 20, 100);
@@ -211,7 +211,7 @@ module.exports = router;
  * Params:
  * - id: Document ID
  */
-router.delete('/delete/:id', accessToken, authenticateToken, requireAdmin, async (req, res) => {
+router.delete('/delete/:id', accessToken, async (req, res) => {
   try {
     const { id } = req.params;
 
