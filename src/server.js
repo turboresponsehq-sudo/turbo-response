@@ -30,6 +30,7 @@ const contractRoutes = require('./routes/contract'); // Contract signing
 const debugRoutes = require('./routes/debug'); // Debug/check endpoints
 const migrateNotionRoutes = require('./routes/migrate-notion'); // Notion migration
 const brainRoutes = require('./routes/brain'); // Turbo Brain System (Supabase)
+const caseUploadRoutes = require('./routes/caseUpload'); // Case Upload Center
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -95,6 +96,7 @@ app.use('/api', contractRoutes); // Contract routes
 app.use('/api', debugRoutes); // Debug routes
 app.use('/api', migrateNotionRoutes); // Notion migration
 app.use('/api/brain', brainRoutes); // Turbo Brain System (Supabase)
+app.use('/api/case-upload', caseUploadRoutes); // Case Upload Center
 
 // Serve frontend static files and SPA fallback
 const { serveFrontend } = require('../serve-frontend');
