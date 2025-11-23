@@ -26,8 +26,12 @@ export default function AdminCaseDetail() {
 
   const fetchCaseData = async () => {
     try {
+      const token = localStorage.getItem('admin_session');
       const response = await fetch(`${API_BASE}/api/admin-cases/${caseId}`, {
-        credentials: 'include'
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
       const data = await response.json();
       if (data.success) {
@@ -42,8 +46,12 @@ export default function AdminCaseDetail() {
 
   const fetchDocuments = async () => {
     try {
+      const token = localStorage.getItem('admin_session');
       const response = await fetch(`${API_BASE}/api/admin-cases/${caseId}/documents`, {
-        credentials: 'include'
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
       const data = await response.json();
       if (data.success) {
@@ -66,9 +74,13 @@ export default function AdminCaseDetail() {
           formData.append('note', note);
         }
 
+        const token = localStorage.getItem('admin_session');
         const response = await fetch(`${API_BASE}/api/admin-cases/${caseId}/upload`, {
           method: 'POST',
           credentials: 'include',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
           body: formData
         });
 
@@ -117,9 +129,13 @@ export default function AdminCaseDetail() {
     if (!confirm('Are you sure you want to delete this document?')) return;
 
     try {
+      const token = localStorage.getItem('admin_session');
       const response = await fetch(`${API_BASE}/api/admin-cases/documents/${docId}`, {
         method: 'DELETE',
-        credentials: 'include'
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
 
       const data = await response.json();

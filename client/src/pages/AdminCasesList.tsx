@@ -36,8 +36,12 @@ export default function AdminCasesList() {
 
   const fetchCases = async () => {
     try {
+      const token = localStorage.getItem('admin_session');
       const response = await fetch(`${API_BASE}/api/admin-cases`, {
-        credentials: 'include'
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
       const data = await response.json();
       if (data.success) {
@@ -53,9 +57,13 @@ export default function AdminCasesList() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem('admin_session');
       const response = await fetch(`${API_BASE}/api/admin-cases/create`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         credentials: 'include',
         body: JSON.stringify(formData)
       });
