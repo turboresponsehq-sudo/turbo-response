@@ -915,3 +915,40 @@ Provides legal proof that client agreed to no-refund policy with timestamp and I
 - [ ] Verify all 5 cases visible
 - [ ] Verify documents viewable
 - [ ] Generate completion report
+
+
+## 🚀 TOP PRIORITY: CASE FILE UPLOAD CENTER (TypeScript + tRPC)
+
+### Database Schema
+- [x] Add `cases` table to drizzle/schema.ts
+- [x] Add `case_documents` table to drizzle/schema.ts (linked by case_id)
+- [x] Run `pnpm db:push` to migrate database
+
+### tRPC Backend
+- [x] Create tRPC procedure: uploadCaseDocument (file upload with note/tag)
+- [x] Create tRPC procedure: getCaseDocuments (list all files for a case)
+- [x] Create tRPC procedure: deleteCaseDocument (remove file)
+- [x] Create tRPC procedure: createCase (create new case)
+- [x] Create tRPC procedure: listCases (list all cases)
+- [x] Support file types: PDF, images (JPG, PNG, HEIC, WebP), DOCX, TXT
+- [x] Handle 50-100 files per case
+
+### Admin UI
+- [x] Create /admin/cases page (list all cases)
+- [x] Create /admin/case/:id/files page (upload & manage files for a case)
+- [x] Add drag-and-drop file upload
+- [x] Add mobile camera/photo library support
+- [x] Add note/tag input per file
+- [x] Add file preview (thumbnails for images, icons for docs)
+- [x] Add download button per file
+- [x] Add delete button per file
+- [x] Use brand colors (dark navy #0a1628, cyan #06b6d4)
+
+### Testing
+- [ ] Test creating a new case (ready for manual testing)
+- [ ] Test uploading multiple files to a case (ready for manual testing)
+- [ ] Test viewing uploaded files (ready for manual testing)
+- [ ] Test downloading files (ready for manual testing)
+- [ ] Test deleting files (ready for manual testing)
+- [ ] Verify 50-100 files can be uploaded per case (ready for manual testing)
+

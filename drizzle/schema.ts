@@ -187,3 +187,54 @@ export const caseMessages = mysqlTable("case_messages", {
 
 export type CaseMessage = typeof caseMessages.$inferSelect;
 export type InsertCaseMessage = typeof caseMessages.$inferInsert;
+
+/**
+ * Cases table - tracks individual legal cases
+ */
+export const cases = mysqlTable("cases", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Case title/name */
+  title: varchar("title", { length: 255 }).notNull(),
+  /** Case category */
+  category: varchar("category", { length: 50 }),
+  /** Case status: open, closed, pending */
+  status: varchar("status", { length: 50 }).default("open").notNull(),
+  /** Case description/summary */
+  description: text("description"),
+  /** Client name */
+  clientName: varchar("clientName", { length: 255 }),
+  /** Client email */
+  clientEmail: varchar("clientEmail", { length: 320 }),
+  /** Client phone */
+  clientPhone: varchar("clientPhone", { length: 50 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Case = typeof cases.$inferSelect;
+export type InsertCase = typeof cases.$inferInsert;
+
+/**
+ * Case Documents table - stores uploaded files for each case
+ */
+export const caseDocuments = mysqlTable("case_documents", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Foreign key to cases table */
+  caseId: int("caseId").notNull(),
+  /** S3 file key */
+  fileKey: varchar("fileKey", { length: 500 }).notNull(),
+  /** Public S3 URL */
+  fileUrl: text("fileUrl").notNull(),
+  /** Original filename */
+  fileName: varchar("fileName", { length: 255 }).notNull(),
+  /** MIME type */
+  mimeType: varchar("mimeType", { length: 100 }),
+  /** File size in bytes */
+  fileSize: int("fileSize"),
+  /** Note/tag for this document */
+  note: text("note"),
+  uploadedAt: timestamp("uploadedAt").defaultNow().notNull(),
+});
+
+export type CaseDocument = typeof caseDocuments.$inferSelect;
+export type InsertCaseDocument = typeof caseDocuments.$inferInsert;

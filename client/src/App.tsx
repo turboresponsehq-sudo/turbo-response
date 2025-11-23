@@ -18,6 +18,7 @@ import AdminConsumerCases from "./pages/AdminConsumerCases";
 import AdminConsumerCaseDetail from "./pages/AdminConsumerCaseDetail";
 import AdminCaseDetail from "./pages/AdminCaseDetail";
 import AdminBrainUpload from "./pages/AdminBrainUpload";
+import CaseUploadCenter from "./pages/CaseUploadCenter";
 import ConsumerConfirmation from "./pages/ConsumerConfirmation";
 import TurboHQ from "./pages/TurboHQ";
 import Services from "./pages/Services";
@@ -29,6 +30,8 @@ import ClientPortal from "./pages/ClientPortal";
 import PaymentPage from "./pages/PaymentPage";
 import SignContract from "./pages/SignContract";
 import TurboIntakeForm from "./pages/TurboIntakeForm";
+import AdminCases from "./pages/AdminCases";
+import CaseFileUpload from "./pages/CaseFileUpload";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -62,6 +65,9 @@ function Router() {
       <Route path="/admin/login" component={AdminLogin} />
       {/* Admin workflow routes - restored to specification */}
       <Route path="/admin/brain" component={AdminBrainUpload} />
+      <Route path="/admin/case-upload" component={CaseUploadCenter} />
+      <Route path="/admin/cases" component={AdminCases} />
+      <Route path="/admin/case/:id/files" component={CaseFileUpload} />
       <Route path="/admin/case/:id" component={AdminCaseDetail} />
       <Route path="/admin" component={AdminDashboard} />
       

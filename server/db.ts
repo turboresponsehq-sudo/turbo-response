@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, cases, caseDocuments, InsertCase, InsertCaseDocument } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,48 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// Case management helpers
+export async function createCase(caseData: InsertCase) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(cases).values(caseData);
+  return result;
+}
+
+export async function getCaseById(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.select().from(cases).where(eq(cases.id, id)).limit(1);
+  return result.length > 0 ? result[0] : null;
+}
+
+export async function listCases() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  return await db.select().from(cases).orderBy(cases.createdAt);
+}
+
+export async function createCaseDocument(docData: InsertCaseDocument) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(caseDocuments).values(docData);
+  return result;
+}
+
+export async function getCaseDocuments(caseId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  return await db.select().from(caseDocuments).where(eq(caseDocuments.caseId, caseId)).orderBy(caseDocuments.uploadedAt);
+}
+
+export async function deleteCaseDocument(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.delete(caseDocuments).where(eq(caseDocuments.id, id));
+}
