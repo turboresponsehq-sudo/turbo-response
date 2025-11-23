@@ -952,3 +952,61 @@ Provides legal proof that client agreed to no-refund policy with timestamp and I
 - [ ] Test deleting files (ready for manual testing)
 - [ ] Verify 50-100 files can be uploaded per case (ready for manual testing)
 
+
+
+## ✅ COMPLETED: Case Upload Center (Express)
+
+### Root Cause Fixed
+- [x] Production runs Express backend (no tRPC)
+- [x] Frontend uses tRPC client (incompatible)
+- [x] Removed all tRPC code
+- [x] Created Express REST API (adminCasesController)
+- [x] Updated React frontend to use fetch()
+- [x] Created admin_cases table (PostgreSQL)
+- [x] Using existing case_documents table
+- [x] Routes: /admin/cases, /admin/cases/:id
+
+
+
+## 🔥 REBUILD: Case File Upload Center (Express Architecture)
+
+### Phase 1: Remove tRPC Code
+- [ ] Delete server/routers/caseRouter.ts
+- [ ] Remove caseRouter import from server/routers.ts
+- [ ] Remove cases & case_documents from drizzle/schema.ts
+- [ ] Remove case helpers from server/db.ts
+- [ ] Delete client/src/pages/AdminCases.tsx (tRPC version)
+- [ ] Delete client/src/pages/CaseFileUpload.tsx (tRPC version)
+- [ ] Remove routes from App.tsx
+
+### Phase 2: Database Tables (Express/MySQL)
+- [ ] Create migration: 008_create_cases_table.mjs
+- [ ] Create migration: 009_create_case_documents_table.mjs
+- [ ] Test migrations locally
+
+### Phase 3: Express REST API
+- [ ] Create src/controllers/casesController.js
+- [ ] POST /api/cases/create
+- [ ] POST /api/cases/:caseId/upload (Supabase storage)
+- [ ] GET /api/cases (list all)
+- [ ] GET /api/cases/:caseId (get one)
+- [ ] GET /api/cases/:caseId/documents
+- [ ] DELETE /api/cases/:caseId/documents/:docId
+- [ ] Create src/routes/cases.js
+- [ ] Register routes in src/server.js
+
+### Phase 4: React Admin UI (Express version)
+- [ ] Create client/src/pages/AdminCasesList.jsx
+- [ ] Create client/src/pages/AdminCaseDetail.jsx
+- [ ] Add drag-and-drop uploader
+- [ ] Add mobile camera support
+- [ ] Add notes/tags per document
+- [ ] Add category dropdown (IRS, Debt Collection, etc.)
+- [ ] Register routes in App.tsx
+
+### Phase 5: Deploy
+- [ ] Test locally
+- [ ] Push to GitHub
+- [ ] Verify Render deployment
+- [ ] Test on production
+
