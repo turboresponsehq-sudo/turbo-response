@@ -1,8 +1,6 @@
 const { query } = require('../services/database/db');
-const { createClient } = require('../services/supabase/client');
+const { getSupabaseClient } = require('../services/supabase/client');
 const logger = require('../utils/logger');
-
-const supabase = createClient();
 
 // Create new admin case
 const createAdminCase = async (req, res) => {
@@ -116,6 +114,7 @@ const uploadDocument = async (req, res) => {
     }
 
     // Upload to Supabase storage
+    const supabase = getSupabaseClient();
     const fileName = `${Date.now()}-${file.originalname}`;
     const filePath = `case-${caseId}/${fileName}`;
 
@@ -208,6 +207,7 @@ const deleteDocument = async (req, res) => {
     const fileKey = docResult.rows[0].file_key;
 
     // Delete from Supabase storage
+    const supabase = getSupabaseClient();
     const { error: deleteError } = await supabase.storage
       .from('case-files')
       .remove([fileKey]);
