@@ -28,7 +28,8 @@ const clientRoutes = require('./routes/client'); // Client portal authentication
 const messagingRoutes = require('./routes/messaging'); // Client-admin messaging
 const contractRoutes = require('./routes/contract'); // Contract signing
 const debugRoutes = require('./routes/debug'); // Debug/check endpoints
-const migrateNotionRoutes = require('./routes/migrate-notion'); // Notion migration
+const migrateNotionRoutes = require('./routes/migrate-notion');
+const migrateAdminCasesRoutes = require('./routes/migrateAdminCases'); // Notion migration
 const brainRoutes = require('./routes/brain'); // Turbo Brain System (Supabase)
 const caseUploadRoutes = require('./routes/caseUpload'); // Case Upload Center
 const adminCasesRoutes = require('./routes/adminCases'); // Admin Case File Upload Center
@@ -96,6 +97,7 @@ app.use('/api/case', messagingRoutes); // Messaging routes
 app.use('/api', contractRoutes); // Contract routes
 app.use('/api', debugRoutes); // Debug routes
 app.use('/api', migrateNotionRoutes); // Notion migration
+app.use('/api/migrate', migrateAdminCasesRoutes); // TEMPORARY - Admin cases migration
 app.use('/api/brain', brainRoutes); // Turbo Brain System (Supabase)
 app.use('/api/case-upload', caseUploadRoutes); // Case Upload Center
 app.use('/api/admin-cases', adminCasesRoutes); // Admin Case File Upload Center
