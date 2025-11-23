@@ -237,11 +237,65 @@ const deleteDocument = async (req, res) => {
   }
 };
 
+// Delete admin case (cascades to documents)
+const deleteAdminCase = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Get all documents for this case
+    const docsResult = await query(
+      `SELECT file_key FROM admin_case_documents WHERE case_id = $1`,
+      [id]
+    );
+
+    // Delete files from Supabase storage
+    if (docsResult.rows.length > 0) {
+      const supabase = getSupabaseClient();
+      const fileKeys = docsResult.rows.map(doc => doc.file_key);
+      
+      const { error: deleteError } = await supabase.storage
+        .from('case-files')
+        .remove(fileKeys);
+
+      if (deleteError) {
+        logger.error('Supabase bulk delete failed', { error: deleteError });
+      }
+    }
+
+    // Delete case (CASCADE will delete documents from database)
+    const result = await query(
+      `DELETE FROM admin_cases WHERE id = $1 RETURNING id`,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'Case not found'
+      });
+    }
+
+    logger.info('Admin case deleted', { caseId: id });
+
+    res.json({
+      success: true,
+      message: 'Case and all associated documents deleted successfully'
+    });
+  } catch (error) {
+    logger.error('Failed to delete admin case', { error: error.message, caseId: req.params.id });
+    res.status(500).json({
+      success: false,
+      error: 'Failed to delete case'
+    });
+  }
+};
+
 module.exports = {
   createAdminCase,
   getAllAdminCases,
   getAdminCaseById,
   uploadDocument,
   getCaseDocuments,
-  deleteDocument
+  deleteDocument,
+  deleteAdminCase
 };

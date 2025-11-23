@@ -125,7 +125,7 @@ export default function AdminCaseDetail() {
     }
   };
 
-  const handleDelete = async (docId) => {
+  const handleDeleteDocument = async (docId) => {
     if (!confirm('Are you sure you want to delete this document?')) return;
 
     try {
@@ -144,6 +144,32 @@ export default function AdminCaseDetail() {
       }
     } catch (error) {
       console.error('Delete failed:', error);
+    }
+  };
+
+  const handleDeleteCase = async () => {
+    if (!confirm('Are you sure you want to delete this entire case? This will also delete all associated documents. This action cannot be undone.')) return;
+
+    try {
+      const token = localStorage.getItem('admin_session');
+      const response = await fetch(`${API_BASE}/api/admin-cases/${caseId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        alert('Case deleted successfully');
+        setLocation('/admin/cases');
+      } else {
+        alert('Failed to delete case: ' + (data.error || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Delete case failed:', error);
+      alert('Failed to delete case');
     }
   };
 
@@ -171,9 +197,18 @@ export default function AdminCaseDetail() {
 
   return (
     <div className="admin-case-detail-container">
-      <button className="btn-back" onClick={() => setLocation('/admin/cases')}>
-        ← Back to Cases
-      </button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <button className="btn-back" onClick={() => setLocation('/admin/cases')}>
+          ← Back to Cases
+        </button>
+        <button 
+          className="btn-delete" 
+          onClick={handleDeleteCase}
+          style={{ backgroundColor: '#dc2626', color: 'white', padding: '0.5rem 1rem', borderRadius: '0.375rem', border: 'none', cursor: 'pointer' }}
+        >
+          🗑️ Delete Case
+        </button>
+      </div>
 
       <div className="case-info">
         <h1>{caseData.title}</h1>
@@ -281,7 +316,7 @@ export default function AdminCaseDetail() {
                   </a>
                   <button
                     className="btn-delete"
-                    onClick={() => handleDelete(doc.id)}
+                    onClick={() => handleDeleteDocument(doc.id)}
                   >
                     Delete
                   </button>

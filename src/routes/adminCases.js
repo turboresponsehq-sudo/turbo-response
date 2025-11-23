@@ -7,7 +7,8 @@ const {
   getAdminCaseById,
   uploadDocument,
   getCaseDocuments,
-  deleteDocument
+  deleteDocument,
+  deleteAdminCase
 } = require('../controllers/adminCasesController');
 const { authenticateToken } = require('../middleware/auth');
 
@@ -26,6 +27,7 @@ router.use(authenticateToken);
 router.post('/create', createAdminCase);
 router.get('/', getAllAdminCases);
 router.get('/:id', getAdminCaseById);
+router.delete('/:id', deleteAdminCase);
 
 // Document management routes
 router.post('/:caseId/upload', upload.single('file'), uploadDocument);
