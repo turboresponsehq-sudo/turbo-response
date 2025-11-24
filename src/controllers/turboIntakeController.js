@@ -1,6 +1,6 @@
 const { query } = require('../services/database/db');
 const logger = require('../utils/logger');
-const { sendBusinessIntakeNotification } = require('../services/emailService');
+const { sendBusinessIntakeNotification, sendBusinessIntakeConfirmation } = require('../services/emailService');
 
 // Submit new business intake form
 const submit = async (req, res, next) => {
@@ -96,6 +96,22 @@ const submit = async (req, res, next) => {
       created_at: newIntake.created_at,
     }).catch(err => {
       logger.error('Failed to send business intake notification email', {
+        error: err.message,
+        intakeId: newIntake.id,
+      });
+    });
+
+    // Send confirmation email to client (non-blocking)
+    sendBusinessIntakeConfirmation({
+      id: newIntake.id,
+      full_name: newIntake.full_name,
+      email: newIntake.email,
+      phone: phone || null,
+      business_name: businessName || null,
+      website_url: websiteUrl || null,
+      created_at: newIntake.created_at,
+    }).catch(err => {
+      logger.error('Failed to send business intake confirmation email', {
         error: err.message,
         intakeId: newIntake.id,
       });
