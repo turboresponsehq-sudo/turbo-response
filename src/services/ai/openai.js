@@ -97,22 +97,32 @@ Please provide a comprehensive legal blueprint that this person can use to defen
 };
 
 // AI Chat endpoint
-const chat = async (messages, caseContext = null) => {
+const chat = async (messages, caseContext = null, brainContext = null) => {
   try {
-    const systemPrompt = caseContext 
-      ? `You are Turbo AI, an expert consumer rights assistant helping with a ${caseContext.category} case. 
-         You have access to the case details and blueprint. Provide helpful, accurate legal guidance 
-         while being empathetic and professional. Always remind users that you're an AI assistant 
-         and they should consult with a licensed attorney for final legal advice.
-         
-         Case Context:
-         - Category: ${caseContext.category}
-         - Status: ${caseContext.status}
-         - Blueprint Generated: ${caseContext.blueprint_generated ? 'Yes' : 'No'}`
-      : `You are Turbo AI, a consumer rights assistant. Help users understand their legal rights 
-         and guide them through the process of defending against unfair practices. Be professional, 
-         empathetic, and actionable. Always remind users to consult with a licensed attorney for 
-         final legal advice.`;
+    // Build system prompt with Brain context if available
+    let systemPrompt = '';
+    
+    if (caseContext) {
+      systemPrompt = `You are Turbo AI, an expert consumer rights assistant helping with a ${caseContext.category} case. 
+You have access to the case details and blueprint. Provide helpful, accurate legal guidance 
+while being empathetic and professional. Always remind users that you're an AI assistant 
+and they should consult with a licensed attorney for final legal advice.
+
+Case Context:
+- Category: ${caseContext.category}
+- Status: ${caseContext.status}
+- Blueprint Generated: ${caseContext.blueprint_generated ? 'Yes' : 'No'}`;
+    } else {
+      systemPrompt = `You are Turbo AI, a consumer rights assistant. Help users understand their legal rights 
+and guide them through the process of defending against unfair practices. Be professional, 
+empathetic, and actionable. Always remind users to consult with a licensed attorney for 
+final legal advice.`;
+    }
+
+    // Add Brain knowledge base context if available
+    if (brainContext && brainContext.context) {
+      systemPrompt += `\n\n---\n\nKNOWLEDGE BASE CONTEXT:\nYou have access to a curated knowledge base of legal documents, guides, and case studies. \nBelow is relevant information retrieved from the knowledge base based on the user's question.\nUse this information to provide more accurate and detailed responses.\nAlways cite the source document when referencing specific information.\n\n${brainContext.context}\n\n---\n\nWhen answering, prioritize information from the knowledge base above, but combine it with your general knowledge for a comprehensive response.`;
+    }
 
     const chatMessages = [
       { role: 'system', content: systemPrompt },

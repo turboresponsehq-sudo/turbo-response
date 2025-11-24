@@ -1,5 +1,7 @@
 const { query } = require('../services/database/db');
 const { chat } = require('../services/ai/openai');
+const { generateEmbedding } = require('../services/embeddings');
+const { searchSimilarChunks } = require('../services/vectorSearch');
 const logger = require('../utils/logger');
 
 // Send chat message
@@ -45,8 +47,56 @@ const sendMessage = async (req, res, next) => {
     // Add current user message to history
     chatHistory.push({ role: 'user', content: message });
 
-    // Generate AI response
-    const { message: aiResponse, tokens_used } = await chat(chatHistory, caseContext);
+    // Retrieve relevant context from Brain documents
+    let brainContext = null;
+    try {
+      // Generate embedding for user message
+      const queryEmbedding = await generateEmbedding(message);
+      
+      // Search for relevant chunks
+      const relevantChunks = await searchSimilarChunks(queryEmbedding, {
+        topK: 3,
+        minScore: 0.75
+      });
+
+      if (relevantChunks.length > 0) {
+        // Fetch document titles
+        const documentIds = [...new Set(relevantChunks.map(c => c.documentId))];
+        const docsResult = await query(
+          'SELECT id, title FROM brain_documents WHERE id = ANY($1)',
+          [documentIds]
+        );
+        
+        const docsMap = {};
+        docsResult.rows.forEach(doc => {
+          docsMap[doc.id] = doc.title;
+        });
+
+        // Assemble context from chunks
+        const contextParts = relevantChunks.map(chunk => 
+          `[Source: ${docsMap[chunk.documentId] || 'Unknown'}]\n${chunk.content}`
+        );
+        
+        brainContext = {
+          context: contextParts.join('\n\n---\n\n'),
+          sources: relevantChunks.map(c => ({
+            title: docsMap[c.documentId] || 'Unknown',
+            score: c.score
+          }))
+        };
+
+        logger.info('Brain context retrieved', {
+          chunksFound: relevantChunks.length,
+          sources: brainContext.sources.length
+        });
+      }
+    } catch (error) {
+      logger.error('Brain context retrieval failed', { error: error.message });
+      // Continue without Brain context if retrieval fails
+    }
+
+    // Generate AI response with Brain context
+    const { message: aiResponse, tokens_used } = await chat(chatHistory, caseContext, brainContext);
 
     // Save user message to database
     if (case_id) {
