@@ -20,6 +20,17 @@ interface BrainDocument {
   size_bytes: number;
   source: string;
   created_at: string;
+  indexing_status?: string;
+  chunk_count?: number;
+  indexed_at?: string;
+}
+
+interface IndexingStatus {
+  total: number;
+  indexed: number;
+  pending: number;
+  indexing: number;
+  failed: number;
 }
 
 export default function AdminBrainUpload() {
@@ -30,6 +41,8 @@ export default function AdminBrainUpload() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [indexingStatus, setIndexingStatus] = useState<IndexingStatus | null>(null);
+  const [bulkIndexing, setBulkIndexing] = useState(false);
 
   // Check admin authentication
   useEffect(() => {
@@ -39,6 +52,7 @@ export default function AdminBrainUpload() {
       return;
     }
     fetchDocuments();
+    fetchIndexingStatus();
   }, []);
 
   const fetchDocuments = async () => {
@@ -55,6 +69,57 @@ export default function AdminBrainUpload() {
       setUploadStatus(`Error loading documents: ${err.response?.data?.error || err.message}`);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchIndexingStatus = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/api/brain/index/status`, {
+        headers: {
+          "x-access-token": BRAIN_ACCESS_TOKEN,
+        },
+      });
+      setIndexingStatus(res.data);
+    } catch (err: any) {
+      console.error("Failed to fetch indexing status:", err);
+    }
+  };
+
+  const handleBulkIndex = async () => {
+    if (!confirm(`Start bulk indexing of all unindexed documents?\n\nThis will process documents in the background and may take several minutes.`)) {
+      return;
+    }
+
+    try {
+      setBulkIndexing(true);
+      setUploadStatus("🔄 Starting bulk indexing...");
+
+      const res = await axios.post(`${API_URL}/api/brain/index/bulk`, {}, {
+        headers: {
+          "x-access-token": BRAIN_ACCESS_TOKEN,
+        },
+      });
+
+      if (res.data.success) {
+        setUploadStatus(`✅ Bulk indexing started! Processing ${res.data.total} documents in background.`);
+        // Poll for status updates
+        const interval = setInterval(async () => {
+          await fetchIndexingStatus();
+          const status = await axios.get(`${API_URL}/api/brain/index/status`, {
+            headers: { "x-access-token": BRAIN_ACCESS_TOKEN }
+          });
+          if (status.data.indexing === 0 && status.data.pending === 0) {
+            clearInterval(interval);
+            setBulkIndexing(false);
+            setUploadStatus(`✅ Bulk indexing complete! ${status.data.indexed} documents indexed.`);
+            await fetchDocuments();
+          }
+        }, 5000); // Check every 5 seconds
+      }
+    } catch (err: any) {
+      console.error("Bulk indexing error:", err);
+      setUploadStatus(`❌ Bulk indexing failed: ${err.response?.data?.error || err.message}`);
+      setBulkIndexing(false);
     }
   };
 
@@ -147,6 +212,45 @@ export default function AdminBrainUpload() {
         <h1>🧠 Turbo Brain – Document Upload</h1>
         <a href="/admin" className="back-link">← Back to Dashboard</a>
       </div>
+
+      {/* Indexing Status Section */}
+      {indexingStatus && (
+        <div className="indexing-status-section">
+          <h2>📊 RAG Indexing Status</h2>
+          <div className="status-grid">
+            <div className="status-card">
+              <div className="status-label">Total Documents</div>
+              <div className="status-value">{indexingStatus.total}</div>
+            </div>
+            <div className="status-card success">
+              <div className="status-label">Indexed</div>
+              <div className="status-value">{indexingStatus.indexed}</div>
+            </div>
+            <div className="status-card warning">
+              <div className="status-label">Pending</div>
+              <div className="status-value">{indexingStatus.pending}</div>
+            </div>
+            <div className="status-card info">
+              <div className="status-label">Processing</div>
+              <div className="status-value">{indexingStatus.indexing}</div>
+            </div>
+            <div className="status-card error">
+              <div className="status-label">Failed</div>
+              <div className="status-value">{indexingStatus.failed}</div>
+            </div>
+          </div>
+          <button
+            onClick={handleBulkIndex}
+            disabled={bulkIndexing || indexingStatus.pending === 0}
+            className="bulk-index-button"
+          >
+            {bulkIndexing ? "🔄 Indexing in Progress..." : `🚀 Bulk Index ${indexingStatus.pending} Documents`}
+          </button>
+          {indexingStatus.pending === 0 && indexingStatus.indexing === 0 && (
+            <div className="all-indexed-message">✅ All documents are indexed!</div>
+          )}
+        </div>
+      )}
 
       {/* Upload Section */}
       <div className="upload-section">
