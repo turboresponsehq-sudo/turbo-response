@@ -440,10 +440,95 @@ async function sendBusinessIntakeNotification(intakeData) {
   }
 }
 
+/**
+ * Send business intake confirmation email to client
+ * @param {Object} intakeData - Business intake information
+ */
+async function sendBusinessIntakeConfirmation(intakeData) {
+  const transport = getTransporter();
+  
+  if (!transport) {
+    logger.warn('Email transporter not available. Skipping business intake confirmation.');
+    return false;
+  }
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: intakeData.email,
+    subject: `✅ Business Audit Request Received - Turbo Response HQ`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #06b6d4, #0284c7); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+          <h1 style="color: white; margin: 0; font-size: 28px;">⚡ Turbo Response HQ</h1>
+          <p style="color: #e0f2fe; margin: 10px 0 0 0;">Business Growth Platform</p>
+        </div>
+
+        <div style="background-color: #f8fafc; padding: 30px; border-radius: 0 0 8px 8px;">
+          <h2 style="color: #0f172a; margin-top: 0;">Thank You, ${intakeData.full_name}!</h2>
+          <p style="color: #475569; font-size: 16px; line-height: 1.6;">
+            Your business audit request has been successfully submitted and is now under review by our growth team.
+          </p>
+
+          <div style="background-color: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #06b6d4;">
+            <h3 style="margin-top: 0; color: #0f172a;">🚀 Your Business Information</h3>
+            <p style="margin: 8px 0;"><strong>Business Name:</strong> ${intakeData.business_name || 'Not provided'}</p>
+            <p style="margin: 8px 0;"><strong>Contact Email:</strong> ${intakeData.email}</p>
+            ${intakeData.phone ? `<p style="margin: 8px 0;"><strong>Phone:</strong> ${intakeData.phone}</p>` : ''}
+            ${intakeData.website_url ? `<p style="margin: 8px 0;"><strong>Website:</strong> <a href="${intakeData.website_url}" style="color: #06b6d4;">${intakeData.website_url}</a></p>` : ''}
+          </div>
+
+          <div style="background-color: #dbeafe; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #0f172a;">📅 What Happens Next?</h3>
+            <ol style="color: #475569; line-height: 1.8; padding-left: 20px;">
+              <li><strong>Business Review</strong> - Our team will analyze your business within 24-48 hours</li>
+              <li><strong>Growth Assessment</strong> - We'll identify opportunities to scale your revenue</li>
+              <li><strong>Custom Strategy</strong> - You'll receive a tailored action plan and pricing</li>
+              <li><strong>Follow-Up Call</strong> - We'll reach out to discuss next steps</li>
+            </ol>
+          </div>
+
+          <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <p style="margin: 0; color: #92400e;"><strong>💡 Pro Tip:</strong> Add ${process.env.EMAIL_USER} to your contacts to ensure you receive all updates about your business audit.</p>
+          </div>
+
+          <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 14px;">
+            <p style="margin: 5px 0;"><strong>Need Help?</strong></p>
+            <p style="margin: 5px 0;">Email: ${process.env.EMAIL_USER}</p>
+            <p style="margin: 5px 0;">Website: <a href="https://turboresponsehq.ai" style="color: #06b6d4;">turboresponsehq.ai</a></p>
+          </div>
+
+          <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 12px; text-align: center;">
+            <p>This is an automated confirmation from Turbo Response HQ.</p>
+            <p>Intake ID: ${intakeData.id} | Submitted: ${new Date(intakeData.created_at).toLocaleString()}</p>
+          </div>
+        </div>
+      </div>
+    `,
+  };
+
+  try {
+    const info = await transport.sendMail(mailOptions);
+    logger.info('Business intake confirmation email sent', {
+      intakeId: intakeData.id,
+      to: intakeData.email,
+      messageId: info.messageId,
+    });
+    return true;
+  } catch (error) {
+    logger.error('Failed to send business intake confirmation email', {
+      error: error.message,
+      intakeId: intakeData.id,
+      email: intakeData.email,
+    });
+    return false;
+  }
+}
+
 module.exports = {
   sendEmail,
   sendNewCaseNotification,
   sendPaymentConfirmationNotification,
   sendClientCaseConfirmation,
   sendBusinessIntakeNotification,
+  sendBusinessIntakeConfirmation,
 };
