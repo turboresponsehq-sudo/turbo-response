@@ -325,8 +325,225 @@ const retrieveContext = async (req, res, next) => {
   }
 };
 
+/**
+ * Start bulk indexing of all unindexed documents
+ * POST /api/brain/index/bulk
+ */
+const bulkIndexDocuments = async (req, res, next) => {
+  try {
+    // Get all unindexed documents
+    const result = await query(
+      `SELECT id, title, file_url 
+       FROM brain_documents 
+       WHERE indexing_status IN ('pending', 'failed') OR indexing_status IS NULL
+       ORDER BY created_at ASC`
+    );
+
+    const unindexedDocs = result.rows;
+
+    if (unindexedDocs.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: 'No documents to index',
+        total: 0,
+        indexed: 0
+      });
+    }
+
+    logger.info('Starting bulk indexing', {
+      totalDocuments: unindexedDocs.length
+    });
+
+    // Process documents asynchronously (don't wait for completion)
+    // This prevents request timeout for large batches
+    processBulkIndexing(unindexedDocs).catch(error => {
+      logger.error('Bulk indexing background process failed', {
+        error: error.message
+      });
+    });
+
+    res.status(202).json({
+      success: true,
+      message: 'Bulk indexing started',
+      total: unindexedDocs.length,
+      status: 'processing'
+    });
+  } catch (error) {
+    logger.error('Bulk indexing start failed', {
+      error: error.message
+    });
+    next(error);
+  }
+};
+
+/**
+ * Background process for bulk indexing
+ * Processes documents in batches to avoid overwhelming the system
+ */
+async function processBulkIndexing(documents) {
+  const batchSize = 5; // Process 5 documents at a time
+  let indexed = 0;
+  let failed = 0;
+
+  for (let i = 0; i < documents.length; i += batchSize) {
+    const batch = documents.slice(i, i + batchSize);
+    
+    logger.info('Processing batch', {
+      batchStart: i,
+      batchSize: batch.length,
+      totalDocuments: documents.length
+    });
+
+    // Process batch in parallel
+    const results = await Promise.allSettled(
+      batch.map(doc => indexSingleDocument(doc.id, doc.file_url, doc.title))
+    );
+
+    // Count successes and failures
+    results.forEach((result, index) => {
+      if (result.status === 'fulfilled') {
+        indexed++;
+        logger.info('Document indexed', {
+          documentId: batch[index].id,
+          title: batch[index].title
+        });
+      } else {
+        failed++;
+        logger.error('Document indexing failed', {
+          documentId: batch[index].id,
+          title: batch[index].title,
+          error: result.reason?.message
+        });
+      }
+    });
+
+    // Small delay between batches to avoid rate limits
+    if (i + batchSize < documents.length) {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+  }
+
+  logger.info('Bulk indexing completed', {
+    total: documents.length,
+    indexed,
+    failed
+  });
+}
+
+/**
+ * Index a single document (helper for bulk indexing)
+ */
+async function indexSingleDocument(documentId, fileUrl, title) {
+  try {
+    // Update status to 'indexing'
+    await query(
+      'UPDATE brain_documents SET indexing_status = $1 WHERE id = $2',
+      ['indexing', documentId]
+    );
+
+    // Extract text from PDF
+    const { text, pages } = await extractTextFromPDFUrl(fileUrl);
+
+    if (!text || text.trim().length === 0) {
+      await query(
+        'UPDATE brain_documents SET indexing_status = $1 WHERE id = $2',
+        ['failed', documentId]
+      );
+      throw new Error('No text content found in document');
+    }
+
+    // Chunk the document
+    const chunks = chunkDocument(text, {
+      maxTokens: 800,
+      overlapTokens: 100
+    });
+
+    if (chunks.length === 0) {
+      await query(
+        'UPDATE brain_documents SET indexing_status = $1 WHERE id = $2',
+        ['failed', documentId]
+      );
+      throw new Error('Failed to chunk document');
+    }
+
+    // Generate embeddings for chunks
+    const chunksWithEmbeddings = await generateChunkEmbeddings(chunks);
+
+    // Delete existing chunks (if re-indexing)
+    await deleteDocumentChunks(documentId);
+
+    // Store chunks with embeddings
+    const chunksStored = await storeChunkEmbeddings(documentId, chunksWithEmbeddings);
+
+    // Update document status to 'indexed'
+    await query(
+      `UPDATE brain_documents 
+       SET indexing_status = $1, 
+           indexed_at = NOW(), 
+           chunk_count = $2 
+       WHERE id = $3`,
+      ['indexed', chunksStored, documentId]
+    );
+
+    return {
+      documentId,
+      title,
+      pages,
+      chunks: chunksStored
+    };
+  } catch (error) {
+    // Update status to 'failed'
+    await query(
+      'UPDATE brain_documents SET indexing_status = $1 WHERE id = $2',
+      ['failed', documentId]
+    );
+    throw error;
+  }
+}
+
+/**
+ * Get bulk indexing status
+ * GET /api/brain/index/status
+ */
+const getIndexingStatus = async (req, res, next) => {
+  try {
+    const result = await query(
+      `SELECT 
+         indexing_status,
+         COUNT(*) as count
+       FROM brain_documents
+       GROUP BY indexing_status`
+    );
+
+    const statusCounts = {};
+    result.rows.forEach(row => {
+      statusCounts[row.indexing_status || 'pending'] = parseInt(row.count);
+    });
+
+    const totalResult = await query('SELECT COUNT(*) as total FROM brain_documents');
+    const total = parseInt(totalResult.rows[0].total);
+
+    res.status(200).json({
+      success: true,
+      total,
+      status: statusCounts,
+      indexed: statusCounts.indexed || 0,
+      pending: (statusCounts.pending || 0) + (statusCounts.null || 0),
+      indexing: statusCounts.indexing || 0,
+      failed: statusCounts.failed || 0
+    });
+  } catch (error) {
+    logger.error('Failed to get indexing status', {
+      error: error.message
+    });
+    next(error);
+  }
+};
+
 module.exports = {
   indexDocument,
   searchDocuments,
-  retrieveContext
+  retrieveContext,
+  bulkIndexDocuments,
+  getIndexingStatus
 };
