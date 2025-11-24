@@ -5,7 +5,7 @@
  * for the Turbo Brain knowledge base
  */
 
-const { getSupabaseDB } = require('../services/supabase/client');
+const { query } = require('../services/database/db');
 const { getSupabaseDB } = require('../services/supabase/client');
 const { extractTextFromPDFUrl } = require('../services/pdfExtractor');
 const { chunkDocument } = require('../services/documentChunker');
@@ -22,13 +22,10 @@ const indexDocument = async (req, res, next) => {
 
   try {
     // 1. Fetch document metadata from database
-    const supabase = getSupabaseDB();
-    const { data: docs, error: fetchError } = await supabase
-      .from('brain_documents')
-      .select('id, title, file_url, mime_type')
-      .eq('id', documentId);
-    if (fetchError) throw fetchError;
-    const docResult = { rows: docs || [] };
+    const docResult = await query(
+      'SELECT id, title, file_url, mime_type FROM brain_documents WHERE id = $1',
+      [documentId]
+    );
 
     if (docResult.rows.length === 0) {
       return res.status(404).json({
@@ -40,8 +37,10 @@ const indexDocument = async (req, res, next) => {
     const document = docResult.rows[0];
 
     // 2. Update status to 'indexing'
-    const sb = getSupabaseDB();
-    await sb.from('brain_documents').update({ indexing_status: 'indexing' }).eq('id', documentId);
+    await query(
+      'UPDATE brain_documents SET indexing_status = $1 WHERE id = $2',
+      ['indexing', documentId]
+    );
 
     logger.info('Starting document indexing', {
       documentId,
@@ -53,8 +52,10 @@ const indexDocument = async (req, res, next) => {
     const { text, pages } = await extractTextFromPDFUrl(document.file_url);
 
     if (!text || text.trim().length === 0) {
-      const sb = getSupabaseDB();
-    await sb.from('brain_documents').update({ indexing_status: 'failed' }).eq('id', documentId);
+      await query(
+        'UPDATE brain_documents SET indexing_status = $1 WHERE id = $2',
+        ['failed', documentId]
+      );
 
       return res.status(400).json({
         success: false,
@@ -69,8 +70,10 @@ const indexDocument = async (req, res, next) => {
     });
 
     if (chunks.length === 0) {
-      const sb = getSupabaseDB();
-    await sb.from('brain_documents').update({ indexing_status: 'failed' }).eq('id', documentId);
+      await query(
+        'UPDATE brain_documents SET indexing_status = $1 WHERE id = $2',
+        ['failed', documentId]
+      );
 
       return res.status(400).json({
         success: false,
@@ -88,12 +91,14 @@ const indexDocument = async (req, res, next) => {
     const chunksStored = await storeChunkEmbeddings(documentId, chunksWithEmbeddings);
 
     // 8. Update document status to 'indexed'
-    const sb = getSupabaseDB();
-    await sb.from('brain_documents').update({
-      indexing_status: 'indexed',
-      indexed_at: new Date().toISOString(),
-      chunk_count: chunksStored
-    }).eq('id', documentId);
+    await query(
+      `UPDATE brain_documents 
+       SET indexing_status = $1, 
+           indexed_at = NOW(), 
+           chunk_count = $2 
+       WHERE id = $3`,
+      ['indexed', chunksStored, documentId]
+    );
 
     logger.info('Document indexed successfully', {
       documentId,
@@ -118,8 +123,10 @@ const indexDocument = async (req, res, next) => {
 
     // Update status to 'failed'
     try {
-      const sb = getSupabaseDB();
-    await sb.from('brain_documents').update({ indexing_status: 'failed' }).eq('id', documentId);
+      await query(
+        'UPDATE brain_documents SET indexing_status = $1 WHERE id = $2',
+        ['failed', documentId]
+      );
     } catch (updateError) {
       logger.error('Failed to update document status', {
         error: updateError.message
@@ -326,14 +333,12 @@ const retrieveContext = async (req, res, next) => {
 const bulkIndexDocuments = async (req, res, next) => {
   try {
     // Get all unindexed documents
-    const sb = getSupabaseDB();
-    const { data, error } = await sb
-      .from('brain_documents')
-      .select('id, title, file_url')
-      .or('indexing_status.in.(pending,failed),indexing_status.is.null')
-      .order('created_at', { ascending: true });
-    if (error) throw error;
-    const result = { rows: data || [] };
+    const result = await query(
+      `SELECT id, title, file_url 
+       FROM brain_documents 
+       WHERE indexing_status IN ('pending', 'failed') OR indexing_status IS NULL
+       ORDER BY created_at ASC`
+    );
 
     const unindexedDocs = result.rows;
 
@@ -432,15 +437,19 @@ async function processBulkIndexing(documents) {
 async function indexSingleDocument(documentId, fileUrl, title) {
   try {
     // Update status to 'indexing'
-    const sb = getSupabaseDB();
-    await sb.from('brain_documents').update({ indexing_status: 'indexing' }).eq('id', documentId);
+    await query(
+      'UPDATE brain_documents SET indexing_status = $1 WHERE id = $2',
+      ['indexing', documentId]
+    );
 
     // Extract text from PDF
     const { text, pages } = await extractTextFromPDFUrl(fileUrl);
 
     if (!text || text.trim().length === 0) {
-      const sb = getSupabaseDB();
-    await sb.from('brain_documents').update({ indexing_status: 'failed' }).eq('id', documentId);
+      await query(
+        'UPDATE brain_documents SET indexing_status = $1 WHERE id = $2',
+        ['failed', documentId]
+      );
       throw new Error('No text content found in document');
     }
 
@@ -451,8 +460,10 @@ async function indexSingleDocument(documentId, fileUrl, title) {
     });
 
     if (chunks.length === 0) {
-      const sb = getSupabaseDB();
-    await sb.from('brain_documents').update({ indexing_status: 'failed' }).eq('id', documentId);
+      await query(
+        'UPDATE brain_documents SET indexing_status = $1 WHERE id = $2',
+        ['failed', documentId]
+      );
       throw new Error('Failed to chunk document');
     }
 
@@ -466,12 +477,14 @@ async function indexSingleDocument(documentId, fileUrl, title) {
     const chunksStored = await storeChunkEmbeddings(documentId, chunksWithEmbeddings);
 
     // Update document status to 'indexed'
-    const sb = getSupabaseDB();
-    await sb.from('brain_documents').update({
-      indexing_status: 'indexed',
-      indexed_at: new Date().toISOString(),
-      chunk_count: chunksStored
-    }).eq('id', documentId);
+    await query(
+      `UPDATE brain_documents 
+       SET indexing_status = $1, 
+           indexed_at = NOW(), 
+           chunk_count = $2 
+       WHERE id = $3`,
+      ['indexed', chunksStored, documentId]
+    );
 
     return {
       documentId,
@@ -481,8 +494,10 @@ async function indexSingleDocument(documentId, fileUrl, title) {
     };
   } catch (error) {
     // Update status to 'failed'
-    const sb = getSupabaseDB();
-    await sb.from('brain_documents').update({ indexing_status: 'failed' }).eq('id', documentId);
+    await query(
+      'UPDATE brain_documents SET indexing_status = $1 WHERE id = $2',
+      ['failed', documentId]
+    );
     throw error;
   }
 }
@@ -493,15 +508,13 @@ async function indexSingleDocument(documentId, fileUrl, title) {
  */
 const getIndexingStatus = async (req, res, next) => {
   try {
-    const sb = getSupabaseDB();
-    const { data: allDocs, error } = await sb.from('brain_documents').select('indexing_status');
-    if (error) throw error;
-    const statusCounts = {};
-    (allDocs || []).forEach(doc => {
-      const status = doc.indexing_status || 'pending';
-      statusCounts[status] = (statusCounts[status] || 0) + 1;
-    });
-    const result = { rows: Object.entries(statusCounts).map(([k,v]) => ({ indexing_status: k, count: v })) };
+    const result = await query(
+      `SELECT 
+         indexing_status,
+         COUNT(*) as count
+       FROM brain_documents
+       GROUP BY indexing_status`
+    );
 
     const statusCounts = {};
     result.rows.forEach(row => {
