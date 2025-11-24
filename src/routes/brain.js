@@ -11,6 +11,7 @@ const multer = require('multer');
 const { getBrainBucket, getSupabaseDB } = require('../services/supabase/client');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
 const accessToken = require('../middleware/accessToken');
+const { indexDocument, searchDocuments, retrieveContext } = require('../controllers/ragController');
 
 // Configure multer for file uploads (memory storage)
 const upload = multer({
@@ -484,5 +485,25 @@ router.delete('/delete/:id', accessToken, async (req, res) => {
     });
   }
 });
+
+/**
+ * POST /api/brain/index/:id
+ * Index a document (extract text, chunk, generate embeddings)
+ */
+router.post('/index/:id', accessToken, indexDocument);
+
+/**
+ * POST /api/brain/search
+ * Semantic search across indexed documents
+ * Body: { query: string, top_k?: number, min_score?: number, document_ids?: number[] }
+ */
+router.post('/search', accessToken, searchDocuments);
+
+/**
+ * GET /api/brain/retrieve
+ * Retrieve context for LLM prompt injection
+ * Query params: query (required), max_tokens (optional, default 2000)
+ */
+router.get('/retrieve', accessToken, retrieveContext);
 
 module.exports = router;

@@ -1015,3 +1015,18 @@ Provides legal proof that client agreed to no-refund policy with timestamp and I
 - [x] Add sendBusinessIntakeConfirmation function to emailService.js
 - [x] Update turboIntakeController to send confirmation email to client
 - [ ] Deploy and test email delivery
+
+## 🧠 RAG Pipeline for Brain System
+- [x] Design RAG architecture (chunking → embeddings → vector search)
+- [x] Create brain_chunks table with vector column (pgvector extension)
+- [x] Implement PDF text extraction service
+- [x] Implement smart document chunking (500-1000 tokens per chunk)
+- [x] Implement OpenAI embeddings generation (text-embedding-3-small)
+- [x] Create vector similarity search function (cosine similarity)
+- [x] Build POST /api/brain/index/:id endpoint (chunk + embed document)
+- [x] Build POST /api/brain/search endpoint (semantic search)
+- [x] Build GET /api/brain/retrieve endpoint (get relevant context)
+- [x] Integrate RAG with Turbo agent system prompt
+- [x] Add context injection to agent responses
+- [ ] Test RAG pipeline with sample documents
+- [ ] Deploy to production
