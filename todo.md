@@ -1036,5 +1036,7 @@ Provides legal proof that client agreed to no-refund policy with timestamp and I
 - [x] Add progress tracking for bulk indexing
 - [x] Process documents in batches to avoid timeouts
 - [x] Add GET /api/brain/index/status endpoint for progress monitoring
+- [x] Add bulk indexing button to /admin/brain page
+- [x] Add real-time status display with auto-refresh
 - [ ] Test bulk indexing with existing documents
 - [ ] Deploy to production
