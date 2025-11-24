@@ -1030,3 +1030,11 @@ Provides legal proof that client agreed to no-refund policy with timestamp and I
 - [x] Add context injection to agent responses
 - [ ] Test RAG pipeline with sample documents
 - [ ] Deploy to production
+
+## 🔄 Bulk Indexing for Brain System
+- [x] Create POST /api/brain/index/bulk endpoint
+- [x] Add progress tracking for bulk indexing
+- [x] Process documents in batches to avoid timeouts
+- [x] Add GET /api/brain/index/status endpoint for progress monitoring
+- [ ] Test bulk indexing with existing documents
+- [ ] Deploy to production

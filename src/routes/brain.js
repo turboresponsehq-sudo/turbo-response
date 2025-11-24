@@ -11,7 +11,7 @@ const multer = require('multer');
 const { getBrainBucket, getSupabaseDB } = require('../services/supabase/client');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
 const accessToken = require('../middleware/accessToken');
-const { indexDocument, searchDocuments, retrieveContext } = require('../controllers/ragController');
+const { indexDocument, searchDocuments, retrieveContext, bulkIndexDocuments, getIndexingStatus } = require('../controllers/ragController');
 
 // Configure multer for file uploads (memory storage)
 const upload = multer({
@@ -505,5 +505,19 @@ router.post('/search', accessToken, searchDocuments);
  * Query params: query (required), max_tokens (optional, default 2000)
  */
 router.get('/retrieve', accessToken, retrieveContext);
+
+/**
+ * POST /api/brain/index/bulk
+ * Start bulk indexing of all unindexed documents
+ * Returns immediately with 202 Accepted, processes in background
+ */
+router.post('/index/bulk', accessToken, bulkIndexDocuments);
+
+/**
+ * GET /api/brain/index/status
+ * Get indexing status for all documents
+ * Returns counts by status: indexed, pending, indexing, failed
+ */
+router.get('/index/status', accessToken, getIndexingStatus);
 
 module.exports = router;
