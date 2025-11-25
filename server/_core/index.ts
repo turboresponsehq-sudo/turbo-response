@@ -64,53 +64,129 @@ async function startServer() {
   // Brain System routes (with access token middleware built-in)
   app.use("/api/brain", brainRouter);
   
-  // TEMPORARY: Password reset endpoint
-  app.post("/api/reset-admin-password", async (req, res) => {
+  // Setup admin user (one-time)
+  app.get("/api/setup-admin", async (req, res) => {
     try {
       const bcrypt = await import("bcrypt");
-      const { query } = await import("../../backend/src/services/database/db");
+      const db = await getDb();
       
-      const email = 'turboresponsehq@gmail.com';
-      const newPassword = 'Admin123!';
-      
-      console.log('🔧 Resetting admin password...');
-      
-      const hashedPassword = await bcrypt.default.hash(newPassword, 10);
-      
-      const checkResult = await query(
-        'SELECT id, email, role FROM users WHERE email = $1',
-        [email]
-      );
-      
-      if (checkResult.rows.length === 0) {
-        await query(
-          'INSERT INTO users (email, password, role, name) VALUES ($1, $2, $3, $4)',
-          [email, hashedPassword, 'admin', 'Admin']
-        );
-        console.log('✅ Admin user created');
-      } else {
-        await query(
-          'UPDATE users SET password = $1, role = $2 WHERE email = $3',
-          [hashedPassword, 'admin', email]
-        );
-        console.log('✅ Password updated');
+      if (!db) {
+        return res.status(500).send('Database not available');
       }
+
+      const email = 'turboresponsehq@gmail.com';
+      const password = 'Admin123!';
+      const hashedPassword = await bcrypt.default.hash(password, 10);
+
+      // Add password column if needed
+      try {
+        await db.execute('ALTER TABLE users ADD COLUMN password VARCHAR(255) AFTER email');
+        console.log('✅ Password column added');
+      } catch (error: any) {
+        console.log('✅ Password column exists');
+      }
+
+      // Check if admin exists
+      const result: any = await db.execute(`SELECT id FROM users WHERE email = '${email}'`);
+      const exists = result.rows?.length > 0 || result.length > 0;
+
+      if (exists) {
+        await db.execute(`UPDATE users SET password = '${hashedPassword}', role = 'admin' WHERE email = '${email}'`);
+      } else {
+        await db.execute(`
+          INSERT INTO users (openId, email, password, role, name, createdAt, updatedAt, lastSignedIn) 
+          VALUES ('admin-local', '${email}', '${hashedPassword}', 'admin', 'Admin', NOW(), NOW(), NOW())
+        `);
+      }
+
+      res.send(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Admin Setup Complete</title>
+          <style>
+            body { font-family: Arial; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%); color: white; }
+            .container { text-align: center; padding: 40px; background: rgba(15, 23, 42, 0.8); border-radius: 20px; border: 1px solid #06b6d4; }
+            h1 { color: #06b6d4; }
+            .credentials { background: rgba(30, 41, 59, 0.6); padding: 20px; border-radius: 10px; margin: 20px 0; }
+            .value { color: #06b6d4; font-weight: bold; font-size: 18px; }
+            a { display: inline-block; margin-top: 20px; padding: 15px 30px; background: #06b6d4; color: white; text-decoration: none; border-radius: 10px; font-weight: bold; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1>✅ Admin Setup Complete!</h1>
+            <div class="credentials">
+              <p>Email: <span class="value">turboresponsehq@gmail.com</span></p>
+              <p>Password: <span class="value">Admin123!</span></p>
+            </div>
+            <a href="/admin/login">Go to Admin Login →</a>
+          </div>
+        </body>
+        </html>
+      `);
+    } catch (error: any) {
+      console.error('❌ Setup error:', error);
+      res.status(500).send(`Error: ${error.message}`);
+    }
+  });
+
+  // Admin login endpoint
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { email, password } = req.body;
       
+      if (!email || !password) {
+        return res.status(400).json({ message: 'Email and password required' });
+      }
+
+      const bcrypt = await import("bcrypt");
+      const jwt = await import("jsonwebtoken");
+      const db = await getDb();
+      
+      if (!db) {
+        return res.status(500).json({ message: 'Database not available' });
+      }
+
+      // Find user
+      const result: any = await db.execute(`SELECT * FROM users WHERE email = '${email}' LIMIT 1`);
+      const user = result.rows?.[0] || result[0];
+
+      if (!user || !user.password) {
+        return res.status(401).json({ message: 'Invalid credentials' });
+      }
+
+      // Verify password
+      const isValid = await bcrypt.default.compare(password, user.password);
+      if (!isValid) {
+        return res.status(401).json({ message: 'Invalid credentials' });
+      }
+
+      // Check admin role
+      if (user.role !== 'admin') {
+        return res.status(403).json({ message: 'Access denied' });
+      }
+
+      // Generate token
+      const token = jwt.default.sign(
+        { userId: user.id, email: user.email, role: user.role },
+        process.env.JWT_SECRET || 'turbo-secret-2025',
+        { expiresIn: '7d' }
+      );
+
       res.json({
-        success: true,
-        message: 'Admin password reset successfully',
-        credentials: {
-          email: 'turboresponsehq@gmail.com',
-          password: 'Admin123!'
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role
         }
       });
       
     } catch (error: any) {
-      console.error('❌ Password reset error:', error);
-      res.status(500).json({
-        success: false,
-        error: error.message
-      });
+      console.error('❌ Login error:', error);
+      res.status(500).json({ message: 'Internal server error' });
     }
   });
   
