@@ -33,6 +33,7 @@ const migrateAdminCasesRoutes = require('./routes/migrateAdminCases'); // Notion
 const brainRoutes = require('./routes/brain'); // Turbo Brain System (Supabase)
 const caseUploadRoutes = require('./routes/caseUpload'); // Case Upload Center
 const adminCasesRoutes = require('./routes/adminCases'); // Admin Case File Upload Center
+const adminDiagnosticRoutes = require('./routes/adminDiagnostic'); // Admin diagnostic and reset
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -100,7 +101,8 @@ app.use('/api', migrateNotionRoutes); // Notion migration
 app.use('/api/migrate', migrateAdminCasesRoutes); // TEMPORARY - Admin cases migration
 app.use('/api/brain', brainRoutes); // Turbo Brain System (Supabase)
 app.use('/api/case-upload', caseUploadRoutes); // Case Upload Center
-app.use('/api/admin-cases', adminCasesRoutes); // Admin Case File Upload Center
+app.use('/api/admin/cases', adminCasesRoutes); // Admin case file upload center
+app.use('/api', adminDiagnosticRoutes); // Admin diagnostic
 
 // Serve frontend static files and SPA fallback
 const { serveFrontend } = require('../serve-frontend');
