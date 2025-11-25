@@ -34,6 +34,7 @@ const brainRoutes = require('./routes/brain'); // Turbo Brain System (Supabase)
 const caseUploadRoutes = require('./routes/caseUpload'); // Case Upload Center
 const adminCasesRoutes = require('./routes/adminCases'); // Admin Case File Upload Center
 const adminDiagnosticRoutes = require('./routes/adminDiagnostic'); // Admin diagnostic and reset
+const createAdminCasesTableRoutes = require('./routes/createAdminCasesTable'); // Create admin_cases table
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -103,6 +104,7 @@ app.use('/api/brain', brainRoutes); // Turbo Brain System (Supabase)
 app.use('/api/case-upload', caseUploadRoutes); // Case Upload Center
 app.use('/api/admin/cases', adminCasesRoutes); // Admin case file upload center
 app.use('/api', adminDiagnosticRoutes); // Admin diagnostic
+app.use('/api', createAdminCasesTableRoutes); // Create admin_cases table
 
 // Serve frontend static files and SPA fallback
 const { serveFrontend } = require('../serve-frontend');
