@@ -1040,3 +1040,10 @@ Provides legal proof that client agreed to no-refund policy with timestamp and I
 - [x] Add real-time status display with auto-refresh
 - [ ] Test bulk indexing with existing documents
 - [ ] Deploy to production
+
+## 🗑️ Fix Brain Admin Delete Functionality
+- [ ] Check/fix DELETE /api/brain/delete/:id endpoint
+- [ ] Add confirmation modal to frontend delete button
+- [ ] Connect delete button to API call
+- [ ] Refresh document list after successful delete
+- [ ] Test and deploy

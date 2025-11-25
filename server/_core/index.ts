@@ -64,6 +64,56 @@ async function startServer() {
   // Brain System routes (with access token middleware built-in)
   app.use("/api/brain", brainRouter);
   
+  // TEMPORARY: Password reset endpoint
+  app.post("/api/reset-admin-password", async (req, res) => {
+    try {
+      const bcrypt = await import("bcrypt");
+      const { query } = await import("../../backend/src/services/database/db");
+      
+      const email = 'turboresponsehq@gmail.com';
+      const newPassword = 'Admin123!';
+      
+      console.log('🔧 Resetting admin password...');
+      
+      const hashedPassword = await bcrypt.default.hash(newPassword, 10);
+      
+      const checkResult = await query(
+        'SELECT id, email, role FROM users WHERE email = $1',
+        [email]
+      );
+      
+      if (checkResult.rows.length === 0) {
+        await query(
+          'INSERT INTO users (email, password, role, name) VALUES ($1, $2, $3, $4)',
+          [email, hashedPassword, 'admin', 'Admin']
+        );
+        console.log('✅ Admin user created');
+      } else {
+        await query(
+          'UPDATE users SET password = $1, role = $2 WHERE email = $3',
+          [hashedPassword, 'admin', email]
+        );
+        console.log('✅ Password updated');
+      }
+      
+      res.json({
+        success: true,
+        message: 'Admin password reset successfully',
+        credentials: {
+          email: 'turboresponsehq@gmail.com',
+          password: 'Admin123!'
+        }
+      });
+      
+    } catch (error: any) {
+      console.error('❌ Password reset error:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+  });
+  
   // tRPC API
   app.use(
     "/api/trpc",
