@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "./AdminBrainUpload.css";
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turbo-response-backend.onrender.com";
+const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turboresponsehq.ai";
 const BRAIN_ACCESS_TOKEN = "TR-SECURE-2025";
 
 interface BrainDocument {
