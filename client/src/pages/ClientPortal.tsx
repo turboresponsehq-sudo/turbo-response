@@ -8,7 +8,7 @@ import { useRoute, useLocation } from "wouter";
 import axios from "axios";
 import ClientMessaging from "../components/ClientMessaging";
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turbo-response-backend.onrender.com";
+const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turboresponsehq.ai";
 
 const CATEGORY_NAMES: Record<string, string> = {
   eviction: "Eviction & Housing",

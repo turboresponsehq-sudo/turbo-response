@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRoute, useLocation } from 'wouter';
 import './AdminCaseDetail.css';
 
-const API_BASE = import.meta.env.VITE_BACKEND_URL || 'https://turbo-response-backend.onrender.com';
+const API_BASE = import.meta.env.VITE_BACKEND_URL || 'https://turboresponsehq.ai';
 
 export default function AdminCaseDetail() {
   const [, params] = useRoute('/admin/cases/:id');
