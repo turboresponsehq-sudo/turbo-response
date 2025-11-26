@@ -524,6 +524,181 @@ async function sendBusinessIntakeConfirmation(intakeData) {
   }
 }
 
+/**
+ * Send notification to client when admin replies to their message
+ * @param {Object} messageData - Message information
+ */
+async function sendClientMessageReplyNotification(messageData) {
+  const transport = getTransporter();
+  
+  if (!transport) {
+    logger.warn('Email transporter not available. Skipping client message notification.');
+    return false;
+  }
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: messageData.client_email,
+    subject: `💬 New Message from Turbo Response - Case ${messageData.case_number}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #06b6d4, #0284c7); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+          <h1 style="color: white; margin: 0; font-size: 28px;">⚡ Turbo Response HQ</h1>
+          <p style="color: #e0f2fe; margin: 10px 0 0 0;">New Message from Your Case Manager</p>
+        </div>
+
+        <div style="background-color: #f8fafc; padding: 30px; border-radius: 0 0 8px 8px;">
+          <h2 style="color: #0f172a; margin-top: 0;">Hi ${messageData.client_name}!</h2>
+          <p style="color: #475569; font-size: 16px; line-height: 1.6;">
+            Your case manager has sent you a new message regarding your case.
+          </p>
+
+          <div style="background-color: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #06b6d4;">
+            <h3 style="margin-top: 0; color: #0f172a;">📋 Case: ${messageData.case_number}</h3>
+            <p style="margin: 8px 0;"><strong>Message Preview:</strong></p>
+            <p style="background-color: #f1f5f9; padding: 15px; border-radius: 6px; color: #334155; font-style: italic;">
+              ${messageData.message_preview}
+            </p>
+          </div>
+
+          <div style="background-color: #dbeafe; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+            <p style="color: #475569; margin-bottom: 15px;">Login to your client portal to read the full message and reply:</p>
+            <a href="https://turboresponsehq.ai/client/login" 
+               style="display: inline-block; padding: 15px 30px; background-color: #06b6d4; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+              View Message in Portal
+            </a>
+          </div>
+
+          <div style="margin-top: 30px; padding: 20px; background-color: #fef3c7; border-radius: 8px; border-left: 4px solid #f59e0b;">
+            <p style="margin: 0; color: #92400e;"><strong>⚡ Quick Login Instructions:</strong></p>
+            <ol style="margin: 10px 0 0 0; padding-left: 20px; color: #92400e;">
+              <li>Visit <a href="https://turboresponsehq.ai/client/login" style="color: #0284c7;">turboresponsehq.ai/client/login</a></li>
+              <li>Enter your email: <strong>${messageData.client_email}</strong></li>
+              <li>Enter your case number: <strong>${messageData.case_number}</strong></li>
+              <li>Check your email for the verification code</li>
+            </ol>
+          </div>
+
+          <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 12px; text-align: center;">
+            <p>This is an automated notification from Turbo Response HQ.</p>
+            <p>Case: ${messageData.case_number} | ${new Date().toLocaleString()}</p>
+          </div>
+        </div>
+      </div>
+    `,
+  };
+
+  try {
+    const info = await transport.sendMail(mailOptions);
+    logger.info('Client message reply notification sent', {
+      caseId: messageData.case_id,
+      to: messageData.client_email,
+      messageId: info.messageId,
+    });
+    return true;
+  } catch (error) {
+    logger.error('Failed to send client message reply notification', {
+      error: error.message,
+      caseId: messageData.case_id,
+      email: messageData.client_email,
+    });
+    return false;
+  }
+}
+
+/**
+ * Send notification to client when case status is updated
+ * @param {Object} statusData - Status update information
+ */
+async function sendClientStatusUpdateNotification(statusData) {
+  const transport = getTransporter();
+  
+  if (!transport) {
+    logger.warn('Email transporter not available. Skipping client status notification.');
+    return false;
+  }
+
+  // Status emoji mapping
+  const statusEmoji = {
+    'Pending Review': '📋',
+    'Under Investigation': '🔍',
+    'Action Required': '⚠️',
+    'In Progress': '⚙️',
+    'Resolved': '✅',
+    'Closed': '🔒',
+    'Lead Submitted': '📝',
+    'Awaiting Payment': '💳',
+    'Payment Pending': '⏳',
+    'Active Case': '✅'
+  };
+
+  const emoji = statusEmoji[statusData.new_status] || '📌';
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: statusData.client_email,
+    subject: `${emoji} Case Status Update - ${statusData.case_number}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #06b6d4, #0284c7); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+          <h1 style="color: white; margin: 0; font-size: 28px;">⚡ Turbo Response HQ</h1>
+          <p style="color: #e0f2fe; margin: 10px 0 0 0;">Case Status Update</p>
+        </div>
+
+        <div style="background-color: #f8fafc; padding: 30px; border-radius: 0 0 8px 8px;">
+          <h2 style="color: #0f172a; margin-top: 0;">Hi ${statusData.client_name}!</h2>
+          <p style="color: #475569; font-size: 16px; line-height: 1.6;">
+            Your case status has been updated.
+          </p>
+
+          <div style="background-color: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #06b6d4;">
+            <h3 style="margin-top: 0; color: #0f172a;">📋 Case: ${statusData.case_number}</h3>
+            <p style="margin: 8px 0;"><strong>Previous Status:</strong> <span style="color: #64748b;">${statusData.old_status || 'N/A'}</span></p>
+            <p style="margin: 8px 0;"><strong>New Status:</strong> <span style="color: #06b6d4; font-size: 18px; font-weight: bold;">${emoji} ${statusData.new_status}</span></p>
+          </div>
+
+          ${statusData.notes ? `
+            <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+              <h3 style="margin-top: 0; color: #92400e;">📝 Update Notes:</h3>
+              <p style="color: #92400e; white-space: pre-wrap;">${statusData.notes}</p>
+            </div>
+          ` : ''}
+
+          <div style="background-color: #dbeafe; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+            <p style="color: #475569; margin-bottom: 15px;">View full case details and communicate with your case manager:</p>
+            <a href="https://turboresponsehq.ai/client/login" 
+               style="display: inline-block; padding: 15px 30px; background-color: #06b6d4; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+              Access Client Portal
+            </a>
+          </div>
+
+          <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 12px; text-align: center;">
+            <p>This is an automated notification from Turbo Response HQ.</p>
+            <p>Case: ${statusData.case_number} | Updated: ${new Date().toLocaleString()}</p>
+          </div>
+        </div>
+      </div>
+    `,
+  };
+
+  try {
+    const info = await transport.sendMail(mailOptions);
+    logger.info('Client status update notification sent', {
+      caseId: statusData.case_id,
+      to: statusData.client_email,
+      messageId: info.messageId,
+    });
+    return true;
+  } catch (error) {
+    logger.error('Failed to send client status update notification', {
+      error: error.message,
+      caseId: statusData.case_id,
+      email: statusData.client_email,
+    });
+    return false;
+  }
+}
+
 module.exports = {
   sendEmail,
   sendNewCaseNotification,
@@ -531,4 +706,6 @@ module.exports = {
   sendClientCaseConfirmation,
   sendBusinessIntakeNotification,
   sendBusinessIntakeConfirmation,
+  sendClientMessageReplyNotification,
+  sendClientStatusUpdateNotification,
 };

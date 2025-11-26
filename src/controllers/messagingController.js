@@ -5,6 +5,7 @@
 
 const { query } = require('../services/database/db');
 const logger = require('../utils/logger');
+const { sendClientMessageReplyNotification } = require('../services/emailService');
 
 /**
  * GET /api/case/:id/messages
@@ -91,6 +92,52 @@ async function sendMessage(req, res) {
        RETURNING *`,
       [caseId, sender, senderName, messageText, filePath, fileName, fileType]
     );
+
+    // Send email notification if admin sent message
+    if (sender === 'admin') {
+      // Get case details for email notification
+      try {
+        const consumerCase = await query(
+          `SELECT case_number, full_name, email FROM cases WHERE id = $1`,
+          [caseId]
+        );
+        
+        if (consumerCase.rows.length > 0) {
+          const caseInfo = consumerCase.rows[0];
+          // Send email notification to client (non-blocking)
+          sendClientMessageReplyNotification({
+            case_id: caseId,
+            case_number: caseInfo.case_number,
+            client_name: caseInfo.full_name,
+            client_email: caseInfo.email,
+            message_preview: messageText ? (messageText.length > 150 ? messageText.substring(0, 150) + '...' : messageText) : 'Admin sent you a file attachment'
+          }).catch(err => {
+            logger.error('Failed to send client message notification email', { error: err.message, caseId });
+          });
+        } else {
+          // Check business_intakes
+          const businessCase = await query(
+            `SELECT id, business_name, email FROM business_intakes WHERE id = $1`,
+            [caseId]
+          );
+          
+          if (businessCase.rows.length > 0) {
+            const caseInfo = businessCase.rows[0];
+            sendClientMessageReplyNotification({
+              case_id: caseId,
+              case_number: `BIZ-${caseId}`,
+              client_name: caseInfo.business_name,
+              client_email: caseInfo.email,
+              message_preview: messageText ? (messageText.length > 150 ? messageText.substring(0, 150) + '...' : messageText) : 'Admin sent you a file attachment'
+            }).catch(err => {
+              logger.error('Failed to send business client message notification email', { error: err.message, caseId });
+            });
+          }
+        }
+      } catch (emailError) {
+        logger.error('Error sending admin message notification', { error: emailError.message, caseId });
+      }
+    }
 
     // Update unread count if client sent message
     if (sender === 'client') {
