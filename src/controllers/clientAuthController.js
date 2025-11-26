@@ -22,24 +22,43 @@ async function requestLogin(req, res) {
     }
 
     // Check if case exists and matches email (both consumer and business cases)
-    const emailLower = email.toLowerCase();
-    console.log('[CLIENT AUTH] Login attempt:', { caseId, email: emailLower });
+    const emailLower = email.toLowerCase().trim();
+    const caseIdNormalized = caseId.trim();
     
-    // Try consumer cases first
+    console.log('[CLIENT AUTH] Login attempt:', { 
+      caseId: caseIdNormalized, 
+      email: emailLower,
+      originalCaseId: caseId,
+      originalEmail: email
+    });
+    
+    // Try consumer cases first (case-insensitive, trimmed comparison)
     let result = await db.query(
-      'SELECT id, case_number, email, portal_enabled, \'consumer\' as case_type FROM cases WHERE case_number = $1 AND email = $2',
-      [caseId, emailLower]
+      `SELECT id, case_number, email, portal_enabled, 'consumer' as case_type 
+       FROM cases 
+       WHERE LOWER(TRIM(case_number)) = LOWER($1) 
+       AND LOWER(TRIM(email)) = LOWER($2)`,
+      [caseIdNormalized, emailLower]
     );
     
-    // If not found, try business intakes
+    console.log('[CLIENT AUTH] Consumer cases query result:', { rowCount: result.rows.length });
+    
+    // If not found, try business intakes (case-insensitive, trimmed comparison)
     if (result.rows.length === 0) {
       result = await db.query(
-        'SELECT id, business_name as case_number, email, portal_enabled, \'business\' as case_type FROM business_intakes WHERE business_name = $1 AND email = $2',
-        [caseId, emailLower]
+        `SELECT id, business_name as case_number, email, portal_enabled, 'business' as case_type 
+         FROM business_intakes 
+         WHERE LOWER(TRIM(business_name)) = LOWER($1) 
+         AND LOWER(TRIM(email)) = LOWER($2)`,
+        [caseIdNormalized, emailLower]
       );
+      console.log('[CLIENT AUTH] Business intakes query result:', { rowCount: result.rows.length });
     }
     
-    console.log('[CLIENT AUTH] Query result:', { rowCount: result.rows.length, rows: result.rows });
+    console.log('[CLIENT AUTH] Final query result:', { 
+      rowCount: result.rows.length, 
+      foundCase: result.rows.length > 0 ? result.rows[0] : null 
+    });
 
     if (result.rows.length === 0) {
       console.log('[CLIENT AUTH] No case found for:', { caseId, email: emailLower });
@@ -71,7 +90,7 @@ async function requestLogin(req, res) {
     });
 
     // Send verification email
-    await emailService.sendEmail({
+    const emailSent = await emailService.sendEmail({
       to: email,
       subject: `Turbo Response - Verification Code for Case ${caseData.case_number}`,
       html: `
@@ -90,6 +109,16 @@ async function requestLogin(req, res) {
       `
     });
 
+    if (!emailSent) {
+      console.error('[CLIENT AUTH] Failed to send verification email - email service returned false');
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to send verification code. Please contact support.'
+      });
+    }
+
+    console.log('[CLIENT AUTH] Verification code sent successfully:', { email, caseNumber: caseData.case_number });
+
     res.json({
       success: true,
       message: 'Verification code sent to your email',
@@ -98,9 +127,15 @@ async function requestLogin(req, res) {
 
   } catch (error) {
     console.error('❌ Client login request error:', error);
+    console.error('[CLIENT AUTH] Full error details:', {
+      message: error.message,
+      stack: error.stack,
+      email,
+      caseId
+    });
     res.status(500).json({
       success: false,
-      message: 'Failed to send verification code'
+      message: 'Failed to send verification code. Please try again or contact support.'
     });
   }
 }
