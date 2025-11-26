@@ -3,6 +3,8 @@ import { useLocation, useRoute } from 'wouter';
 import AIUsageTracker from '@/components/AIUsageTracker';
 import './AdminConsumerCaseDetail.css';
 
+const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turbo-response-backend.onrender.com";
+
 interface CaseDetail {
   id: number;
   name: string;
@@ -76,7 +78,7 @@ export default function AdminConsumerCaseDetail() {
     try {
       setLoading(true);
       const response = await fetch(
-        `/api/admin/consumer/case/${caseId}`
+        `${API_URL}/api/admin/consumer/case/${caseId}`
       );
       
       if (!response.ok) {
@@ -126,7 +128,7 @@ export default function AdminConsumerCaseDetail() {
       const startTime = Date.now();
       
       const response = await fetch(
-        `/api/admin/consumer/analyze-case/${caseId}`,
+        `${API_URL}/api/admin/consumer/analyze-case/${caseId}`,
         {
           method: 'POST',
           headers: {
@@ -172,7 +174,7 @@ export default function AdminConsumerCaseDetail() {
     try {
       setVerifyingPayment(true);
       const response = await fetch(
-        `/api/payment/verify/${caseId}`,
+        `${API_URL}/api/payment/verify/${caseId}`,
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -201,7 +203,7 @@ export default function AdminConsumerCaseDetail() {
     try {
       setVerifyingPayment(true);
       const response = await fetch(
-        `/api/payment/verify/${caseId}`,
+        `${API_URL}/api/payment/verify/${caseId}`,
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -230,7 +232,7 @@ export default function AdminConsumerCaseDetail() {
       setError('');
       
       const response = await fetch(
-        `/api/admin/consumer/generate-letter/${caseId}`,
+        `${API_URL}/api/admin/consumer/generate-letter/${caseId}`,
         {
           method: 'POST',
           headers: {
@@ -304,6 +306,24 @@ export default function AdminConsumerCaseDetail() {
       'critical': '#ef4444'
     };
     return colors[level] || '#94a3b8';
+  };
+
+  // Helper function to ensure document URLs are absolute
+  const getDocumentUrl = (doc: string) => {
+    // If localhost URL, replace with production backend URL
+    if (doc.includes('localhost')) {
+      // Extract the path after localhost:PORT
+      const match = doc.match(/localhost:\d+(\/.*)/)
+      if (match) {
+        return `${API_URL}${match[1]}`;
+      }
+    }
+    // If already absolute production URL, return as-is
+    if (doc.startsWith('https://') && !doc.includes('localhost')) {
+      return doc;
+    }
+    // If relative path, prepend backend URL
+    return `${API_URL}${doc.startsWith('/') ? '' : '/'}${doc}`;
   };
 
   if (loading) {
@@ -469,7 +489,7 @@ export default function AdminConsumerCaseDetail() {
               {caseData.documents.map((doc, index) => (
                 <a 
                   key={index} 
-                  href={doc} 
+                  href={getDocumentUrl(doc)} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="document-link"
