@@ -3,7 +3,7 @@ import { useRoute, useLocation } from "wouter";
 import axios from "axios";
 import "./ClientContract.css";
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turbo-response-backend.onrender.com";
+const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turboresponsehq.ai";
 
 export default function SignContract() {
   const [, params] = useRoute("/sign-contract/:caseId");

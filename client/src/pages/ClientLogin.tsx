@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turbo-response-backend.onrender.com";
+const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turboresponsehq.ai";
 
 export default function ClientLogin() {
   const [, setLocation] = useLocation();
