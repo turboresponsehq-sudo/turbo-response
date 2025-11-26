@@ -1,10 +1,9 @@
 const { query } = require('../services/database/db');
 
-// GET ALL ADMIN CASES
-async function getAllAdminCases(req, res) => {
+async function getAllAdminCases(req, res) {
   try {
     const result = await query(`
-      SELECT
+      SELECT 
         id,
         title,
         category,
@@ -23,19 +22,14 @@ async function getAllAdminCases(req, res) => {
       success: true,
       cases: result.rows
     });
-
   } catch (error) {
-    console.error("❌ Error loading admin cases:", error);
+    console.error('❌ Error loading admin cases:', error);
     res.status(500).json({
       success: false,
-      error: "Failed to load admin cases",
+      error: 'Failed to load admin cases',
       detail: error.message
     });
   }
 }
 
-module.exports = {
-  getAllAdminCases
-};
-
-
+module.exports = { getAllAdminCases };
