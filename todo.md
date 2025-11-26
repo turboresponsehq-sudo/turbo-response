@@ -1,69 +1,55 @@
 # Turbo Response - TODO
 
-## 🚨 CRITICAL ISSUES - USER REPORTED (JAN 26 2025 - 3:00 PM)
+## ✅ WORKING FEATURES (Confirmed JAN 26 2025)
+- [x] Client portal login (both consumer & business)
+- [x] File upload via "Upload Additional Document" button
+- [x] File upload via messaging paperclip button
+- [x] Business messaging
+- [x] Consumer messaging
+- [x] Admin dashboard case viewing (desktop & iPhone)
+- [x] Document upload endpoint fixed (commit f2a79c4)
 
-### 1️⃣ CLIENT PORTAL - Verification Code Email Failing (CRITICAL)
-- [x] Check /api/client/send-code endpoint implementation
-- [x] Verify emailService is using EMAIL_USER/EMAIL_PASSWORD from env
-- [x] Check if email transporter is initialized correctly
-- [x] Add detailed error logging for email failures
-- [x] Fixed: Now checks if emailService.sendEmail() returns false
-- [x] Added console logging to track email send status
-- [ ] Deploy and test on production
+## 🚀 NEW FEATURES TO BUILD (JAN 26 2025 - 3:45 PM)
 
-### 2️⃣ CLIENT PORTAL - "No case found with that email and case ID"
-- [x] Review clientAuth.js case lookup logic
-- [x] Verify query checks both cases AND business_intakes tables
-- [x] Fixed: Added LOWER(TRIM()) to handle case sensitivity and whitespace
-- [x] Added detailed logging to show which table is being queried
-- [x] Now normalizes both email and case ID before comparison
-- [ ] Deploy and test with actual consumer case data
+### 1️⃣ EMAIL NOTIFICATION ON DOCUMENT UPLOAD (HIGH PRIORITY)
+- [x] Add email notification to admin when client uploads document
+- [x] Include case number, client name, document name in email
+- [x] Add link to admin dashboard case detail page
+- [ ] Test notification triggers correctly after deployment
 
-### 3️⃣ CONSUMER CLIENT PORTAL - File Upload Feature
-- [x] File upload button EXISTS (📎 paperclip button)
-- [x] Upload endpoint EXISTS (/api/upload/single)
-- [x] File display in messages EXISTS
-- [x] File type validation EXISTS (.pdf, .jpg, .png, .heic, .webp, .tiff, .bmp)
-- [ ] NEED TO TEST: Verify file upload works on production
-- [ ] NEED TO TEST: Check if uploaded files appear in admin dashboard
-- [ ] If broken: Check /api/upload/single endpoint and S3 configuration
+### 2️⃣ DOCUMENT GALLERY VIEW (HIGH PRIORITY)
+- [x] Build thumbnail grid view for documents in admin dashboard
+- [x] Show PDF icon for PDF files
+- [x] Show image thumbnails for JPG/PNG/HEIC files
+- [x] Add click to open larger view (lightbox)
+- [x] Add download button for each document
+- [x] Integrated into AdminConsumerCaseDetail page
+- [ ] Test on production after deployment
 
-### 4️⃣ MOBILE ADMIN PORTAL - Android Login Failure
-- [ ] Check CORS configuration for mobile browsers
-- [ ] Verify cookie handling on Android browsers
-- [ ] Check domain redirect logic (turboresponsehq.ai vs www.)
-- [ ] Test admin token persistence on Android
-- [ ] Add mobile-specific error logging
+### 3️⃣ DOCUMENT CATEGORIES/TAGS
+- [ ] DEFERRED - Not needed for MVP
+- [ ] Can be added later when case volume increases
 
-### 5️⃣ BUSINESS PORTAL - Working ✅
-- [x] Business messaging fixed
-- [x] Gaudi Designs case created
-- [x] FK constraint removed
-- No AI audit tools needed (manual audits only)
+### 4️⃣ FIX ANDROID ADMIN DASHBOARD
+- [ ] Fix "Could not load cases" error on Samsung Android
+- [ ] Add better error logging to AdminDashboard.tsx
+- [ ] Check if API response format is correct
+- [ ] Test on Android after fix
 
-## COMPLETED FIXES (PREVIOUS SESSION)
-- [x] Created business_intakes table (migration 010)
-- [x] Seeded Gaudi Designs case (migration 011)
-- [x] Removed FK constraint from case_messages (migration 012)
-- [x] Business messaging now works
+## 📝 TECHNICAL NOTES
 
+### Database Schema Changes Needed
+- [ ] Add `category` field to document storage
+- [ ] Consider creating `case_documents` table instead of JSON array
+- [ ] Add `uploaded_by` field (client vs admin)
+- [ ] Add `uploaded_at` timestamp
 
-## 🚨 NEW ISSUES - USER TESTED (JAN 26 2025 - 3:15 PM)
+### Email Service
+- [ ] Use existing emailService.sendEmail()
+- [ ] Create document upload email template
+- [ ] Include case details and document info
 
-### ✅ WORKING
-- [x] Client portal login works on Android
-- [x] File upload via messaging works (paperclip button)
-- [x] Messages display correctly
-
-### ❌ BROKEN
-- [x] Document upload button shows "Failed to update case documents"
-  - Fixed: Now checks both cases AND business_intakes tables
-  - Fixed: Properly handles client authentication (req.clientAuth)
-  - Fixed: Updates correct table based on case type
-  - [x] Deployed (commit f2a79c4)
-  - [ ] Test on production after deployment
-  
-- [ ] Android admin portal login not working
-  - Client portal works on Android
-  - Admin portal fails on Android
-  - Need to get error message/logs from user
+### Frontend Components
+- [ ] Create DocumentGallery component
+- [ ] Create DocumentUploadWithCategory component
+- [ ] Update AdminCaseDetail to show gallery instead of list

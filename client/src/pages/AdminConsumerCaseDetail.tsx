@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
+import DocumentGallery from '../components/DocumentGallery';
 import { useLocation, useRoute } from 'wouter';
 import AIUsageTracker from '@/components/AIUsageTracker';
 import './AdminConsumerCaseDetail.css';
@@ -462,24 +463,10 @@ export default function AdminConsumerCaseDetail() {
           <p>{caseData.description}</p>
         </div>
 
-        {caseData.documents && caseData.documents.length > 0 && (
-          <div className="documents-section">
-            <label>📎 Attached Documents ({caseData.documents.length}):</label>
-            <div className="documents-list">
-              {caseData.documents.map((doc, index) => (
-                <a 
-                  key={index} 
-                  href={doc} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="document-link"
-                >
-                  📄 Document {index + 1}
-                </a>
-              ))}
-            </div>
-          </div>
-        )}
+        <div className="documents-section">
+          <label>📎 Attached Documents ({caseData.documents?.length || 0}):</label>
+          <DocumentGallery documents={caseData.documents || []} />
+        </div>
       </div>
 
       {/* AI Usage Tracker */}

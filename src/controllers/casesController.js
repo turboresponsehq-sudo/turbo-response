@@ -910,6 +910,50 @@ const updateCaseDocuments = async (req, res, next) => {
       userEmail
     });
 
+    // Send email notification to admin if client uploaded (not admin)
+    if (!isAdmin && documents.length > 0) {
+      try {
+        const emailService = require('../services/emailService');
+        const newDocuments = documents.slice(-1); // Get last uploaded document
+        const documentNames = newDocuments.map(doc => {
+          // Extract filename from URL
+          if (typeof doc === 'string') {
+            return doc.split('/').pop() || 'document';
+          }
+          return 'document';
+        }).join(', ');
+
+        // Get case details for email
+        const caseDetailsQuery = caseData.case_type === 'consumer'
+          ? 'SELECT case_number, full_name, category FROM cases WHERE id = $1'
+          : 'SELECT business_name as case_number, full_name, \'Business Audit\' as category FROM business_intakes WHERE id = $1';
+        
+        const caseDetails = await query(caseDetailsQuery, [caseId]);
+        const caseInfo = caseDetails.rows[0];
+
+        const emailSent = await emailService.sendEmail(
+          process.env.ADMIN_EMAIL || 'turboresponsehq@gmail.com',
+          `New Document Uploaded - Case ${caseInfo.case_number}`,
+          `
+            <h2>New Document Uploaded</h2>
+            <p>A client has uploaded a new document to their case.</p>
+            <hr>
+            <p><strong>Case Number:</strong> ${caseInfo.case_number}</p>
+            <p><strong>Client Name:</strong> ${caseInfo.full_name}</p>
+            <p><strong>Category:</strong> ${caseInfo.category}</p>
+            <p><strong>Document:</strong> ${documentNames}</p>
+            <hr>
+            <p><a href="https://turboresponsehq.ai/admin/cases/${caseId}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">View Case Details</a></p>
+          `
+        );
+
+        console.log('[updateCaseDocuments] Email notification sent:', emailSent);
+      } catch (emailError) {
+        console.error('[updateCaseDocuments] Failed to send email notification:', emailError);
+        // Don't fail the request if email fails
+      }
+    }
+
     res.json({
       success: true,
       message: 'Documents updated successfully'
