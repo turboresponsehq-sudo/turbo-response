@@ -40,13 +40,47 @@ export default function AdminDashboard() {
 
     const fetchCases = async () => {
       try {
+        // 🔍 ANDROID DEBUG: Log request details
+        console.log('🔍 [AdminDashboard] Fetching cases...');
+        console.log('API_URL:', API_URL);
+        console.log('Token exists:', !!storedToken);
+        console.log('Token length:', storedToken?.length);
+        console.log('Full URL:', `${API_URL}/api/cases/admin/all`);
+        
         const res = await axios.get(`${API_URL}/api/cases/admin/all`, {
-          headers: { Authorization: `Bearer ${storedToken}` },
+          headers: { 
+            Authorization: `Bearer ${storedToken}`,
+            'Content-Type': 'application/json'
+          },
         });
+        
+        // 🔍 ANDROID DEBUG: Log response
+        console.log('✅ Response status:', res.status);
+        console.log('✅ Response data:', res.data);
+        console.log('✅ Cases count:', res.data.cases?.length || 0);
+        
         setCases(res.data.cases || []);
-      } catch (err) {
-        console.error(err);
-        setError("Could not load cases");
+      } catch (err: any) {
+        // 🔍 ANDROID DEBUG: Detailed error logging
+        console.error('❌ [AdminDashboard] Error fetching cases:', err);
+        console.error('Error message:', err.message);
+        console.error('Error response:', err.response);
+        console.error('Error status:', err.response?.status);
+        console.error('Error data:', err.response?.data);
+        
+        // Show detailed error for mobile debugging
+        const errorDetails = `
+API URL: ${API_URL}
+Status: ${err.response?.status || 'No response'}
+Message: ${err.message}
+Data: ${JSON.stringify(err.response?.data || {})}`;
+        
+        // Alert for mobile users to see error
+        if (typeof window !== 'undefined' && /Android|iPhone|iPad/i.test(navigator.userAgent)) {
+          alert('Admin Dashboard Error:' + errorDetails);
+        }
+        
+        setError("Could not load cases" + errorDetails);
       } finally {
         setLoading(false);
       }

@@ -8,48 +8,29 @@
 - [x] Consumer messaging
 - [x] Admin dashboard case viewing (desktop & iPhone)
 - [x] Document upload endpoint fixed (commit f2a79c4)
+- [x] Email notifications on document upload
+- [x] Document gallery with thumbnails
+- [x] Client notifications when admin replies to messages
+- [x] Client notifications when case status is updated
 
-## 🚀 NEW FEATURES TO BUILD (JAN 26 2025 - 3:45 PM)
+## 🔥 FINAL FIXES (JAN 26 2025 - 4:20 PM)
 
-### 1️⃣ EMAIL NOTIFICATION ON DOCUMENT UPLOAD (HIGH PRIORITY)
-- [x] Add email notification to admin when client uploads document
-- [x] Include case number, client name, document name in email
-- [x] Add link to admin dashboard case detail page
-- [ ] Test notification triggers correctly after deployment
+### ANDROID ADMIN DASHBOARD FIX
+- [x] Add comprehensive error logging to AdminDashboard.tsx
+- [x] Log: API URL, token existence, response status, error details
+- [x] Add mobile-specific error alerts for debugging
+- [ ] Test on Android after deployment
+- [ ] Verify error details from alert popup
 
-### 2️⃣ DOCUMENT GALLERY VIEW (HIGH PRIORITY)
-- [x] Build thumbnail grid view for documents in admin dashboard
-- [x] Show PDF icon for PDF files
-- [x] Show image thumbnails for JPG/PNG/HEIC files
-- [x] Add click to open larger view (lightbox)
-- [x] Add download button for each document
-- [x] Integrated into AdminConsumerCaseDetail page
-- [ ] Test on production after deployment
+### CLIENT NOTIFICATION SYSTEM
+- [x] Send email when admin replies to client message
+- [x] Send email when admin updates case status
+- [x] Include case number, message preview, and portal link in emails
+- [x] Include status change details and notes in status emails
+- [x] Beautiful branded email templates with login instructions
+- [ ] Test email delivery after deployment
 
-### 3️⃣ DOCUMENT CATEGORIES/TAGS
-- [ ] DEFERRED - Not needed for MVP
-- [ ] Can be added later when case volume increases
-
-### 4️⃣ FIX ANDROID ADMIN DASHBOARD
-- [ ] Fix "Could not load cases" error on Samsung Android
-- [ ] Add better error logging to AdminDashboard.tsx
-- [ ] Check if API response format is correct
-- [ ] Test on Android after fix
-
-## 📝 TECHNICAL NOTES
-
-### Database Schema Changes Needed
-- [ ] Add `category` field to document storage
-- [ ] Consider creating `case_documents` table instead of JSON array
-- [ ] Add `uploaded_by` field (client vs admin)
-- [ ] Add `uploaded_at` timestamp
-
-### Email Service
-- [ ] Use existing emailService.sendEmail()
-- [ ] Create document upload email template
-- [ ] Include case details and document info
-
-### Frontend Components
-- [ ] Create DocumentGallery component
-- [ ] Create DocumentUploadWithCategory component
-- [ ] Update AdminCaseDetail to show gallery instead of list
+## 📝 DEFERRED FEATURES
+- [ ] Document categories/tags (not needed for MVP)
+- [ ] Advanced case filtering
+- [ ] Bulk case operations

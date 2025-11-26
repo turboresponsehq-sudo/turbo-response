@@ -464,6 +464,36 @@ const updateCaseStatus = async (req, res, next) => {
       );
     }
 
+    // Send email notification to client about status change
+    if (status && currentStatus !== status) {
+      try {
+        const caseDetails = await query(
+          'SELECT case_number, full_name, email FROM cases WHERE id = $1',
+          [caseId]
+        );
+        
+        if (caseDetails.rows.length > 0) {
+          const caseInfo = caseDetails.rows[0];
+          const { sendClientStatusUpdateNotification } = require('../services/emailService');
+          
+          // Send email notification (non-blocking)
+          sendClientStatusUpdateNotification({
+            case_id: caseId,
+            case_number: caseInfo.case_number,
+            client_name: caseInfo.full_name,
+            client_email: caseInfo.email,
+            old_status: currentStatus,
+            new_status: status,
+            notes: client_notes || null
+          }).catch(err => {
+            logger.error('Failed to send status update notification email', { error: err.message, caseId });
+          });
+        }
+      } catch (emailError) {
+        logger.error('Error sending status update notification', { error: emailError.message, caseId });
+      }
+    }
+
     logger.info('Case status updated', {
       caseId,
       oldStatus: currentStatus,
