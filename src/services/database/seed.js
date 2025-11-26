@@ -12,7 +12,7 @@ const seedAdminAccount = async () => {
 
     // Admin credentials (FORCE UPDATE on every startup)
     const adminEmail = 'turboresponsehq@gmail.com';
-    const adminPassword = 'admin123';
+    const adminPassword = 'Turbo1234!';
     const passwordHash = await bcrypt.hash(adminPassword, 10);
 
     // Check if admin account exists
