@@ -414,11 +414,18 @@ module.exports = router;
 router.delete('/delete/:id', accessToken, async (req, res) => {
   try {
     const { id } = req.params;
+    console.log('[Brain Delete] Received delete request for ID:', id, 'Type:', typeof id);
 
-    if (!id || isNaN(parseInt(id))) {
+    // Convert to integer
+    const docId = parseInt(id);
+    
+    if (!id || isNaN(docId) || docId <= 0) {
+      console.error('[Brain Delete] Invalid ID:', { id, docId, type: typeof id });
       return res.status(400).json({
         success: false,
-        error: 'Invalid document ID'
+        error: 'Invalid document ID',
+        received: id,
+        parsed: docId
       });
     }
 
