@@ -238,7 +238,7 @@ const getAdminCaseById = async (req, res, next) => {
           long_term_vision as case_details,
           NULL as amount,
           NULL as deadline,
-          JSON_ARRAY() as documents,
+          documents,
           NULL as client_status,
           NULL as client_notes,
           NULL as payment_link,
@@ -262,7 +262,19 @@ const getAdminCaseById = async (req, res, next) => {
           NULL as success_probability,
           NULL as pricing_suggestion,
           NULL as pricing_tier,
-          NULL as summary
+          NULL as summary,
+          business_name,
+          website_url,
+          instagram_url,
+          tiktok_url,
+          facebook_url,
+          youtube_url,
+          link_in_bio,
+          what_you_sell,
+          ideal_customer,
+          biggest_struggle,
+          short_term_goal,
+          long_term_vision
         FROM business_intakes
         WHERE id = $1`,
         [caseId]

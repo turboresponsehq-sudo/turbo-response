@@ -261,6 +261,74 @@ export default function AdminCaseDetail() {
         </div>
       )}
 
+      {/* Business Intake Information */}
+      {caseData.case_type === 'business' && (
+        <>
+          {(caseData.business_name || caseData.website_url) && (
+            <div className="client-info">
+              <h3>Business Information</h3>
+              {caseData.business_name && <p><strong>Business Name:</strong> {caseData.business_name}</p>}
+              {caseData.website_url && <p><strong>Website:</strong> <a href={caseData.website_url} target="_blank" rel="noopener noreferrer">{caseData.website_url}</a></p>}
+            </div>
+          )}
+
+          {(caseData.instagram_url || caseData.tiktok_url || caseData.facebook_url || caseData.youtube_url || caseData.link_in_bio) && (
+            <div className="client-info">
+              <h3>Social Media</h3>
+              {caseData.instagram_url && <p><strong>Instagram:</strong> <a href={caseData.instagram_url} target="_blank" rel="noopener noreferrer">{caseData.instagram_url}</a></p>}
+              {caseData.tiktok_url && <p><strong>TikTok:</strong> <a href={caseData.tiktok_url} target="_blank" rel="noopener noreferrer">{caseData.tiktok_url}</a></p>}
+              {caseData.facebook_url && <p><strong>Facebook:</strong> <a href={caseData.facebook_url} target="_blank" rel="noopener noreferrer">{caseData.facebook_url}</a></p>}
+              {caseData.youtube_url && <p><strong>YouTube:</strong> <a href={caseData.youtube_url} target="_blank" rel="noopener noreferrer">{caseData.youtube_url}</a></p>}
+              {caseData.link_in_bio && <p><strong>Link in Bio:</strong> <a href={caseData.link_in_bio} target="_blank" rel="noopener noreferrer">{caseData.link_in_bio}</a></p>}
+            </div>
+          )}
+
+          {(caseData.what_you_sell || caseData.ideal_customer || caseData.biggest_struggle) && (
+            <div className="client-info">
+              <h3>Business Details</h3>
+              {caseData.what_you_sell && <p><strong>What You Sell:</strong> {caseData.what_you_sell}</p>}
+              {caseData.ideal_customer && <p><strong>Ideal Customer:</strong> {caseData.ideal_customer}</p>}
+              {caseData.biggest_struggle && <p><strong>Biggest Struggle:</strong> {caseData.biggest_struggle}</p>}
+            </div>
+          )}
+
+          {(caseData.short_term_goal || caseData.long_term_vision) && (
+            <div className="client-info">
+              <h3>Goals & Vision</h3>
+              {caseData.short_term_goal && <p><strong>Short-term Goal:</strong> {caseData.short_term_goal}</p>}
+              {caseData.long_term_vision && <p><strong>Long-term Vision:</strong> {caseData.long_term_vision}</p>}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Consumer Case Information */}
+      {caseData.case_type === 'consumer' && (
+        <>
+          {(caseData.amount || caseData.deadline) && (
+            <div className="client-info">
+              <h3>Case Details</h3>
+              {caseData.amount && <p><strong>Amount:</strong> ${caseData.amount}</p>}
+              {caseData.deadline && <p><strong>Deadline:</strong> {new Date(caseData.deadline).toLocaleDateString()}</p>}
+            </div>
+          )}
+
+          {/* AI Analysis Section */}
+          {(caseData.violations || caseData.laws_cited || caseData.recommended_actions || caseData.summary) && (
+            <div className="client-info" style={{ backgroundColor: '#f0f9ff', borderLeft: '4px solid #3b82f6' }}>
+              <h3>🤖 AI Analysis</h3>
+              {caseData.summary && <p><strong>Summary:</strong> {caseData.summary}</p>}
+              {caseData.violations && <p><strong>Potential Violations:</strong> {caseData.violations}</p>}
+              {caseData.laws_cited && <p><strong>Laws Cited:</strong> {caseData.laws_cited}</p>}
+              {caseData.recommended_actions && <p><strong>Recommended Actions:</strong> {caseData.recommended_actions}</p>}
+              {caseData.urgency_level && <p><strong>Urgency Level:</strong> {caseData.urgency_level}</p>}
+              {caseData.estimated_value && <p><strong>Estimated Value:</strong> ${caseData.estimated_value}</p>}
+              {caseData.success_probability && <p><strong>Success Probability:</strong> {caseData.success_probability}%</p>}
+            </div>
+          )}
+        </>
+      )}
+
       <div className="upload-section">
         <h2>Upload Documents</h2>
         <div
