@@ -6,7 +6,7 @@
 export async function up(connection) {
   console.log('🔄 Creating cases table...');
   
-  await connection.execute(`
+  await connection.query(`
     CREATE TABLE IF NOT EXISTS cases (
       id INT AUTO_INCREMENT PRIMARY KEY,
       title VARCHAR(255) NOT NULL,
@@ -29,6 +29,6 @@ export async function up(connection) {
 
 export async function down(connection) {
   console.log('🔄 Dropping cases table...');
-  await connection.execute('DROP TABLE IF EXISTS cases');
+  await connection.query('DROP TABLE IF EXISTS cases');
   console.log('✅ Cases table dropped');
 }
