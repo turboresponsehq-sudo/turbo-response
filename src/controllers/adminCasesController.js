@@ -36,16 +36,46 @@ const createAdminCase = async (req, res) => {
   }
 };
 
-// Get all admin cases
+// Get all admin cases (includes both admin_cases and business_intakes)
 const getAllAdminCases = async (req, res) => {
   try {
-    const result = await query(
-      `SELECT * FROM admin_cases ORDER BY created_at DESC`
+    // Get admin cases
+    const adminCasesResult = await query(
+      `SELECT 
+        id, 
+        title, 
+        category, 
+        client_name, 
+        client_email, 
+        client_phone, 
+        created_at,
+        'admin_case' as case_type
+      FROM admin_cases 
+      ORDER BY created_at DESC`
     );
+
+    // Get business intakes
+    const businessIntakesResult = await query(
+      `SELECT 
+        id,
+        business_name as title,
+        'Business Audit' as category,
+        full_name as client_name,
+        email as client_email,
+        phone as client_phone,
+        created_at,
+        'business_intake' as case_type
+      FROM business_intakes
+      ORDER BY created_at DESC`
+    );
+
+    // Merge and sort by created_at
+    const allCases = [...adminCasesResult.rows, ...businessIntakesResult.rows]
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
     res.json({
       success: true,
-      cases: result.rows
+      cases: allCases
     });
   } catch (error) {
     logger.error('Failed to get admin cases', { error: error.message });
@@ -56,15 +86,24 @@ const getAllAdminCases = async (req, res) => {
   }
 };
 
-// Get single admin case by ID
+// Get single admin case by ID (checks both admin_cases and business_intakes)
 const getAdminCaseById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const result = await query(
-      `SELECT * FROM admin_cases WHERE id = $1`,
+    // Try admin_cases first
+    let result = await query(
+      `SELECT *, 'admin_case' as case_type FROM admin_cases WHERE id = $1`,
       [id]
     );
+
+    // If not found, try business_intakes
+    if (result.rows.length === 0) {
+      result = await query(
+        `SELECT *, 'business_intake' as case_type FROM business_intakes WHERE id = $1`,
+        [id]
+      );
+    }
 
     if (result.rows.length === 0) {
       return res.status(404).json({
