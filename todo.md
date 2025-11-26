@@ -85,3 +85,13 @@
 - [ ] Need to check actual error in Render logs after deployment
 - [ ] May be related to business_intakes table missing
 - [ ] Test after migration deployment
+
+
+## 🚨 EMERGENCY FIX - Business Messaging (JAN 26 2025 - 2:30 PM)
+
+### Issue: Gaudi Designs case doesn't exist in database
+- [ ] Migration created table but it's empty
+- [ ] Original case submission was lost (table didn't exist)
+- [ ] Create seed script to insert Gaudi Designs case manually
+- [ ] Deploy and run seed script on production
+- [ ] Test messaging after case is seeded
