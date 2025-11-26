@@ -73,8 +73,10 @@ const getCaseById = async (req, res, next) => {
 
 // Get all cases (admin only) - MERGED from both cases and business_intakes tables
 const getAllCases = async (req, res, next) => {
+  console.log('[/api/cases/admin/all] Handler hit - getAllCases called');
   try {
     // Get consumer cases from cases table
+    console.log('[getAllCases] Querying consumer cases from cases table...');
     const consumerCasesResult = await query(`
       SELECT 
         id, 
@@ -99,7 +101,10 @@ const getAllCases = async (req, res, next) => {
       ORDER BY created_at DESC
     `);
 
+    console.log('[getAllCases] Consumer cases count:', consumerCasesResult.rows.length);
+    
     // Get business cases from business_intakes table
+    console.log('[getAllCases] Querying business cases from business_intakes table...');
     const businessCasesResult = await query(`
       SELECT 
         id,
@@ -145,10 +150,15 @@ const getAllCases = async (req, res, next) => {
       return caseData;
     });
 
+    console.log('[getAllCases] Business cases count:', businessCasesResult.rows.length);
+    
     // Merge both arrays and sort by created_at (newest first)
     const allCases = [...normalizedConsumerCases, ...businessCasesResult.rows]
       .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
+    console.log('[getAllCases] Merged cases - Consumer:', consumerCasesResult.rows.length, 'Business:', businessCasesResult.rows.length, 'Total:', allCases.length);
+    console.log('[getAllCases] First case sample:', allCases[0]);
+    
     logger.info('getAllCases: merged cases', {
       consumerCount: consumerCasesResult.rows.length,
       businessCount: businessCasesResult.rows.length,
@@ -173,8 +183,10 @@ const getAllCases = async (req, res, next) => {
 
 // Get case details by ID (admin only) - checks BOTH cases and business_intakes tables
 const getAdminCaseById = async (req, res, next) => {
+  console.log('[/api/case/:id] Handler hit - getAdminCaseById called with ID:', req.params.id);
   try {
     const caseId = parseInt(req.params.id);
+    console.log('[getAdminCaseById] Parsed caseId:', caseId);
 
     if (isNaN(caseId)) {
       return res.status(400).json({
@@ -184,6 +196,7 @@ const getAdminCaseById = async (req, res, next) => {
     }
 
     // Try consumer cases table first
+    console.log('[getAdminCaseById] Querying consumer cases table...');
     let result = await query(
       `SELECT 
         c.id, c.user_id, c.case_number, c.category, c.status,
@@ -206,8 +219,11 @@ const getAdminCaseById = async (req, res, next) => {
       [caseId]
     );
 
+    console.log('[getAdminCaseById] Consumer query result rows:', result.rows.length);
+    
     // If not found in cases table, try business_intakes table
     if (result.rows.length === 0) {
+      console.log('[getAdminCaseById] Not found in cases table, trying business_intakes...');
       result = await query(
         `SELECT 
           id,
@@ -253,7 +269,10 @@ const getAdminCaseById = async (req, res, next) => {
       );
     }
 
+    console.log('[getAdminCaseById] Business query result rows:', result.rows.length);
+    
     if (result.rows.length === 0) {
+      console.log('[getAdminCaseById] Case not found in either table');
       return res.status(404).json({
         success: false,
         error: 'Case not found in either cases or business_intakes tables'
@@ -282,6 +301,13 @@ const getAdminCaseById = async (req, res, next) => {
       });
     }
 
+    console.log('[getAdminCaseById] Returning case data:', {
+      id: caseData.id,
+      case_number: caseData.case_number,
+      category: caseData.category,
+      case_type: caseData.case_type
+    });
+    
     res.json({
       success: true,
       case: caseData
