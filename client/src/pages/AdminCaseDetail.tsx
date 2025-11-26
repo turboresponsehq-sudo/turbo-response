@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRoute, useLocation } from 'wouter';
 import './AdminCaseDetail.css';
 
-const API_BASE = import.meta.env.VITE_API_URL || '';
+const API_BASE = import.meta.env.VITE_BACKEND_URL || 'https://turbo-response-backend.onrender.com';
 
 export default function AdminCaseDetail() {
   const [, params] = useRoute('/admin/cases/:id');
@@ -27,18 +27,48 @@ export default function AdminCaseDetail() {
   const fetchCaseData = async () => {
     try {
       const token = localStorage.getItem('admin_session');
+      console.log('[AdminCaseDetail] Fetching case:', caseId);
+      console.log('[AdminCaseDetail] Token exists:', !!token);
+      console.log('[AdminCaseDetail] API URL:', `${API_BASE}/api/admin/cases/${caseId}`);
+      
+      if (!token) {
+        console.error('[AdminCaseDetail] No auth token found');
+        setLocation('/admin/login');
+        return;
+      }
+      
       const response = await fetch(`${API_BASE}/api/admin/cases/${caseId}`, {
         credentials: 'include',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
       });
+      
+      console.log('[AdminCaseDetail] Response status:', response.status);
+      
+      if (!response.ok) {
+        console.error('[AdminCaseDetail] Response not OK:', response.status, response.statusText);
+        if (response.status === 401) {
+          console.error('[AdminCaseDetail] Unauthorized - redirecting to login');
+          localStorage.removeItem('admin_session');
+          localStorage.removeItem('admin_user');
+          setLocation('/admin/login');
+          return;
+        }
+      }
+      
       const data = await response.json();
+      console.log('[AdminCaseDetail] Response data:', data);
+      
       if (data.success) {
         setCaseData(data.case);
+      } else {
+        console.error('[AdminCaseDetail] API returned success=false:', data);
       }
     } catch (error) {
-      console.error('Failed to fetch case:', error);
+      console.error('[AdminCaseDetail] Failed to fetch case:', error);
+      alert(`Could not load the case. Error: ${error.message}`);
     } finally {
       setLoading(false);
     }
