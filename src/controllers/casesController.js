@@ -200,7 +200,7 @@ const getAdminCaseById = async (req, res, next) => {
         a.pricing_suggestion, a.pricing_tier, a.summary
       FROM cases c
       LEFT JOIN case_analyses a ON a.case_id = c.id
-      WHERE c.id = $1
+      WHERE c.id = ?
       ORDER BY a.created_at DESC
       LIMIT 1`,
       [caseId]
@@ -248,7 +248,7 @@ const getAdminCaseById = async (req, res, next) => {
           NULL as pricing_tier,
           NULL as summary
         FROM business_intakes
-        WHERE id = $1`,
+        WHERE id = ?`,
         [caseId]
       );
     }
