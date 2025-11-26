@@ -94,13 +94,31 @@ async function sendMessage(req, res) {
 
     // Update unread count if client sent message
     if (sender === 'client') {
-      await query(
-        `UPDATE cases 
-         SET unread_messages_count = unread_messages_count + 1,
-             updated_at = CURRENT_TIMESTAMP
-         WHERE id = $1`,
+      // Check if case exists in cases table (consumer) or business_intakes (business)
+      const consumerCase = await query(
+        `SELECT id FROM cases WHERE id = $1`,
         [caseId]
       );
+
+      if (consumerCase.rows.length > 0) {
+        // Consumer case
+        await query(
+          `UPDATE cases 
+           SET unread_messages_count = unread_messages_count + 1,
+               updated_at = CURRENT_TIMESTAMP
+           WHERE id = $1`,
+          [caseId]
+        );
+      } else {
+        // Business case
+        await query(
+          `UPDATE business_intakes 
+           SET unread_messages_count = COALESCE(unread_messages_count, 0) + 1,
+               updated_at = CURRENT_TIMESTAMP
+           WHERE id = $1`,
+          [caseId]
+        );
+      }
     }
 
     logger.info('Message sent', {
@@ -144,13 +162,31 @@ async function markMessagesRead(req, res) {
 
     // TODO: Add admin authorization check
 
-    await query(
-      `UPDATE cases 
-       SET unread_messages_count = 0,
-           updated_at = CURRENT_TIMESTAMP
-       WHERE id = $1`,
+    // Check if case exists in cases table (consumer) or business_intakes (business)
+    const consumerCase = await query(
+      `SELECT id FROM cases WHERE id = $1`,
       [caseId]
     );
+
+    if (consumerCase.rows.length > 0) {
+      // Consumer case
+      await query(
+        `UPDATE cases 
+         SET unread_messages_count = 0,
+             updated_at = CURRENT_TIMESTAMP
+         WHERE id = $1`,
+        [caseId]
+      );
+    } else {
+      // Business case
+      await query(
+        `UPDATE business_intakes 
+         SET unread_messages_count = 0,
+             updated_at = CURRENT_TIMESTAMP
+         WHERE id = $1`,
+        [caseId]
+      );
+    }
 
     logger.info('Messages marked as read', { caseId });
 
