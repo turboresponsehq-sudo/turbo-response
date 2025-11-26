@@ -46,3 +46,22 @@
 - [x] Seeded Gaudi Designs case (migration 011)
 - [x] Removed FK constraint from case_messages (migration 012)
 - [x] Business messaging now works
+
+
+## 🚨 NEW ISSUES - USER TESTED (JAN 26 2025 - 3:15 PM)
+
+### ✅ WORKING
+- [x] Client portal login works on Android
+- [x] File upload via messaging works (paperclip button)
+- [x] Messages display correctly
+
+### ❌ BROKEN
+- [ ] Document upload button shows "Failed to update case documents"
+  - This is separate from messaging file upload
+  - Endpoint: PATCH /api/case/:id/documents
+  - Need to check if endpoint exists and is working
+  
+- [ ] Android admin portal login not working
+  - Client portal works on Android
+  - Admin portal fails on Android
+  - Need to get error message/logs from user
