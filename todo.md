@@ -56,10 +56,12 @@
 - [x] Messages display correctly
 
 ### ❌ BROKEN
-- [ ] Document upload button shows "Failed to update case documents"
-  - This is separate from messaging file upload
-  - Endpoint: PATCH /api/case/:id/documents
-  - Need to check if endpoint exists and is working
+- [x] Document upload button shows "Failed to update case documents"
+  - Fixed: Now checks both cases AND business_intakes tables
+  - Fixed: Properly handles client authentication (req.clientAuth)
+  - Fixed: Updates correct table based on case type
+  - [x] Deployed (commit f2a79c4)
+  - [ ] Test on production after deployment
   
 - [ ] Android admin portal login not working
   - Client portal works on Android
