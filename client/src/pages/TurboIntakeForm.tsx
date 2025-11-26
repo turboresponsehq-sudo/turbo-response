@@ -27,9 +27,17 @@ export default function TurboIntakeForm() {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    let value = e.target.value;
+    
+    // Auto-fix URLs: add https:// if missing protocol
+    const urlFields = ['websiteUrl', 'instagramUrl', 'tiktokUrl', 'facebookUrl', 'youtubeUrl', 'linkInBio'];
+    if (urlFields.includes(e.target.name) && value && !value.match(/^https?:\/\//i)) {
+      value = 'https://' + value;
+    }
+    
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: value,
     });
   };
 
@@ -37,6 +45,15 @@ export default function TurboIntakeForm() {
     e.preventDefault();
     setLoading(true);
     setError('');
+    
+    // Clean up URLs before submission
+    const cleanedData = { ...formData };
+    const urlFields: Array<keyof typeof formData> = ['websiteUrl', 'instagramUrl', 'tiktokUrl', 'facebookUrl', 'youtubeUrl', 'linkInBio'];
+    urlFields.forEach(field => {
+      if (cleanedData[field] && !cleanedData[field].match(/^https?:\/\//i)) {
+        cleanedData[field] = 'https://' + cleanedData[field];
+      }
+    });
 
     try {
       const response = await fetch('/api/turbo-intake', {
@@ -44,7 +61,7 @@ export default function TurboIntakeForm() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(cleanedData),
       });
 
       const data = await response.json();
