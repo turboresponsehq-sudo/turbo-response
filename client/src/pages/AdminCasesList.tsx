@@ -37,7 +37,7 @@ export default function AdminCasesList() {
   const fetchCases = async () => {
     try {
       const token = localStorage.getItem('admin_session');
-      const response = await fetch(`${API_BASE}/api/admin-cases`, {
+      const response = await fetch(`${API_BASE}/api/admin/cases`, {
         credentials: 'include',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -58,7 +58,7 @@ export default function AdminCasesList() {
     e.preventDefault();
     try {
       const token = localStorage.getItem('admin_session');
-      const response = await fetch(`${API_BASE}/api/admin-cases/create`, {
+      const response = await fetch(`${API_BASE}/api/admin/cases/create`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

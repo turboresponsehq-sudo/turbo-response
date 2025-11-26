@@ -27,7 +27,7 @@ export default function AdminCaseDetail() {
   const fetchCaseData = async () => {
     try {
       const token = localStorage.getItem('admin_session');
-      const response = await fetch(`${API_BASE}/api/admin-cases/${caseId}`, {
+      const response = await fetch(`${API_BASE}/api/admin/cases/${caseId}`, {
         credentials: 'include',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -47,7 +47,7 @@ export default function AdminCaseDetail() {
   const fetchDocuments = async () => {
     try {
       const token = localStorage.getItem('admin_session');
-      const response = await fetch(`${API_BASE}/api/admin-cases/${caseId}/documents`, {
+      const response = await fetch(`${API_BASE}/api/admin/cases/${caseId}/documents`, {
         credentials: 'include',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -75,7 +75,7 @@ export default function AdminCaseDetail() {
         }
 
         const token = localStorage.getItem('admin_session');
-        const response = await fetch(`${API_BASE}/api/admin-cases/${caseId}/upload`, {
+        const response = await fetch(`${API_BASE}/api/admin/cases/${caseId}/upload`, {
           method: 'POST',
           credentials: 'include',
           headers: {
@@ -130,7 +130,7 @@ export default function AdminCaseDetail() {
 
     try {
       const token = localStorage.getItem('admin_session');
-      const response = await fetch(`${API_BASE}/api/admin-cases/documents/${docId}`, {
+      const response = await fetch(`${API_BASE}/api/admin/cases/documents/${docId}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -152,7 +152,7 @@ export default function AdminCaseDetail() {
 
     try {
       const token = localStorage.getItem('admin_session');
-      const response = await fetch(`${API_BASE}/api/admin-cases/${caseId}`, {
+      const response = await fetch(`${API_BASE}/api/admin/cases/${caseId}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
