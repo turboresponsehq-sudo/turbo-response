@@ -75,6 +75,34 @@ const submit = async (req, res, next) => {
       businessName
     });
 
+    // Create client portal user (if doesn't exist)
+    try {
+      const bcrypt = require('bcrypt');
+      const tempPassword = Math.random().toString(36).slice(-8);
+      const password_hash = await bcrypt.hash(tempPassword, 10);
+      
+      // Check if user already exists
+      const existingUser = await query(
+        `SELECT id FROM users WHERE email = $1`,
+        [email]
+      );
+
+      if (existingUser.rows.length === 0) {
+        await query(
+          `INSERT INTO users (email, password_hash, full_name, phone, role)
+           VALUES ($1, $2, $3, $4, 'client')`,
+          [email, password_hash, fullName, phone || null]
+        );
+        logger.info('Client portal user created for business intake', { email, intakeId: newIntake.id });
+      }
+    } catch (userError) {
+      logger.error('Failed to create portal user for business intake', {
+        error: userError.message,
+        intakeId: newIntake.id
+      });
+      // Don't fail the whole intake if user creation fails
+    }
+
     // Send email notification to admin (non-blocking)
     sendBusinessIntakeNotification({
       id: newIntake.id,
