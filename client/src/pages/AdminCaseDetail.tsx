@@ -241,22 +241,23 @@ export default function AdminCaseDetail() {
       </div>
 
       <div className="case-info">
-        <h1>{caseData.title}</h1>
+        <h1>{caseData.case_number || caseData.title}</h1>
         <span className="case-category">{caseData.category}</span>
       </div>
 
-      {caseData.description && (
+      {caseData.case_details && (
         <div className="case-description-box">
-          <p>{caseData.description}</p>
+          <p>{caseData.case_details}</p>
         </div>
       )}
 
-      {caseData.client_name && (
+      {caseData.full_name && (
         <div className="client-info">
           <h3>Client Information</h3>
-          <p><strong>Name:</strong> {caseData.client_name}</p>
-          {caseData.client_email && <p><strong>Email:</strong> {caseData.client_email}</p>}
-          {caseData.client_phone && <p><strong>Phone:</strong> {caseData.client_phone}</p>}
+          <p><strong>Name:</strong> {caseData.full_name}</p>
+          {caseData.email && <p><strong>Email:</strong> {caseData.email}</p>}
+          {caseData.phone && <p><strong>Phone:</strong> {caseData.phone}</p>}
+          {caseData.address && <p><strong>Address:</strong> {caseData.address}</p>}
         </div>
       )}
 
