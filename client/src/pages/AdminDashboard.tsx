@@ -56,7 +56,7 @@ export default function AdminDashboard() {
   }, []);
 
   const handleCaseClick = (caseId: number) => {
-    setLocation(`/admin/case/${caseId}`);
+    setLocation(`/admin/cases/${caseId}`);
   };
 
   const handleLogout = () => {
