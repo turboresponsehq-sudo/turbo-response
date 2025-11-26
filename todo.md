@@ -96,3 +96,13 @@
 - [x] Deploy and run seed script on production (commit 30c78cc)
 - [ ] Wait for Render deployment (2-3 minutes)
 - [ ] Test messaging after case is seeded
+
+
+## 🚨 CRITICAL - Foreign Key Constraint Blocking Business Messaging (JAN 26 2025 - 2:45 PM)
+
+### Root Cause: case_messages table has FK constraint to cases table only
+- [x] Error: "violates foreign key constraint case_messages_case_id_fkey"
+- [x] case_messages.case_id references cases(id) only
+- [x] Business cases are in business_intakes table, not cases table
+- [ ] Create migration to drop FK constraint
+- [ ] Deploy and test business messaging
