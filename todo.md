@@ -104,5 +104,7 @@
 - [x] Error: "violates foreign key constraint case_messages_case_id_fkey"
 - [x] case_messages.case_id references cases(id) only
 - [x] Business cases are in business_intakes table, not cases table
-- [ ] Create migration to drop FK constraint
-- [ ] Deploy and test business messaging
+- [x] Create migration 012_remove_case_messages_fk.mjs
+- [x] Deploy to GitHub (commit 0ea9280)
+- [ ] Wait for Render deployment (2-3 minutes)
+- [ ] Test business messaging after deployment
