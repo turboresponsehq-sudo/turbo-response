@@ -11,7 +11,7 @@ import { useRoute, useLocation } from "wouter";
 import axios from "axios";
 import AdminMessaging from "../components/AdminMessaging";
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turbo-response-backend.onrender.com";
+const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turboresponsehq.ai";
 
 const STATUS_OPTIONS = [
   'Pending Review',

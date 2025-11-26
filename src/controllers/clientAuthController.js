@@ -21,14 +21,23 @@ async function requestLogin(req, res) {
       });
     }
 
-    // Check if case exists and matches email
+    // Check if case exists and matches email (both consumer and business cases)
     const emailLower = email.toLowerCase();
     console.log('[CLIENT AUTH] Login attempt:', { caseId, email: emailLower });
     
-    const result = await db.query(
-      'SELECT id, case_number, email, portal_enabled FROM cases WHERE case_number = $1 AND email = $2',
+    // Try consumer cases first
+    let result = await db.query(
+      'SELECT id, case_number, email, portal_enabled, \'consumer\' as case_type FROM cases WHERE case_number = $1 AND email = $2',
       [caseId, emailLower]
     );
+    
+    // If not found, try business intakes
+    if (result.rows.length === 0) {
+      result = await db.query(
+        'SELECT id, business_name as case_number, email, portal_enabled, \'business\' as case_type FROM business_intakes WHERE business_name = $1 AND email = $2',
+        [caseId, emailLower]
+      );
+    }
     
     console.log('[CLIENT AUTH] Query result:', { rowCount: result.rows.length, rows: result.rows });
 
@@ -152,11 +161,19 @@ async function verifyCode(req, res) {
     // Code is valid - delete it and issue JWT
     verificationCodes.delete(key);
 
-    // Get case data
-    const result = await db.query(
-      'SELECT id, case_number, email, full_name FROM cases WHERE case_number = $1',
+    // Get case data (check both consumer and business cases)
+    let result = await db.query(
+      'SELECT id, case_number, email, full_name, \'consumer\' as case_type FROM cases WHERE case_number = $1',
       [caseId]
     );
+
+    // If not found in consumer cases, check business intakes
+    if (result.rows.length === 0) {
+      result = await db.query(
+        'SELECT id, business_name as case_number, email, full_name, \'business\' as case_type FROM business_intakes WHERE business_name = $1',
+        [caseId]
+      );
+    }
 
     const caseData = result.rows[0];
 
@@ -213,8 +230,8 @@ async function getClientCase(req, res) {
       });
     }
 
-    // Get case data
-    const result = await db.query(`
+    // Get case data (check both consumer and business cases)
+    let result = await db.query(`
       SELECT 
         id,
         case_number,
@@ -236,10 +253,42 @@ async function getClientCase(req, res) {
         deadline,
         documents,
         created_at,
-        updated_at
+        updated_at,
+        'consumer' as case_type
       FROM cases
       WHERE id = $1 AND portal_enabled = TRUE
     `, [id]);
+
+    // If not found in consumer cases, check business intakes
+    if (result.rows.length === 0) {
+      result = await db.query(`
+        SELECT 
+          id,
+          business_name as case_number,
+          NULL as category,
+          status,
+          NULL as client_status,
+          NULL as client_notes,
+          NULL as payment_link,
+          NULL as payment_verified,
+          NULL as funnel_stage,
+          NULL as pricing_tier,
+          NULL as pricing_tier_amount,
+          NULL as pricing_tier_name,
+          full_name,
+          email,
+          phone,
+          what_you_sell as case_details,
+          NULL as amount,
+          NULL as deadline,
+          NULL as documents,
+          created_at,
+          updated_at,
+          'business' as case_type
+        FROM business_intakes
+        WHERE id = $1 AND portal_enabled = TRUE
+      `, [id]);
+    }
 
     if (result.rows.length === 0) {
       return res.status(404).json({
