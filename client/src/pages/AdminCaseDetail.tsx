@@ -408,7 +408,8 @@ export default function AdminCaseDetail() {
         </div>
       )}
 
-      {/* AI Analysis Panel */}
+      {/* AI Analysis Panel - Consumer Cases Only */}
+      {caseData?.case_type === 'consumer' && (
       <div style={{ 
         backgroundColor: "#f8f9fa", 
         padding: "1rem", 
@@ -579,8 +580,10 @@ export default function AdminCaseDetail() {
           </div>
         )}
       </div>
+      )}
 
-      {/* Client Portal Controls Card */}
+      {/* Client Portal Controls Card - Consumer Cases Only */}
+      {caseData?.case_type === 'consumer' && (
       <div style={{ 
         backgroundColor: "#e7f3ff", 
         padding: "1rem", 
@@ -754,8 +757,10 @@ export default function AdminCaseDetail() {
           </button>
         </div>
       </div>
+      )}
 
-      {/* Pricing Tier Selection Card */}
+      {/* Pricing Tier Selection Card - Consumer Cases Only */}
+      {caseData?.case_type === 'consumer' && (
       <div style={{ 
         backgroundColor: "#e7f3ff", 
         padding: "1.5rem", 
@@ -890,8 +895,10 @@ export default function AdminCaseDetail() {
           </button>
         </div>
       </div>
+      )}
 
-      {/* Payment Verification Card */}
+      {/* Payment Verification Card - Consumer Cases Only */}
+      {caseData?.case_type === 'consumer' && (
       <div style={{ 
         backgroundColor: "#fff3cd", 
         padding: "1.5rem", 
@@ -1020,6 +1027,7 @@ export default function AdminCaseDetail() {
           </div>
         </div>
       </div>
+      )}
 
       {/* Client Information Card */}
       <div style={{ 
@@ -1070,6 +1078,78 @@ export default function AdminCaseDetail() {
               </p>
               <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>{caseData.address || 'N/A'}</p>
             </div>
+          )}
+
+          {/* Business-specific fields */}
+          {caseData.case_type === 'business' && (
+            <>
+              {caseData.business_name && (
+                <div>
+                  <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                    <strong>Business Name:</strong>
+                  </p>
+                  <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>{caseData.business_name}</p>
+                </div>
+              )}
+
+              {caseData.website_url && (
+                <div>
+                  <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                    <strong>Website:</strong>
+                  </p>
+                  <p style={{ margin: 0, fontSize: "1rem" }}>
+                    <a href={caseData.website_url} target="_blank" rel="noopener noreferrer" style={{ color: "#007bff", textDecoration: "none" }}>
+                      {caseData.website_url}
+                    </a>
+                  </p>
+                </div>
+              )}
+
+              {caseData.what_you_sell && (
+                <div>
+                  <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                    <strong>What You Sell:</strong>
+                  </p>
+                  <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>{caseData.what_you_sell}</p>
+                </div>
+              )}
+
+              {caseData.ideal_customer && (
+                <div>
+                  <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                    <strong>Ideal Customer:</strong>
+                  </p>
+                  <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>{caseData.ideal_customer}</p>
+                </div>
+              )}
+
+              {caseData.biggest_struggle && (
+                <div>
+                  <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                    <strong>Biggest Struggle:</strong>
+                  </p>
+                  <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>{caseData.biggest_struggle}</p>
+                </div>
+              )}
+
+              {caseData.short_term_goal && (
+                <div>
+                  <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                    <strong>Short-term Goal:</strong>
+                  </p>
+                  <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>{caseData.short_term_goal}</p>
+                </div>
+              )}
+
+              {caseData.long_term_vision && (
+                <div>
+                  <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                    <strong>Long-term Vision:</strong>
+                  </p>
+                  <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>{caseData.long_term_vision}</p>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
