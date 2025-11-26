@@ -1,430 +1,1251 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useRoute, useLocation } from 'wouter';
-import './AdminCaseDetail.css';
+/**
+ * Admin Case Detail Page
+ * Restored to match authoritative specification
+ * Shows full case info + attachments + status dropdown editor
+ * NO AI analysis, NO pricing, NO contract elements
+ * PHASE 1: Mobile responsive with proper breakpoints
+ */
 
-const API_BASE = import.meta.env.VITE_BACKEND_URL || 'https://turboresponsehq.ai';
+import { useEffect, useState } from "react";
+import { useRoute, useLocation } from "wouter";
+import axios from "axios";
+import AdminMessaging from "../components/AdminMessaging";
+
+const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turbo-response-backend.onrender.com";
+
+const STATUS_OPTIONS = [
+  'Pending Review',
+  'In Review',
+  'Awaiting Client',
+  'Completed',
+  'Rejected'
+];
+
+const CATEGORY_NAMES: Record<string, string> = {
+  eviction: "Eviction & Housing",
+  debt: "Debt Collection",
+  irs: "IRS & Tax Issues",
+  wage: "Wage Garnishment",
+  medical: "Medical Bills",
+  benefits: "Benefits Denial",
+  auto: "Auto Repossession",
+  consumer: "Consumer Rights"
+};
 
 export default function AdminCaseDetail() {
-  const [, params] = useRoute('/admin/cases/:id');
+  const [, params] = useRoute("/admin/cases/:id");
   const [, setLocation] = useLocation();
-  const caseId = params?.id;
-
-  const [caseData, setCaseData] = useState(null);
-  const [documents, setDocuments] = useState([]);
+  const [caseData, setCaseData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
-  const [note, setNote] = useState('');
-  const [dragActive, setDragActive] = useState(false);
-  const fileInputRef = useRef(null);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const [updating, setUpdating] = useState(false);
+  const [updateMessage, setUpdateMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [aiAnalysis, setAiAnalysis] = useState<any>(null);
+  const [analyzingAI, setAnalyzingAI] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  
+  // Pricing tier state
+  const [pricingTier, setPricingTier] = useState<string>('foundation');
+  const [pricingAmount, setPricingAmount] = useState<string>('349');
+  const [pricingName, setPricingName] = useState<string>('Foundation Case Strategy');
+  const [customAmount, setCustomAmount] = useState<string>('');
 
   useEffect(() => {
-    if (caseId) {
-      fetchCaseData();
-      fetchDocuments();
+    const storedToken = localStorage.getItem("admin_session");
+    if (!storedToken) {
+      window.location.replace("/admin/login");
+      return;
     }
-  }, [caseId]);
 
-  const fetchCaseData = async () => {
-    try {
-      const token = localStorage.getItem('admin_session');
-      console.log('[AdminCaseDetail] Fetching case:', caseId);
-      console.log('[AdminCaseDetail] Token exists:', !!token);
-      console.log('[AdminCaseDetail] API URL:', `${API_BASE}/api/admin/cases/${caseId}`);
-      
-      if (!token) {
-        console.error('[AdminCaseDetail] No auth token found');
-        setLocation('/admin/login');
-        return;
-      }
-      
-      const response = await fetch(`${API_BASE}/api/admin/cases/${caseId}`, {
-        credentials: 'include',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      console.log('[AdminCaseDetail] Response status:', response.status);
-      
-      if (!response.ok) {
-        console.error('[AdminCaseDetail] Response not OK:', response.status, response.statusText);
-        if (response.status === 401) {
-          console.error('[AdminCaseDetail] Unauthorized - redirecting to login');
-          localStorage.removeItem('admin_session');
-          localStorage.removeItem('admin_user');
-          setLocation('/admin/login');
-          return;
-        }
-      }
-      
-      const data = await response.json();
-      console.log('[AdminCaseDetail] Response data:', data);
-      
-      if (data.success) {
-        setCaseData(data.case);
-      } else {
-        console.error('[AdminCaseDetail] API returned success=false:', data);
-      }
-    } catch (error) {
-      console.error('[AdminCaseDetail] Failed to fetch case:', error);
-      alert(`Could not load the case. Error: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchDocuments = async () => {
-    try {
-      const token = localStorage.getItem('admin_session');
-      const response = await fetch(`${API_BASE}/api/admin/cases/${caseId}/documents`, {
-        credentials: 'include',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-      if (data.success) {
-        setDocuments(data.documents);
-      }
-    } catch (error) {
-      console.error('Failed to fetch documents:', error);
-    }
-  };
-
-  const handleFileUpload = async (files) => {
-    if (!files || files.length === 0) return;
-
-    setUploading(true);
-    try {
-      for (const file of files) {
-        const formData = new FormData();
-        formData.append('file', file);
-        if (note) {
-          formData.append('note', note);
-        }
-
-        const token = localStorage.getItem('admin_session');
-        const response = await fetch(`${API_BASE}/api/admin/cases/${caseId}/upload`, {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          },
-          body: formData
+    const fetchCase = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/api/admin/cases/${params?.id}`, {
+          headers: { Authorization: `Bearer ${storedToken}` },
         });
-
-        const data = await response.json();
-        if (!data.success) {
-          console.error('Upload failed:', data.error);
+        console.log('🔍 API Response:', res.data);
+        console.log('🔍 Case Data:', res.data.case);
+        console.log('🔍 Case Number:', res.data.case?.case_number);
+        console.log('🔍 Full Name:', res.data.case?.full_name);
+        setCaseData(res.data.case);
+        setSelectedStatus(res.data.case.status);
+        
+        // Initialize pricing tier state from case data
+        if (res.data.case.pricing_tier) {
+          setPricingTier(res.data.case.pricing_tier);
+          setPricingAmount(res.data.case.pricing_tier_amount?.toString() || '349');
+          setPricingName(res.data.case.pricing_tier_name || 'Foundation Case Strategy');
         }
+      } catch (err: any) {
+        console.error(err);
+        setError(err.response?.data?.error || "Could not load case details");
+      } finally {
+        setLoading(false);
       }
+    };
 
-      setNote('');
-      fetchDocuments();
-    } catch (error) {
-      console.error('Upload error:', error);
-    } finally {
-      setUploading(false);
-    }
-  };
+    if (params?.id) fetchCase();
+  }, [params?.id]);
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleFileUpload(Array.from(e.dataTransfer.files));
-    }
-  };
-
-  const handleDrag = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
-  };
-
-  const handleFileInputChange = (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-      handleFileUpload(Array.from(e.target.files));
-    }
-  };
-
-  const handleDeleteDocument = async (docId) => {
-    if (!confirm('Are you sure you want to delete this document?')) return;
+  const handleStatusUpdate = async () => {
+    const storedToken = localStorage.getItem("admin_session");
+    setUpdating(true);
+    setUpdateMessage(null);
 
     try {
-      const token = localStorage.getItem('admin_session');
-      const response = await fetch(`${API_BASE}/api/admin/cases/documents/${docId}`, {
-        method: 'DELETE',
-        credentials: 'include',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        fetchDocuments();
-      }
-    } catch (error) {
-      console.error('Delete failed:', error);
+      await axios.patch(
+        `${API_URL}/api/case/${params?.id}`,
+        { status: selectedStatus },
+        { headers: { Authorization: `Bearer ${storedToken}` } }
+      );
+      
+      setUpdateMessage({ type: 'success', text: 'Status updated successfully' });
+      setCaseData({ ...caseData, status: selectedStatus });
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setUpdateMessage(null), 3000);
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.error || "Failed to update status";
+      setUpdateMessage({ type: 'error', text: errorMsg });
+    } finally {
+      setUpdating(false);
     }
   };
 
   const handleDeleteCase = async () => {
-    if (!confirm('Are you sure you want to delete this entire case? This will also delete all associated documents. This action cannot be undone.')) return;
+    if (!confirm(`Are you sure you want to delete case ${caseData.case_number}? This action cannot be undone.`)) {
+      return;
+    }
+
+    const storedToken = localStorage.getItem("admin_session");
+    setDeleting(true);
 
     try {
-      const token = localStorage.getItem('admin_session');
-      const response = await fetch(`${API_BASE}/api/admin/cases/${caseId}`, {
-        method: 'DELETE',
-        credentials: 'include',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        alert('Case deleted successfully');
-        setLocation('/admin/cases');
-      } else {
-        alert('Failed to delete case: ' + (data.error || 'Unknown error'));
-      }
-    } catch (error) {
-      console.error('Delete case failed:', error);
-      alert('Failed to delete case');
+      await axios.delete(
+        `${API_URL}/api/case/${params?.id}`,
+        { headers: { Authorization: `Bearer ${storedToken}` } }
+      );
+      
+      // Redirect to dashboard after successful deletion
+      setLocation("/admin");
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.error || "Failed to delete case";
+      alert(`Error: ${errorMsg}`);
+      setDeleting(false);
     }
-  };
-
-  const formatFileSize = (bytes) => {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
   };
 
   if (loading) {
     return (
-      <div className="admin-case-detail-container">
-        <div className="loading">Loading case...</div>
+      <div style={{ padding: "1rem", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+        <p>Loading case details...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ padding: "1rem", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+        <p style={{ color: "red" }}>{error}</p>
+        <button
+          onClick={() => setLocation("/admin")}
+          style={{
+            marginTop: "1rem",
+            padding: "0.75rem 1.5rem",
+            minHeight: "48px",
+            backgroundColor: "#6c757d",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontSize: "1rem"
+          }}
+        >
+          Back to Dashboard
+        </button>
       </div>
     );
   }
 
   if (!caseData) {
     return (
-      <div className="admin-case-detail-container">
-        <div className="error">Case not found</div>
+      <div style={{ padding: "1rem", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+        <p>Case not found</p>
+        <button
+          onClick={() => setLocation("/admin")}
+          style={{
+            marginTop: "1rem",
+            padding: "0.75rem 1.5rem",
+            minHeight: "48px",
+            backgroundColor: "#6c757d",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontSize: "1rem"
+          }}
+        >
+          Back to Dashboard
+        </button>
       </div>
     );
   }
 
+  // documents is already parsed by pg driver (JSONB type)
+  const documents = Array.isArray(caseData.documents) ? caseData.documents : [];
+  
+  // Helper function to ensure document URLs are absolute
+  const getDocumentUrl = (doc: string) => {
+    // If localhost URL, replace with production backend URL
+    if (doc.includes('localhost')) {
+      // Extract the path after localhost:PORT
+      const match = doc.match(/localhost:\d+(\/.*)/)
+      if (match) {
+        return `${API_URL}${match[1]}`;
+      }
+    }
+    // If already absolute production URL, return as-is
+    if (doc.startsWith('https://') && !doc.includes('localhost')) {
+      return doc;
+    }
+    // If relative path, prepend backend URL
+    return `${API_URL}${doc.startsWith('/') ? '' : '/'}${doc}`;
+  };
+
   return (
-    <div className="admin-case-detail-container">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <button className="btn-back" onClick={() => setLocation('/admin/cases')}>
-          ← Back to Cases
-        </button>
-        <button 
-          className="btn-delete" 
-          onClick={handleDeleteCase}
-          style={{ backgroundColor: '#dc2626', color: 'white', padding: '0.5rem 1rem', borderRadius: '0.375rem', border: 'none', cursor: 'pointer' }}
+    <div style={{ 
+      padding: "1rem", 
+      fontFamily: "system-ui, -apple-system, sans-serif", 
+      maxWidth: "900px", 
+      margin: "0 auto" 
+    }}>
+      {/* Header with Back Button */}
+      <div style={{ marginBottom: "1.5rem" }}>
+        <button
+          onClick={() => setLocation("/admin")}
+          style={{
+            padding: "0.5rem 1rem",
+            minHeight: "48px",
+            backgroundColor: "#6c757d",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontSize: "0.875rem",
+            marginBottom: "1rem"
+          }}
         >
-          🗑️ Delete Case
+          ← Back to Dashboard
         </button>
+        <h1 style={{ margin: "0.5rem 0 0 0", fontSize: "1.5rem", color: "#212529" }}>
+          Case Details
+        </h1>
       </div>
 
-      <div className="case-info">
-        <h1>{caseData.case_number || caseData.title}</h1>
-        <span className="case-category">{caseData.category}</span>
+      {/* Status Update Message */}
+      {updateMessage && (
+        <div style={{
+          padding: "1rem",
+          marginBottom: "1.5rem",
+          borderRadius: "6px",
+          backgroundColor: updateMessage.type === 'success' ? '#d4edda' : '#f8d7da',
+          color: updateMessage.type === 'success' ? '#155724' : '#721c24',
+          border: `1px solid ${updateMessage.type === 'success' ? '#c3e6cb' : '#f5c6cb'}`
+        }}>
+          {updateMessage.text}
+        </div>
+      )}
+
+      {/* Case Information Card */}
+      <div style={{ 
+        backgroundColor: "#f8f9fa", 
+        padding: "1rem", 
+        borderRadius: "8px", 
+        marginBottom: "1rem",
+        border: "1px solid #dee2e6"
+      }}>
+        <h2 style={{ marginTop: 0, fontSize: "1.125rem", color: "#212529" }}>Case Information</h2>
+        
+        {/* Responsive grid - 2 columns on desktop, 1 on mobile */}
+        <div className="info-grid" style={{ display: "grid", gap: "1rem", marginBottom: "1rem" }}>
+          <div>
+            <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+              <strong>Case ID:</strong>
+            </p>
+            <p style={{ margin: 0, fontFamily: "monospace", fontSize: "1rem", color: "#212529" }}>
+              {caseData.case_number || 'N/A'}
+            </p>
+          </div>
+          <div>
+            <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+              <strong>Category:</strong>
+            </p>
+            <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>
+              {caseData.category ? (CATEGORY_NAMES[caseData.category] || caseData.category) : 'N/A'}
+            </p>
+          </div>
+        </div>
+
+        <div className="info-grid" style={{ display: "grid", gap: "1rem", marginBottom: "1rem" }}>
+          <div>
+            <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+              <strong>Created:</strong>
+            </p>
+            <p style={{ margin: 0, fontSize: "0.875rem", color: "#212529" }}>
+              {caseData.created_at ? new Date(caseData.created_at).toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              }) : 'N/A'}
+            </p>
+          </div>
+          {caseData.updated_at && caseData.updated_at !== caseData.created_at && (
+            <div>
+              <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                <strong>Last Updated:</strong>
+              </p>
+              <p style={{ margin: 0, fontSize: "0.875rem", color: "#212529" }}>
+                {new Date(caseData.updated_at).toLocaleString('en-US', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Status Editor - Stacks on mobile */}
+        <div style={{ 
+          borderTop: "1px solid #dee2e6", 
+          paddingTop: "1rem",
+          marginTop: "1rem"
+        }}>
+          <label style={{ 
+            display: "block", 
+            marginBottom: "0.5rem", 
+            fontWeight: 600,
+            color: "#495057",
+            fontSize: "0.875rem"
+          }}>
+            Case Status:
+          </label>
+          <div className="status-controls" style={{ display: "flex", gap: "0.75rem", alignItems: "stretch" }}>
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              style={{
+                padding: "0.75rem",
+                fontSize: "1rem",
+                borderRadius: "4px",
+                border: "1px solid #ced4da",
+                backgroundColor: "white",
+                flex: "1 1 auto",
+                minHeight: "48px"
+              }}
+            >
+              {STATUS_OPTIONS.map(status => (
+                <option key={status} value={status}>{status}</option>
+              ))}
+            </select>
+            <button
+              onClick={handleStatusUpdate}
+              disabled={updating || selectedStatus === caseData.status}
+              style={{
+                padding: "0.75rem 1rem",
+                minHeight: "48px",
+                backgroundColor: selectedStatus === caseData.status ? "#e9ecef" : "#007bff",
+                color: selectedStatus === caseData.status ? "#6c757d" : "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: selectedStatus === caseData.status ? "not-allowed" : "pointer",
+                fontSize: "0.875rem",
+                fontWeight: 500,
+                whiteSpace: "nowrap",
+                flex: "0 0 auto"
+              }}
+            >
+            {updating ? "Updating..." : "Update"}
+          </button>
+          </div>
+
+          {/* Delete Case Button */}
+          <div style={{ marginTop: "1rem" }}>
+            <button
+              onClick={handleDeleteCase}
+              disabled={deleting}
+              style={{
+                padding: "0.75rem 1rem",
+                minHeight: "48px",
+                backgroundColor: deleting ? "#e9ecef" : "#dc3545",
+                color: deleting ? "#6c757d" : "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: deleting ? "not-allowed" : "pointer",
+                fontSize: "0.875rem",
+                fontWeight: 500,
+                width: "100%"
+              }}
+            >
+              {deleting ? "Deleting..." : "🗑️ Delete Case"}
+            </button>
+          </div>
+        </div>
       </div>
 
-      {caseData.case_details && (
-        <div className="case-description-box">
-          <p>{caseData.case_details}</p>
-        </div>
-      )}
-
-      {caseData.full_name && (
-        <div className="client-info">
-          <h3>Client Information</h3>
-          <p><strong>Name:</strong> {caseData.full_name}</p>
-          {caseData.email && <p><strong>Email:</strong> {caseData.email}</p>}
-          {caseData.phone && <p><strong>Phone:</strong> {caseData.phone}</p>}
-          {caseData.address && <p><strong>Address:</strong> {caseData.address}</p>}
-        </div>
-      )}
-
-      {/* Business Intake Information */}
-      {caseData.case_type === 'business' && (
-        <>
-          {(caseData.business_name || caseData.website_url) && (
-            <div className="client-info">
-              <h3>Business Information</h3>
-              {caseData.business_name && <p><strong>Business Name:</strong> {caseData.business_name}</p>}
-              {caseData.website_url && <p><strong>Website:</strong> <a href={caseData.website_url} target="_blank" rel="noopener noreferrer">{caseData.website_url}</a></p>}
-            </div>
-          )}
-
-          {(caseData.instagram_url || caseData.tiktok_url || caseData.facebook_url || caseData.youtube_url || caseData.link_in_bio) && (
-            <div className="client-info">
-              <h3>Social Media</h3>
-              {caseData.instagram_url && <p><strong>Instagram:</strong> <a href={caseData.instagram_url} target="_blank" rel="noopener noreferrer">{caseData.instagram_url}</a></p>}
-              {caseData.tiktok_url && <p><strong>TikTok:</strong> <a href={caseData.tiktok_url} target="_blank" rel="noopener noreferrer">{caseData.tiktok_url}</a></p>}
-              {caseData.facebook_url && <p><strong>Facebook:</strong> <a href={caseData.facebook_url} target="_blank" rel="noopener noreferrer">{caseData.facebook_url}</a></p>}
-              {caseData.youtube_url && <p><strong>YouTube:</strong> <a href={caseData.youtube_url} target="_blank" rel="noopener noreferrer">{caseData.youtube_url}</a></p>}
-              {caseData.link_in_bio && <p><strong>Link in Bio:</strong> <a href={caseData.link_in_bio} target="_blank" rel="noopener noreferrer">{caseData.link_in_bio}</a></p>}
-            </div>
-          )}
-
-          {(caseData.what_you_sell || caseData.ideal_customer || caseData.biggest_struggle) && (
-            <div className="client-info">
-              <h3>Business Details</h3>
-              {caseData.what_you_sell && <p><strong>What You Sell:</strong> {caseData.what_you_sell}</p>}
-              {caseData.ideal_customer && <p><strong>Ideal Customer:</strong> {caseData.ideal_customer}</p>}
-              {caseData.biggest_struggle && <p><strong>Biggest Struggle:</strong> {caseData.biggest_struggle}</p>}
-            </div>
-          )}
-
-          {(caseData.short_term_goal || caseData.long_term_vision) && (
-            <div className="client-info">
-              <h3>Goals & Vision</h3>
-              {caseData.short_term_goal && <p><strong>Short-term Goal:</strong> {caseData.short_term_goal}</p>}
-              {caseData.long_term_vision && <p><strong>Long-term Vision:</strong> {caseData.long_term_vision}</p>}
-            </div>
-          )}
-        </>
-      )}
-
-      {/* Consumer Case Information */}
-      {caseData.case_type === 'consumer' && (
-        <>
-          {(caseData.amount || caseData.deadline) && (
-            <div className="client-info">
-              <h3>Case Details</h3>
-              {caseData.amount && <p><strong>Amount:</strong> ${caseData.amount}</p>}
-              {caseData.deadline && <p><strong>Deadline:</strong> {new Date(caseData.deadline).toLocaleDateString()}</p>}
-            </div>
-          )}
-
-          {/* AI Analysis Section */}
-          {(caseData.violations || caseData.laws_cited || caseData.recommended_actions || caseData.summary) && (
-            <div className="client-info" style={{ backgroundColor: '#f0f9ff', borderLeft: '4px solid #3b82f6' }}>
-              <h3>🤖 AI Analysis</h3>
-              {caseData.summary && <p><strong>Summary:</strong> {caseData.summary}</p>}
-              {caseData.violations && <p><strong>Potential Violations:</strong> {caseData.violations}</p>}
-              {caseData.laws_cited && <p><strong>Laws Cited:</strong> {caseData.laws_cited}</p>}
-              {caseData.recommended_actions && <p><strong>Recommended Actions:</strong> {caseData.recommended_actions}</p>}
-              {caseData.urgency_level && <p><strong>Urgency Level:</strong> {caseData.urgency_level}</p>}
-              {caseData.estimated_value && <p><strong>Estimated Value:</strong> ${caseData.estimated_value}</p>}
-              {caseData.success_probability && <p><strong>Success Probability:</strong> {caseData.success_probability}%</p>}
-            </div>
-          )}
-        </>
-      )}
-
-      <div className="upload-section">
-        <h2>Upload Documents</h2>
-        <div
-          className={`upload-dropzone ${dragActive ? 'drag-active' : ''}`}
-          onDrop={handleDrop}
-          onDragEnter={handleDrag}
-          onDragLeave={handleDrag}
-          onDragOver={handleDrag}
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            accept=".pdf,.jpg,.jpeg,.png,.heic,.webp,.docx,.txt"
-            onChange={handleFileInputChange}
-            style={{ display: 'none' }}
-          />
-          <div className="upload-icon">📁</div>
-          <h3>Drag & drop files here</h3>
-          <p>or click to browse</p>
-          <p className="upload-hint">
-            Supports: PDF, Images (JPG, PNG, HEIC, WebP), DOCX, TXT
-          </p>
-        </div>
-
-        <div className="note-input-group">
-          <label>Add a note (optional)</label>
-          <textarea
-            className="note-input"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder="Add context or notes for this document..."
-            rows="2"
+      {/* Messaging Section */}
+      {caseData && (
+        <div style={{ marginBottom: "2rem" }}>
+          <AdminMessaging 
+            caseId={parseInt(params?.id || "0")} 
+            clientName={caseData?.full_name || "Client"}
           />
         </div>
+      )}
 
-        {uploading && (
-          <div className="upload-progress">
-            <div className="progress-spinner"></div>
-            <span>Uploading...</span>
+      {/* AI Analysis Panel */}
+      <div style={{ 
+        backgroundColor: "#f8f9fa", 
+        padding: "1rem", 
+        borderRadius: "8px", 
+        marginBottom: "1rem",
+        border: "1px solid #dee2e6"
+      }}>
+        <h2 style={{ marginTop: 0, fontSize: "1.125rem", color: "#212529" }}>AI Analysis & Pricing</h2>
+        
+        {!aiAnalysis && (
+          <div>
+            <p style={{ margin: "0.5rem 0 1rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+              Run AI analysis to get pricing suggestion and case insights.
+            </p>
+            <button
+              onClick={async () => {
+                const storedToken = localStorage.getItem("admin_session");
+                setAnalyzingAI(true);
+                setAiError(null);
+                try {
+                  const res = await axios.post(
+                    `${API_URL}/api/case/${params?.id}/analyze`,
+                    {},
+                    { headers: { Authorization: `Bearer ${storedToken}` } }
+                  );
+                  setAiAnalysis(res.data.analysis);
+                } catch (err: any) {
+                  console.error(err);
+                  setAiError(err.response?.data?.error || "Failed to run AI analysis");
+                } finally {
+                  setAnalyzingAI(false);
+                }
+              }}
+              disabled={analyzingAI}
+              style={{
+                padding: "0.75rem 1.5rem",
+                minHeight: "48px",
+                backgroundColor: analyzingAI ? "#6c757d" : "#06b6d4",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: analyzingAI ? "not-allowed" : "pointer",
+                fontSize: "1rem",
+                fontWeight: 500,
+                width: "100%"
+              }}
+            >
+              {analyzingAI ? "Analyzing..." : "🤖 Run AI Analysis"}
+            </button>
+            {aiError && (
+              <p style={{ margin: "0.75rem 0 0 0", color: "#dc3545", fontSize: "0.875rem" }}>
+                {aiError}
+              </p>
+            )}
+          </div>
+        )}
+
+        {aiAnalysis && (
+          <div>
+            {/* Pricing Display */}
+            <div style={{
+              backgroundColor: "white",
+              padding: "1rem",
+              borderRadius: "6px",
+              border: "2px solid #06b6d4",
+              marginBottom: "1rem"
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
+                <div>
+                  <p style={{ margin: 0, color: "#6c757d", fontSize: "0.875rem" }}>Suggested Price</p>
+                  <p style={{ margin: "0.25rem 0 0 0", fontSize: "2rem", fontWeight: "bold", color: "#212529" }}>
+                    ${aiAnalysis.pricing_suggestion || 0}
+                  </p>
+                </div>
+                <div>
+                  <span style={{
+                    padding: "0.5rem 1rem",
+                    borderRadius: "20px",
+                    fontSize: "0.875rem",
+                    fontWeight: 600,
+                    backgroundColor: 
+                      aiAnalysis.pricing_tier === 'extreme' ? '#dc3545' :
+                      aiAnalysis.pricing_tier === 'high' ? '#fd7e14' :
+                      '#28a745',
+                    color: "white",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px"
+                  }}>
+                    {aiAnalysis.pricing_tier === 'extreme' && '⚡ EXTREME'}
+                    {aiAnalysis.pricing_tier === 'high' && '🔥 HIGH'}
+                    {aiAnalysis.pricing_tier === 'standard' && '✓ STANDARD'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Success Probability */}
+            {aiAnalysis.success_probability !== undefined && (
+              <div style={{ marginBottom: "1rem" }}>
+                <p style={{ margin: "0 0 0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                  <strong>Success Probability:</strong>
+                </p>
+                <div style={{
+                  backgroundColor: "#e9ecef",
+                  borderRadius: "4px",
+                  height: "24px",
+                  overflow: "hidden",
+                  position: "relative"
+                }}>
+                  <div style={{
+                    backgroundColor: "#28a745",
+                    height: "100%",
+                    width: `${(aiAnalysis.success_probability * 100).toFixed(0)}%`,
+                    transition: "width 0.3s ease"
+                  }} />
+                  <span style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    color: "#212529"
+                  }}>
+                    {(aiAnalysis.success_probability * 100).toFixed(0)}%
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Potential Violations */}
+            <div style={{ marginBottom: "1rem" }}>
+              <p style={{ margin: "0 0 0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                <strong>Potential Violations:</strong>
+              </p>
+              {aiAnalysis?.potential_violations?.length ? (
+                <ul style={{ margin: 0, paddingLeft: "1.5rem", color: "#212529" }}>
+                  {aiAnalysis.potential_violations.map((v: { label: string; citation?: string }, i: number) => (
+                    <li key={i} style={{ marginBottom: "0.25rem" }}>
+                      {v.label}{v.citation ? ` (${v.citation})` : ''}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p style={{ margin: 0, color: "#6c757d", fontSize: "0.875rem" }}>
+                  No specific laws flagged yet. Ask for more documents if needed.
+                </p>
+              )}
+            </div>
+
+            {/* Refresh Button */}
+            <button
+              onClick={() => setAiAnalysis(null)}
+              style={{
+                padding: "0.5rem 1rem",
+                minHeight: "40px",
+                backgroundColor: "#6c757d",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "0.875rem",
+                width: "100%"
+              }}
+            >
+              Run New Analysis
+            </button>
           </div>
         )}
       </div>
 
-      <div className="documents-section">
-        <h2>Uploaded Documents ({documents.length})</h2>
-        {documents.length === 0 ? (
-          <div className="empty-state">
-            <p>No documents uploaded yet.</p>
+      {/* Client Portal Controls Card */}
+      <div style={{ 
+        backgroundColor: "#e7f3ff", 
+        padding: "1rem", 
+        borderRadius: "8px", 
+        marginBottom: "1rem",
+        border: "2px solid #007bff"
+      }}>
+        <h2 style={{ marginTop: 0, fontSize: "1.125rem", color: "#007bff" }}>🔐 Client Portal Settings</h2>
+        
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          {/* Portal Enabled Toggle */}
+          <div>
+            <label style={{ 
+              display: "flex", 
+              alignItems: "center", 
+              gap: "0.5rem",
+              cursor: "pointer",
+              fontSize: "0.875rem",
+              fontWeight: 600,
+              color: "#495057"
+            }}>
+              <input 
+                type="checkbox" 
+                checked={caseData.portal_enabled !== false}
+                onChange={(e) => {
+                  setCaseData({ ...caseData, portal_enabled: e.target.checked });
+                  // TODO: Add API call to update portal_enabled
+                }}
+                style={{ width: "20px", height: "20px" }}
+              />
+              Enable Client Portal Access
+            </label>
+            <p style={{ margin: "0.25rem 0 0 1.75rem", fontSize: "0.75rem", color: "#6c757d" }}>
+              When enabled, client can log in with email + verification code
+            </p>
           </div>
-        ) : (
-          <div className="documents-grid">
-            {documents.map((doc) => (
-              <div key={doc.id} className="document-card">
-                <div className="document-header">
-                  <div className="file-icon">📄</div>
-                  <div className="document-info">
-                    <h4 className="document-name">{doc.file_name}</h4>
-                    <p className="document-size">{formatFileSize(doc.file_size)}</p>
+
+          {/* Client Status */}
+          <div>
+            <label style={{ 
+              display: "block", 
+              marginBottom: "0.5rem", 
+              fontWeight: 600,
+              color: "#495057",
+              fontSize: "0.875rem"
+            }}>
+              Client-Facing Status:
+            </label>
+            <input
+              type="text"
+              value={caseData.client_status || ''}
+              onChange={(e) => setCaseData({ ...caseData, client_status: e.target.value })}
+              placeholder="e.g., Under Review, Documents Received, Awaiting Payment"
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                fontSize: "1rem",
+                borderRadius: "4px",
+                border: "1px solid #ced4da",
+                boxSizing: "border-box",
+                color: "#212529",
+                backgroundColor: "#ffffff"
+              }}
+            />
+            <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.75rem", color: "#6c757d" }}>
+              This status is shown to the client in their portal
+            </p>
+          </div>
+
+          {/* Client Notes */}
+          <div>
+            <label style={{ 
+              display: "block", 
+              marginBottom: "0.5rem", 
+              fontWeight: 600,
+              color: "#495057",
+              fontSize: "0.875rem"
+            }}>
+              Notes for Client:
+            </label>
+            <textarea
+              value={caseData.client_notes || ''}
+              onChange={(e) => setCaseData({ ...caseData, client_notes: e.target.value })}
+              placeholder="Updates, next steps, or messages for the client..."
+              rows={4}
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                fontSize: "1rem",
+                borderRadius: "4px",
+                border: "1px solid #ced4da",
+                fontFamily: "inherit",
+                resize: "vertical",
+                boxSizing: "border-box",
+                color: "#212529",
+                backgroundColor: "#ffffff"
+              }}
+            />
+            <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.75rem", color: "#6c757d" }}>
+              These notes will be visible to the client in their portal
+            </p>
+          </div>
+
+          {/* Payment Link */}
+          <div>
+            <label style={{ 
+              display: "block", 
+              marginBottom: "0.5rem", 
+              fontWeight: 600,
+              color: "#495057",
+              fontSize: "0.875rem"
+            }}>
+              Payment Link:
+            </label>
+            <input
+              type="url"
+              value={caseData.payment_link || ''}
+              onChange={(e) => setCaseData({ ...caseData, payment_link: e.target.value })}
+              placeholder="https://cash.app/$turboresponsehq or Stripe link"
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                fontSize: "1rem",
+                borderRadius: "4px",
+                border: "1px solid #ced4da",
+                boxSizing: "border-box",
+                color: "#212529",
+                backgroundColor: "#ffffff"
+              }}
+            />
+            <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.75rem", color: "#6c757d" }}>
+              If provided, client will see a "Pay Now" button in their portal
+            </p>
+          </div>
+
+          {/* Save Button */}
+          <button
+            onClick={async () => {
+              const storedToken = localStorage.getItem("admin_session");
+              try {
+                await axios.patch(
+                  `${API_URL}/api/case/${params?.id}`,
+                  {
+                    client_status: caseData.client_status,
+                    client_notes: caseData.client_notes,
+                    payment_link: caseData.payment_link,
+                    portal_enabled: caseData.portal_enabled
+                  },
+                  { headers: { Authorization: `Bearer ${storedToken}` } }
+                );
+                setUpdateMessage({ type: 'success', text: 'Client portal settings saved' });
+                setTimeout(() => setUpdateMessage(null), 3000);
+              } catch (err: any) {
+                setUpdateMessage({ type: 'error', text: 'Failed to save portal settings' });
+              }
+            }}
+            style={{
+              padding: "0.75rem 1rem",
+              minHeight: "48px",
+              backgroundColor: "#007bff",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "1rem",
+              fontWeight: 600,
+              width: "100%"
+            }}
+          >
+            💾 Save Portal Settings
+          </button>
+        </div>
+      </div>
+
+      {/* Pricing Tier Selection Card */}
+      <div style={{ 
+        backgroundColor: "#e7f3ff", 
+        padding: "1.5rem", 
+        borderRadius: "8px", 
+        marginBottom: "1rem",
+        border: "2px solid #0066cc"
+      }}>
+        <h2 style={{ marginTop: 0, fontSize: "1.125rem", color: "#004085" }}>💰 Pricing Tier Assignment</h2>
+        
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          {/* Current Pricing Display */}
+          <div style={{ 
+            padding: "1rem", 
+            backgroundColor: "#fff", 
+            borderRadius: "6px",
+            border: "1px solid #cce5ff"
+          }}>
+            <p style={{ margin: 0, fontSize: "0.875rem", color: "#004085", fontWeight: 600 }}>Current Pricing:</p>
+            <p style={{ 
+              margin: "0.5rem 0 0 0", 
+              fontSize: "1.5rem", 
+              fontWeight: 700,
+              color: "#0066cc"
+            }}>
+              ${caseData.pricing_tier_amount || 349}
+            </p>
+            <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.875rem", color: "#666" }}>
+              {caseData.pricing_tier_name || 'Foundation Case Strategy'}
+            </p>
+          </div>
+
+          {/* Pricing Tier Dropdown */}
+          <div>
+            <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.875rem", fontWeight: 600, color: "#004085" }}>
+              Select Pricing Tier:
+            </label>
+            <select
+              value={pricingTier}
+              onChange={(e) => {
+                setPricingTier(e.target.value);
+                // Auto-set amount and name based on tier
+                const tiers: Record<string, { amount: number; name: string }> = {
+                  foundation: { amount: 349, name: 'Foundation Case Strategy' },
+                  premium: { amount: 997, name: 'Premium Case Architecture' },
+                  executive: { amount: 2500, name: 'Executive Case Buildout' },
+                  retainer: { amount: 297, name: 'Corporate Monthly Retainer' },
+                  custom: { amount: parseInt(customAmount) || 0, name: 'Custom Pricing' }
+                };
+                if (e.target.value !== 'custom') {
+                  setPricingAmount(tiers[e.target.value].amount.toString());
+                  setPricingName(tiers[e.target.value].name);
+                }
+              }}
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                fontSize: "1rem",
+                borderRadius: "4px",
+                border: "2px solid #cce5ff",
+                backgroundColor: "#fff",
+                color: "#212529"
+              }}
+            >
+              <option value="foundation">$349 - Foundation Case Strategy</option>
+              <option value="premium">$997 - Premium Case Architecture</option>
+              <option value="executive">$2,500 - Executive Case Buildout</option>
+              <option value="retainer">$297/mo - Corporate Retainer</option>
+              <option value="custom">Custom Amount</option>
+            </select>
+          </div>
+
+          {/* Custom Amount Input */}
+          {pricingTier === 'custom' && (
+            <div>
+              <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.875rem", fontWeight: 600, color: "#004085" }}>
+                Custom Amount ($):
+              </label>
+              <input
+                type="number"
+                value={customAmount}
+                onChange={(e) => {
+                  setCustomAmount(e.target.value);
+                  setPricingAmount(e.target.value);
+                }}
+                placeholder="Enter custom amount"
+                style={{
+                  width: "100%",
+                  padding: "0.75rem",
+                  fontSize: "1rem",
+                  borderRadius: "4px",
+                  border: "2px solid #cce5ff",
+                  backgroundColor: "#fff",
+                  color: "#212529"
+                }}
+              />
+            </div>
+          )}
+
+          {/* Save Pricing Button */}
+          <button
+            onClick={async () => {
+              try {
+                const token = localStorage.getItem('admin_session');
+                await axios.patch(
+                  `${API_URL}/api/case/${params?.id}/status`,
+                  {
+                    pricing_tier: pricingTier,
+                    pricing_tier_amount: parseInt(pricingAmount),
+                    pricing_tier_name: pricingName
+                  },
+                  { headers: { Authorization: `Bearer ${token}` } }
+                );
+                alert('Pricing tier updated successfully!');
+                window.location.reload();
+              } catch (err: any) {
+                alert(err.response?.data?.message || 'Failed to update pricing tier');
+              }
+            }}
+            style={{
+              padding: "1rem",
+              backgroundColor: "#0066cc",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "1rem",
+              fontWeight: 600,
+              width: "100%"
+            }}
+          >
+            💾 Save Pricing Tier
+          </button>
+        </div>
+      </div>
+
+      {/* Payment Verification Card */}
+      <div style={{ 
+        backgroundColor: "#fff3cd", 
+        padding: "1.5rem", 
+        borderRadius: "8px", 
+        marginBottom: "1rem",
+        border: "2px solid #ffc107"
+      }}>
+        <h2 style={{ marginTop: 0, fontSize: "1.125rem", color: "#856404" }}>💳 Payment Verification</h2>
+        
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          {/* Funnel Stage Display */}
+          <div>
+            <p style={{ margin: 0, fontSize: "0.875rem", color: "#856404" }}>Current Stage:</p>
+            <p style={{ 
+              margin: "0.5rem 0 0 0", 
+              fontSize: "1.125rem", 
+              fontWeight: 700,
+              color: "#212529"
+            }}>
+              {caseData.funnel_stage || 'Lead Submitted'}
+            </p>
+          </div>
+
+          {/* Payment Method Display */}
+          {caseData.payment_method && (
+            <div>
+              <p style={{ margin: 0, fontSize: "0.875rem", color: "#856404" }}>Payment Method:</p>
+              <p style={{ margin: "0.5rem 0 0 0", fontSize: "1rem", color: "#212529", textTransform: "capitalize" }}>
+                {caseData.payment_method}
+              </p>
+            </div>
+          )}
+
+          {/* Payment Status */}
+          <div>
+            <p style={{ margin: 0, fontSize: "0.875rem", color: "#856404" }}>Payment Status:</p>
+            <p style={{ 
+              margin: "0.5rem 0 0 0", 
+              fontSize: "1rem",
+              fontWeight: 600,
+              color: caseData.payment_verified ? "#28a745" : "#dc3545"
+            }}>
+              {caseData.payment_verified ? "✅ Verified" : "❌ Not Verified"}
+            </p>
+          </div>
+
+          {/* Mark as Paid Button */}
+          {!caseData.payment_verified && (
+            <button
+              onClick={async () => {
+                if (!window.confirm('Are you sure you want to mark this payment as verified? This will activate the case and create a client account.')) {
+                  return;
+                }
+                try {
+                  const token = localStorage.getItem('admin_session');
+                  await axios.patch(
+                    `${API_URL}/api/case/${params?.id}/verify-payment`,
+                    {},
+                    { headers: { Authorization: `Bearer ${token}` } }
+                  );
+                  alert('Payment verified successfully! Case is now active.');
+                  window.location.reload();
+                } catch (err: any) {
+                  alert(err.response?.data?.message || 'Failed to verify payment');
+                }
+              }}
+              style={{
+                padding: "1rem",
+                fontSize: "1rem",
+                fontWeight: 700,
+                color: "white",
+                backgroundColor: "#28a745",
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer",
+                transition: "all 0.2s",
+                width: "100%"
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#218838")}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#28a745")}
+            >
+              ✓ Mark as Paid (Verify Manually)
+            </button>
+          )}
+
+          {/* Payment Link for Client */}
+          <div style={{
+            marginTop: "0.5rem",
+            padding: "1rem",
+            background: "#ffffff",
+            borderRadius: "8px",
+            border: "1px solid #ffc107"
+          }}>
+            <p style={{ margin: "0 0 0.5rem 0", fontSize: "0.875rem", color: "#856404", fontWeight: 600 }}>
+              Payment Link for Client:
+            </p>
+            <code style={{
+              display: "block",
+              padding: "0.5rem",
+              background: "#f8f9fa",
+              borderRadius: "4px",
+              fontSize: "0.875rem",
+              wordBreak: "break-all",
+              color: "#007bff"
+            }}>
+              {`https://turboresponsehq.ai/pay/${caseData.id}`}
+            </code>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(`https://turboresponsehq.ai/pay/${caseData.id}`);
+                alert('Payment link copied to clipboard!');
+              }}
+              style={{
+                marginTop: "0.5rem",
+                padding: "0.5rem 1rem",
+                fontSize: "0.875rem",
+                color: "#007bff",
+                backgroundColor: "white",
+                border: "1px solid #007bff",
+                borderRadius: "4px",
+                cursor: "pointer"
+              }}
+            >
+              📋 Copy Link
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Client Information Card */}
+      <div style={{ 
+        backgroundColor: "#f8f9fa", 
+        padding: "1rem", 
+        borderRadius: "8px", 
+        marginBottom: "1rem",
+        border: "1px solid #dee2e6"
+      }}>
+        <h2 style={{ marginTop: 0, fontSize: "1.125rem", color: "#212529" }}>Client Information</h2>
+        
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <div>
+            <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+              <strong>Full Name:</strong>
+            </p>
+            <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>{caseData.full_name || 'N/A'}</p>
+          </div>
+          
+          <div>
+            <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+              <strong>Email:</strong>
+            </p>
+            <p style={{ margin: 0, fontSize: "1rem", wordBreak: "break-word" }}>
+              <a href={`mailto:${caseData.email || ''}`} style={{ color: "#007bff", textDecoration: "none" }}>
+                {caseData.email || 'N/A'}
+              </a>
+            </p>
+          </div>
+          
+          {caseData.phone && (
+            <div>
+              <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                <strong>Phone:</strong>
+              </p>
+              <p style={{ margin: 0, fontSize: "1rem" }}>
+                <a href={`tel:${caseData.phone || ''}`} style={{ color: "#007bff", textDecoration: "none" }}>
+                  {caseData.phone || 'N/A'}
+                </a>
+              </p>
+            </div>
+          )}
+          
+          {caseData.address && (
+            <div>
+              <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                <strong>Address:</strong>
+              </p>
+              <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>{caseData.address || 'N/A'}</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Case Details Card */}
+      <div style={{ 
+        backgroundColor: "#f8f9fa", 
+        padding: "1rem", 
+        borderRadius: "8px", 
+        marginBottom: "1rem",
+        border: "1px solid #dee2e6"
+      }}>
+        <h2 style={{ marginTop: 0, fontSize: "1.125rem", color: "#212529" }}>Case Details</h2>
+        
+        <div style={{ marginBottom: "1rem" }}>
+          <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+            <strong>Description:</strong>
+          </p>
+          <p style={{ 
+            margin: 0, 
+            fontSize: "1rem", 
+            whiteSpace: "pre-wrap",
+            lineHeight: "1.6",
+            color: "#212529"
+          }}>
+            {caseData.case_details || 'No description provided'}
+          </p>
+        </div>
+        
+        {caseData.amount && (
+          <div style={{ marginBottom: "1rem" }}>
+            <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+              <strong>Amount:</strong>
+            </p>
+            <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>
+              ${parseFloat(caseData.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </p>
+          </div>
+        )}
+        
+        {caseData.deadline && (
+          <div>
+            <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+              <strong>Deadline:</strong>
+            </p>
+            <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>
+              {new Date(caseData.deadline).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Document List UI - Enhanced for Phase 1 */}
+      {documents.length > 0 && (
+        <div style={{ 
+          backgroundColor: "#f8f9fa", 
+          padding: "1rem", 
+          borderRadius: "8px",
+          border: "1px solid #dee2e6"
+        }}>
+          <h2 style={{ marginTop: 0, fontSize: "1.125rem", color: "#212529" }}>
+            Attachments ({documents.length})
+          </h2>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            {documents.map((doc: string, idx: number) => (
+              <div 
+                key={idx}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "0.75rem",
+                  backgroundColor: "white",
+                  borderRadius: "4px",
+                  border: "1px solid #dee2e6",
+                  gap: "0.75rem"
+                }}
+              >
+                <div style={{ flex: "1 1 auto", minWidth: 0 }}>
+                  <div style={{ 
+                    fontWeight: 500, 
+                    fontSize: "0.875rem",
+                    color: "#212529",
+                    marginBottom: "0.25rem"
+                  }}>
+                    Document {idx + 1}
+                  </div>
+                  <div style={{ 
+                    fontSize: "0.75rem", 
+                    color: "#6c757d",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap"
+                  }}>
+                    {doc.split('/').pop() || 'Attachment'}
                   </div>
                 </div>
-
-                {doc.note && (
-                  <div className="document-note">
-                    <strong>Note:</strong> {doc.note}
-                  </div>
-                )}
-
-                <div className="document-meta">
-                  <p className="document-date">
-                    {new Date(doc.uploaded_at).toLocaleString()}
-                  </p>
-                </div>
-
-                <div className="document-actions">
-                  <a
-                    href={doc.file_url}
-                    target="_blank"
+                <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                  <a 
+                    href={getDocumentUrl(doc)} 
+                    target="_blank" 
                     rel="noopener noreferrer"
-                    className="btn-download"
+                    style={{ 
+                      padding: "0.5rem 1rem",
+                      minHeight: "44px",
+                      backgroundColor: "#007bff",
+                      color: "white",
+                      textDecoration: "none",
+                      borderRadius: "4px",
+                      fontSize: "0.875rem",
+                      fontWeight: 500,
+                      whiteSpace: "nowrap",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.5rem"
+                    }}
                   >
-                    Download
+                    📄 View PDF
                   </a>
-                  <button
-                    className="btn-delete"
-                    onClick={() => handleDeleteDocument(doc.id)}
+                  <a 
+                    href={getDocumentUrl(doc)}
+                    download
+                    style={{ 
+                      padding: "0.5rem 1rem",
+                      minHeight: "44px",
+                      backgroundColor: "#28a745",
+                      color: "white",
+                      textDecoration: "none",
+                      borderRadius: "4px",
+                      fontSize: "0.875rem",
+                      fontWeight: 500,
+                      whiteSpace: "nowrap",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.5rem"
+                    }}
                   >
-                    Delete
-                  </button>
+                    ⬇️ Download
+                  </a>
                 </div>
               </div>
             ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* Responsive CSS */}
+      <style>{`
+        /* Desktop: 2 columns */
+        @media (min-width: 769px) {
+          .info-grid {
+            grid-template-columns: 1fr 1fr !important;
+          }
+          .status-controls {
+            flex-direction: row !important;
+          }
+        }
+
+        /* Mobile: 1 column, stack status controls */
+        @media (max-width: 768px) {
+          .info-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .status-controls {
+            flex-direction: column !important;
+          }
+          .status-controls select,
+          .status-controls button {
+            width: 100% !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
