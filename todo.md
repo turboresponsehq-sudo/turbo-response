@@ -1,5 +1,28 @@
 # Turbo Response - TODO
 
+## 🚨🚨🚨 NEW CRITICAL ISSUES - JAN 26 2025 (USER REPORTED)
+
+### Issue A: Client Portal Login - Verification Code Failure
+- [ ] Investigate "Failed to send verification code" error
+- [ ] Check EMAIL_USER and EMAIL_PASSWORD env vars on Render
+- [ ] Verify sendEmail() function in emailService.js
+- [ ] Test email sending with business case (TR-78678309-671)
+- [ ] Add better error logging for email failures
+
+### Issue B: Business Case Messaging - Still 500 Errors
+- [ ] Verify messagingController.js deployed to production
+- [ ] Check if business_intakes table has unread_messages_count column
+- [ ] Add database migration if column missing
+- [ ] Test messaging with business case ID
+- [ ] Add console logging to track which table is being updated
+
+### Issue C: Mobile Admin Dashboard - Could Not Load Cases
+- [ ] Check if getAllCases() changes deployed to production
+- [ ] Verify UNION query works on production database
+- [ ] Test API endpoint /api/cases/admin/all on mobile
+- [ ] Check CORS headers in response
+- [ ] Add mobile-specific error logging
+
 ## 🚨🚨🚨 ROOT CODE ISSUES - HIGHEST PRIORITY
 
 ### Issue 1: View Case 404 Error
