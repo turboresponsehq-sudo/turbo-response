@@ -68,3 +68,20 @@
 - [ ] Case appears in admin list
 - [ ] Click "View Case" - loads successfully
 - [ ] Test on mobile - works
+
+
+## 🚨 URGENT - PRODUCTION BROKEN (JAN 26 2025 - 2:15 PM)
+
+### Business Messaging 500 Error - FIXED
+- [x] Discovered business_intakes table doesn't exist in production PostgreSQL
+- [x] Created migration 010_create_business_intakes.mjs
+- [x] Migration will create table with all columns including unread_messages_count
+- [ ] Deploy to GitHub and wait for Render auto-deploy
+- [ ] Verify migration runs successfully in Render logs
+- [ ] Test messaging after deployment
+
+### Mobile Admin Login - INVESTIGATING
+- [x] Email credentials ARE set (confirmed in screenshot)
+- [ ] Need to check actual error in Render logs after deployment
+- [ ] May be related to business_intakes table missing
+- [ ] Test after migration deployment
