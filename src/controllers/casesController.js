@@ -840,13 +840,34 @@ const updateCaseDocuments = async (req, res, next) => {
       });
     }
 
-    // Verify case belongs to client
-    const caseResult = await query(
-      'SELECT id, email FROM cases WHERE id = $1',
+    // Get user email from either client auth or regular auth
+    const userEmail = req.clientAuth?.email || req.user?.email;
+    const isAdmin = req.user?.role === 'admin';
+
+    console.log('[updateCaseDocuments] Request:', {
+      caseId,
+      userEmail,
+      isAdmin,
+      hasClientAuth: !!req.clientAuth,
+      documentCount: documents?.length
+    });
+
+    // Try to find case in consumer cases first
+    let caseResult = await query(
+      'SELECT id, email, \'consumer\' as case_type FROM cases WHERE id = $1',
       [caseId]
     );
 
+    // If not found, try business_intakes
     if (caseResult.rows.length === 0) {
+      caseResult = await query(
+        'SELECT id, email, \'business\' as case_type FROM business_intakes WHERE id = $1',
+        [caseId]
+      );
+    }
+
+    if (caseResult.rows.length === 0) {
+      console.log('[updateCaseDocuments] Case not found:', caseId);
       return res.status(404).json({
         success: false,
         error: 'Case not found'
@@ -854,30 +875,39 @@ const updateCaseDocuments = async (req, res, next) => {
     }
 
     const caseData = caseResult.rows[0];
+    console.log('[updateCaseDocuments] Found case:', {
+      caseId: caseData.id,
+      caseType: caseData.case_type,
+      caseEmail: caseData.email
+    });
     
-    // Check if client owns this case
-    // Support both client auth (req.clientAuth) and regular user auth (req.user)
-    const userEmail = req.clientAuth?.email || req.user?.email;
-    const isClient = !!req.clientAuth || req.user?.type === 'client';
-    const isAdmin = req.user?.role === 'admin';
-    
-    if (isClient && !isAdmin && userEmail !== caseData.email) {
+    // Check if client owns this case (unless admin)
+    if (!isAdmin && userEmail !== caseData.email) {
+      console.log('[updateCaseDocuments] Unauthorized:', { userEmail, caseEmail: caseData.email });
       return res.status(403).json({
         success: false,
         error: 'You can only update your own cases'
       });
     }
 
-    // Update documents
+    // Update documents in the correct table
+    const tableName = caseData.case_type === 'consumer' ? 'cases' : 'business_intakes';
     await query(
-      'UPDATE cases SET documents = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
+      `UPDATE ${tableName} SET documents = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2`,
       [JSON.stringify(documents), caseId]
     );
 
+    console.log('[updateCaseDocuments] Documents updated successfully:', {
+      caseId,
+      tableName,
+      documentCount: documents.length
+    });
+
     logger.info('Case documents updated', {
       caseId,
+      caseType: caseData.case_type,
       documentCount: documents.length,
-      userId: req.user.id || req.user.email
+      userEmail
     });
 
     res.json({
@@ -885,8 +915,10 @@ const updateCaseDocuments = async (req, res, next) => {
       message: 'Documents updated successfully'
     });
   } catch (error) {
+    console.error('[updateCaseDocuments] Error:', error);
     logger.error('Failed to update case documents', {
       error: error.message,
+      stack: error.stack,
       caseId: req.params.id
     });
     return res.status(500).json({
