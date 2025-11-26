@@ -34,3 +34,11 @@
 - [ ] Document categories/tags (not needed for MVP)
 - [ ] Advanced case filtering
 - [ ] Bulk case operations
+
+
+## 🚨 URGENT: ADMIN LOGIN FIX (JAN 26 2025 - 4:30 PM)
+- [x] Investigate HTTP 401 error on admin login
+- [x] Check admin account exists in database
+- [x] Verify password hash is correct
+- [x] Update seed file to use Turbo1234! password
+- [ ] Deploy and test login on mobile
