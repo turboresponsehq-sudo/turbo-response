@@ -6,12 +6,14 @@ const router = express.Router();
 const {
   createAdminCase,
   getAllAdminCases,
-  getAdminCaseById,
   uploadDocument,
   getCaseDocuments,
   deleteDocument,
   deleteAdminCase
 } = require('../controllers/adminCasesController');
+
+// Import getAdminCaseById from casesController (queries cases + business_intakes tables)
+const { getAdminCaseById } = require('../controllers/casesController');
 
 // AUTH MIDDLEWARE
 const { authenticateToken } = require('../middleware/auth');
@@ -28,6 +30,7 @@ router.use(authenticateToken);
 // ------- CASE ROUTES -------
 router.post('/create', createAdminCase);
 router.get('/', getAllAdminCases);
+// Use casesController.getAdminCaseById to query cases + business_intakes tables
 router.get('/:id', getAdminCaseById);
 router.delete('/:id', deleteAdminCase);
 
