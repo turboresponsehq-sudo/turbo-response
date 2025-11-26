@@ -71,10 +71,11 @@ const getCaseById = async (req, res, next) => {
   }
 };
 
-// Get all cases (admin only)
+// Get all cases (admin only) - MERGED from both cases and business_intakes tables
 const getAllCases = async (req, res, next) => {
   try {
-    const result = await query(`
+    // Get consumer cases from cases table
+    const consumerCasesResult = await query(`
       SELECT 
         id, 
         case_number, 
@@ -87,40 +88,76 @@ const getAllCases = async (req, res, next) => {
         amount, 
         deadline, 
         documents, 
-        status, 
+        status,
+        funnel_stage,
+        payment_verified,
+        unread_messages_count,
         created_at,
-        updated_at
+        updated_at,
+        'consumer' as case_type
       FROM cases
       ORDER BY created_at DESC
     `);
 
-    // Normalize document URLs before returning
+    // Get business cases from business_intakes table
+    const businessCasesResult = await query(`
+      SELECT 
+        id,
+        business_name as case_number,
+        'Business Audit' as category,
+        email,
+        full_name,
+        phone,
+        NULL as address,
+        vision as case_details,
+        NULL as amount,
+        NULL as deadline,
+        '[]'::jsonb as documents,
+        status,
+        NULL as funnel_stage,
+        false as payment_verified,
+        0 as unread_messages_count,
+        created_at,
+        updated_at,
+        'business' as case_type
+      FROM business_intakes
+      ORDER BY created_at DESC
+    `);
+
+    // Normalize document URLs before merging
     const backendUrl = process.env.BACKEND_URL || 'https://turbo-response-backend.onrender.com';
     
-    const normalizedCases = result.rows.map(caseData => {
+    const normalizedConsumerCases = consumerCasesResult.rows.map(caseData => {
       if (caseData.documents && Array.isArray(caseData.documents)) {
         caseData.documents = caseData.documents.map(doc => {
-          // If localhost URL, replace with production backend
           if (doc.includes('localhost')) {
-            const match = doc.match(/localhost:\d+(\/.*)/)
+            const match = doc.match(/localhost:\d+(\/.*)/);
             if (match) {
               return `${backendUrl}${match[1]}`;
             }
           }
-          // If relative path, prepend backend URL
           if (doc.startsWith('/')) {
             return `${backendUrl}${doc}`;
           }
-          // If already absolute production URL, return as-is
           return doc;
         });
       }
       return caseData;
     });
 
+    // Merge both arrays and sort by created_at (newest first)
+    const allCases = [...normalizedConsumerCases, ...businessCasesResult.rows]
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+    logger.info('getAllCases: merged cases', {
+      consumerCount: consumerCasesResult.rows.length,
+      businessCount: businessCasesResult.rows.length,
+      totalCount: allCases.length
+    });
+
     res.json({
       success: true,
-      cases: normalizedCases
+      cases: allCases
     });
   } catch (error) {
     logger.error('Failed to get all cases (admin)', {
@@ -134,7 +171,7 @@ const getAllCases = async (req, res, next) => {
   }
 };
 
-// Get case details by ID (admin only)
+// Get case details by ID (admin only) - checks BOTH cases and business_intakes tables
 const getAdminCaseById = async (req, res, next) => {
   try {
     const caseId = parseInt(req.params.id);
@@ -146,7 +183,8 @@ const getAdminCaseById = async (req, res, next) => {
       });
     }
 
-    const result = await query(
+    // Try consumer cases table first
+    let result = await query(
       `SELECT 
         c.id, c.user_id, c.case_number, c.category, c.status,
         c.full_name, c.email, c.phone, c.address,
@@ -156,6 +194,7 @@ const getAdminCaseById = async (req, res, next) => {
         c.payment_verified_at, c.payment_verified_by,
         c.pricing_tier, c.pricing_tier_amount, c.pricing_tier_name,
         c.created_at, c.updated_at,
+        'consumer' as case_type,
         a.violations, a.laws_cited, a.recommended_actions,
         a.urgency_level, a.estimated_value, a.success_probability,
         a.pricing_suggestion, a.pricing_tier, a.summary
@@ -167,10 +206,57 @@ const getAdminCaseById = async (req, res, next) => {
       [caseId]
     );
 
+    // If not found in cases table, try business_intakes table
+    if (result.rows.length === 0) {
+      result = await query(
+        `SELECT 
+          id,
+          NULL as user_id,
+          business_name as case_number,
+          'Business Audit' as category,
+          status,
+          full_name,
+          email,
+          phone,
+          NULL as address,
+          vision as case_details,
+          NULL as amount,
+          NULL as deadline,
+          '[]'::jsonb as documents,
+          NULL as client_status,
+          NULL as client_notes,
+          NULL as payment_link,
+          false as portal_enabled,
+          NULL as funnel_stage,
+          NULL as payment_method,
+          false as payment_verified,
+          NULL as payment_verified_at,
+          NULL as payment_verified_by,
+          NULL as pricing_tier,
+          NULL as pricing_tier_amount,
+          NULL as pricing_tier_name,
+          created_at,
+          updated_at,
+          'business' as case_type,
+          NULL as violations,
+          NULL as laws_cited,
+          NULL as recommended_actions,
+          NULL as urgency_level,
+          NULL as estimated_value,
+          NULL as success_probability,
+          NULL as pricing_suggestion,
+          NULL as pricing_tier,
+          NULL as summary
+        FROM business_intakes
+        WHERE id = $1`,
+        [caseId]
+      );
+    }
+
     if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
-        error: 'Case not found'
+        error: 'Case not found in either cases or business_intakes tables'
       });
     }
 

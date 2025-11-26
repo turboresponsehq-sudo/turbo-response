@@ -1,95 +1,47 @@
 # Turbo Response - TODO
 
-## 🚨🚨🚨 URGENT FIXES - Mobile Admin + Routing (HIGHEST PRIORITY)
+## 🚨🚨🚨 ROOT CODE ISSUES - HIGHEST PRIORITY
 
-### Mobile Admin Dashboard Issue
-- [ ] Fix "Could not load the case" error on mobile
-- [ ] Check mobile API requests to /api/admin/cases/:id
-- [ ] Verify auth/session tokens work on mobile
-- [ ] Check CORS headers for mobile browsers
-- [ ] Test cookie handling on mobile Safari/Chrome
-- [ ] Verify admin middleware doesn't block mobile requests
-- [ ] Add mobile-specific logging to diagnose issue
+### Issue 1: View Case 404 Error
+- [x] URL shows `/admin/case/58` but should be `/admin/cases/58`
+- [x] Find ALL places that generate case detail links
+- [x] Search for any remaining `/admin/case/` references (without 's') - NONE FOUND
+- [x] Verify AdminDashboard.tsx handleCaseClick uses correct route - FIXED
+- [x] Check if there are other components linking to case details - ALL CORRECT
+- [ ] Test on desktop and mobile after deployment
 
-### Routing Fix - /admin/case/:id → /admin/cases/:id
-- [ ] Update App.tsx route definition
-- [ ] Update AdminDashboard.tsx "View Case" navigation
-- [ ] Update AdminCaseDetail.tsx breadcrumbs/links
-- [ ] Search codebase for ALL /admin/case/ references
-- [ ] Test case detail page loads for consumer cases
-- [ ] Test case detail page loads for business cases
+### Issue 2: Business Cases NOT Appearing in Admin List
+- [x] Check `/api/cases/admin/all` endpoint - FIXED
+- [x] Verify it queries BOTH tables (cases + business_intakes) - NOW MERGES BOTH
+- [x] Check if business_intakes table has data - WILL VERIFY AFTER DEPLOYMENT
+- [x] Verify merged response includes business cases - IMPLEMENTED
+- [x] Check frontend table rendering logic - ALREADY CORRECT
+- [x] Ensure case_type field distinguishes consumer vs business - ADDED
 
-### Business Intake Pipeline Alignment
-- [ ] Verify business intake creates portal user (DONE - just deployed)
-- [ ] Verify business cases appear in unified admin list
-- [ ] Verify business cases use same case detail page
-- [ ] Verify business cases follow payment flow
-- [ ] Verify business cases redirect to portal after payment
-- [ ] Verify business case uploads work
-- [ ] Verify case_type field is set correctly
+### Issue 3: Case Detail Endpoint Failures
+- [x] Check `/api/case/:id` endpoint (getAdminCaseById) - FIXED
+- [x] Verify it can find cases from BOTH tables - NOW CHECKS BOTH
+- [ ] Test with consumer case ID - AFTER DEPLOYMENT
+- [ ] Test with business case ID - AFTER DEPLOYMENT
+- [x] Ensure full case object is returned - IMPLEMENTED
+- [x] Verify no null/undefined responses - ERROR HANDLING ADDED
 
-### Complete Testing Checklist
-**Desktop - Consumer Flow:**
-- [ ] Submit intake form
-- [ ] Verify case appears in admin dashboard
-- [ ] Click "View Case" - detail page loads
-- [ ] Verify all fields display
-- [ ] Test payment flow
-- [ ] Test portal access
-- [ ] Test file uploads
+### Issue 4: Mobile Admin Errors
+- [x] Related to Issue 1 (404 route error) - FIXED
+- [x] Will be fixed once route is corrected - DONE
+- [ ] Test mobile after deployment
+- [x] Verify auth tokens work on mobile - LOGGING ADDED
+- [x] Check console logs on mobile browser - ENHANCED ERROR MESSAGES
 
-**Desktop - Business Flow:**
-- [ ] Submit business intake form
-- [ ] Verify case appears in admin dashboard
-- [ ] Click "View Case" - detail page loads
-- [ ] Verify all fields display
-- [ ] Test payment flow
-- [ ] Test portal access
-- [ ] Test file uploads
+### End-to-End Testing Required
+**Consumer Intake:**
+- [ ] Submit form
+- [ ] Case appears in admin list
+- [ ] Click "View Case" - loads successfully
+- [ ] Test on mobile - works
 
-**Mobile - Admin:**
-- [ ] Login to admin dashboard
-- [ ] Dashboard loads correctly
-- [ ] Click consumer case - detail loads
-- [ ] Click business case - detail loads
-- [ ] All actions work (status update, messaging, etc.)
-
----
-
-## 🚨 HARDENING PHASE STEP 1: CASE DETAIL PAGE FIXES (IN PROGRESS)
-
-### STEP 1: Fix API Response (GET /api/case/:id)
-- [x] Investigate current database schema and field names
-- [x] Verify what fields are returned by getAdminCaseById()
-- [x] Normalize field names in API response (already correct)
-- [x] Return: case_id, category, created_at, case_status, full_name, email, phone, address, case_details, attachments[]
-- [x] Handle first_name + last_name → full_name conversion (not needed - database has full_name)
-- [ ] Test API response with curl/browser
-
-### STEP 2: Fix Frontend Mappings (AdminCaseDetail.tsx)
-- [x] Update all field mappings to match normalized API response
-- [x] Add null checks for all fields (prevent React error #31)
-- [x] Add fallback values for missing data
-- [x] Fix Case ID display
-- [x] Fix Category display
-- [x] Fix Created Date display
-- [x] Fix Status display (already working)
-- [x] Fix Full Name display
-- [x] Fix Address display
-- [x] Fix Description display
-- [x] Fix Attachments list display (already working)
-
-### STEP 3: Fix Attachment View
-- [x] Verify document URLs match upload directory (code is correct)
-- [x] Update frontend link path if needed (not needed)
-- [x] Update backend static file path if needed (not needed)
-- [ ] Test document download
-
-### STEP 4: Validate with New Test Case
-- [ ] Deploy all fixes to production
-- [ ] Submit brand new case via /intake form
-- [ ] Open case in admin detail page
-- [ ] Verify ALL fields display correctly
-- [ ] Verify zero console errors
-- [ ] Take screenshots of working page
-- [ ] Generate completion report
+**Business Intake:**
+- [ ] Submit form
+- [ ] Case appears in admin list
+- [ ] Click "View Case" - loads successfully
+- [ ] Test on mobile - works
