@@ -1,333 +1,342 @@
 const { query } = require('../services/database/db');
-const { getSupabaseClient } = require('../services/supabase/client');
 const logger = require('../utils/logger');
 
-// Create new admin case
-const createAdminCase = async (req, res) => {
+/**
+ * Get all admin cases (used by /admin dashboard)
+ */
+async function getAllAdminCases(req, res) {
   try {
-    const { title, category, description, client_name, client_email, client_phone } = req.body;
+    const result = await query(`
+      SELECT
+        id,
+        title,
+        category,
+        status,
+        description,
+        client_name,
+        client_email,
+        client_phone,
+        created_at,
+        updated_at
+      FROM admin_cases
+      ORDER BY created_at DESC;
+    `);
 
-    if (!title || !category) {
-      return res.status(400).json({
-        success: false,
-        error: 'Title and category are required'
-      });
-    }
+    return res.json({
+      success: true,
+      cases: result.rows,
+    });
+  } catch (error) {
+    logger.error('Error loading admin cases:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to load admin cases',
+      detail: error.message,
+    });
+  }
+}
+
+/**
+ * Create a new admin case
+ */
+async function createAdminCase(req, res) {
+  try {
+    const {
+      title,
+      category,
+      status,
+      description,
+      clientName,
+      clientEmail,
+      clientPhone,
+      client_name,
+      client_email,
+      client_phone,
+    } = req.body;
+
+    const finalClientName = client_name || clientName || null;
+    const finalClientEmail = client_email || clientEmail || null;
+    const finalClientPhone = client_phone || clientPhone || null;
+    const finalStatus = status || 'active';
 
     const result = await query(
-      `INSERT INTO admin_cases (title, category, description, client_name, client_email, client_phone)
-       VALUES ($1, $2, $3, $4, $5, $6)
-       RETURNING *`,
-      [title, category, description, client_name, client_email, client_phone]
-    );
-
-    logger.info('Admin case created', { caseId: result.rows[0].id });
-
-    res.json({
-      success: true,
-      case: result.rows[0]
-    });
-  } catch (error) {
-    logger.error('Failed to create admin case', { error: error.message });
-    res.status(500).json({
-      success: false,
-      error: 'Failed to create case'
-    });
-  }
-};
-
-// Get all admin cases (includes both admin_cases and business_intakes)
-const getAllAdminCases = async (req, res) => {
-  try {
-    // Get admin cases
-    const adminCasesResult = await query(
-      `SELECT 
-        id, 
-        title, 
-        category, 
-        client_name, 
-        client_email, 
-        client_phone, 
-        created_at,
-        'admin_case' as case_type
-      FROM admin_cases 
-      ORDER BY created_at DESC`
-    );
-
-    // Get business intakes
-    const businessIntakesResult = await query(
-      `SELECT 
+      `
+      INSERT INTO admin_cases (
+        title,
+        category,
+        status,
+        description,
+        client_name,
+        client_email,
+        client_phone
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING
         id,
-        business_name as title,
-        'Business Audit' as category,
-        full_name as client_name,
-        email as client_email,
-        phone as client_phone,
+        title,
+        category,
+        status,
+        description,
+        client_name,
+        client_email,
+        client_phone,
         created_at,
-        'business_intake' as case_type
-      FROM business_intakes
-      ORDER BY created_at DESC`
+        updated_at;
+    `,
+      [
+        title,
+        category,
+        finalStatus,
+        description || null,
+        finalClientName,
+        finalClientEmail,
+        finalClientPhone,
+      ]
     );
 
-    // Merge and sort by created_at
-    const allCases = [...adminCasesResult.rows, ...businessIntakesResult.rows]
-      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-    res.json({
+    return res.status(201).json({
       success: true,
-      cases: allCases
+      case: result.rows[0],
     });
   } catch (error) {
-    logger.error('Failed to get admin cases', { error: error.message });
-    res.status(500).json({
+    logger.error('Error creating admin case:', error);
+    return res.status(500).json({
       success: false,
-      error: 'Failed to retrieve cases'
+      error: 'Failed to create admin case',
+      detail: error.message,
     });
   }
-};
+}
 
-// Get single admin case by ID (checks both admin_cases and business_intakes)
-const getAdminCaseById = async (req, res) => {
+/**
+ * Get single admin case by ID
+ */
+async function getAdminCaseById(req, res) {
   try {
     const { id } = req.params;
 
-    // Try admin_cases first
-    let result = await query(
-      `SELECT *, 'admin_case' as case_type FROM admin_cases WHERE id = $1`,
+    const result = await query(
+      `
+      SELECT
+        id,
+        title,
+        category,
+        status,
+        description,
+        client_name,
+        client_email,
+        client_phone,
+        created_at,
+        updated_at
+      FROM admin_cases
+      WHERE id = $1;
+    `,
       [id]
     );
-
-    // If not found, try business_intakes
-    if (result.rows.length === 0) {
-      result = await query(
-        `SELECT *, 'business_intake' as case_type FROM business_intakes WHERE id = $1`,
-        [id]
-      );
-    }
 
     if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
-        error: 'Case not found'
+        error: 'Case not found',
       });
     }
 
-    res.json({
+    return res.json({
       success: true,
-      case: result.rows[0]
+      case: result.rows[0],
     });
   } catch (error) {
-    logger.error('Failed to get admin case', { error: error.message, caseId: req.params.id });
-    res.status(500).json({
+    logger.error('Error fetching admin case by id:', error);
+    return res.status(500).json({
       success: false,
-      error: 'Failed to retrieve case'
+      error: 'Failed to load case',
+      detail: error.message,
     });
   }
-};
+}
 
-// Upload document to admin case
-const uploadDocument = async (req, res) => {
+/**
+ * Upload a document for a case
+ * (uses multer memoryStorage in the route)
+ */
+async function uploadDocument(req, res) {
   try {
     const { caseId } = req.params;
-    const { note } = req.body;
     const file = req.file;
+    const { note } = req.body;
 
     if (!file) {
       return res.status(400).json({
         success: false,
-        error: 'No file uploaded'
+        error: 'No file uploaded',
       });
     }
 
-    // Verify case exists
-    const caseResult = await query(
-      `SELECT id FROM admin_cases WHERE id = $1`,
-      [caseId]
+    // Simple placeholder file_key / file_url so DB insert works.
+    const fileKey = `${Date.now()}-${file.originalname}`;
+    const fileUrl = `/uploads/${fileKey}`;
+
+    const result = await query(
+      `
+      INSERT INTO admin_case_documents (
+        case_id,
+        file_key,
+        file_url,
+        file_name,
+        mime_type,
+        file_size,
+        note
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING
+        id,
+        case_id,
+        file_key,
+        file_url,
+        file_name,
+        mime_type,
+        file_size,
+        note,
+        uploaded_at;
+    `,
+      [
+        caseId,
+        fileKey,
+        fileUrl,
+        file.originalname,
+        file.mimetype,
+        file.size,
+        note || null,
+      ]
     );
 
-    if (caseResult.rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        error: 'Case not found'
-      });
-    }
-
-    // Upload to Supabase storage
-    const supabase = getSupabaseClient();
-    const fileName = `${Date.now()}-${file.originalname}`;
-    const filePath = `case-${caseId}/${fileName}`;
-
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('case-files')
-      .upload(filePath, file.buffer, {
-        contentType: file.mimetype,
-        upsert: false
-      });
-
-    if (uploadError) {
-      logger.error('Supabase upload failed', { error: uploadError });
-      return res.status(500).json({
-        success: false,
-        error: 'Failed to upload file to storage'
-      });
-    }
-
-    // Get public URL
-    const { data: urlData } = supabase.storage
-      .from('case-files')
-      .getPublicUrl(filePath);
-
-    const fileUrl = urlData.publicUrl;
-
-    // Save document metadata to database
-    const docResult = await query(
-      `INSERT INTO case_documents (case_id, file_key, file_url, file_name, mime_type, file_size, note)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
-       RETURNING *`,
-      [caseId, filePath, fileUrl, file.originalname, file.mimetype, file.size, note || null]
-    );
-
-    logger.info('Document uploaded', { caseId, documentId: docResult.rows[0].id });
-
-    res.json({
+    return res.status(201).json({
       success: true,
-      document: docResult.rows[0]
+      document: result.rows[0],
     });
   } catch (error) {
-    logger.error('Failed to upload document', { error: error.message, caseId: req.params.caseId });
-    res.status(500).json({
+    logger.error('Error uploading admin case document:', error);
+    return res.status(500).json({
       success: false,
-      error: 'Failed to upload document'
+      error: 'Failed to upload document',
+      detail: error.message,
     });
   }
-};
+}
 
-// Get all documents for a case
-const getCaseDocuments = async (req, res) => {
+/**
+ * Get documents for a case
+ */
+async function getCaseDocuments(req, res) {
   try {
     const { caseId } = req.params;
 
     const result = await query(
-      `SELECT * FROM case_documents WHERE case_id = $1 ORDER BY uploaded_at DESC`,
+      `
+      SELECT
+        id,
+        case_id,
+        file_key,
+        file_url,
+        file_name,
+        mime_type,
+        file_size,
+        note,
+        uploaded_at
+      FROM admin_case_documents
+      WHERE case_id = $1
+      ORDER BY uploaded_at DESC;
+    `,
       [caseId]
     );
 
-    res.json({
+    return res.json({
       success: true,
-      documents: result.rows
+      documents: result.rows,
     });
   } catch (error) {
-    logger.error('Failed to get case documents', { error: error.message, caseId: req.params.caseId });
-    res.status(500).json({
+    logger.error('Error loading admin case documents:', error);
+    return res.status(500).json({
       success: false,
-      error: 'Failed to retrieve documents'
+      error: 'Failed to load documents',
+      detail: error.message,
     });
   }
-};
+}
 
-// Delete document
-const deleteDocument = async (req, res) => {
+/**
+ * Delete a document
+ */
+async function deleteDocument(req, res) {
   try {
     const { docId } = req.params;
 
-    // Get document info
-    const docResult = await query(
-      `SELECT file_key FROM case_documents WHERE id = $1`,
+    const result = await query(
+      `
+      DELETE FROM admin_case_documents
+      WHERE id = $1
+      RETURNING id;
+    `,
       [docId]
     );
 
-    if (docResult.rows.length === 0) {
+    if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
-        error: 'Document not found'
+        error: 'Document not found',
       });
     }
 
-    const fileKey = docResult.rows[0].file_key;
-
-    // Delete from Supabase storage
-    const supabase = getSupabaseClient();
-    const { error: deleteError } = await supabase.storage
-      .from('case-files')
-      .remove([fileKey]);
-
-    if (deleteError) {
-      logger.error('Supabase delete failed', { error: deleteError });
-    }
-
-    // Delete from database
-    await query(
-      `DELETE FROM case_documents WHERE id = $1`,
-      [docId]
-    );
-
-    logger.info('Document deleted', { documentId: docId });
-
-    res.json({
+    return res.json({
       success: true,
-      message: 'Document deleted successfully'
+      deletedId: docId,
     });
   } catch (error) {
-    logger.error('Failed to delete document', { error: error.message, docId: req.params.docId });
-    res.status(500).json({
+    logger.error('Error deleting admin case document:', error);
+    return res.status(500).json({
       success: false,
-      error: 'Failed to delete document'
+      error: 'Failed to delete document',
+      detail: error.message,
     });
   }
-};
+}
 
-// Delete admin case (cascades to documents)
-const deleteAdminCase = async (req, res) => {
+/**
+ * Delete a case (and its documents via FK cascade)
+ */
+async function deleteAdminCase(req, res) {
   try {
     const { id } = req.params;
 
-    // Get all documents for this case
-    const docsResult = await query(
-      `SELECT file_key FROM admin_case_documents WHERE case_id = $1`,
-      [id]
-    );
-
-    // Delete files from Supabase storage
-    if (docsResult.rows.length > 0) {
-      const supabase = getSupabaseClient();
-      const fileKeys = docsResult.rows.map(doc => doc.file_key);
-      
-      const { error: deleteError } = await supabase.storage
-        .from('case-files')
-        .remove(fileKeys);
-
-      if (deleteError) {
-        logger.error('Supabase bulk delete failed', { error: deleteError });
-      }
-    }
-
-    // Delete case (CASCADE will delete documents from database)
     const result = await query(
-      `DELETE FROM admin_cases WHERE id = $1 RETURNING id`,
+      `
+      DELETE FROM admin_cases
+      WHERE id = $1
+      RETURNING id;
+    `,
       [id]
     );
 
     if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
-        error: 'Case not found'
+        error: 'Case not found',
       });
     }
 
-    logger.info('Admin case deleted', { caseId: id });
-
-    res.json({
+    return res.json({
       success: true,
-      message: 'Case and all associated documents deleted successfully'
+      deletedId: id,
     });
   } catch (error) {
-    logger.error('Failed to delete admin case', { error: error.message, caseId: req.params.id });
-    res.status(500).json({
+    logger.error('Error deleting admin case:', error);
+    return res.status(500).json({
       success: false,
-      error: 'Failed to delete case'
+      error: 'Failed to delete case',
+      detail: error.message,
     });
   }
-};
+}
 
 module.exports = {
   createAdminCase,
@@ -336,5 +345,6 @@ module.exports = {
   uploadDocument,
   getCaseDocuments,
   deleteDocument,
-  deleteAdminCase
+  deleteAdminCase,
 };
+
