@@ -43,3 +43,10 @@
 - [x] Update seed file to use Turbo1234! password
 - [x] Deploy and test login on mobile
 - [x] Verified working on Samsung Internet Android
+
+
+## 📊 META PIXEL INSTALLATION (JAN 26 2025 - 5:00 PM)
+- [x] Add Meta Pixel code to client/index.html <head>
+- [ ] Deploy to production
+- [ ] Verify Pixel loads on all pages
+- [ ] User confirms in Meta Events Manager
