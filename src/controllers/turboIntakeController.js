@@ -1,6 +1,7 @@
 const { query } = require('../services/database/db');
 const logger = require('../utils/logger');
 const { sendBusinessIntakeNotification, sendBusinessIntakeConfirmation } = require('../services/emailService');
+const { trackBusinessSignup } = require('../services/metaConversionsAPI');
 
 // Submit new business intake form
 const submit = async (req, res, next) => {
@@ -143,6 +144,19 @@ const submit = async (req, res, next) => {
         error: err.message,
         intakeId: newIntake.id,
       });
+    });
+
+    // Track Meta Conversions API business_signup event (non-blocking)
+    trackBusinessSignup({
+      email,
+      phone,
+      businessName,
+      businessType: whatYouSell || 'unknown',
+      userAgent: req.get('user-agent'),
+      ipAddress: req.ip || req.connection.remoteAddress,
+      sourceUrl: 'https://turboresponsehq.ai/business'
+    }).catch(err => {
+      logger.error('Failed to track business_signup event', { error: err.message });
     });
 
     res.status(200).json({

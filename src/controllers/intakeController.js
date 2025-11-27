@@ -1,6 +1,7 @@
 const { query } = require('../services/database/db');
 const logger = require('../utils/logger');
 const { sendNewCaseNotification, sendClientCaseConfirmation } = require('../services/emailService');
+const { trackIntakeCompleted, trackCaseCreated } = require('../services/metaConversionsAPI');
 
 // Generate unique case number
 const generateCaseNumber = () => {
@@ -159,6 +160,51 @@ const submit = async (req, res, next) => {
       created_at: newCase.created_at,
     }).catch(err => {
       logger.error('Failed to send client confirmation email', { error: err.message });
+    });
+
+    // Track Meta Conversions API events (non-blocking)
+    const nameParts = full_name.split(' ');
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '';
+    
+    // Track intake completed
+    trackIntakeCompleted(
+      {
+        email,
+        phone,
+        firstName,
+        lastName,
+        userAgent: req.get('user-agent'),
+        ipAddress: req.ip || req.connection.remoteAddress,
+        sourceUrl: 'https://turboresponsehq.ai'
+      },
+      {
+        caseNumber: newCase.case_number,
+        category,
+        caseId: newCase.id
+      }
+    ).catch(err => {
+      logger.error('Failed to track intake_completed event', { error: err.message });
+    });
+    
+    // Track case created
+    trackCaseCreated(
+      {
+        email,
+        phone,
+        firstName,
+        lastName,
+        userAgent: req.get('user-agent'),
+        ipAddress: req.ip || req.connection.remoteAddress,
+        sourceUrl: 'https://turboresponsehq.ai'
+      },
+      {
+        caseNumber: newCase.case_number,
+        category,
+        caseId: newCase.id
+      }
+    ).catch(err => {
+      logger.error('Failed to track case_created event', { error: err.message });
     });
 
     res.status(201).json({

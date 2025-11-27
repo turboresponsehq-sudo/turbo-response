@@ -50,3 +50,13 @@
 - [ ] Deploy to production
 - [ ] Verify Pixel loads on all pages
 - [ ] User confirms in Meta Events Manager
+
+
+## 🎯 META CONVERSIONS API (CAPI) SETUP (JAN 26 2025 - 5:15 PM)
+- [x] Create metaConversionsAPI.js service (custom HTTP implementation)
+- [x] Add CAPI events: intake_completed, business_signup, case_created
+- [x] Include user email/phone for event matching with SHA256 hashing
+- [x] Integrate events into backend endpoints (intakeController, turboIntakeController)
+- [ ] Store access token in Render environment (META_CAPI_ACCESS_TOKEN)
+- [ ] Deploy to production
+- [ ] Test events in Meta Events Manager
