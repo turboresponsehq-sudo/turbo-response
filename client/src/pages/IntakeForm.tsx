@@ -204,15 +204,32 @@ export default function IntakeForm() {
 
       {/* Main Content */}
       <div className="container">
-        <div className="intake-header">
-          <h1 className="intake-title">DEFENSE INTAKE</h1>
-          <p className="intake-subtitle">
+        <div className="intake-header" style={{
+          backgroundColor: '#ffffff',
+          padding: '2.5rem 1.5rem',
+          marginBottom: '2rem',
+          borderBottom: '2px solid #e5e7eb',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
+        }}>
+          <h1 className="intake-title" style={{
+            fontSize: '2.5rem',
+            fontWeight: '700',
+            color: '#1a1a1a',
+            marginBottom: '0.5rem',
+            letterSpacing: '-0.5px'
+          }}>DEFENSE INTAKE</h1>
+          <p className="intake-subtitle" style={{
+            fontSize: '1.25rem',
+            fontWeight: '600',
+            color: '#374151',
+            marginBottom: '1rem'
+          }}>
             RESPOND TO AN ACTION TAKEN AGAINST YOU
           </p>
-          <p style={{ fontSize: '0.95rem', color: '#666', marginTop: '0.75rem', lineHeight: '1.6' }}>
+          <p style={{ fontSize: '0.95rem', color: '#666', marginTop: '0.75rem', lineHeight: '1.6', maxWidth: '800px' }}>
             Use this intake if an agency, institution, or authority has taken action against you and requires a formal response.
           </p>
-          <div className="progress-bar">
+          <div className="progress-bar" style={{ marginTop: '1.5rem' }}>
             <div className="progress-fill" style={{ width: `${progress}%` }}></div>
           </div>
         </div>

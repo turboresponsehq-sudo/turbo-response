@@ -41,6 +41,9 @@ function Router() {
       <Route path="/pricing" component={Pricing} />
       <Route path="/results" component={Results} />
       <Route path="/testimonials" component={Testimonials} />
+      {/* Defense Intake - Consumer */}
+      <Route path="/intake-defense" component={IntakeForm} />
+      {/* Redirect legacy route */}
       <Route path="/intake" component={IntakeForm} />
       <Route path="/consumer/confirmation" component={ConsumerConfirmation} />
       
@@ -48,7 +51,9 @@ function Router() {
       <Route path="/payment" component={Payment} />
       <Route path="/turbo" component={TurboHQ} />
       
-      {/* Business Intake Form */}
+      {/* Offense Intake - Business */}
+      <Route path="/intake-offense" component={TurboIntakeForm} />
+      {/* Redirect legacy route */}
       <Route path="/turbo-intake" component={TurboIntakeForm} />
       
       {/* Client Portal Routes */}
