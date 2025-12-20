@@ -73,6 +73,7 @@ const uploadSingleFile = async (req, res, next) => {
 
 /**
  * Upload multiple files to S3
+ * Handles partial failures gracefully - returns per-file status
  */
 const uploadMultipleFiles = async (req, res, next) => {
   try {
@@ -80,43 +81,82 @@ const uploadMultipleFiles = async (req, res, next) => {
       return res.status(400).json({ error: 'No files uploaded' });
     }
 
-    // Convert all files to PDF and upload to S3
+    logger.info('📤 Multiple files upload started', {
+      count: req.files.length
+    });
+
+    // Process each file with error handling (don't fail on first error)
     const uploadPromises = req.files.map(async (file) => {
-      logger.info('Converting file to PDF', { 
-        originalname: file.originalname, 
-        mimetype: file.mimetype 
-      });
-      
-      const { pdfBuffer, filename } = await convertToPDF(
-        file.buffer, 
-        file.mimetype, 
-        file.originalname
-      );
-      
-      const fileUrl = await uploadFile(pdfBuffer, filename, 'application/pdf');
-      
-      return {
-        file_url: fileUrl,
-        file_name: filename,
-        original_name: file.originalname,
-        file_size: pdfBuffer.length,
-        mime_type: 'application/pdf'
-      };
+      try {
+        logger.info('Converting file to PDF', { 
+          originalname: file.originalname, 
+          mimetype: file.mimetype,
+          size: file.size
+        });
+        
+        const { pdfBuffer, filename } = await convertToPDF(
+          file.buffer, 
+          file.mimetype, 
+          file.originalname
+        );
+        
+        logger.info('☁️ Uploading to storage', { filename });
+        const fileUrl = await uploadFile(pdfBuffer, filename, 'application/pdf');
+        
+        logger.info('✅ File uploaded successfully', { 
+          originalname: file.originalname,
+          filename
+        });
+        
+        return {
+          success: true,
+          file_url: fileUrl,
+          file_name: filename,
+          original_name: file.originalname,
+          file_size: pdfBuffer.length,
+          mime_type: 'application/pdf'
+        };
+      } catch (fileError) {
+        // Catch individual file errors and return status instead of throwing
+        logger.warn('❌ File upload failed', {
+          originalname: file.originalname,
+          error: fileError.message
+        });
+        
+        return {
+          success: false,
+          original_name: file.originalname,
+          error: fileError.message || 'Upload failed'
+        };
+      }
     });
 
-    const uploadedFiles = await Promise.all(uploadPromises);
+    const results = await Promise.all(uploadPromises);
+    
+    const successCount = results.filter(r => r.success).length;
+    const failureCount = results.filter(r => !r.success).length;
 
-    logger.info('Multiple files uploaded', {
-      count: uploadedFiles.length
+    logger.info('Multiple files upload completed', {
+      total: results.length,
+      successful: successCount,
+      failed: failureCount
     });
 
+    // Return 200 even if some files failed (partial success is ok)
     res.status(200).json({
-      success: true,
-      files: uploadedFiles
+      success: failureCount === 0, // true only if all succeeded
+      total: results.length,
+      successful: successCount,
+      failed: failureCount,
+      files: results
     });
   } catch (error) {
     logger.error('Multiple upload error', { error: error.message });
-    next(error);
+    res.status(500).json({
+      success: false,
+      error: 'Upload processing failed',
+      message: error.message
+    });
   }
 };
 
