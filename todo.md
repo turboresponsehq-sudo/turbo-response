@@ -142,3 +142,33 @@
 - [ ] Save checkpoint
 - [ ] Push to GitHub
 - [ ] Verify on production
+
+
+---
+
+## INTAKE ROUTING + CLEANUP (FEB 8 2025)
+
+### Phase 1: Routing Updates
+- [x] Add new route /intake-defense for DEFENSE intake
+- [x] Add new route /intake-offense for OFFENSE intake
+- [x] Keep legacy routes /intake and /turbo-intake for backward compatibility
+- [x] Both old and new routes serve the same components
+
+### Phase 2: OFFENSE Intake Updates
+- [x] Updated paragraph with exact wording provided
+- [x] Added note about optional business/entity fields
+- [x] Header text remains unchanged
+
+### Phase 3: DEFENSE Intake Header Visibility Fix
+- [x] Added white background container
+- [x] Increased padding (2.5rem 1.5rem)
+- [x] Increased font size (2.5rem) and weight (700)
+- [x] Added border-bottom for visual separation
+- [x] Added subtle box shadow
+- [x] Improved contrast and spacing
+- [x] Ensured mobile responsiveness
+
+### Phase 4: Deploy
+- [ ] Save checkpoint
+- [ ] Push to GitHub
+- [ ] Verify on production

@@ -170,6 +170,9 @@ export default function TurboIntakeForm() {
             <p style={{ fontSize: '0.95rem', color: '#666', marginTop: '0.75rem', lineHeight: '1.6' }}>
               Use this intake to initiate an application, claim, dispute, or formal request intended to secure approval, funding, recovery, or corrective action.
             </p>
+            <p style={{ fontSize: '0.95rem', color: '#666', marginTop: '0.5rem', lineHeight: '1.6' }}>
+              This intake may request business or entity information. If certain fields do not apply to your situation, you may leave them blank.
+            </p>
           </div>
 
           {error && (
