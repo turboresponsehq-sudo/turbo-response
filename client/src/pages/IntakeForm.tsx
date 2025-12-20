@@ -205,9 +205,12 @@ export default function IntakeForm() {
       {/* Main Content */}
       <div className="container">
         <div className="intake-header">
-          <h1 className="intake-title">Defense Intake Form</h1>
+          <h1 className="intake-title">DEFENSE INTAKE</h1>
           <p className="intake-subtitle">
-            AI-Powered Consumer Defense - Get Your Professional Response in 24 Hours
+            RESPOND TO AN ACTION TAKEN AGAINST YOU
+          </p>
+          <p style={{ fontSize: '0.95rem', color: '#666', marginTop: '0.75rem', lineHeight: '1.6' }}>
+            Use this intake if an agency, institution, or authority has taken action against you and requires a formal response.
           </p>
           <div className="progress-bar">
             <div className="progress-fill" style={{ width: `${progress}%` }}></div>
@@ -220,7 +223,6 @@ export default function IntakeForm() {
             <h2 className="section-title">
               <span className="section-icon">👤</span>
               Contact Information
-              <span className="ai-badge">🤖 AI Secure</span>
             </h2>
 
             <div className="form-group">
@@ -293,7 +295,6 @@ export default function IntakeForm() {
             <h2 className="section-title">
               <span className="section-icon">🎯</span>
               Case Category
-              <span className="ai-badge">🤖 AI Powered</span>
             </h2>
 
             <div className="category-grid">
@@ -317,7 +318,6 @@ export default function IntakeForm() {
             <h2 className="section-title">
               <span className="section-icon">⚠️</span>
               Action Details
-              <span className="ai-badge">🤖 AI Analysis</span>
             </h2>
 
             <div className="form-group">
@@ -387,7 +387,6 @@ export default function IntakeForm() {
             <h2 className="section-title">
               <span className="section-icon">📝</span>
               Case Description
-              <span className="ai-badge">🤖 AI Analysis</span>
             </h2>
 
             <div className="form-group">
@@ -411,7 +410,6 @@ export default function IntakeForm() {
             <h2 className="section-title">
               <span className="section-icon">📎</span>
               Upload Documents
-              <span className="ai-badge">🤖 AI Scan</span>
             </h2>
 
             <div className="form-group">
