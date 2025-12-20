@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useRoute, useLocation } from "wouter";
 import axios from "axios";
 import ClientMessaging from "../components/ClientMessaging";
+import MultiFileUploader from "../components/MultiFileUploader";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turboresponsehq.ai";
 
@@ -27,8 +28,6 @@ export default function ClientPortal() {
   const [caseData, setCaseData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchCaseData();
@@ -52,24 +51,18 @@ export default function ClientPortal() {
     }
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    setUploading(true);
-    setUploadError(null);
-
+  // Handle multi-file upload completion
+  const handleUploadComplete = async (uploadedFiles: any[]) => {
     try {
-      const formData = new FormData();
-      formData.append('file', files[0]);
+      // Extract file URLs from uploaded files
+      const newFileUrls = uploadedFiles
+        .filter((file) => file.success !== false && file.file_url)
+        .map((file) => file.file_url);
 
-      const response = await axios.post(`${API_URL}/api/upload/single`, formData, {
-        withCredentials: true
-        // Don't set Content-Type manually - let axios set it with boundary
-      });
+      if (newFileUrls.length === 0) return;
 
       // Update case documents
-      const updatedDocuments = [...(caseData.documents || []), response.data.file_url];
+      const updatedDocuments = [...(caseData.documents || []), ...newFileUrls];
       
       // Update case in database
       await axios.patch(
@@ -78,12 +71,10 @@ export default function ClientPortal() {
         { withCredentials: true }
       );
 
-      // Refresh case data
+      // Refresh case data to show new documents
       await fetchCaseData();
     } catch (error: any) {
-      setUploadError(error.response?.data?.message || 'Upload failed');
-    } finally {
-      setUploading(false);
+      console.error('Failed to update case with uploaded files:', error);
     }
   };
 
@@ -710,37 +701,15 @@ export default function ClientPortal() {
             </p>
           )}
 
-          {/* Upload Button */}
-          <div>
-            <label style={{
-              display: "inline-block",
-              padding: "0.75rem 1.5rem",
-              backgroundColor: "#f1f5f9",
-              color: "#475569",
-              border: "2px dashed #cbd5e1",
-              borderRadius: "8px",
-              cursor: uploading ? "not-allowed" : "pointer",
-              fontSize: "0.875rem",
-              fontWeight: 600,
-              transition: "all 0.2s"
-            }}>
-              {uploading ? "Uploading..." : "📤 Upload Additional Document"}
-              <input
-                type="file"
-                onChange={handleFileUpload}
-                disabled={uploading}
-                accept=".pdf,.jpg,.jpeg,.png,.heic,.webp,.tiff,.bmp"
-                style={{ display: "none" }}
-              />
-            </label>
-            <p style={{ fontSize: "0.75rem", color: "#64748b", marginTop: "0.5rem", marginBottom: 0 }}>
-              Supported: PDF, JPG, PNG, HEIC, WEBP, TIFF, BMP
-            </p>
-            {uploadError && (
-              <p style={{ fontSize: "0.875rem", color: "#dc2626", marginTop: "0.5rem", marginBottom: 0 }}>
-                {uploadError}
-              </p>
-            )}
+          {/* Multi-File Upload */}
+          <div style={{ marginTop: "1.5rem" }}>
+            <MultiFileUploader
+              onUploadComplete={handleUploadComplete}
+              apiUrl={API_URL}
+              uploadEndpoint="/api/upload/multiple"
+              maxConcurrency={3}
+              acceptedTypes=".pdf,.jpg,.jpeg,.png,.heic,.webp,.tiff,.bmp,.doc,.docx"
+            />
           </div>
         </div>
 
