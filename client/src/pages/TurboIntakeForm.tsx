@@ -163,9 +163,12 @@ export default function TurboIntakeForm() {
       <main className="main-content">
         <div className="form-container">
           <div className="form-header">
-            <h1 className="form-title">Offense Intake</h1>
+            <h1 className="form-title">OFFENSE INTAKE</h1>
             <p className="form-subtitle">
-              Going after money, approvals, recovery, or leverage — Grants, funding, disputes, complaints, settlements, contract challenges
+              INITIATE AN ACTION TO PURSUE APPROVAL OR RECOVERY
+            </p>
+            <p style={{ fontSize: '0.95rem', color: '#666', marginTop: '0.75rem', lineHeight: '1.6' }}>
+              Use this intake to initiate an application, claim, dispute, or formal request intended to secure approval, funding, recovery, or corrective action.
             </p>
           </div>
 
