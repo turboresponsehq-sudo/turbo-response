@@ -72,13 +72,77 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Why Clients Come To Us */}
-      <section className="why-section">
+      {/* Problems We Solve. Results We Deliver */}
+      <section className="problems-section">
         <div className="section-container">
-          <h2 className="section-title">WHY CLIENTS COME TO US</h2>
-          <p className="section-description">
-            Most outcomes aren't decided by intent — they're decided by what's submitted, how it's structured, and whether it meets the requirements. Turbo Response exists to help clients build the right structure, present the right records, and respond the right way — with speed and consistency powered by AI.
-          </p>
+          <h2 className="section-title">PROBLEMS WE SOLVE. RESULTS WE DELIVER.</h2>
+          
+          <div className="problems-grid">
+            {/* Card 1: When Records Are an Emergency */}
+            <div className="problem-card">
+              <h3 className="problem-title">WHEN RECORDS ARE AN EMERGENCY</h3>
+              <p className="problem-body">
+                Turbo Response helps clients prepare documentation in cases where the wrong response — or no response — can create immediate consequences.
+              </p>
+              <p className="problem-subtitle">We support situations involving:</p>
+              <ul className="problem-list">
+                <li>Wrongful or improper evictions</li>
+                <li>IRS notices, audits, assessments, and enforcement</li>
+                <li>Wage garnishments and bank levies</li>
+                <li>Illegal auto repossessions</li>
+                <li>Yo‑yo financing and deceptive dealership practices</li>
+                <li>Debt collection violations</li>
+                <li>Benefit denials and administrative actions</li>
+                <li>Regulatory and compliance issues</li>
+              </ul>
+              <p className="problem-closing">
+                In these moments, speed, structure, and accuracy matter. Poorly prepared records can escalate situations that could have been contained.
+              </p>
+            </div>
+
+            {/* Card 2: When Necessary Documentation Unlocks Opportunity */}
+            <div className="problem-card">
+              <h3 className="problem-title">WHEN NECESSARY DOCUMENTATION UNLOCKS OPPORTUNITY</h3>
+              <p className="problem-body">
+                Turbo Response also works with clients who are initiating action to secure outcomes — not just reacting to problems.
+              </p>
+              <p className="problem-subtitle">We prepare documentation for:</p>
+              <ul className="problem-list">
+                <li>Grant and funding opportunities</li>
+                <li>Credit, capital, and approval requests</li>
+                <li>Formal disputes and complaints</li>
+                <li>Settlement and recovery efforts</li>
+                <li>Contract challenges and corrections</li>
+                <li>Administrative reviews and appeals</li>
+              </ul>
+              <p className="problem-closing">
+                Here, documentation isn't defensive. It's what creates leverage, access, and opportunity.
+              </p>
+            </div>
+          </div>
+
+          {/* Full-width closing section */}
+          <div className="problems-close">
+            <h3 className="close-title">WHY TURBO RESPONSE DELIVERS RESULTS</h3>
+            <p className="close-body">
+              The majority of people don't lose because they aren't qualified. They lose because their records are disorganized, incomplete, late, or misaligned with what the system requires.
+            </p>
+            <p className="close-body">
+              Turbo Response delivers results by combining:
+            </p>
+            <ul className="close-list">
+              <li>AI‑driven processing to move faster than manual workflows</li>
+              <li>Strong structure and organization so nothing critical is missed</li>
+              <li>Clear case framing so information is easy to review and understand</li>
+              <li>Procedural discipline around rules, standards, and deadlines</li>
+            </ul>
+            <p className="close-body">
+              This is not basic form filling. This is preparation built to withstand review and produce outcomes.
+            </p>
+            <p className="close-closing">
+              When information is prepared correctly, outcomes change.
+            </p>
+          </div>
         </div>
       </section>
 
