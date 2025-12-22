@@ -860,3 +860,52 @@ body {
     font-size: 0.95rem;
   }
 }
+
+
+/* How Results Are Produced Section */
+.how-results-section {
+  padding: 60px 20px;
+  background: transparent;
+}
+
+.how-results-card {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: rgba(6, 182, 212, 0.08);
+  border: 1px solid rgba(6, 182, 212, 0.15);
+  border-radius: 12px;
+  padding: 35px 40px;
+  text-align: center;
+  backdrop-filter: blur(5px);
+}
+
+.how-results-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 15px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.how-results-text {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+@media (max-width: 768px) {
+  .how-results-card {
+    padding: 25px 20px;
+  }
+
+  .how-results-title {
+    font-size: 0.9rem;
+  }
+
+  .how-results-text {
+    font-size: 0.9rem;
+  }
+}
