@@ -37,71 +37,109 @@ export default function Home() {
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-content">
-          <div className="hero-badge">
-            🤖 Powered by Advanced AI Technology
-          </div>
           <h1 className="hero-title">
-            AI-POWERED<br />
-            CONSUMER DEFENSE
+            AI‑DRIVEN DOCUMENTATION & RESPONSE
           </h1>
           <p className="hero-description">
-            We are a next-generation, AI-powered consumer rights platform that delivers rapid legal responses in minutes — not days. Built with cutting-edge technology, our platform empowers everyday people to stand up against unfair practices, while giving them a seamless, modern experience.
+            Turbo Response helps clients prepare, organize, and respond when entities require proof, records, or formal responses. We use AI‑driven systems to move faster, stay consistent, and keep documentation structured — so clients are positioned correctly before decisions are made.
           </p>
-          <p className="hero-subtitle">
-            Stop evictions, IRS threats, and debt collectors with professional legal game plans generated in minutes using cutting-edge AI
-          </p>
-          <Link href="/intake" className="cta-button">
-            🚀 GET STARTED
-          </Link>
+
+          {/* Dual Intake Buttons */}
+          <div className="intake-buttons-container">
+            <div className="intake-button-group">
+              <Link href="/turbo-intake" className="cta-button primary-button">
+                APPLY, FILE, OR TAKE ACTION
+              </Link>
+              <p className="button-helper">Use this if you are initiating an application, request, dispute, or claim.</p>
+            </div>
+            <div className="intake-button-group">
+              <Link href="/intake" className="cta-button secondary-button">
+                RESPOND TO A NOTICE OR ISSUE
+              </Link>
+              <p className="button-helper">Use this if you received a notice, denial, demand, or enforcement action.</p>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="features">
-        <h2 className="features-title">Next-Generation Legal Defense</h2>
-        <div className="features-grid">
-          <div className="feature-card">
-            <div className="feature-icon">🧠</div>
-            <h3>AI-Powered Analysis</h3>
-            <p>Advanced machine learning analyzes your case and generates the perfect legal response game plan</p>
+      {/* Who This Is For */}
+      <section className="who-section">
+        <div className="section-container">
+          <h2 className="section-title">WHO THIS IS FOR</h2>
+          <p className="section-description">
+            For individuals, entrepreneurs, and organizations dealing with banks, agencies, landlords, insurers, schools, employers, vendors, regulators, or any institution that requires formal documentation.
+          </p>
+        </div>
+      </section>
+
+      {/* Why Clients Come To Us */}
+      <section className="why-section">
+        <div className="section-container">
+          <h2 className="section-title">WHY CLIENTS COME TO US</h2>
+          <p className="section-description">
+            Most outcomes aren't decided by intent — they're decided by what's submitted, how it's structured, and whether it meets the requirements. Turbo Response exists to help clients build the right structure, present the right records, and respond the right way — with speed and consistency powered by AI.
+          </p>
+        </div>
+      </section>
+
+      {/* What We Do */}
+      <section className="services">
+        <h2 className="services-title">WHAT WE DO</h2>
+        <div className="services-grid">
+          <div className="service-card">
+            <h3>DOCUMENT PROCESSING</h3>
+            <p>Organize and standardize records into clear, usable documentation.</p>
           </div>
-          <div className="feature-card">
-            <div className="feature-icon">⚡</div>
-            <h3>Lightning Fast</h3>
-            <p>Get professional legal game plans in minutes, not days. Our AI works 24/7 to protect your rights</p>
+          <div className="service-card">
+            <h3>CASE BUILDING</h3>
+            <p>Structure the facts, records, and narrative into a coherent case.</p>
           </div>
-          <div className="feature-card">
-            <div className="feature-icon">🛡️</div>
-            <h3>Expert Reviewed</h3>
-            <p>Every AI-generated game plan is reviewed by consumer rights specialists for maximum effectiveness</p>
+          <div className="service-card">
+            <h3>SUBMISSION READINESS</h3>
+            <p>Prepare materials so they are complete, properly formatted, and ready for review.</p>
           </div>
-          <div className="feature-card">
-            <div className="feature-icon">🎯</div>
-            <h3>Precision Targeting</h3>
-            <p>AI identifies the exact laws and regulations to cite for your specific situation and jurisdiction</p>
+          <div className="service-card">
+            <h3>RESPONSE & ESCALATION SUPPORT</h3>
+            <p>Coordinate structured responses to notices, denials, disputes, or enforcement actions.</p>
           </div>
-          <div className="feature-card">
-            <div className="feature-icon">🔒</div>
-            <h3>Bank-Level Security</h3>
-            <p>Your sensitive information is protected with military-grade encryption and secure processing</p>
+        </div>
+      </section>
+
+      {/* Choose Your Path */}
+      <section className="choose-path">
+        <div className="section-container">
+          <h2 className="section-title">CHOOSE YOUR PATH</h2>
+          
+          <div className="path-grid">
+            <div className="path-card">
+              <h3 className="path-title">INITIATING ACTION</h3>
+              <p className="path-items">Grants • funding • approvals • disputes • complaints • settlements • corrections</p>
+              <Link href="/turbo-intake" className="cta-button">
+                APPLY, FILE, OR TAKE ACTION
+              </Link>
+            </div>
+            <div className="path-card">
+              <h3 className="path-title">RESPONDING TO ACTION</h3>
+              <p className="path-items">Notices • denials • enforcement • demands • compliance issues • collections</p>
+              <Link href="/intake" className="cta-button">
+                RESPOND TO A NOTICE OR ISSUE
+              </Link>
+            </div>
           </div>
-          <div className="feature-card">
-            <div className="feature-icon">📊</div>
-            <h3>Success Analytics</h3>
-            <p>Track your case progress with real-time analytics and success probability scoring</p>
-          </div>
+
+          <p className="path-footer">Same system. Same standards. Different situation.</p>
         </div>
       </section>
 
       {/* Pricing Section */}
       <section className="pricing">
-        <h2 className="pricing-title">Choose Your Case Defense Package</h2>
+        <h2 className="pricing-title">PRICING</h2>
         <div className="pricing-grid pricing-grid-four">
           <div className="pricing-card">
             <div className="pricing-price">$349</div>
-            <div className="pricing-name">Foundation Case Strategy</div>
+            <div className="pricing-name">FOUNDATION CASE STRATEGY</div>
             <div className="pricing-description">
-              Perfect for straightforward consumer disputes. AI-powered case analysis, custom response letter, legal strategy outline, one round of revisions
+              For straightforward matters requiring structure and a clear plan.
             </div>
             <Link href="/intake" className="cta-button">
               Get Started
@@ -110,9 +148,9 @@ export default function Home() {
           <div className="pricing-card featured">
             <div className="pricing-badge">Most Popular</div>
             <div className="pricing-price">$997+</div>
-            <div className="pricing-name">Premium Case Architecture</div>
+            <div className="pricing-name">PREMIUM CASE ARCHITECTURE</div>
             <div className="pricing-description">
-              For complex disputes requiring multi-stage defense. Complete case buildout, multiple response letters, escalation strategy, 60-day support
+              For complex matters requiring stronger buildout and support.
             </div>
             <Link href="/intake" className="cta-button">
               Get Started
@@ -120,9 +158,9 @@ export default function Home() {
           </div>
           <div className="pricing-card">
             <div className="pricing-price">$2,500+</div>
-            <div className="pricing-name">Executive Case Buildout</div>
+            <div className="pricing-name">EXECUTIVE CASE BUILDOUT</div>
             <div className="pricing-description">
-              For high-stakes cases with significant financial impact. Full legal team coordination, expert witness preparation, court-ready documentation, priority 24/7 support
+              For high‑stakes matters with significant impact.
             </div>
             <Link href="/intake" className="cta-button">
               Get Started
@@ -130,29 +168,46 @@ export default function Home() {
           </div>
           <div className="pricing-card">
             <div className="pricing-price">$297/mo</div>
-            <div className="pricing-name">Corporate Monthly Retainer</div>
+            <div className="pricing-name">CORPORATE MONTHLY RETAINER</div>
             <div className="pricing-description">
-              Ongoing protection for businesses. Unlimited case consultations, priority response times, dedicated account manager, quarterly strategy reviews
+              Ongoing documentation and response support for organizations.
             </div>
             <Link href="/intake" className="cta-button">
               Get Started
             </Link>
           </div>
         </div>
+        <p className="pricing-footnote">
+          Final pricing depends on complexity, urgency, and scope. Turbo Response is not a law firm and provides documentation and procedural support.
+        </p>
         <div style={{ textAlign: 'center', marginTop: '2rem' }}>
           <Link href="/pricing" className="cta-button" style={{ background: 'transparent', border: '2px solid #06b6d4', color: '#06b6d4' }}>
-            View Full Pricing Details →
+            VIEW FULL PRICING DETAILS
           </Link>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="final-cta">
+        <div className="section-container">
+          <h2 className="section-title">START HERE</h2>
+          <p className="cta-subtitle">Choose the option that matches your situation:</p>
+          
+          <div className="final-buttons">
+            <Link href="/turbo-intake" className="cta-button primary-button">
+              APPLY, FILE, OR TAKE ACTION
+            </Link>
+            <Link href="/intake" className="cta-button secondary-button">
+              RESPOND TO A NOTICE OR ISSUE
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* Footer */}
       <footer className="footer">
         <div className="footer-text">
-          © 2025 Rapid Response AI. Advanced consumer defense technology.
-        </div>
-        <div className="footer-text">
-          🔒 Secure • 🤖 AI-Powered • ⚡ Lightning Fast
+          © 2025 Turbo Response. Documentation and procedural support.
         </div>
       </footer>
     </>
