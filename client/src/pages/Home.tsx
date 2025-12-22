@@ -62,15 +62,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Who This Is For */}
-      <section className="who-section">
-        <div className="section-container">
-          <h2 className="section-title">WHO THIS IS FOR</h2>
-          <p className="section-description">
-            For individuals, entrepreneurs, and organizations dealing with banks, agencies, landlords, insurers, schools, employers, vendors, regulators, or any institution that requires formal documentation.
-          </p>
-        </div>
-      </section>
+
 
       {/* Problems We Solve. Results We Deliver */}
       <section className="problems-section">
@@ -146,52 +138,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* What We Do */}
-      <section className="services">
-        <h2 className="services-title">WHAT WE DO</h2>
-        <div className="services-grid">
-          <div className="service-card">
-            <h3>DOCUMENT PROCESSING</h3>
-            <p>Organize and standardize records into clear, usable documentation.</p>
-          </div>
-          <div className="service-card">
-            <h3>CASE BUILDING</h3>
-            <p>Structure the facts, records, and narrative into a coherent case.</p>
-          </div>
-          <div className="service-card">
-            <h3>SUBMISSION READINESS</h3>
-            <p>Prepare materials so they are complete, properly formatted, and ready for review.</p>
-          </div>
-          <div className="service-card">
-            <h3>RESPONSE & ESCALATION SUPPORT</h3>
-            <p>Coordinate structured responses to notices, denials, disputes, or enforcement actions.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Choose Your Path */}
-      <section className="choose-path">
+      {/* How Results Are Produced */}
+      <section className="how-results-section">
         <div className="section-container">
-          <h2 className="section-title">CHOOSE YOUR PATH</h2>
-          
-          <div className="path-grid">
-            <div className="path-card">
-              <h3 className="path-title">INITIATING ACTION</h3>
-              <p className="path-items">Grants • funding • approvals • disputes • complaints • settlements • corrections</p>
-              <Link href="/turbo-intake" className="cta-button">
-                APPLY, FILE, OR TAKE ACTION
-              </Link>
-            </div>
-            <div className="path-card">
-              <h3 className="path-title">RESPONDING TO ACTION</h3>
-              <p className="path-items">Notices • denials • enforcement • demands • compliance issues • collections</p>
-              <Link href="/intake" className="cta-button">
-                RESPOND TO A NOTICE OR ISSUE
-              </Link>
-            </div>
+          <div className="how-results-card">
+            <h3 className="how-results-title">HOW RESULTS ARE PRODUCED</h3>
+            <p className="how-results-text">
+              AI-driven processing • Structured case framing • Submission readiness • Response & escalation support
+            </p>
           </div>
-
-          <p className="path-footer">Same system. Same standards. Different situation.</p>
         </div>
       </section>
 
