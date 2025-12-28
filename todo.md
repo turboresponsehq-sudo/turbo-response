@@ -176,6 +176,32 @@
 
 ---
 
+## 🆕 CONSUMER RIGHTS VIOLATIONS WEBPAGE (FEB 27 2025)
+
+### Phase 1: Research & Content
+- [x] Research FDCPA violations (debt collectors)
+- [x] Research FCRA violations (credit bureaus)
+- [x] Research Fair Housing Act violations (landlords)
+- [x] Research CFPB violations (banks/financial institutions)
+- [x] Research unfair claims practices (insurance)
+- [x] Research FCRA background check violations
+- [x] Create comprehensive violation content (10 violations)
+
+### Phase 2: Web Development
+- [x] Create /violations page component
+- [x] Build violation card components
+- [x] Add route to App.tsx
+- [x] Style with Tailwind CSS
+- [x] Add resources/links section
+- [x] Optimize for mobile responsiveness
+
+### Phase 3: Deploy
+- [ ] Save checkpoint
+- [ ] Push to GitHub
+- [ ] Verify on production
+
+---
+
 ## HOMEPAGE FINAL UPDATE (FEB 8 2025)
 
 ### Phase 1: Homepage Content & Routing

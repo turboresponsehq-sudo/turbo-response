@@ -1,0 +1,321 @@
+:root {
+  --eviction-dark-red: #2a0a0a;
+  --eviction-medium-red: #5c1a1a;
+  --eviction-light-red: #8c3a3a;
+  --eviction-accent: #ff4444;
+  --eviction-text-primary: #ffffff;
+  --eviction-text-secondary: #e0b0b0;
+  --eviction-text-muted: #a07070;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--eviction-dark-red);
+  color: var(--eviction-text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  line-height: 1.6;
+}
+
+/* Header */
+.eviction-header {
+  background: rgba(42, 10, 10, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(255, 68, 68, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.eviction-nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.eviction-logo {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--eviction-text-primary);
+  text-decoration: none;
+  letter-spacing: 1px;
+}
+
+/* Hero Section */
+.eviction-hero {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  background: linear-gradient(135deg, var(--eviction-dark-red) 0%, var(--eviction-medium-red) 100%);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.eviction-hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(255, 68, 68, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.eviction-hero-content {
+  max-width: 800px;
+  position: relative;
+  z-index: 1;
+}
+
+.eviction-hero-title {
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  font-weight: 900;
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+  line-height: 1.1;
+}
+
+.eviction-hero-subtitle {
+  font-size: 1.3rem;
+  color: var(--eviction-text-secondary);
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+.eviction-cta-button {
+  display: inline-block;
+  padding: 18px 50px;
+  background: var(--eviction-accent);
+  color: var(--eviction-dark-red);
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  border: 2px solid var(--eviction-accent);
+  cursor: pointer;
+}
+
+.eviction-cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(255, 68, 68, 0.3);
+}
+
+.eviction-cta-large {
+  padding: 20px 60px;
+  font-size: 1.1rem;
+}
+
+/* Container */
+.eviction-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Timeline Section */
+.eviction-timeline {
+  padding: 100px 20px;
+  background: var(--eviction-dark-red);
+}
+
+.eviction-section-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+.eviction-section-subtitle {
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--eviction-text-secondary);
+  margin-bottom: 60px;
+}
+
+.eviction-timeline-items {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.timeline-item {
+  background: var(--eviction-medium-red);
+  padding: 30px;
+  border-radius: 12px;
+  border: 2px solid var(--eviction-accent);
+  min-width: 250px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.timeline-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(255, 68, 68, 0.2);
+}
+
+.timeline-day {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--eviction-accent);
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.timeline-item h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.timeline-item p {
+  font-size: 0.95rem;
+  color: var(--eviction-text-secondary);
+}
+
+.timeline-arrow {
+  font-size: 2rem;
+  color: var(--eviction-accent);
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .timeline-arrow {
+    display: none;
+  }
+
+  .eviction-timeline-items {
+    flex-direction: column;
+  }
+}
+
+/* What We Do Section */
+.eviction-what-we-do {
+  padding: 100px 20px;
+  background: linear-gradient(135deg, var(--eviction-medium-red) 0%, var(--eviction-dark-red) 100%);
+}
+
+.eviction-services {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.service-item {
+  background: rgba(255, 68, 68, 0.05);
+  padding: 35px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 68, 68, 0.2);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.service-item:hover {
+  transform: translateY(-5px);
+  border-color: var(--eviction-accent);
+  box-shadow: 0 10px 30px rgba(255, 68, 68, 0.15);
+}
+
+.service-icon {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  display: block;
+}
+
+.service-item h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  letter-spacing: 0.5px;
+}
+
+.service-item p {
+  font-size: 0.95rem;
+  color: var(--eviction-text-secondary);
+  line-height: 1.6;
+}
+
+/* Final CTA Section */
+.eviction-final-cta {
+  padding: 100px 20px;
+  background: var(--eviction-dark-red);
+  text-align: center;
+}
+
+.eviction-cta-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+.eviction-cta-text {
+  font-size: 1.15rem;
+  color: var(--eviction-text-secondary);
+  margin-bottom: 40px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.7;
+}
+
+/* Footer */
+.eviction-footer {
+  padding: 40px 20px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 68, 68, 0.1);
+  color: var(--eviction-text-muted);
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .eviction-hero {
+    min-height: 60vh;
+    padding: 60px 20px;
+  }
+
+  .eviction-hero-title {
+    font-size: 2rem;
+  }
+
+  .eviction-hero-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .eviction-timeline,
+  .eviction-what-we-do,
+  .eviction-final-cta {
+    padding: 60px 20px;
+  }
+
+  .eviction-section-title,
+  .eviction-cta-title {
+    font-size: 1.8rem;
+  }
+
+  .eviction-cta-button {
+    padding: 15px 40px;
+    font-size: 0.95rem;
+  }
+
+  .eviction-cta-large {
+    padding: 18px 50px;
+    font-size: 1rem;
+  }
+}
