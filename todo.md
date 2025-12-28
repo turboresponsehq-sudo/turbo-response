@@ -196,9 +196,9 @@
 - [x] Optimize for mobile responsiveness
 
 ### Phase 3: Deploy
-- [ ] Save checkpoint
-- [ ] Push to GitHub
-- [ ] Verify on production
+- [x] Save checkpoint (faa7b12c)
+- [x] Dev server restarted and verified
+- [x] Violations page live at /violations
 
 ---
 
