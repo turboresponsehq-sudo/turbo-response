@@ -5,6 +5,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import Violations from "./pages/Violations";
 import AdminDashboard from "./pages/AdminDashboard";
 import IntakeForm from "./pages/IntakeForm";
 import Payment from "./pages/Payment";
@@ -31,12 +32,17 @@ import SignContract from "./pages/SignContract";
 import TurboIntakeForm from "./pages/TurboIntakeForm";
 import AdminCasesList from "./pages/AdminCasesList";
 import AdminCasesDetail from "./pages/AdminCaseDetail";
+import GrantDemo from "./pages/GrantDemo";
+import EvictionDemo from "./pages/EvictionDemo";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      <Route path="/violations" component={Violations} />
+      <Route path="/grant-demo" component={GrantDemo} />
+      <Route path="/eviction-demo" component={EvictionDemo} />
       <Route path="/services" component={Services} />
       <Route path="/pricing" component={Pricing} />
       <Route path="/results" component={Results} />
@@ -81,7 +87,7 @@ function Router() {
       <Route path="/client-contract" component={ClientContract} />
       <Route path="/service-agreement" component={ServiceAgreement} />
       <Route path="/disclaimer" component={Disclaimer} />
-      <Route path="/terms-of-service" component={TermsOfService} />
+      <Route path="/terms" component={TermsOfService} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
