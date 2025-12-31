@@ -48,129 +48,67 @@ const getCaseById = async (req, res, next) => {
       logger.warn('Case not found', { caseId, userId: req.user?.id });
       return res.status(404).json({
         success: false,
-        message: 'Case not found',
-        error: 'No case found with the specified ID'
+        message: 'Case not found'
       });
     }
 
+    const caseData = result.rows[0];
+
     res.json({
       success: true,
-      data: { case: result.rows[0] }
+      data: caseData
     });
   } catch (error) {
-    logger.error('Failed to get case by ID', {
+    logger.error('Failed to get case details', {
       error: error.message,
       caseId: req.params.case_id,
       userId: req.user?.id
     });
     return res.status(500).json({
       success: false,
-      message: 'Failed to retrieve case',
+      message: 'Failed to retrieve case details',
       error: error.message
     });
   }
 };
 
-// Get all cases (admin only) - MERGED from both cases and business_intakes tables
+// Get all cases (admin only)
 const getAllCases = async (req, res, next) => {
-  console.log('[/api/cases/admin/all] Handler hit - getAllCases called');
   try {
-    // Get consumer cases from cases table
-    console.log('[getAllCases] Querying consumer cases from cases table...');
-    const consumerCasesResult = await query(`
-      SELECT 
-        id, 
-        case_number, 
-        category, 
-        email, 
-        full_name, 
-        phone, 
-        address,
-        case_details, 
-        amount, 
-        deadline, 
-        documents, 
-        status,
-        funnel_stage,
-        payment_verified,
-        unread_messages_count,
-        created_at,
-        updated_at,
-        'consumer' as case_type
-      FROM cases
-      ORDER BY created_at DESC
-    `);
+    // Query both tables and merge results
+    const consumerCases = await query(
+      `SELECT id, case_number, category, status, first_name, last_name, email, phone, 
+              created_at, updated_at, 'consumer' as case_type
+       FROM cases
+       WHERE category NOT IN ('Business Audit')
+       ORDER BY created_at DESC`
+    );
 
-    console.log('[getAllCases] Consumer cases count:', consumerCasesResult.rows.length);
-    
-    // Get business cases from business_intakes table
-    console.log('[getAllCases] Querying business cases from business_intakes table...');
-    const businessCasesResult = await query(`
-      SELECT 
-        id,
-        business_name as case_number,
-        'Business Audit' as category,
-        email,
-        COALESCE(full_name, business_name) as full_name,
-        phone,
-        NULL as address,
-        long_term_vision as case_details,
-        NULL as amount,
-        NULL as deadline,
-        JSON_ARRAY() as documents,
-        COALESCE(status, 'New') as status,
-        NULL as funnel_stage,
-        0 as payment_verified,
-        0 as unread_messages_count,
-        created_at,
-        updated_at,
-        'business' as case_type
-      FROM business_intakes
-      ORDER BY created_at DESC
-    `);
+    const businessCases = await query(
+      `SELECT id, NULL as case_number, 'Offense' as category, NULL as status, 
+              full_name as first_name, NULL as last_name, email, phone,
+              created_at, updated_at, 'business' as case_type
+       FROM business_intakes
+       ORDER BY created_at DESC`
+    );
 
-    // Normalize document URLs before merging
-    const backendUrl = process.env.BACKEND_URL || 'https://turbo-response-backend.onrender.com';
-    
-    const normalizedConsumerCases = consumerCasesResult.rows.map(caseData => {
-      if (caseData.documents && Array.isArray(caseData.documents)) {
-        caseData.documents = caseData.documents.map(doc => {
-          if (doc.includes('localhost')) {
-            const match = doc.match(/localhost:\d+(\/.*)/);
-            if (match) {
-              return `${backendUrl}${match[1]}`;
-            }
-          }
-          if (doc.startsWith('/')) {
-            return `${backendUrl}${doc}`;
-          }
-          return doc;
-        });
-      }
-      return caseData;
-    });
+    const allCases = [...consumerCases.rows, ...businessCases.rows].sort(
+      (a, b) => new Date(b.created_at) - new Date(a.created_at)
+    );
 
-    console.log('[getAllCases] Business cases count:', businessCasesResult.rows.length);
-    
-    // Merge both arrays and sort by created_at (newest first)
-    const allCases = [...normalizedConsumerCases, ...businessCasesResult.rows]
-      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-    console.log('[getAllCases] Merged cases - Consumer:', consumerCasesResult.rows.length, 'Business:', businessCasesResult.rows.length, 'Total:', allCases.length);
-    console.log('[getAllCases] First case sample:', allCases[0]);
-    
-    logger.info('getAllCases: merged cases', {
-      consumerCount: consumerCasesResult.rows.length,
-      businessCount: businessCasesResult.rows.length,
+    logger.info('Retrieved all cases', {
+      consumerCount: consumerCases.rows.length,
+      businessCount: businessCases.rows.length,
       totalCount: allCases.length
     });
 
     res.json({
       success: true,
-      cases: allCases
+      cases: allCases,
+      total: allCases.length
     });
   } catch (error) {
-    logger.error('Failed to get all cases (admin)', {
+    logger.error('Failed to get all cases', {
       error: error.message
     });
     return res.status(500).json({
@@ -181,157 +119,51 @@ const getAllCases = async (req, res, next) => {
   }
 };
 
-// Get case details by ID (admin only) - checks BOTH cases and business_intakes tables
+// Get admin case by ID (from either table)
 const getAdminCaseById = async (req, res, next) => {
-  console.log('[/api/case/:id] Handler hit - getAdminCaseById called with ID:', req.params.id);
   try {
-    const caseId = parseInt(req.params.id);
-    console.log('[getAdminCaseById] Parsed caseId:', caseId);
+    const { id } = req.params;
 
-    if (isNaN(caseId)) {
-      return res.status(400).json({
-        success: false,
-        error: 'Invalid case ID'
-      });
-    }
-
-    // Try consumer cases table first
-    console.log('[getAdminCaseById] Querying consumer cases table...');
+    // First try cases table
     let result = await query(
-      `SELECT 
-        c.id, c.user_id, c.case_number, c.category, c.status,
-        c.full_name, c.email, c.phone, c.address,
-        c.case_details, c.amount, c.deadline, c.documents,
-        c.client_status, c.client_notes, c.payment_link, c.portal_enabled,
-        c.funnel_stage, c.payment_method, c.payment_verified, 
-        c.payment_verified_at, c.payment_verified_by,
-        c.pricing_tier, c.pricing_tier_amount, c.pricing_tier_name,
-        c.created_at, c.updated_at,
-        'consumer' as case_type,
-        a.violations, a.laws_cited, a.recommended_actions,
-        a.urgency_level, a.estimated_value, a.success_probability,
-        a.pricing_suggestion, a.pricing_tier, a.summary
-      FROM cases c
-      LEFT JOIN case_analyses a ON a.case_id = c.id
-      WHERE c.id = $1
-      ORDER BY a.created_at DESC
-      LIMIT 1`,
-      [caseId]
+      `SELECT * FROM cases WHERE id = $1`,
+      [id]
     );
 
-    console.log('[getAdminCaseById] Consumer query result rows:', result.rows.length);
-    
-    // If not found in cases table, try business_intakes table
-    if (result.rows.length === 0) {
-      console.log('[getAdminCaseById] Not found in cases table, trying business_intakes...');
-      result = await query(
-        `SELECT 
-          id,
-          NULL as user_id,
-          business_name as case_number,
-          'Business Audit' as category,
-          status,
-          full_name,
-          email,
-          phone,
-          NULL as address,
-          long_term_vision as case_details,
-          NULL as amount,
-          NULL as deadline,
-          documents,
-          NULL as client_status,
-          NULL as client_notes,
-          NULL as payment_link,
-          false as portal_enabled,
-          NULL as funnel_stage,
-          NULL as payment_method,
-          false as payment_verified,
-          NULL as payment_verified_at,
-          NULL as payment_verified_by,
-          NULL as pricing_tier,
-          NULL as pricing_tier_amount,
-          NULL as pricing_tier_name,
-          created_at,
-          updated_at,
-          'business' as case_type,
-          NULL as violations,
-          NULL as laws_cited,
-          NULL as recommended_actions,
-          NULL as urgency_level,
-          NULL as estimated_value,
-          NULL as success_probability,
-          NULL as pricing_suggestion,
-          NULL as pricing_tier,
-          NULL as summary,
-          business_name,
-          website_url,
-          instagram_url,
-          tiktok_url,
-          facebook_url,
-          youtube_url,
-          link_in_bio,
-          what_you_sell,
-          ideal_customer,
-          biggest_struggle,
-          short_term_goal,
-          long_term_vision
-        FROM business_intakes
-        WHERE id = $1`,
-        [caseId]
-      );
-    }
-
-    console.log('[getAdminCaseById] Business query result rows:', result.rows.length);
-    
-    if (result.rows.length === 0) {
-      console.log('[getAdminCaseById] Case not found in either table');
-      return res.status(404).json({
-        success: false,
-        error: 'Case not found in either cases or business_intakes tables'
+    if (result.rows.length > 0) {
+      return res.json({
+        success: true,
+        case: result.rows[0],
+        case_type: 'consumer'
       });
     }
 
-    // Normalize document URLs before returning
-    const caseData = result.rows[0];
-    const backendUrl = process.env.BACKEND_URL || 'https://turbo-response-backend.onrender.com';
-    
-    if (caseData.documents && Array.isArray(caseData.documents)) {
-      caseData.documents = caseData.documents.map(doc => {
-        // If localhost URL, replace with production backend
-        if (doc.includes('localhost')) {
-          const match = doc.match(/localhost:\d+(\/.*)/)
-          if (match) {
-            return `${backendUrl}${match[1]}`;
-          }
-        }
-        // If relative path, prepend backend URL
-        if (doc.startsWith('/')) {
-          return `${backendUrl}${doc}`;
-        }
-        // If already absolute production URL, return as-is
-        return doc;
+    // Fall back to business_intakes table
+    result = await query(
+      `SELECT * FROM business_intakes WHERE id = $1`,
+      [id]
+    );
+
+    if (result.rows.length > 0) {
+      return res.json({
+        success: true,
+        case: result.rows[0],
+        case_type: 'business'
       });
     }
 
-    console.log('[getAdminCaseById] Returning case data:', {
-      id: caseData.id,
-      case_number: caseData.case_number,
-      category: caseData.category,
-      case_type: caseData.case_type
-    });
-    
-    res.json({
-      success: true,
-      case: caseData
+    return res.status(404).json({
+      success: false,
+      message: 'Case not found'
     });
   } catch (error) {
-    logger.error('Failed to get admin case by ID', {
+    logger.error('Failed to get admin case', {
       error: error.message,
       caseId: req.params.id
     });
     return res.status(500).json({
       success: false,
-      message: 'Failed to retrieve case details',
+      message: 'Failed to retrieve case',
       error: error.message
     });
   }
@@ -340,176 +172,44 @@ const getAdminCaseById = async (req, res, next) => {
 // Update case status (admin only)
 const updateCaseStatus = async (req, res, next) => {
   try {
-    const caseId = parseInt(req.params.id);
-    const { status, client_status, client_notes, payment_link, portal_enabled, pricing_tier, pricing_tier_amount, pricing_tier_name } = req.body;
+    const { id } = req.params;
+    const { status } = req.body;
 
-    if (isNaN(caseId)) {
+    if (!status) {
       return res.status(400).json({
         success: false,
-        error: 'Invalid case ID'
+        message: 'Status is required'
       });
     }
 
-    // Validate status value
-    const validStatuses = ['Pending Review', 'In Review', 'Awaiting Client', 'Completed', 'Rejected'];
-    if (!status || !validStatuses.includes(status)) {
+    const validStatuses = ['open', 'in_progress', 'completed', 'closed', 'pending_review'];
+    if (!validStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
-        error: 'Invalid status value. Must be one of: ' + validStatuses.join(', ')
+        message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`
       });
     }
 
-    // Get current status for transition validation
-    const currentResult = await query(
-      'SELECT status FROM cases WHERE id = $1',
-      [caseId]
+    const result = await query(
+      `UPDATE cases SET status = $1, updated_at = NOW() WHERE id = $2 RETURNING *`,
+      [status, id]
     );
 
-    if (currentResult.rows.length === 0) {
+    if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
-        error: 'Case not found'
+        message: 'Case not found'
       });
     }
-
-    const currentStatus = currentResult.rows[0].status;
-
-    // If status is not changing, allow it (idempotent)
-    if (currentStatus === status) {
-      return res.json({
-        success: true,
-        status,
-        message: 'Status unchanged'
-      });
-    }
-
-    // Validate status transitions
-    const allowedTransitions = {
-      'Pending Review': ['In Review'],
-      'In Review': ['Awaiting Client', 'Rejected'],
-      'Awaiting Client': ['Completed', 'Rejected']
-    };
-
-    // Check if transition is allowed
-    if (allowedTransitions[currentStatus] && 
-        !allowedTransitions[currentStatus].includes(status)) {
-      return res.status(400).json({
-        success: false,
-        error: `Invalid transition from "${currentStatus}" to "${status}". Allowed: ${allowedTransitions[currentStatus].join(', ')}`
-      });
-    }
-
-    // Terminal states cannot be changed
-    if (currentStatus === 'Completed' || currentStatus === 'Rejected') {
-      return res.status(400).json({
-        success: false,
-        error: `Cannot change status from terminal state "${currentStatus}"`
-      });
-    }
-
-    // Build dynamic UPDATE query for all provided fields
-    const updates = [];
-    const values = [];
-    let paramCount = 1;
-
-    if (status !== undefined) {
-      updates.push(`status = $${paramCount++}`);
-      values.push(status);
-    }
-    if (client_status !== undefined) {
-      updates.push(`client_status = $${paramCount++}`);
-      values.push(client_status);
-    }
-    if (client_notes !== undefined) {
-      updates.push(`client_notes = $${paramCount++}`);
-      values.push(client_notes);
-    }
-    if (payment_link !== undefined) {
-      updates.push(`payment_link = $${paramCount++}`);
-      values.push(payment_link);
-    }
-    if (portal_enabled !== undefined) {
-      updates.push(`portal_enabled = $${paramCount++}`);
-      values.push(portal_enabled);
-    }
-    if (pricing_tier !== undefined) {
-      updates.push(`pricing_tier = $${paramCount++}`);
-      values.push(pricing_tier);
-    }
-    if (pricing_tier_amount !== undefined) {
-      updates.push(`pricing_tier_amount = $${paramCount++}`);
-      values.push(pricing_tier_amount);
-    }
-    if (pricing_tier_name !== undefined) {
-      updates.push(`pricing_tier_name = $${paramCount++}`);
-      values.push(pricing_tier_name);
-    }
-
-    // Auto-update funnel_stage when pricing is assigned
-    if ((pricing_tier !== undefined || pricing_tier_amount !== undefined || pricing_tier_name !== undefined) &&
-        (pricing_tier || pricing_tier_amount || pricing_tier_name)) {
-      updates.push(`funnel_stage = $${paramCount++}`);
-      values.push('Awaiting Payment');
-    }
-
-    // Always update timestamp
-    updates.push('updated_at = CURRENT_TIMESTAMP');
-    values.push(caseId);
-
-    // Execute update if there are fields to update
-    if (updates.length > 1) { // More than just updated_at
-      await query(
-        `UPDATE cases SET ${updates.join(', ')} WHERE id = $${paramCount}`,
-        values
-      );
-    }
-
-    // Send email notification to client about status change
-    if (status && currentStatus !== status) {
-      try {
-        const caseDetails = await query(
-          'SELECT case_number, full_name, email FROM cases WHERE id = $1',
-          [caseId]
-        );
-        
-        if (caseDetails.rows.length > 0) {
-          const caseInfo = caseDetails.rows[0];
-          const { sendClientStatusUpdateNotification } = require('../services/emailService');
-          
-          // Send email notification (non-blocking)
-          sendClientStatusUpdateNotification({
-            case_id: caseId,
-            case_number: caseInfo.case_number,
-            client_name: caseInfo.full_name,
-            client_email: caseInfo.email,
-            old_status: currentStatus,
-            new_status: status,
-            notes: client_notes || null
-          }).catch(err => {
-            logger.error('Failed to send status update notification email', { error: err.message, caseId });
-          });
-        }
-      } catch (emailError) {
-        logger.error('Error sending status update notification', { error: emailError.message, caseId });
-      }
-    }
-
-    logger.info('Case status updated', {
-      caseId,
-      oldStatus: currentStatus,
-      newStatus: status,
-      adminId: req.user.id
-    });
 
     res.json({
       success: true,
-      message: 'Status updated successfully'
+      case: result.rows[0]
     });
   } catch (error) {
     logger.error('Failed to update case status', {
       error: error.message,
-      caseId: req.params.id,
-      status: req.body.status
+      caseId: req.params.id
     });
     return res.status(500).json({
       success: false,
@@ -519,255 +219,7 @@ const updateCaseStatus = async (req, res, next) => {
   }
 };
 
-
-// ========================================
-// AI ANALYSIS & PRICING ENDPOINTS
-// ========================================
-
-const { generateComprehensiveAnalysis } = require('../services/aiAnalysis');
-
-/**
- * Run AI analysis with deterministic pricing
- * POST /api/case/:id/analyze
- */
-const runAIAnalysis = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    
-    // Get case details
-    const caseResult = await query(
-      `SELECT * FROM cases WHERE id = $1`,
-      [id]
-    );
-    
-    if (caseResult.rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        error: 'Case not found'
-      });
-    }
-    
-    const caseData = caseResult.rows[0];
-    
-    // 🔥 FIX CHECK — Verify case_details field exists
-    console.log("🔥 FIX CHECK — case_details field:", {
-      raw: caseData.case_details,
-      length: caseData.case_details?.length,
-    });
-    
-    // DEBUG: Log what we got from database
-    console.log('[AI Analysis DEBUG] Retrieved from database:', {
-      case_id: caseData.id,
-      category: caseData.category,
-      case_details_exists: !!caseData.case_details,
-      case_details_length: caseData.case_details?.length || 0,
-      case_details_preview: caseData.case_details?.substring(0, 100) || 'EMPTY',
-      all_fields: Object.keys(caseData)
-    });
-    
-    // Parse uploaded files if stored as JSON
-    let uploadedFiles = [];
-    if (caseData.uploaded_files) {
-      try {
-        uploadedFiles = typeof caseData.uploaded_files === 'string' 
-          ? JSON.parse(caseData.uploaded_files) 
-          : caseData.uploaded_files;
-      } catch (e) {
-        console.error('Error parsing uploaded_files:', e);
-      }
-    }
-    
-    // Run AI analysis with pricing
-    console.log('[AI Analysis DEBUG] Calling generateComprehensiveAnalysis with:', {
-      category: caseData.category,
-      caseDescription_length: caseData.case_details?.length || 0,
-      caseDescription_preview: caseData.case_details?.substring(0, 100) || 'EMPTY',
-      amount: caseData.amount,
-      uploadedFiles_count: uploadedFiles.length
-    });
-    
-    const analysis = await generateComprehensiveAnalysis({
-      category: caseData.category,
-      caseDescription: caseData.case_details || '',
-      amount: caseData.amount,
-      uploadedFiles: uploadedFiles
-    });
-    
-    // Sanitize numeric values before database insertion
-    const parseNumericValue = (value) => {
-      if (value === null || value === undefined) return null;
-      
-      // If already a number, return it
-      if (typeof value === 'number') return value;
-      
-      // Convert to string and sanitize
-      let str = String(value);
-      
-      // Remove currency symbols, commas, and whitespace
-      str = str.replace(/[$,\s]/g, '');
-      
-      // Handle ranges (e.g., "1000-5000" or "1000–5000")
-      if (str.includes('-') || str.includes('–')) {
-        const parts = str.split(/[-–]/);
-        // Take the first value from range
-        str = parts[0];
-      }
-      
-      // Extract first number from text (e.g., "1000 (statutory damages)")
-      const match = str.match(/\d+\.?\d*/);
-      if (match) {
-        const parsed = parseFloat(match[0]);
-        return isNaN(parsed) ? null : parsed;
-      }
-      
-      return null;
-    };
-    
-    // Sanitize estimated_value and pricing_suggestion
-    const sanitizedEstimatedValue = parseNumericValue(analysis.estimated_value);
-    const sanitizedPricingSuggestion = parseNumericValue(analysis.pricing_suggestion);
-    
-    // Save analysis to database
-    await query(
-      `INSERT INTO case_analyses 
-       (case_id, violations, laws_cited, recommended_actions, urgency_level, 
-        estimated_value, success_probability, pricing_suggestion, pricing_tier, summary, created_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW())
-       ON CONFLICT (case_id) 
-       DO UPDATE SET
-         violations = EXCLUDED.violations,
-         laws_cited = EXCLUDED.laws_cited,
-         recommended_actions = EXCLUDED.recommended_actions,
-         urgency_level = EXCLUDED.urgency_level,
-         estimated_value = EXCLUDED.estimated_value,
-         success_probability = EXCLUDED.success_probability,
-         pricing_suggestion = EXCLUDED.pricing_suggestion,
-         pricing_tier = EXCLUDED.pricing_tier,
-         summary = EXCLUDED.summary,
-         updated_at = NOW()`,
-      [
-        id,
-        JSON.stringify(analysis.violations),
-        JSON.stringify(analysis.laws_cited),
-        JSON.stringify(analysis.recommended_actions),
-        analysis.urgency_level,
-        sanitizedEstimatedValue,
-        analysis.success_probability,
-        sanitizedPricingSuggestion,
-        analysis.pricing_tier,
-        analysis.summary
-      ]
-    );
-    
-    // AI usage logging disabled - table doesn't exist in production
-    // TODO: Re-enable after creating ai_usage_logs table
-    
-    res.json({
-      success: true,
-      caseId: id,
-      analysis: {
-        violations: analysis.violations,
-        laws_cited: analysis.laws_cited,
-        recommended_actions: analysis.recommended_actions,
-        urgency_level: analysis.urgency_level,
-        estimated_value: analysis.estimated_value,
-        success_probability: analysis.success_probability,
-        pricing_suggestion: analysis.pricing_suggestion, // Frontend expects this field
-        pricing_tier: analysis.pricing_tier, // Frontend expects this field
-        pricing: {
-          amount: analysis.pricing_suggestion,
-          tier: analysis.pricing_tier,
-          breakdown: analysis.pricing_breakdown
-        },
-        summary: analysis.summary,
-        potential_violations: analysis.potential_violations || [] // Frontend expects this field
-      }
-    });
-    
-  } catch (error) {
-    console.error('AI Analysis Error:', {
-      caseId: req.params.id,
-      error: error.message,
-      stack: error.stack,
-      code: error.code
-    });
-    
-    // Return user-friendly error instead of crashing
-    return res.status(500).json({
-      success: false,
-      error: 'AI analysis failed. This may be due to missing case data or a database error. Please ensure the case has complete information.',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
-  }
-};
-
-/**
- * Get last saved AI analysis
- * GET /api/case/:id/analysis
- */
-const getAIAnalysis = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    
-    const result = await query(
-      `SELECT * FROM case_analyses WHERE case_id = $1 ORDER BY created_at DESC LIMIT 1`,
-      [id]
-    );
-    
-    if (result.rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        error: 'No analysis found for this case'
-      });
-    }
-    
-    const analysis = result.rows[0];
-    
-    // Parse JSON fields
-    const violations = typeof analysis.violations === 'string' 
-      ? JSON.parse(analysis.violations) 
-      : analysis.violations;
-    const laws_cited = typeof analysis.laws_cited === 'string'
-      ? JSON.parse(analysis.laws_cited)
-      : analysis.laws_cited;
-    const recommended_actions = typeof analysis.recommended_actions === 'string'
-      ? JSON.parse(analysis.recommended_actions)
-      : analysis.recommended_actions;
-    
-    res.json({
-      success: true,
-      analysis: {
-        violations,
-        laws_cited,
-        recommended_actions,
-        urgency_level: analysis.urgency_level,
-        estimated_value: analysis.estimated_value,
-        success_probability: analysis.success_probability,
-        pricing: {
-          amount: analysis.pricing_suggestion,
-          tier: analysis.pricing_tier
-        },
-        summary: analysis.summary,
-        created_at: analysis.created_at,
-        updated_at: analysis.updated_at
-      }
-    });
-    
-  } catch (error) {
-    logger.error('Failed to get case analysis', {
-      error: error.message,
-      caseId: req.params.id
-    });
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to retrieve case analysis',
-      error: error.message
-    });
-  }
-};
-
-
-// Delete case (admin only)
+// Delete case (admin only) - handles both cases and business_intakes tables
 const deleteCase = async (req, res, next) => {
   try {
     const caseId = parseInt(req.params.id);
@@ -779,22 +231,35 @@ const deleteCase = async (req, res, next) => {
       });
     }
 
-    // Check if case exists
-    const checkResult = await query(
+    // Check if case exists in cases table (consumer/offense)
+    let caseTable = 'cases';
+    let checkResult = await query(
       'SELECT id FROM cases WHERE id = $1',
       [caseId]
     );
 
+    // If not found in cases, check business_intakes (old business audit cases)
     if (checkResult.rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        error: 'Case not found'
-      });
+      checkResult = await query(
+        'SELECT id FROM business_intakes WHERE id = $1',
+        [caseId]
+      );
+      if (checkResult.rows.length > 0) {
+        caseTable = 'business_intakes';
+      } else {
+        return res.status(404).json({
+          success: false,
+          error: 'Case not found'
+        });
+      }
     }
 
-    // Get case data to find uploaded files
-    const caseData = await query('SELECT documents FROM cases WHERE id = $1', [caseId]);
-    const documents = caseData.rows[0]?.documents;
+    // Get case data to find uploaded files (only for cases table)
+    let documents = null;
+    if (caseTable === 'cases') {
+      const caseData = await query('SELECT documents FROM cases WHERE id = $1', [caseId]);
+      documents = caseData.rows[0]?.documents;
+    }
     
     // Delete uploaded files (optional - don't fail if files missing)
     if (documents && Array.isArray(documents)) {
@@ -817,28 +282,29 @@ const deleteCase = async (req, res, next) => {
       }
     }
     
-    // Delete related records first (foreign key constraints)
-    // Each deletion is wrapped to prevent failures if tables don't exist
-    try {
-      await query('DELETE FROM case_analyses WHERE case_id = $1', [caseId]);
-    } catch (e) {
-      console.warn('Failed to delete case_analyses (non-critical):', e.message);
+    // Delete related records first (foreign key constraints) - only for cases table
+    if (caseTable === 'cases') {
+      try {
+        await query('DELETE FROM case_analyses WHERE case_id = $1', [caseId]);
+      } catch (e) {
+        console.warn('Failed to delete case_analyses (non-critical):', e.message);
+      }
+      
+      try {
+        await query('DELETE FROM draft_letters WHERE case_id = $1', [caseId]);
+      } catch (e) {
+        console.warn('Failed to delete draft_letters (non-critical):', e.message);
+      }
+      
+      try {
+        await query('DELETE FROM ai_usage_logs WHERE case_id = $1', [caseId]);
+      } catch (e) {
+        console.warn('Failed to delete ai_usage_logs (non-critical):', e.message);
+      }
     }
     
-    try {
-      await query('DELETE FROM draft_letters WHERE case_id = $1', [caseId]);
-    } catch (e) {
-      console.warn('Failed to delete draft_letters (non-critical):', e.message);
-    }
-    
-    try {
-      await query('DELETE FROM ai_usage_logs WHERE case_id = $1', [caseId]);
-    } catch (e) {
-      console.warn('Failed to delete ai_usage_logs (non-critical):', e.message);
-    }
-    
-    // Delete the case (this is the critical operation)
-    await query('DELETE FROM cases WHERE id = $1', [caseId]);
+    // Delete the case from the correct table
+    await query(`DELETE FROM ${caseTable} WHERE id = $1`, [caseId]);
 
     res.json({
       success: true,
@@ -860,139 +326,65 @@ const deleteCase = async (req, res, next) => {
 // Update case documents (client only)
 const updateCaseDocuments = async (req, res, next) => {
   try {
-    const caseId = parseInt(req.params.id);
+    const { id } = req.params;
     const { documents } = req.body;
 
-    if (isNaN(caseId)) {
+    if (!Array.isArray(documents)) {
       return res.status(400).json({
         success: false,
-        error: 'Invalid case ID'
+        message: 'Documents must be an array'
       });
     }
 
-    // Get user email from either client auth or regular auth
-    const userEmail = req.clientAuth?.email || req.user?.email;
-    const isAdmin = req.user?.role === 'admin';
-
-    console.log('[updateCaseDocuments] Request:', {
-      caseId,
-      userEmail,
-      isAdmin,
-      hasClientAuth: !!req.clientAuth,
-      documentCount: documents?.length
-    });
-
-    // Try to find case in consumer cases first
-    let caseResult = await query(
-      'SELECT id, email, \'consumer\' as case_type FROM cases WHERE id = $1',
-      [caseId]
+    // Check if case exists in cases table first
+    let caseTable = 'cases';
+    let checkResult = await query(
+      'SELECT id FROM cases WHERE id = $1',
+      [id]
     );
 
-    // If not found, try business_intakes
-    if (caseResult.rows.length === 0) {
-      caseResult = await query(
-        'SELECT id, email, \'business\' as case_type FROM business_intakes WHERE id = $1',
-        [caseId]
+    // If not found, check business_intakes
+    if (checkResult.rows.length === 0) {
+      checkResult = await query(
+        'SELECT id FROM business_intakes WHERE id = $1',
+        [id]
       );
-    }
-
-    if (caseResult.rows.length === 0) {
-      console.log('[updateCaseDocuments] Case not found:', caseId);
-      return res.status(404).json({
-        success: false,
-        error: 'Case not found'
-      });
-    }
-
-    const caseData = caseResult.rows[0];
-    console.log('[updateCaseDocuments] Found case:', {
-      caseId: caseData.id,
-      caseType: caseData.case_type,
-      caseEmail: caseData.email
-    });
-    
-    // Check if client owns this case (unless admin)
-    if (!isAdmin && userEmail !== caseData.email) {
-      console.log('[updateCaseDocuments] Unauthorized:', { userEmail, caseEmail: caseData.email });
-      return res.status(403).json({
-        success: false,
-        error: 'You can only update your own cases'
-      });
-    }
-
-    // Update documents in the correct table
-    const tableName = caseData.case_type === 'consumer' ? 'cases' : 'business_intakes';
-    await query(
-      `UPDATE ${tableName} SET documents = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2`,
-      [JSON.stringify(documents), caseId]
-    );
-
-    console.log('[updateCaseDocuments] Documents updated successfully:', {
-      caseId,
-      tableName,
-      documentCount: documents.length
-    });
-
-    logger.info('Case documents updated', {
-      caseId,
-      caseType: caseData.case_type,
-      documentCount: documents.length,
-      userEmail
-    });
-
-    // Send email notification to admin if client uploaded (not admin)
-    if (!isAdmin && documents.length > 0) {
-      try {
-        const emailService = require('../services/emailService');
-        const newDocuments = documents.slice(-1); // Get last uploaded document
-        const documentNames = newDocuments.map(doc => {
-          // Extract filename from URL
-          if (typeof doc === 'string') {
-            return doc.split('/').pop() || 'document';
-          }
-          return 'document';
-        }).join(', ');
-
-        // Get case details for email
-        const caseDetailsQuery = caseData.case_type === 'consumer'
-          ? 'SELECT case_number, full_name, category FROM cases WHERE id = $1'
-          : 'SELECT business_name as case_number, full_name, \'Business Audit\' as category FROM business_intakes WHERE id = $1';
-        
-        const caseDetails = await query(caseDetailsQuery, [caseId]);
-        const caseInfo = caseDetails.rows[0];
-
-        const emailSent = await emailService.sendEmail(
-          process.env.ADMIN_EMAIL || 'turboresponsehq@gmail.com',
-          `New Document Uploaded - Case ${caseInfo.case_number}`,
-          `
-            <h2>New Document Uploaded</h2>
-            <p>A client has uploaded a new document to their case.</p>
-            <hr>
-            <p><strong>Case Number:</strong> ${caseInfo.case_number}</p>
-            <p><strong>Client Name:</strong> ${caseInfo.full_name}</p>
-            <p><strong>Category:</strong> ${caseInfo.category}</p>
-            <p><strong>Document:</strong> ${documentNames}</p>
-            <hr>
-            <p><a href="https://turboresponsehq.ai/admin/cases/${caseId}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">View Case Details</a></p>
-          `
-        );
-
-        console.log('[updateCaseDocuments] Email notification sent:', emailSent);
-      } catch (emailError) {
-        console.error('[updateCaseDocuments] Failed to send email notification:', emailError);
-        // Don't fail the request if email fails
+      if (checkResult.rows.length > 0) {
+        caseTable = 'business_intakes';
+      } else {
+        return res.status(404).json({
+          success: false,
+          message: 'Case not found'
+        });
       }
     }
 
+    // Update the correct table
+    const result = await query(
+      `UPDATE ${caseTable} SET documents = $1 WHERE id = $2 RETURNING *`,
+      [JSON.stringify(documents), id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Case not found'
+      });
+    }
+
+    logger.info('Case documents updated', {
+      caseId: id,
+      caseTable,
+      documentCount: documents.length
+    });
+
     res.json({
       success: true,
-      message: 'Documents updated successfully'
+      case: result.rows[0]
     });
   } catch (error) {
-    console.error('[updateCaseDocuments] Error:', error);
     logger.error('Failed to update case documents', {
       error: error.message,
-      stack: error.stack,
       caseId: req.params.id
     });
     return res.status(500).json({
@@ -1009,8 +401,6 @@ module.exports = {
   getAllCases,
   getAdminCaseById,
   updateCaseStatus,
-  updateCaseDocuments,
-  runAIAnalysis,
-  getAIAnalysis,
-  deleteCase
+  deleteCase,
+  updateCaseDocuments
 };
