@@ -234,7 +234,7 @@ async function startServer() {
       const token = jwt.default.sign(
         { userId: user.id, email: user.email, role: user.role },
         secret,
-        { expiresIn: '7d' }
+        { expiresIn: '365d' }
       );
       console.log('[Login] Token generated successfully for:', user.email);
 
