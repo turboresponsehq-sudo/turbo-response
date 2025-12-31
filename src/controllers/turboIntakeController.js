@@ -21,6 +21,12 @@ const submit = async (req, res, next) => {
       biggestStruggle,
       shortTermGoal,
       longTermVision,
+      estimatedAmount,
+      caseDescription,
+      primaryGoal,
+      targetAuthority,
+      stage,
+      deadline,
       documents
     } = req.body;
 
@@ -44,8 +50,9 @@ const submit = async (req, res, next) => {
         full_name, email, phone, business_name, website_url, instagram_url,
         tiktok_url, facebook_url, youtube_url, link_in_bio, what_you_sell,
         ideal_customer, biggest_struggle, short_term_goal, long_term_vision,
-        documents, status
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+        estimated_amount, case_description, primary_goal, target_authority,
+        stage, deadline, documents, status
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23)
       RETURNING id, full_name, email, status, created_at`,
       [
         fullName,
@@ -63,6 +70,12 @@ const submit = async (req, res, next) => {
         biggestStruggle || null,
         shortTermGoal || null,
         longTermVision || null,
+        estimatedAmount || null,
+        caseDescription || null,
+        primaryGoal || null,
+        targetAuthority || null,
+        stage || null,
+        deadline || null,
         JSON.stringify(documents || []),
         'pending'
       ]
@@ -123,6 +136,12 @@ const submit = async (req, res, next) => {
       biggest_struggle: biggestStruggle || null,
       short_term_goal: shortTermGoal || null,
       long_term_vision: longTermVision || null,
+      estimated_amount: estimatedAmount || null,
+      case_description: caseDescription || null,
+      primary_goal: primaryGoal || null,
+      target_authority: targetAuthority || null,
+      stage: stage || null,
+      deadline: deadline || null,
       created_at: newIntake.created_at,
     }).catch(err => {
       logger.error('Failed to send business intake notification email', {
