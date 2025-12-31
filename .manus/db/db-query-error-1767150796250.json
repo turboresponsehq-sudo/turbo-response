@@ -1,0 +1,8 @@
+{
+  "query": "SELECT id, case_number, category, first_name, last_name, email, phone, description, created_at FROM cases WHERE first_name LIKE '%Jamario%' OR last_name LIKE '%Ford%' OR email LIKE '%jamario%' OR email LIKE '%ford%' LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute SELECT id, case_number, category, first_name, last_name, email, phone, description, created_at FROM cases WHERE first_name LIKE '%Jamario%' OR last_name LIKE '%Ford%' OR email LIKE '%jamario%' OR email LIKE '%ford%' LIMIT 10;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'first_name' in 'where clause'"
+  ]
+}

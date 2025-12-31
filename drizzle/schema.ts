@@ -191,13 +191,16 @@ export type InsertCaseMessage = typeof caseMessages.$inferInsert;
 
 /**
  * Cases table - tracks individual legal cases
+ * Extended to support both Offense and Defense intake forms
  */
 export const cases = mysqlTable("cases", {
   id: int("id").autoincrement().primaryKey(),
   /** Case title/name */
   title: varchar("title", { length: 255 }).notNull(),
-  /** Case category */
+  /** Case category: 'Offense', 'Defense', or specific defense categories */
   category: varchar("category", { length: 50 }),
+  /** Case type: 'offense' or 'defense' */
+  caseType: varchar("caseType", { length: 20 }),
   /** Case status: open, closed, pending */
   status: varchar("status", { length: 50 }).default("open").notNull(),
   /** Case description/summary */
@@ -208,6 +211,37 @@ export const cases = mysqlTable("cases", {
   clientEmail: varchar("clientEmail", { length: 320 }),
   /** Client phone */
   clientPhone: varchar("clientPhone", { length: 50 }),
+  /** Client address (for defense cases) */
+  clientAddress: text("clientAddress"),
+  
+  /** OFFENSE INTAKE FIELDS */
+  /** Business/Entity name */
+  businessName: varchar("businessName", { length: 255 }),
+  /** Entity type: Individual, LLC, Corporation, Nonprofit, Other */
+  entityType: varchar("entityType", { length: 50 }),
+  /** Website URL */
+  websiteUrl: text("websiteUrl"),
+  /** Instagram URL */
+  instagramUrl: text("instagramUrl"),
+  /** TikTok URL */
+  tiktokUrl: text("tiktokUrl"),
+  /** Facebook URL */
+  facebookUrl: text("facebookUrl"),
+  /** YouTube URL */
+  youtubeUrl: text("youtubeUrl"),
+  /** Link in bio URL */
+  linkInBio: text("linkInBio"),
+  /** Primary goal: Grant/Funding, Credit Line, Contract Dispute, Complaint, Settlement, Other */
+  primaryGoal: varchar("primaryGoal", { length: 100 }),
+  /** Target authority/counterparty */
+  targetAuthority: text("targetAuthority"),
+  /** Stage: Preparing, Submitted/Pending, Rejected/Denied, Pre-dispute, Active dispute */
+  stage: varchar("stage", { length: 100 }),
+  /** Estimated amount at stake */
+  estimatedAmount: varchar("estimatedAmount", { length: 50 }),
+  /** Deadline/timeline */
+  deadline: varchar("deadline", { length: 50 }),
+  
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

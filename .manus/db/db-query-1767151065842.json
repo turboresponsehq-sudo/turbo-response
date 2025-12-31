@@ -1,0 +1,22 @@
+{
+  "query": "SELECT * FROM conversations LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute SELECT * FROM conversations LIMIT 1;",
+  "rows": [
+    {
+      "id": "1",
+      "userId": "NULL",
+      "category": "NULL",
+      "status": "active",
+      "summary": "NULL",
+      "messageCount": "0",
+      "evidenceCount": "0",
+      "convertedToLead": "0",
+      "createdAt": "2025-11-09 20:35:16",
+      "updatedAt": "2025-11-09 20:35:16"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\tcategory\tstatus\tsummary\tmessageCount\tevidenceCount\tconvertedToLead\tcreatedAt\tupdatedAt\n1\tNULL\tNULL\tactive\tNULL\t0\t0\t0\t2025-11-09 20:35:16\t2025-11-09 20:35:16\n",
+  "stderr": "",
+  "execution_time_ms": 56
+}

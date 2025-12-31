@@ -43,6 +43,13 @@
       "when": 1764103891946,
       "tag": "0005_foamy_shriek",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1767152761747,
+      "tag": "0006_dapper_screwball",
+      "breakpoints": true
     }
   ]
 }
