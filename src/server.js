@@ -19,6 +19,7 @@ const intakeRoutes = require('./routes/intake');
 const paymentRoutes = require('./routes/payment');
 const adminRoutes = require('./routes/admin');
 const casesRoutes = require('./routes/cases');
+console.log('[ROUTES] casesRoutes loaded:', !!casesRoutes, typeof casesRoutes);
 const uploadRoutes = require('./routes/upload');
 const adminConsumerRoutes = require('./routes/adminConsumer');
 const turboIntakeRoutes = require('./routes/turboIntake');
@@ -90,7 +91,9 @@ app.use('/api/turbo-intake', turboIntakeRoutes);
 // app.use('/api/chat', chatRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/admin', adminRoutes);
+console.log('[ROUTES] Registering /api (casesRoutes) with casesRoutes:', !!casesRoutes);
 app.use('/api', casesRoutes);  // Mount at /api for admin case routes
+console.log('[ROUTES] /api (casesRoutes) registered successfully');
 app.use('/api/upload', uploadRoutes);
 app.use('/api/admin/consumer', adminConsumerRoutes);
 app.use('/api/turbo', turboRoutes);
