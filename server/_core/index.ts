@@ -142,7 +142,12 @@ async function startServer() {
 
       const token = authHeader.substring(7);
       const jwt = await import('jsonwebtoken');
-      const secret = process.env.JWT_SECRET || 'turbo-secret-2025';
+      const secret = process.env.JWT_SECRET;
+      
+      if (!secret) {
+        console.error('[Auth] JWT_SECRET not set in environment');
+        return res.status(500).json({ error: 'Server configuration error' });
+      }
       
       console.log('[Auth] Verifying token with secret length:', secret.length);
       
@@ -207,7 +212,13 @@ async function startServer() {
       }
 
       // Generate token
-      const secret = process.env.JWT_SECRET || 'turbo-secret-2025';
+      const secret = process.env.JWT_SECRET;
+      
+      if (!secret) {
+        console.error('[Login] JWT_SECRET not set in environment');
+        return res.status(500).json({ message: 'Server configuration error' });
+      }
+      
       console.log('[Login] Generating token with secret length:', secret.length);
       const token = jwt.default.sign(
         { userId: user.id, email: user.email, role: user.role },
