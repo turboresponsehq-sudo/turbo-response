@@ -136,32 +136,36 @@ async function startServer() {
     try {
       const authHeader = req.headers.authorization;
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        console.warn('[Auth] Missing or invalid auth header');
         return res.status(401).json({ error: 'Missing or invalid authorization header' });
       }
 
       const token = authHeader.substring(7);
       const jwt = await import('jsonwebtoken');
+      const secret = process.env.JWT_SECRET || 'turbo-secret-2025';
+      
+      console.log('[Auth] Verifying token with secret length:', secret.length);
       
       try {
-        const decoded: any = jwt.default.verify(
-          token,
-          process.env.JWT_SECRET || 'turbo-secret-2025'
-        );
+        const decoded: any = jwt.default.verify(token, secret);
+        console.log('[Auth] Token verified successfully for user:', decoded.email);
         
         if (decoded.role !== 'admin') {
+          console.warn('[Auth] User is not admin:', decoded.email);
           return res.status(403).json({ error: 'Admin access required' });
         }
         
         req.user = decoded;
         next();
       } catch (err: any) {
+        console.error('[Auth] Token verification failed:', err.message, 'Error name:', err.name);
         if (err.name === 'TokenExpiredError') {
           return res.status(401).json({ error: 'Token expired' });
         }
-        return res.status(401).json({ error: 'Invalid token' });
+        return res.status(401).json({ error: 'Invalid token', details: err.message });
       }
     } catch (error: any) {
-      console.error('Auth middleware error:', error);
+      console.error('[Auth] Middleware error:', error);
       return res.status(500).json({ error: 'Internal server error' });
     }
   };
@@ -203,11 +207,14 @@ async function startServer() {
       }
 
       // Generate token
+      const secret = process.env.JWT_SECRET || 'turbo-secret-2025';
+      console.log('[Login] Generating token with secret length:', secret.length);
       const token = jwt.default.sign(
         { userId: user.id, email: user.email, role: user.role },
-        process.env.JWT_SECRET || 'turbo-secret-2025',
+        secret,
         { expiresIn: '7d' }
       );
+      console.log('[Login] Token generated successfully for:', user.email);
 
       res.json({
         token,
