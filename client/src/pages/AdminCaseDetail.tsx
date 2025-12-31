@@ -45,6 +45,7 @@ export default function AdminCaseDetail() {
   const [analyzingAI, setAnalyzingAI] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [caseType, setCaseType] = useState<string>('consumer');
   
   // Pricing tier state
   const [pricingTier, setPricingTier] = useState<string>('foundation');
@@ -66,9 +67,11 @@ export default function AdminCaseDetail() {
         });
         console.log('🔍 API Response:', res.data);
         console.log('🔍 Case Data:', res.data.case);
+        console.log('🔍 Case Type:', res.data.case_type);
         console.log('🔍 Case Number:', res.data.case?.case_number);
         console.log('🔍 Full Name:', res.data.case?.full_name);
         setCaseData(res.data.case);
+        setCaseType(res.data.case_type || 'consumer');
         setSelectedStatus(res.data.case.status);
         
         // Initialize pricing tier state from case data
@@ -267,25 +270,115 @@ export default function AdminCaseDetail() {
       }}>
         <h2 style={{ marginTop: 0, fontSize: "1.125rem", color: "#212529" }}>Case Information</h2>
         
-        {/* Responsive grid - 2 columns on desktop, 1 on mobile */}
-        <div className="info-grid" style={{ display: "grid", gap: "1rem", marginBottom: "1rem" }}>
-          <div>
-            <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
-              <strong>Case ID:</strong>
-            </p>
-            <p style={{ margin: 0, fontFamily: "monospace", fontSize: "1rem", color: "#212529" }}>
-              {caseData.case_number || 'N/A'}
-            </p>
+        {/* Business Intake Info */}
+        {caseType === 'business' && (
+          <>
+            <div className="info-grid" style={{ display: "grid", gap: "1rem", marginBottom: "1rem" }}>
+              <div>
+                <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                  <strong>Business Name:</strong>
+                </p>
+                <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>
+                  {caseData.business_name || 'N/A'}
+                </p>
+              </div>
+              <div>
+                <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                  <strong>Website:</strong>
+                </p>
+                <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>
+                  {caseData.website_url ? <a href={caseData.website_url} target="_blank" rel="noopener noreferrer" style={{ color: "#0066cc", textDecoration: "underline" }}>{caseData.website_url}</a> : 'N/A'}
+                </p>
+              </div>
+            </div>
+            
+            <div className="info-grid" style={{ display: "grid", gap: "1rem", marginBottom: "1rem" }}>
+              <div>
+                <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                  <strong>What You Sell:</strong>
+                </p>
+                <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>
+                  {caseData.what_you_sell || 'N/A'}
+                </p>
+              </div>
+              <div>
+                <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                  <strong>Ideal Customer:</strong>
+                </p>
+                <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>
+                  {caseData.ideal_customer || 'N/A'}
+                </p>
+              </div>
+            </div>
+            
+            <div className="info-grid" style={{ display: "grid", gap: "1rem", marginBottom: "1rem" }}>
+              <div>
+                <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                  <strong>Biggest Struggle:</strong>
+                </p>
+                <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>
+                  {caseData.biggest_struggle || 'N/A'}
+                </p>
+              </div>
+              <div>
+                <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                  <strong>Short Term Goal:</strong>
+                </p>
+                <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>
+                  {caseData.short_term_goal || 'N/A'}
+                </p>
+              </div>
+            </div>
+            
+            <div className="info-grid" style={{ display: "grid", gap: "1rem", marginBottom: "1rem" }}>
+              <div>
+                <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                  <strong>Long Term Vision:</strong>
+                </p>
+                <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>
+                  {caseData.long_term_vision || 'N/A'}
+                </p>
+              </div>
+            </div>
+            
+            <div className="info-grid" style={{ display: "grid", gap: "1rem", marginBottom: "1rem" }}>
+              <div>
+                <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                  <strong>Social Media:</strong>
+                </p>
+                <div style={{ margin: 0, fontSize: "0.875rem", color: "#212529" }}>
+                  {caseData.instagram_url && <div>Instagram: <a href={caseData.instagram_url} target="_blank" rel="noopener noreferrer" style={{ color: "#0066cc" }}>{caseData.instagram_url}</a></div>}
+                  {caseData.tiktok_url && <div>TikTok: <a href={caseData.tiktok_url} target="_blank" rel="noopener noreferrer" style={{ color: "#0066cc" }}>{caseData.tiktok_url}</a></div>}
+                  {caseData.facebook_url && <div>Facebook: <a href={caseData.facebook_url} target="_blank" rel="noopener noreferrer" style={{ color: "#0066cc" }}>{caseData.facebook_url}</a></div>}
+                  {caseData.youtube_url && <div>YouTube: <a href={caseData.youtube_url} target="_blank" rel="noopener noreferrer" style={{ color: "#0066cc" }}>{caseData.youtube_url}</a></div>}
+                  {!caseData.instagram_url && !caseData.tiktok_url && !caseData.facebook_url && !caseData.youtube_url && 'N/A'}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+        
+        {/* Consumer Case Info */}
+        {caseType === 'consumer' && (
+          <div className="info-grid" style={{ display: "grid", gap: "1rem", marginBottom: "1rem" }}>
+            <div>
+              <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                <strong>Case ID:</strong>
+              </p>
+              <p style={{ margin: 0, fontFamily: "monospace", fontSize: "1rem", color: "#212529" }}>
+                {caseData.case_number || 'N/A'}
+              </p>
+            </div>
+            <div>
+              <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
+                <strong>Category:</strong>
+              </p>
+              <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>
+                {caseData.category ? (CATEGORY_NAMES[caseData.category] || caseData.category) : 'N/A'}
+              </p>
+            </div>
           </div>
-          <div>
-            <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
-              <strong>Category:</strong>
-            </p>
-            <p style={{ margin: 0, fontSize: "1rem", color: "#212529" }}>
-              {caseData.category ? (CATEGORY_NAMES[caseData.category] || caseData.category) : 'N/A'}
-            </p>
-          </div>
-        </div>
+        )}
 
         <div className="info-grid" style={{ display: "grid", gap: "1rem", marginBottom: "1rem" }}>
           <div>
