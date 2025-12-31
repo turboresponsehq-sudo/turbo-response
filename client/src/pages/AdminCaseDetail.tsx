@@ -95,7 +95,7 @@ export default function AdminCaseDetail() {
 
     try {
       await axios.patch(
-        `${API_URL}/api/case/${params?.id}`,
+        `${API_URL}/api/cases/${params?.id}`,
         { status: selectedStatus },
         { headers: { Authorization: `Bearer ${storedToken}` } }
       );
@@ -123,7 +123,7 @@ export default function AdminCaseDetail() {
 
     try {
       await axios.delete(
-        `${API_URL}/api/case/${params?.id}`,
+        `${API_URL}/api/cases/${params?.id}`,
         { headers: { Authorization: `Bearer ${storedToken}` } }
       );
       
