@@ -38,6 +38,7 @@ const submit = async (req, res, next) => {
     }
 
     // Insert business intake into database
+    console.log('[TURBO-INTAKE] Attempting to insert:', { fullName, email, businessName });
     const result = await query(
       `INSERT INTO business_intakes (
         full_name, email, phone, business_name, website_url, instagram_url,
@@ -68,6 +69,7 @@ const submit = async (req, res, next) => {
     );
 
     const newIntake = result.rows[0];
+    console.log('[TURBO-INTAKE] Insert successful:', { intakeId: newIntake.id, email: newIntake.email });
 
     logger.info('New business intake submitted', {
       intakeId: newIntake.id,
