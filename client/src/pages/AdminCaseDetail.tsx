@@ -350,7 +350,12 @@ export default function AdminCaseDetail() {
                   {caseData.instagram_url && <div>Instagram: <a href={caseData.instagram_url} target="_blank" rel="noopener noreferrer" style={{ color: "#0066cc" }}>{caseData.instagram_url}</a></div>}
                   {caseData.tiktok_url && <div>TikTok: <a href={caseData.tiktok_url} target="_blank" rel="noopener noreferrer" style={{ color: "#0066cc" }}>{caseData.tiktok_url}</a></div>}
                   {caseData.facebook_url && <div>Facebook: <a href={caseData.facebook_url} target="_blank" rel="noopener noreferrer" style={{ color: "#0066cc" }}>{caseData.facebook_url}</a></div>}
-                  {caseData.youtube_url && <div>YouTube: <a href={caseData.youtube_url} target="_blank" rel="noopener noreferrer" style={{ color: "#0066cc" }}>{caseData.youtube_url}</a></div>}            
+                  {caseData.youtube_url && <div>YouTube: <a href={caseData.youtube_url} target="_blank" rel="noopener noreferrer" style={{ color: "#0066cc" }}>{caseData.youtube_url}</a></div>}
+                  {!caseData.instagram_url && !caseData.tiktok_url && !caseData.facebook_url && !caseData.youtube_url && 'N/A'}
+                </div>
+              </div>
+            </div>
+            
             <div className="info-grid" style={{ display: "grid", gap: "1rem", marginBottom: "1rem" }}>
               <div>
                 <p style={{ margin: "0.5rem 0", color: "#6c757d", fontSize: "0.875rem" }}>
