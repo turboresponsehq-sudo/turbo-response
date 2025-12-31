@@ -131,6 +131,41 @@ async function startServer() {
     }
   });
 
+  // JWT verification middleware
+  const verifyAdminToken = async (req: any, res: any, next: any) => {
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Missing or invalid authorization header' });
+      }
+
+      const token = authHeader.substring(7);
+      const jwt = await import('jsonwebtoken');
+      
+      try {
+        const decoded: any = jwt.default.verify(
+          token,
+          process.env.JWT_SECRET || 'turbo-secret-2025'
+        );
+        
+        if (decoded.role !== 'admin') {
+          return res.status(403).json({ error: 'Admin access required' });
+        }
+        
+        req.user = decoded;
+        next();
+      } catch (err: any) {
+        if (err.name === 'TokenExpiredError') {
+          return res.status(401).json({ error: 'Token expired' });
+        }
+        return res.status(401).json({ error: 'Invalid token' });
+      }
+    } catch (error: any) {
+      console.error('Auth middleware error:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  };
+  
   // Admin login endpoint
   app.post("/api/auth/login", async (req, res) => {
     try {
@@ -187,6 +222,45 @@ async function startServer() {
     } catch (error: any) {
       console.error('❌ Login error:', error);
       res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+  
+  // Admin cases endpoints
+  app.get("/api/admin/cases", verifyAdminToken, async (req: any, res: any) => {
+    try {
+      const { listCases } = await import("../db");
+      const cases = await listCases();
+      res.json({ success: true, cases });
+    } catch (error: any) {
+      console.error('Error fetching cases:', error);
+      res.status(500).json({ error: 'Failed to fetch cases' });
+    }
+  });
+  
+  app.post("/api/admin/cases/create", verifyAdminToken, async (req: any, res: any) => {
+    try {
+      const { createCase } = await import("../db");
+      const { title, category, description, client_name, client_email, client_phone } = req.body;
+      
+      if (!title) {
+        return res.status(400).json({ error: 'Title is required' });
+      }
+      
+      const caseData = {
+        title,
+        category: category || null,
+        description: description || null,
+        clientName: client_name || null,
+        clientEmail: client_email || null,
+        clientPhone: client_phone || null,
+        status: 'open'
+      };
+      
+      await createCase(caseData);
+      res.json({ success: true, message: 'Case created successfully' });
+    } catch (error: any) {
+      console.error('Error creating case:', error);
+      res.status(500).json({ error: 'Failed to create case' });
     }
   });
   
