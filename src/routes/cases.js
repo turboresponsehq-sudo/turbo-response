@@ -32,23 +32,23 @@ const requireAdmin = (req, res, next) => {
 // GET /api/cases/admin/all - Get all cases (admin only)
 router.get('/cases/admin/all', authenticateToken, requireAdmin, getAllCases);
 
-// GET /api/case/:id - Get case details by ID (admin only)
-router.get('/case/:id', authenticateToken, requireAdmin, getAdminCaseById);
+// GET /api/cases/:id - Get case details by ID (admin only)
+router.get('/cases/:id', authenticateToken, requireAdmin, getAdminCaseById);
 
-// PATCH /api/case/:id - Update case status (admin only)
-router.patch('/case/:id', authenticateToken, requireAdmin, updateCaseStatus);
+// PATCH /api/cases/:id - Update case status (admin only)
+router.patch('/cases/:id', authenticateToken, requireAdmin, updateCaseStatus);
 
-// POST /api/case/:id/analyze - Run AI analysis with pricing (admin only)
-router.post('/case/:id/analyze', authenticateToken, requireAdmin, runAIAnalysis);
+// POST /api/cases/:id/analyze - Run AI analysis with pricing (admin only)
+router.post('/cases/:id/analyze', authenticateToken, requireAdmin, runAIAnalysis);
 
-// GET /api/case/:id/analysis - Get last saved AI analysis (admin only)
-router.get('/case/:id/analysis', authenticateToken, requireAdmin, getAIAnalysis);
+// GET /api/cases/:id/analysis - Get last saved AI analysis (admin only)
+router.get('/cases/:id/analysis', authenticateToken, requireAdmin, getAIAnalysis);
 
-// DELETE /api/case/:id - Delete case (admin only)
-router.delete('/case/:id', authenticateToken, requireAdmin, deleteCase);
+// DELETE /api/cases/:id - Delete case (admin only)
+router.delete('/cases/:id', authenticateToken, requireAdmin, deleteCase);
 
-// PATCH /api/case/:id/verify-payment - Admin verifies payment (admin only)
-router.patch('/case/:id/verify-payment', authenticateToken, requireAdmin, verifyPayment);
+// PATCH /api/cases/:id/verify-payment - Admin verifies payment (admin only)
+router.patch('/cases/:id/verify-payment', authenticateToken, requireAdmin, verifyPayment);
 
 // User routes
 // GET /api/cases - Get all cases for current user
