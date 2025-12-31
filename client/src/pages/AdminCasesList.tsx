@@ -37,15 +37,39 @@ export default function AdminCasesList() {
   const fetchCases = async () => {
     try {
       const token = localStorage.getItem('admin_session');
+      
+      // If no token, redirect to login
+      if (!token) {
+        setLocation('/admin/login');
+        return;
+      }
+      
       const response = await fetch(`${API_BASE}/api/admin/cases`, {
         credentials: 'include',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
       });
+      
+      // Handle 401/403 - invalid or expired token
+      if (response.status === 401 || response.status === 403) {
+        console.warn('Auth token invalid or expired');
+        localStorage.removeItem('admin_session');
+        setLocation('/admin/login');
+        return;
+      }
+      
+      // Handle other errors
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
       const data = await response.json();
       if (data.success) {
-        setCases(data.cases);
+        setCases(data.cases || []);
+      } else if (data.error) {
+        console.error('API error:', data.error);
       }
     } catch (error) {
       console.error('Failed to fetch cases:', error);
@@ -58,6 +82,12 @@ export default function AdminCasesList() {
     e.preventDefault();
     try {
       const token = localStorage.getItem('admin_session');
+      
+      if (!token) {
+        setLocation('/admin/login');
+        return;
+      }
+      
       const response = await fetch(`${API_BASE}/api/admin/cases/create`, {
         method: 'POST',
         headers: { 
@@ -67,6 +97,19 @@ export default function AdminCasesList() {
         credentials: 'include',
         body: JSON.stringify(formData)
       });
+      
+      // Handle 401/403 - invalid or expired token
+      if (response.status === 401 || response.status === 403) {
+        console.warn('Auth token invalid or expired');
+        localStorage.removeItem('admin_session');
+        setLocation('/admin/login');
+        return;
+      }
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
       const data = await response.json();
       if (data.success) {
         setShowModal(false);
@@ -79,12 +122,13 @@ export default function AdminCasesList() {
           client_phone: ''
         });
         fetchCases();
+      } else if (data.error) {
+        console.error('API error:', data.error);
       }
     } catch (error) {
       console.error('Failed to create case:', error);
     }
   };
-
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
