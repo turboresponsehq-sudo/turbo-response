@@ -77,7 +77,7 @@ const getAllCases = async (req, res, next) => {
   try {
     // Query both tables and merge results
     const consumerCases = await query(
-      `SELECT id, case_number, category, status, first_name, last_name, email, phone, 
+      `SELECT id, case_number, category, status, full_name, NULL as last_name, email, phone, 
               created_at, updated_at, 'consumer' as case_type
        FROM cases
        WHERE category NOT IN ('Business Audit')
@@ -86,7 +86,7 @@ const getAllCases = async (req, res, next) => {
 
     const businessCases = await query(
       `SELECT id, NULL as case_number, 'Offense' as category, NULL as status, 
-              full_name as first_name, NULL as last_name, email, phone,
+              full_name, NULL as last_name, email, phone,
               created_at, updated_at, 'business' as case_type
        FROM business_intakes
        ORDER BY created_at DESC`
