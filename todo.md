@@ -69,11 +69,16 @@
 - [x] Extended database schema with all Offense/Defense form fields
 - [x] Registered intake routes in server/_core/index.ts
 - [x] Fixed admin dashboard to filter out old "Business Audit" cases
+- [x] Updated turboIntakeController.js to save to cases table (not business_intakes)
+- [x] Now saves ALL fields: businessName, entityType, URLs, goals, authority, stage, deadline, amount
+- [x] Build successful and deployed to staging
 
-### Pending (BLOCKED - Database Connection Issue)
-- [ ] Run pnpm db:push to apply schema migration (TiDB connection failing - Manus platform issue)
-- [ ] Test end-to-end form submissions once database is available
+### Testing (IN PROGRESS)
+- [ ] Test Offense intake form submission on staging
+- [ ] Verify ALL fields appear in admin dashboard
+- [ ] Verify case deletion works
 - [ ] Deploy to production
+- [ ] Contact Jamario Ford to re-submit
 
 ### Jamario Ford Data Recovery
 - [x] Located his submission in old Render backend (intake_id: 5)
