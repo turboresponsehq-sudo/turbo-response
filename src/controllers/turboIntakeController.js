@@ -10,6 +10,7 @@ const submit = async (req, res, next) => {
       email,
       phone,
       businessName,
+      entityType,
       websiteUrl,
       instagramUrl,
       tiktokUrl,
@@ -21,6 +22,12 @@ const submit = async (req, res, next) => {
       biggestStruggle,
       shortTermGoal,
       longTermVision,
+      primaryGoal,
+      targetAuthority,
+      stage,
+      deadline,
+      estimatedAmount,
+      caseDescription,
       documents
     } = req.body;
 
@@ -37,41 +44,45 @@ const submit = async (req, res, next) => {
       return res.status(400).json({ error: 'Invalid email format' });
     }
 
-    // Insert business intake into database
+    // Insert into cases table (not business_intakes)
+    // This ensures data appears in admin dashboard
     const result = await query(
-      `INSERT INTO business_intakes (
-        full_name, email, phone, business_name, website_url, instagram_url,
-        tiktok_url, facebook_url, youtube_url, link_in_bio, what_you_sell,
-        ideal_customer, biggest_struggle, short_term_goal, long_term_vision,
-        documents, status
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
-      RETURNING id, full_name, email, status, created_at`,
+      `INSERT INTO cases (
+        title, category, caseType, status, description, clientName, clientEmail, clientPhone,
+        businessName, entityType, websiteUrl, instagramUrl, tiktokUrl, facebookUrl, youtubeUrl,
+        linkInBio, primaryGoal, targetAuthority, stage, deadline, estimatedAmount, createdAt
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, NOW())
+      RETURNING id, clientName, clientEmail, status, createdAt`,
       [
-        fullName,
-        email,
-        phone || null,
-        businessName || null,
-        websiteUrl || null,
-        instagramUrl || null,
-        tiktokUrl || null,
-        facebookUrl || null,
-        youtubeUrl || null,
-        linkInBio || null,
-        whatYouSell || null,
-        idealCustomer || null,
-        biggestStruggle || null,
-        shortTermGoal || null,
-        longTermVision || null,
-        JSON.stringify(documents || []),
-        'pending'
+        businessName || fullName,  // title
+        'Offense',                  // category
+        'offense',                  // caseType
+        'open',                     // status
+        caseDescription || `Business: ${businessName}`,  // description
+        fullName,                   // clientName
+        email,                      // clientEmail
+        phone || null,              // clientPhone
+        businessName || null,       // businessName
+        entityType || null,         // entityType
+        websiteUrl || null,         // websiteUrl
+        instagramUrl || null,       // instagramUrl
+        tiktokUrl || null,          // tiktokUrl
+        facebookUrl || null,        // facebookUrl
+        youtubeUrl || null,         // youtubeUrl
+        linkInBio || null,          // linkInBio
+        primaryGoal || null,        // primaryGoal
+        targetAuthority || null,    // targetAuthority
+        stage || null,              // stage
+        deadline || null,           // deadline
+        estimatedAmount || null     // estimatedAmount
       ]
     );
 
-    const newIntake = result.rows[0];
+    const newCase = result.rows[0];
 
-    logger.info('New business intake submitted', {
-      intakeId: newIntake.id,
-      email: newIntake.email,
+    logger.info('New offense case submitted', {
+      caseId: newCase.id,
+      email: newCase.clientEmail,
       businessName
     });
 
@@ -93,21 +104,21 @@ const submit = async (req, res, next) => {
            VALUES ($1, $2, $3, $4, 'client')`,
           [email, password_hash, fullName, phone || null]
         );
-        logger.info('Client portal user created for business intake', { email, intakeId: newIntake.id });
+        logger.info('Client portal user created for offense case', { email, caseId: newCase.id });
       }
     } catch (userError) {
-      logger.error('Failed to create portal user for business intake', {
+      logger.error('Failed to create portal user for offense case', {
         error: userError.message,
-        intakeId: newIntake.id
+        caseId: newCase.id
       });
       // Don't fail the whole intake if user creation fails
     }
 
     // Send email notification to admin (non-blocking)
     sendBusinessIntakeNotification({
-      id: newIntake.id,
-      full_name: newIntake.full_name,
-      email: newIntake.email,
+      id: newCase.id,
+      full_name: newCase.clientName,
+      email: newCase.clientEmail,
       phone: phone || null,
       business_name: businessName || null,
       website_url: websiteUrl || null,
@@ -121,44 +132,44 @@ const submit = async (req, res, next) => {
       biggest_struggle: biggestStruggle || null,
       short_term_goal: shortTermGoal || null,
       long_term_vision: longTermVision || null,
-      created_at: newIntake.created_at,
+      created_at: newCase.createdAt,
     }).catch(err => {
-      logger.error('Failed to send business intake notification email', {
+      logger.error('Failed to send offense case notification email', {
         error: err.message,
-        intakeId: newIntake.id,
+        caseId: newCase.id,
       });
     });
 
     // Send confirmation email to client (non-blocking)
     sendBusinessIntakeConfirmation({
-      id: newIntake.id,
-      full_name: newIntake.full_name,
-      email: newIntake.email,
+      id: newCase.id,
+      full_name: newCase.clientName,
+      email: newCase.clientEmail,
       phone: phone || null,
       business_name: businessName || null,
       website_url: websiteUrl || null,
-      created_at: newIntake.created_at,
+      created_at: newCase.createdAt,
     }).catch(err => {
-      logger.error('Failed to send business intake confirmation email', {
+      logger.error('Failed to send offense case confirmation email', {
         error: err.message,
-        intakeId: newIntake.id,
+        caseId: newCase.id,
       });
     });
 
     res.status(200).json({
       success: true,
-      message: 'Business intake received successfully',
-      intake_id: newIntake.id,
-      intake: newIntake
+      message: 'Offense intake received successfully',
+      case_id: newCase.id,
+      case: newCase
     });
   } catch (error) {
-    logger.error('Error submitting business intake', {
+    logger.error('Error submitting offense intake', {
       error: error.message,
       stack: error.stack
     });
     
     res.status(500).json({
-      error: 'Failed to submit business intake',
+      error: 'Failed to submit offense intake',
       message: error.message
     });
   }
