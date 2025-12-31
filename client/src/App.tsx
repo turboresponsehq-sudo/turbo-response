@@ -4,6 +4,8 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { AdminAuthProvider } from "./contexts/AdminAuthContext";
+import { setupAxiosInterceptor } from "./lib/axiosInterceptor";
 import Home from "./pages/Home";
 import Violations from "./pages/Violations";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -101,18 +103,23 @@ function Router() {
 // - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
 
 function App() {
+  setupAxiosInterceptor(() => {
+    console.warn('[App] Axios interceptor detected 401');
+  });
+
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="dark"
-        // switchable
-      >
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-          <FloatingChatWidget />
-        </TooltipProvider>
-      </ThemeProvider>
+      <AdminAuthProvider>
+        <ThemeProvider
+          defaultTheme="dark"
+        >
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+            <FloatingChatWidget />
+          </TooltipProvider>
+        </ThemeProvider>
+      </AdminAuthProvider>
     </ErrorBoundary>
   );
 }

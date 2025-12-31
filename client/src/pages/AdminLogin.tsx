@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { api } from "@/lib/api";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import "./AdminLogin.css";
 
 export default function AdminLogin() {
   const [, setLocation] = useLocation();
+  const { login, isAuthenticated } = useAdminAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -12,11 +14,10 @@ export default function AdminLogin() {
 
   useEffect(() => {
     // Check if already logged in
-    const session = localStorage.getItem("admin_session");
-    if (session) {
+    if (isAuthenticated) {
       setLocation("/admin");
     }
-  }, [setLocation]);
+  }, [isAuthenticated, setLocation]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,11 +31,8 @@ export default function AdminLogin() {
         password,
       });
 
-      // Store session token and user info
-      localStorage.setItem("admin_session", response.token);
-      if (response.user) {
-        localStorage.setItem("admin_user", JSON.stringify(response.user));
-      }
+      // Use auth context to store token and user
+      login(response.token, response.user);
       setLocation("/admin");
     } catch (error: any) {
       setError(`❌ ${error.message}`);
