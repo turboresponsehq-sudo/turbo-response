@@ -244,6 +244,20 @@ async function startServer() {
     }
   });
   
+  // Frontend calls THIS endpoint - MUST match exactly
+  app.get("/api/cases/admin/all", verifyAdminToken, async (req: any, res: any) => {
+    try {
+      console.log('[Cases API] Fetching all cases for admin');
+      const { listCases } = await import("../db");
+      const cases = await listCases();
+      console.log('[Cases API] Found', cases.length, 'cases');
+      res.json({ success: true, cases: cases || [] });
+    } catch (error: any) {
+      console.error('[Cases API] Error fetching cases:', error);
+      res.status(500).json({ error: 'Failed to fetch cases', details: error.message });
+    }
+  });
+  
   app.post("/api/admin/cases/create", verifyAdminToken, async (req: any, res: any) => {
     try {
       const { createCase } = await import("../db");
