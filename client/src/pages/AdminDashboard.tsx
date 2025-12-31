@@ -88,6 +88,15 @@ Data: ${JSON.stringify(err.response?.data || {})}`;
           alert('Admin Dashboard Error:' + errorDetails);
         }
         
+        // Check if token expired (401 error)
+        if (err.response?.status === 401) {
+          console.warn('[AdminDashboard] Token expired - clearing and redirecting');
+          localStorage.removeItem('admin_session');
+          localStorage.removeItem('admin_user');
+          setLocation('/admin/login');
+          return;
+        }
+        
         setError("Could not load cases" + errorDetails);
       } finally {
         setLoading(false);

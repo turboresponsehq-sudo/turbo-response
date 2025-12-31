@@ -50,9 +50,15 @@ router.post('/login', async (req, res) => {
     }
 
     // Generate JWT token
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      console.error('[Auth] JWT_SECRET not set in environment');
+      return res.status(500).json({ error: 'Server configuration error: JWT_SECRET not set' });
+    }
+    
     const token = jwt.sign(
       { userId: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET || 'default-secret-change-in-production',
+      secret,
       { expiresIn: '7d' }
     );
 

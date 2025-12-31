@@ -161,8 +161,8 @@ async function startServer() {
         console.log('[Auth] Token verified successfully for user:', decoded.email);
         
         if (decoded.role !== 'admin') {
-          console.warn('[Auth] User is not admin:', decoded.email);
-          return res.status(403).json({ error: 'Admin access required' });
+          console.warn('[Auth] User is not admin:', decoded.email, 'role:', decoded.role);
+          return res.status(403).json({ error: 'Admin access required', reason: 'User role is not admin', userRole: decoded.role });
         }
         
         req.user = decoded;
@@ -170,8 +170,14 @@ async function startServer() {
       } catch (err: any) {
         console.error('[Auth] Token verification failed:', err.message, 'Error name:', err.name);
         if (err.name === 'TokenExpiredError') {
-          return res.status(401).json({ error: 'Token expired' });
+          console.error('[Auth] Token is expired - user needs to re-login');
+          return res.status(401).json({ error: 'Token expired', reason: 'Please login again' });
         }
+        if (err.name === 'JsonWebTokenError') {
+          console.error('[Auth] Invalid token signature or format');
+          return res.status(401).json({ error: 'Invalid token', reason: 'Token signature invalid' });
+        }
+        console.error('[Auth] Unknown JWT error:', err);
         return res.status(401).json({ error: 'Invalid token', details: err.message });
       }
     } catch (error: any) {
