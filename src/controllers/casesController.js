@@ -395,6 +395,50 @@ const updateCaseDocuments = async (req, res, next) => {
   }
 };
 
+// Run AI analysis on case (admin only)
+const runAIAnalysis = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    // TODO: Implement AI analysis logic
+    return res.status(501).json({
+      success: false,
+      message: 'AI analysis feature coming soon'
+    });
+  } catch (error) {
+    logger.error('Failed to run AI analysis', {
+      error: error.message,
+      caseId: req.params.id
+    });
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to run AI analysis',
+      error: error.message
+    });
+  }
+};
+
+// Get last saved AI analysis (admin only)
+const getAIAnalysis = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    // TODO: Implement get AI analysis logic
+    return res.status(404).json({
+      success: false,
+      message: 'No AI analysis found for this case'
+    });
+  } catch (error) {
+    logger.error('Failed to get AI analysis', {
+      error: error.message,
+      caseId: req.params.id
+    });
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve AI analysis',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   getMyCases,
   getCaseById,
@@ -402,5 +446,7 @@ module.exports = {
   getAdminCaseById,
   updateCaseStatus,
   deleteCase,
-  updateCaseDocuments
+  updateCaseDocuments,
+  runAIAnalysis,
+  getAIAnalysis
 };
