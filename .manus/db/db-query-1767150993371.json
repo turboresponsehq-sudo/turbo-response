@@ -1,0 +1,52 @@
+{
+  "query": "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = DATABASE();",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = DATABASE();",
+  "rows": [
+    {
+      "TABLE_NAME": "__drizzle_migrations"
+    },
+    {
+      "TABLE_NAME": "users"
+    },
+    {
+      "TABLE_NAME": "conversations"
+    },
+    {
+      "TABLE_NAME": "evidence_uploads"
+    },
+    {
+      "TABLE_NAME": "leads"
+    },
+    {
+      "TABLE_NAME": "messages"
+    },
+    {
+      "TABLE_NAME": "lead_notes"
+    },
+    {
+      "TABLE_NAME": "turbo_intake_submissions"
+    },
+    {
+      "TABLE_NAME": "brain_embeddings"
+    },
+    {
+      "TABLE_NAME": "case_analyses"
+    },
+    {
+      "TABLE_NAME": "case_messages"
+    },
+    {
+      "TABLE_NAME": "cases"
+    },
+    {
+      "TABLE_NAME": "case_documents"
+    },
+    {
+      "TABLE_NAME": "business_intakes"
+    }
+  ],
+  "messages": [],
+  "stdout": "TABLE_NAME\n__drizzle_migrations\nusers\nconversations\nevidence_uploads\nleads\nmessages\nlead_notes\nturbo_intake_submissions\nbrain_embeddings\ncase_analyses\ncase_messages\ncases\ncase_documents\nbusiness_intakes\n",
+  "stderr": "",
+  "execution_time_ms": 57
+}

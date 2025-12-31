@@ -59,7 +59,15 @@ export default function AdminDashboard() {
         console.log('✅ Response data:', res.data);
         console.log('✅ Cases count:', res.data.cases?.length || 0);
         
-        setCases(res.data.cases || []);
+        // Filter out old "Business Audit" cases - only show Offense and Defense
+        const filteredCases = (res.data.cases || []).filter((c: CaseItem) => 
+          c.category !== 'Business Audit' && c.category !== 'business'
+        );
+        setCases(filteredCases);
+        
+        // Log filtered results
+        console.log('📊 Total cases from API:', res.data.cases?.length || 0);
+        console.log('📊 Filtered cases (Offense/Defense only):', filteredCases.length);
       } catch (err: any) {
         // 🔍 ANDROID DEBUG: Detailed error logging
         console.error('❌ [AdminDashboard] Error fetching cases:', err);

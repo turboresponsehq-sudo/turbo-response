@@ -9,6 +9,8 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { brainRouter } from "./brainRouter";
+import intakeRouter from "../routes/intake";
+import { getDb } from "../db"; // Already imported above
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -63,6 +65,9 @@ async function startServer() {
   
   // Brain System routes (with access token middleware built-in)
   app.use("/api/brain", brainRouter);
+  
+  // Intake form routes (Offense and Defense)
+  app.use("/api", intakeRouter);
   
   // Setup admin user (one-time)
   app.get("/api/setup-admin", async (req, res) => {
@@ -304,6 +309,11 @@ async function startServer() {
       createContext,
     })
   );
+  
+  // Health check endpoint
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok", timestamp: new Date().toISOString() });
+  });
   
   // development mode uses Vite, production mode uses static files
   if (process.env.NODE_ENV === "development") {
