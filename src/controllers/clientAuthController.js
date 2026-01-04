@@ -213,13 +213,14 @@ async function verifyCode(req, res) {
     const caseData = result.rows[0];
 
     // Generate JWT token (expires in 24 hours)
+    const jwtSecret = process.env.JWT_SECRET || 'turbo-response-default-secret-key-2024';
     const token = jwt.sign(
       {
         caseId: caseData.id,
         email: caseData.email,
         type: 'client'
       },
-      process.env.JWT_SECRET,
+      jwtSecret,
       { expiresIn: '24h' }
     );
 

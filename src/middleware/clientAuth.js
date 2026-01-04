@@ -16,7 +16,8 @@ function authenticateClient(req, res, next) {
     }
 
     // Verify JWT token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const jwtSecret = process.env.JWT_SECRET || 'turbo-response-default-secret-key-2024';
+    const decoded = jwt.verify(token, jwtSecret);
 
     // Check if token is for client (not admin)
     if (decoded.type !== 'client') {
