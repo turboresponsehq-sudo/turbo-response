@@ -224,36 +224,17 @@ export default function AdminDashboard() {
                 <tr
                   key={caseItem.id}
                   onClick={() => handleCaseClick(caseItem.id)}
-                  style={{
-                    borderBottom: '1px solid #e5e7eb',
-                    cursor: 'pointer',
-                    transition: 'background-color 0.2s',
-                    backgroundColor: '#ffffff'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = '#f3f4f6';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = '#ffffff';
-                  }}
+                  className="border-b border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors bg-white"
                 >
-                  <td style={{ padding: '12px 16px', color: '#000000 !important', fontWeight: '500' }}>{caseItem.full_name}</td>
-                  <td style={{ padding: '12px 16px', color: '#000000 !important', fontWeight: '600' }}>{caseItem.case_number}</td>
-                  <td style={{ padding: '12px 16px', color: '#000000 !important', fontSize: '13px' }}>{caseItem.email}</td>
-                  <td style={{ padding: '12px 16px' }}>
-                    <span style={{
-                      display: 'inline-block',
-                      padding: '4px 8px',
-                      backgroundColor: '#e0e7ff',
-                      color: '#3730a3',
-                      borderRadius: '4px',
-                      fontSize: '12px',
-                      fontWeight: '500'
-                    }}>
+                  <td className="px-4 py-3 text-black font-medium">{caseItem.full_name}</td>
+                  <td className="px-4 py-3 text-black font-semibold">{caseItem.case_number}</td>
+                  <td className="px-4 py-3 text-black text-sm">{caseItem.email}</td>
+                  <td className="px-4 py-3">
+                    <span className="inline-block px-2 py-1 bg-indigo-100 text-indigo-700 rounded text-xs font-medium">
                       {caseItem.category}
                     </span>
                   </td>
-                  <td style={{ padding: '12px 16px', color: '#000000 !important' }}>{caseItem.status || 'Pending'}</td>
+                  <td className="px-4 py-3 text-black">{caseItem.status || 'Pending'}</td>
                 </tr>
               ))}
             </tbody>
