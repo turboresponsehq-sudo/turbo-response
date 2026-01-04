@@ -52,9 +52,11 @@ async function verifyPayment(req, res) {
     }
 
     // Update case to Active and enable portal
+    // Also update status to 'Active' so it shows correctly in admin dashboard
     await query(
       `UPDATE cases
        SET funnel_stage = 'Active Case',
+           status = 'Active',
            payment_verified = true,
            payment_verified_at = CURRENT_TIMESTAMP,
            payment_verified_by = $1,

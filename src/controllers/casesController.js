@@ -72,40 +72,26 @@ const getCaseById = async (req, res, next) => {
   }
 };
 
-// Get all cases (admin only)
+// Get all cases (admin only) - ALL cases are in the cases table
 const getAllCases = async (req, res, next) => {
   try {
-    // Query both tables and merge results
-    const consumerCases = await query(
-      `SELECT id, case_number, category, status, full_name, NULL as last_name, email, phone, 
-              created_at, updated_at, 'consumer' as case_type
+    // Query only the cases table - all cases (Defense & Offense) are stored here
+    const result = await query(
+      `SELECT id, case_number, category, status, full_name, email, phone, 
+              funnel_stage, portal_enabled, payment_verified,
+              created_at, updated_at
        FROM cases
-       WHERE category NOT IN ('Business Audit')
        ORDER BY created_at DESC`
-    );
-
-    const businessCases = await query(
-      `SELECT id, NULL as case_number, 'Offense' as category, NULL as status, 
-              full_name, NULL as last_name, email, phone,
-              created_at, updated_at, 'business' as case_type
-       FROM business_intakes
-       ORDER BY created_at DESC`
-    );
-
-    const allCases = [...consumerCases.rows, ...businessCases.rows].sort(
-      (a, b) => new Date(b.created_at) - new Date(a.created_at)
     );
 
     logger.info('Retrieved all cases', {
-      consumerCount: consumerCases.rows.length,
-      businessCount: businessCases.rows.length,
-      totalCount: allCases.length
+      totalCount: result.rows.length
     });
 
     res.json({
       success: true,
-      cases: allCases,
-      total: allCases.length
+      cases: result.rows,
+      total: result.rows.length
     });
   } catch (error) {
     logger.error('Failed to get all cases', {
@@ -119,13 +105,12 @@ const getAllCases = async (req, res, next) => {
   }
 };
 
-// Get admin case by ID (from either table)
+// Get admin case by ID - all cases are in the cases table
 const getAdminCaseById = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    // First try cases table
-    let result = await query(
+    const result = await query(
       `SELECT * FROM cases WHERE id = $1`,
       [id]
     );
@@ -133,22 +118,7 @@ const getAdminCaseById = async (req, res, next) => {
     if (result.rows.length > 0) {
       return res.json({
         success: true,
-        case: result.rows[0],
-        case_type: 'consumer'
-      });
-    }
-
-    // Fall back to business_intakes table
-    result = await query(
-      `SELECT * FROM business_intakes WHERE id = $1`,
-      [id]
-    );
-
-    if (result.rows.length > 0) {
-      return res.json({
-        success: true,
-        case: result.rows[0],
-        case_type: 'business'
+        case: result.rows[0]
       });
     }
 
