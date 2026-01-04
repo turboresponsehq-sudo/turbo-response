@@ -111,7 +111,7 @@ function App() {
     <ErrorBoundary>
       <AdminAuthProvider>
         <ThemeProvider
-          defaultTheme="dark"
+          defaultTheme="light"
         >
           <TooltipProvider>
             <Toaster />
