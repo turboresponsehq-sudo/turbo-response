@@ -31,6 +31,15 @@ export function ThemeProvider({
 
   useEffect(() => {
     const root = document.documentElement;
+    const isAdminRoute = window.location.pathname.startsWith("/admin");
+    
+    // FORCE LIGHT MODE on /admin routes - always remove dark class
+    if (isAdminRoute) {
+      root.classList.remove("dark");
+      return;
+    }
+    
+    // For non-admin routes, apply theme normally
     if (theme === "dark") {
       root.classList.add("dark");
     } else {
@@ -41,6 +50,28 @@ export function ThemeProvider({
       localStorage.setItem("theme", theme);
     }
   }, [theme, switchable]);
+
+  // Re-run effect when route changes (for SPA navigation)
+  useEffect(() => {
+    const handleRouteChange = () => {
+      const root = document.documentElement;
+      const isAdminRoute = window.location.pathname.startsWith("/admin");
+      
+      if (isAdminRoute) {
+        root.classList.remove("dark");
+      } else if (theme === "dark") {
+        root.classList.add("dark");
+      }
+    };
+
+    // Listen for popstate (browser back/forward)
+    window.addEventListener("popstate", handleRouteChange);
+    
+    // Initial check
+    handleRouteChange();
+    
+    return () => window.removeEventListener("popstate", handleRouteChange);
+  }, [theme]);
 
   const toggleTheme = switchable
     ? () => {
