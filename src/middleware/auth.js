@@ -10,9 +10,18 @@ const authenticateToken = (req, res, next) => {
     return res.status(401).json({ error: 'Access token required' });
   }
 
+  if (!process.env.JWT_SECRET) {
+    logger.error('JWT_SECRET not configured in environment');
+    return res.status(500).json({ error: 'Server configuration error: JWT_SECRET not set' });
+  }
+
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
-      logger.warn('Invalid token attempt', { error: err.message });
+      logger.warn('Invalid token attempt', { 
+        error: err.message,
+        errorType: err.name,
+        tokenLength: token?.length
+      });
       return res.status(403).json({ error: 'Invalid or expired token' });
     }
 

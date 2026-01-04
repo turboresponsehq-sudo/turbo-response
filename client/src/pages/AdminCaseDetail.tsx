@@ -1109,7 +1109,7 @@ export default function AdminCaseDetail() {
                 try {
                   const token = localStorage.getItem('admin_session');
                   await axios.patch(
-                    `${API_URL}/api/case/${params?.id}/verify-payment`,
+                    `${API_URL}/api/cases/${params?.id}/verify-payment`,
                     {},
                     { headers: { Authorization: `Bearer ${token}` } }
                   );

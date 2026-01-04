@@ -63,8 +63,8 @@ const submit = async (req, res, next) => {
       `INSERT INTO cases (
         user_id, case_number, category, email, full_name, phone, address, 
         case_details, amount, deadline, documents, status, payment_status, funnel_stage,
-        terms_accepted_at, terms_accepted_ip
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+        portal_enabled, terms_accepted_at, terms_accepted_ip
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
       RETURNING id, case_number, category, status, created_at`,
       [
         req.user?.id || null,
@@ -81,6 +81,7 @@ const submit = async (req, res, next) => {
         'Pending Review',
         'unpaid',
         'Lead Submitted',
+        false,  // portal_enabled = false until admin approves
         terms_accepted_at || null,
         terms_accepted_ip || null
       ]
