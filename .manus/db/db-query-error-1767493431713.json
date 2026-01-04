@@ -1,0 +1,8 @@
+{
+  "query": "SELECT id, case_number, full_name, email, category, status, created_at FROM cases WHERE full_name LIKE '%Katherine%' OR full_name LIKE '%Sona%' ORDER BY created_at DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute SELECT id, case_number, full_name, email, category, status, created_at FROM cases WHERE full_name LIKE '%Katherine%' OR full_name LIKE '%Sona%' ORDER BY created_at DESC;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'full_name' in 'where clause'"
+  ]
+}
