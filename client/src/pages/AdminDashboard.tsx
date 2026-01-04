@@ -237,9 +237,9 @@ export default function AdminDashboard() {
                     e.currentTarget.style.backgroundColor = '#ffffff';
                   }}
                 >
-                  <td style={{ padding: '12px 16px', color: '#000000', fontWeight: '500' }}>{caseItem.full_name}</td>
-                  <td style={{ padding: '12px 16px', color: '#000000', fontWeight: '600' }}>{caseItem.case_number}</td>
-                  <td style={{ padding: '12px 16px', color: '#000000', fontSize: '13px' }}>{caseItem.email}</td>
+                  <td style={{ padding: '12px 16px', color: '#000000 !important', fontWeight: '500' }}>{caseItem.full_name}</td>
+                  <td style={{ padding: '12px 16px', color: '#000000 !important', fontWeight: '600' }}>{caseItem.case_number}</td>
+                  <td style={{ padding: '12px 16px', color: '#000000 !important', fontSize: '13px' }}>{caseItem.email}</td>
                   <td style={{ padding: '12px 16px' }}>
                     <span style={{
                       display: 'inline-block',
@@ -253,7 +253,7 @@ export default function AdminDashboard() {
                       {caseItem.category}
                     </span>
                   </td>
-                  <td style={{ padding: '12px 16px', color: '#000000' }}>{caseItem.status || 'Pending'}</td>
+                  <td style={{ padding: '12px 16px', color: '#000000 !important' }}>{caseItem.status || 'Pending'}</td>
                 </tr>
               ))}
             </tbody>
