@@ -136,7 +136,8 @@ export default function AdminDashboard() {
     <div style={{ 
       minHeight: '100vh', 
       backgroundColor: '#f3f4f6',
-      padding: '20px'
+      padding: '20px',
+      fontFamily: 'system-ui, -apple-system, sans-serif'
     }}>
       {/* Header */}
       <div style={{
@@ -150,7 +151,7 @@ export default function AdminDashboard() {
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
       }}>
         <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 'bold' }}>
-          ⚡ Admin Dashboard
+          ⚡ Admin Dashboard ({cases.length} cases)
         </h1>
         <button
           onClick={handleLogout}
@@ -183,96 +184,82 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Cases List */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-        gap: '20px'
-      }}>
-        {cases.length === 0 ? (
-          <div style={{
-            gridColumn: '1 / -1',
-            textAlign: 'center',
-            padding: '40px',
-            backgroundColor: 'white',
-            borderRadius: '8px',
-            color: '#6b7280'
+      {/* Cases Table */}
+      {cases.length === 0 ? (
+        <div style={{
+          textAlign: 'center',
+          padding: '40px',
+          backgroundColor: 'white',
+          borderRadius: '8px',
+          color: '#6b7280'
+        }}>
+          <p style={{ fontSize: '18px' }}>No cases found</p>
+        </div>
+      ) : (
+        <div style={{
+          backgroundColor: 'white',
+          borderRadius: '8px',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          overflow: 'hidden'
+        }}>
+          <table style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            fontSize: '14px'
           }}>
-            <p style={{ fontSize: '18px' }}>No cases found</p>
-          </div>
-        ) : (
-          cases.map((caseItem) => (
-            <div
-              key={caseItem.id}
-              onClick={() => handleCaseClick(caseItem.id)}
-              style={{
-                backgroundColor: 'white',
-                padding: '20px',
-                borderRadius: '8px',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                border: '1px solid #e5e7eb'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.15)';
-                e.currentTarget.style.transform = 'translateY(-2px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
-            >
-              <div style={{ marginBottom: '12px' }}>
-                <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: '600' }}>
-                  {caseItem.full_name}
-                </h3>
-                <p style={{ margin: 0, fontSize: '12px', color: '#6b7280' }}>
-                  Case #{caseItem.case_number}
-                </p>
-              </div>
-
-              <div style={{ marginBottom: '12px' }}>
-                <p style={{ margin: '4px 0', fontSize: '13px' }}>
-                  <strong>Email:</strong> {caseItem.email}
-                </p>
-                {caseItem.phone && (
-                  <p style={{ margin: '4px 0', fontSize: '13px' }}>
-                    <strong>Phone:</strong> {caseItem.phone}
-                  </p>
-                )}
-              </div>
-
-              <div style={{ marginBottom: '12px' }}>
-                <span style={{
-                  display: 'inline-block',
-                  padding: '4px 8px',
-                  backgroundColor: '#e0e7ff',
-                  color: '#3730a3',
-                  borderRadius: '4px',
-                  fontSize: '12px',
-                  fontWeight: '500'
-                }}>
-                  {caseItem.category}
-                </span>
-              </div>
-
-              {caseItem.funnel_stage && (
-                <div style={{
-                  padding: '8px',
-                  backgroundColor: getFunnelStageColor(caseItem.funnel_stage) + '20',
-                  borderLeft: `3px solid ${getFunnelStageColor(caseItem.funnel_stage)}`,
-                  borderRadius: '4px',
-                  fontSize: '12px',
-                  color: getFunnelStageColor(caseItem.funnel_stage)
-                }}>
-                  Stage: {caseItem.funnel_stage}
-                </div>
-              )}
-            </div>
-          ))
-        )}
-      </div>
+            <thead>
+              <tr style={{
+                backgroundColor: '#f9fafb',
+                borderBottom: '2px solid #e5e7eb'
+              }}>
+                <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#374151' }}>Name</th>
+                <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#374151' }}>Case #</th>
+                <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#374151' }}>Email</th>
+                <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#374151' }}>Category</th>
+                <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#374151' }}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cases.map((caseItem) => (
+                <tr
+                  key={caseItem.id}
+                  onClick={() => handleCaseClick(caseItem.id)}
+                  style={{
+                    borderBottom: '1px solid #e5e7eb',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s',
+                    backgroundColor: '#ffffff'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#f3f4f6';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#ffffff';
+                  }}
+                >
+                  <td style={{ padding: '12px 16px', color: '#111827' }}>{caseItem.full_name}</td>
+                  <td style={{ padding: '12px 16px', color: '#111827', fontWeight: '500' }}>{caseItem.case_number}</td>
+                  <td style={{ padding: '12px 16px', color: '#6b7280', fontSize: '13px' }}>{caseItem.email}</td>
+                  <td style={{ padding: '12px 16px' }}>
+                    <span style={{
+                      display: 'inline-block',
+                      padding: '4px 8px',
+                      backgroundColor: '#e0e7ff',
+                      color: '#3730a3',
+                      borderRadius: '4px',
+                      fontSize: '12px',
+                      fontWeight: '500'
+                    }}>
+                      {caseItem.category}
+                    </span>
+                  </td>
+                  <td style={{ padding: '12px 16px', color: '#6b7280' }}>{caseItem.status || 'Pending'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
