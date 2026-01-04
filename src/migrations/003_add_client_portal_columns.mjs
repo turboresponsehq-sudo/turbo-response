@@ -15,7 +15,7 @@ export async function up(db) {
       ADD COLUMN IF NOT EXISTS client_status VARCHAR(100),
       ADD COLUMN IF NOT EXISTS client_notes TEXT,
       ADD COLUMN IF NOT EXISTS payment_link VARCHAR(500),
-      ADD COLUMN IF NOT EXISTS portal_enabled BOOLEAN DEFAULT TRUE;
+      ADD COLUMN IF NOT EXISTS portal_enabled BOOLEAN DEFAULT FALSE;
     `);
     
     console.log('[MIGRATION 003] ✅ Columns added successfully');
@@ -28,9 +28,10 @@ export async function up(db) {
     console.log('[MIGRATION 003] ✅ Index created successfully');
     
     // Set default values for existing cases
+    // NOTE: New cases should have portal_enabled = FALSE until admin approves
     await db.query(`
       UPDATE cases 
-      SET portal_enabled = TRUE 
+      SET portal_enabled = FALSE 
       WHERE portal_enabled IS NULL;
     `);
     
