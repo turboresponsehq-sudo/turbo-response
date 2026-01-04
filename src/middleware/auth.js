@@ -1,12 +1,31 @@
 const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');
 
-// Verify JWT token
+// Verify JWT token from cookies (mobile-friendly)
 const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+  // Try to get token from:
+  // 1. httpOnly cookie (preferred for mobile)
+  // 2. Authorization header (fallback for API clients)
+  
+  let token = null;
+
+  // First, try to get from httpOnly cookie
+  if (req.cookies && req.cookies.admin_session) {
+    token = req.cookies.admin_session;
+    logger.debug('Token retrieved from httpOnly cookie');
+  }
+  
+  // Fallback to Authorization header for API clients
+  if (!token) {
+    const authHeader = req.headers['authorization'];
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+      logger.debug('Token retrieved from Authorization header');
+    }
+  }
 
   if (!token) {
+    logger.warn('No token found in cookies or Authorization header');
     return res.status(401).json({ error: 'Access token required' });
   }
 
@@ -21,7 +40,8 @@ const authenticateToken = (req, res, next) => {
       logger.warn('Invalid token attempt', { 
         error: err.message,
         errorType: err.name,
-        tokenLength: token?.length
+        tokenLength: token?.length,
+        tokenSource: req.cookies?.admin_session ? 'cookie' : 'header'
       });
       return res.status(403).json({ error: 'Invalid or expired token' });
     }

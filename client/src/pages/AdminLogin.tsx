@@ -11,11 +11,20 @@ export default function AdminLogin() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Check if already logged in
-    const session = localStorage.getItem("admin_session");
-    if (session) {
-      setLocation("/admin");
-    }
+    // Check if already logged in by attempting to fetch admin data
+    // If the httpOnly cookie is valid, this will succeed
+    const checkAuth = async () => {
+      try {
+        const response = await api.get('/api/auth/me');
+        if (response.user) {
+          setLocation("/admin");
+        }
+      } catch (error) {
+        // Not logged in, stay on login page
+      }
+    };
+    
+    checkAuth();
   }, [setLocation]);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -25,16 +34,19 @@ export default function AdminLogin() {
 
     try {
       // Authenticate with backend
+      // The response will include an httpOnly cookie (admin_session)
+      // which will be automatically sent with subsequent requests
       const response = await api.post('/api/auth/login', {
         email,
         password,
       });
 
-      // Store session token and user info
-      localStorage.setItem("admin_session", response.token);
+      // Store user info in localStorage (optional, for display purposes)
+      // The actual auth token is now in the httpOnly cookie
       if (response.user) {
         localStorage.setItem("admin_user", JSON.stringify(response.user));
       }
+      
       setLocation("/admin");
     } catch (error: any) {
       setError(`❌ ${error.message}`);
@@ -97,10 +109,6 @@ export default function AdminLogin() {
             {isLoading ? "Logging in..." : "🔓 Login to Dashboard"}
           </button>
         </form>
-
-        <div className="back-link">
-          <a href="/">← Back to Homepage</a>
-        </div>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const { query } = require('../services/database/db');
 const { generateToken } = require('../middleware/auth');
 const logger = require('../utils/logger');
@@ -116,9 +116,19 @@ const login = async (req, res, next) => {
 
     logger.info('User logged in', { userId: user.id, email: user.email });
 
+    // Set token as httpOnly, secure cookie (works on mobile)
+    // This replaces localStorage-based authentication
+    res.cookie('admin_session', token, {
+      httpOnly: true,        // Prevents JavaScript access (XSS protection)
+      secure: true,          // HTTPS only
+      sameSite: 'lax',       // CSRF protection, allows same-site navigation
+      maxAge: 365 * 24 * 60 * 60 * 1000  // 1 year in milliseconds
+    });
+
+    logger.info('Admin session cookie set', { userId: user.id, email: user.email });
+
     res.json({
       message: 'Login successful',
-      token,
       user: {
         id: user.id,
         email: user.email,
@@ -149,8 +159,28 @@ const getMe = async (req, res, next) => {
   }
 };
 
+// Logout user (clear cookie)
+const logout = async (req, res, next) => {
+  try {
+    res.clearCookie('admin_session', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax'
+    });
+
+    logger.info('User logged out', { userId: req.user?.id });
+
+    res.json({
+      message: 'Logout successful'
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   login,
-  getMe
+  getMe,
+  logout
 };
