@@ -10,10 +10,11 @@ const generateCaseNumber = () => {
   return `${prefix}-${timestamp}-${random}`;
 };
 
-// Submit new intake form
+// Submit new intake form (MOBILE-HARDENED)
 const submit = async (req, res, next) => {
   try {
-    const {
+    // Mobile-safe input extraction with trimming and normalization
+    let {
       email,
       full_name,
       phone,
@@ -27,6 +28,25 @@ const submit = async (req, res, next) => {
       terms_accepted_ip
     } = req.body;
 
+    // MOBILE FIX 1: Trim and normalize all string inputs
+    // Mobile keyboards can add invisible characters, spaces, and inconsistent casing
+    email = typeof email === 'string' ? email.trim().toLowerCase() : email;
+    full_name = typeof full_name === 'string' ? full_name.trim() : full_name;
+    phone = typeof phone === 'string' ? phone.trim() : phone;
+    address = typeof address === 'string' ? address.trim() : address;
+    category = typeof category === 'string' ? category.trim().toLowerCase() : category;
+    case_details = typeof case_details === 'string' ? case_details.trim() : case_details;
+    amount = typeof amount === 'string' ? amount.trim() : amount;
+    deadline = typeof deadline === 'string' ? deadline.trim() : deadline;
+
+    // MOBILE FIX 2: Safely handle documents array
+    // Mobile browsers may send null, undefined, or malformed file data
+    if (!documents || !Array.isArray(documents)) {
+      documents = [];
+    }
+    // Filter out null/undefined/empty entries from mobile file uploads
+    documents = documents.filter(doc => doc && typeof doc === 'object' && doc.url);
+
     // DEBUG: Log received case_details
     console.log('[INTAKE DEBUG] Received case_details:', {
       length: case_details?.length || 0,
@@ -34,13 +54,24 @@ const submit = async (req, res, next) => {
       type: typeof case_details
     });
 
-    // Validate required fields
+    // MOBILE FIX 3: Validate required fields with explicit checks
     if (!email || !full_name || !category || !case_details) {
       logger.warn('Intake validation failed: missing required fields', { email, full_name, category });
       return res.status(400).json({
         success: false,
         message: 'Missing required fields',
         error: 'email, full_name, category, and case_details are required'
+      });
+    }
+
+    // MOBILE FIX 4: Enhanced email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      logger.warn('Intake validation failed: invalid email format', { email });
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid email format',
+        error: 'Please provide a valid email address'
       });
     }
 
@@ -63,8 +94,8 @@ const submit = async (req, res, next) => {
       `INSERT INTO cases (
         user_id, case_number, category, email, full_name, phone, address, 
         case_details, amount, deadline, documents, status, payment_status, funnel_stage,
-        terms_accepted_at, terms_accepted_ip
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+        portal_enabled, terms_accepted_at, terms_accepted_ip
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
       RETURNING id, case_number, category, status, created_at`,
       [
         req.user?.id || null,
@@ -81,6 +112,7 @@ const submit = async (req, res, next) => {
         'Pending Review',
         'unpaid',
         'Lead Submitted',
+        false,  // portal_enabled = false until admin approves
         terms_accepted_at || null,
         terms_accepted_ip || null
       ]

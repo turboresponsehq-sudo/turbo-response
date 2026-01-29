@@ -264,3 +264,47 @@
 - [ ] Save checkpoint
 - [ ] Push to GitHub
 - [ ] Verify on production
+
+
+---
+
+## 🚨 MOBILE INTAKE FIX (JAN 29 2026)
+
+**CRITICAL BUG: Mobile intake submissions failing with "Failed to create case/user" error**
+
+### Root Cause Analysis (COMPLETED)
+- [x] Desktop submissions working ✅
+- [x] Mobile submissions failing ❌
+- [x] Identified 3 root causes:
+  1. Mobile file uploads sending null/undefined/malformed data
+  2. Mobile keyboards adding invisible characters and whitespace
+  3. Email casing inconsistencies (Mobile@Email.com vs mobile@email.com)
+
+### Solution Implemented (COMPLETED)
+- [x] **MOBILE FIX 1:** Input normalization - trim and lowercase all string inputs
+- [x] **MOBILE FIX 2:** Safe file upload handling - default to empty array, filter malformed objects
+- [x] **MOBILE FIX 3:** Explicit required field validation with clear error messages
+- [x] **MOBILE FIX 4:** Enhanced email validation after normalization
+- [x] Applied fixes to both intakeController.js (Defense) and turboIntakeController.js (Offense)
+- [x] Created MOBILE_INTAKE_FIX.md documentation
+
+### Files Modified
+- [x] src/controllers/intakeController.js (Defense intake)
+- [x] src/controllers/turboIntakeController.js (Offense intake)
+
+### Testing Checklist
+- [ ] Test Defense intake on iPhone Safari
+- [ ] Test Defense intake on Android Chrome
+- [ ] Test Offense intake on iPhone Safari
+- [ ] Test Offense intake on Android Chrome
+- [ ] Test with files from mobile camera
+- [ ] Test without files
+- [ ] Test with whitespace in email/name
+- [ ] Verify desktop submissions still work (regression test)
+
+### Deployment
+- [ ] Save checkpoint
+- [ ] Push to GitHub
+- [ ] Auto-deploy to Render
+- [ ] Monitor mobile intake success rate
+- [ ] Confirm "Failed to create case/user" errors disappear
