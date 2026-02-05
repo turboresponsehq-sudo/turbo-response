@@ -13,7 +13,7 @@ interface AdminAuthContextType {
   user: AdminUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (token: string, user: AdminUser) => void;
+  login: (token: string, user: AdminUser, useCookieAuth?: boolean) => void;
   logout: () => void;
   clearTokenAndRedirect: () => void;
   checkAuth: () => boolean;
@@ -47,12 +47,23 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false);
   }, []);
 
-  const login = useCallback((newToken: string, newUser: AdminUser) => {
-    localStorage.setItem('admin_session', newToken);
-    localStorage.setItem('admin_user', JSON.stringify(newUser));
-    setToken(newToken);
-    setUser(newUser);
-    console.log('[AdminAuth] Login successful for:', newUser.email);
+  const login = useCallback((newToken: string, newUser: AdminUser, useCookieAuth?: boolean) => {
+    if (useCookieAuth) {
+      // PR #2: Cookie mode - don't store token in localStorage
+      console.log('[AdminAuth] Using cookie-based auth (test mode)');
+      setToken('cookie-based'); // Placeholder to indicate authenticated
+      setUser(newUser);
+      localStorage.setItem('admin_user', JSON.stringify(newUser)); // Still store user for UI
+      localStorage.setItem('auth_mode', 'cookie'); // Flag for API calls
+    } else {
+      // Legacy mode - store token in localStorage
+      localStorage.setItem('admin_session', newToken);
+      localStorage.setItem('admin_user', JSON.stringify(newUser));
+      localStorage.removeItem('auth_mode'); // Clear cookie flag
+      setToken(newToken);
+      setUser(newUser);
+      console.log('[AdminAuth] Login successful for:', newUser.email);
+    }
   }, []);
 
   const logout = useCallback(() => {
