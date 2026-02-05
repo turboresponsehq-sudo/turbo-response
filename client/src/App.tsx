@@ -36,6 +36,7 @@ import AdminCasesList from "./pages/AdminCasesList";
 import AdminCasesDetail from "./pages/AdminCaseDetail";
 import GrantDemo from "./pages/GrantDemo";
 import EvictionDemo from "./pages/EvictionDemo";
+import AdminLogin from "./pages/AdminLogin";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -80,7 +81,7 @@ function Router() {
 
       <Route path="/admin/cases/:id" component={AdminCasesDetail} />
       <Route path="/admin/cases" component={AdminCasesList} />
-      <Route path="/admin" component={Admin} />
+      <Route path="/admin" component={AdminLogin} />
       
       {/* Legacy AI analysis routes - separate system */}
       <Route path="/admin/consumer/case/:id" component={AdminConsumerCaseDetail} />

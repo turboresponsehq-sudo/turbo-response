@@ -1,68 +1,46 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { getLoginUrl } from "@/const";
-import { useAuth } from "@/_core/hooks/useAuth";
+import { api } from "@/lib/api";
 import "./AdminLogin.css";
 
 export default function AdminLogin() {
   const [, setLocation] = useLocation();
-  const { user, loading } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // Check if already logged in
-    if (!loading && user) {
-      // Check if user is admin
-      if (user.role === 'admin') {
-        setLocation("/admin");
-      } else {
-        // Not an admin - show access denied
-        console.warn('[AdminLogin] User is not an admin:', user.email, 'role:', user.role);
-      }
+    const session = localStorage.getItem("admin_session");
+    if (session) {
+      setLocation("/admin");
     }
-  }, [user, loading, setLocation]);
+  }, [setLocation]);
 
-  const handleGoogleLogin = () => {
-    // Redirect to OAuth login
-    window.location.href = getLoginUrl();
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
+
+    try {
+      // Authenticate with backend
+      const response = await api.post('/api/auth/login', {
+        email,
+        password,
+      });
+
+      // Store session token and user info
+      localStorage.setItem("admin_session", response.token);
+      if (response.user) {
+        localStorage.setItem("admin_user", JSON.stringify(response.user));
+      }
+      setLocation("/admin");
+    } catch (error: any) {
+      setError(`❌ ${error.message}`);
+      setIsLoading(false);
+    }
   };
-
-  // Show access denied if user is logged in but not admin
-  if (!loading && user && user.role !== 'admin') {
-    return (
-      <div className="admin-login-page">
-        {/* Animated Background */}
-        <div className="bg-animation">
-          <div className="bg-grid"></div>
-        </div>
-
-        {/* Access Denied Container */}
-        <div className="login-container">
-          <div className="login-header">
-            <div className="logo">
-              <div className="logo-icon">⚡</div>
-              TURBO RESPONSE
-            </div>
-            <h1 className="login-title">Access Denied</h1>
-            <p className="login-subtitle">🔒 Admin Access Required</p>
-          </div>
-
-          <div className="error-message">
-            You are logged in as <strong>{user.email}</strong>, but you do not have administrator privileges.
-          </div>
-
-          <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-            <button
-              onClick={() => setLocation("/")}
-              className="google-login-button"
-              style={{ background: '#6b7280' }}
-            >
-              ← Back to Home
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="admin-login-page">
@@ -82,48 +60,46 @@ export default function AdminLogin() {
           <p className="login-subtitle">🔒 Secure Access Required</p>
         </div>
 
-        <div style={{ marginTop: '2rem', marginBottom: '2rem', textAlign: 'center', color: '#9ca3af' }}>
-          <p>Sign in with your Google account to access the admin dashboard.</p>
-          <p style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}>
-            Only authorized administrators can access this area.
-          </p>
-        </div>
+        {error && <div className="error-message">{error}</div>}
 
-        <button
-          onClick={handleGoogleLogin}
-          className="google-login-button"
-          disabled={loading}
-        >
-          <svg
-            style={{ width: '20px', height: '20px', marginRight: '12px' }}
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fill="#4285F4"
-              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+        <form onSubmit={handleLogin}>
+          <div className="form-group">
+            <label className="form-label" htmlFor="email">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              className="form-input"
+              placeholder="Enter email"
+              required
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
-            <path
-              fill="#34A853"
-              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+          </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="password">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              className="form-input"
+              placeholder="Enter password"
+              required
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
-            <path
-              fill="#FBBC05"
-              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-            />
-            <path
-              fill="#EA4335"
-              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-            />
-          </svg>
-          {loading ? 'Loading...' : 'Sign in with Google'}
-        </button>
+          </div>
+          <button type="submit" className="btn-login" disabled={isLoading}>
+            {isLoading ? "Logging in..." : "🔓 Login to Dashboard"}
+          </button>
+        </form>
 
-        <div style={{ marginTop: '2rem', textAlign: 'center', fontSize: '0.75rem', color: '#6b7280' }}>
-          <p>✅ OAuth 2.0 Secure Authentication</p>
-          <p style={{ marginTop: '0.5rem' }}>
-            Your credentials are never stored on our servers.
-          </p>
+        <div className="back-link">
+          <a href="/">← Back to Homepage</a>
         </div>
       </div>
     </div>
