@@ -1,7 +1,6 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import cookieParser from "cookie-parser";
 import { createServer } from "http";
 import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
@@ -60,9 +59,6 @@ async function startServer() {
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
-  
-  // Cookie parser for reading cookies
-  app.use(cookieParser());
   
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
@@ -190,63 +186,73 @@ async function startServer() {
     }
   };
   
-  // Email/Password login endpoint
+  // Admin login endpoint
   app.post("/api/auth/login", async (req, res) => {
     try {
       const { email, password } = req.body;
       
       if (!email || !password) {
-        return res.status(400).json({ error: 'Email and password are required' });
+        return res.status(400).json({ message: 'Email and password required' });
       }
+
+      const bcrypt = await import("bcrypt");
+      const jwt = await import("jsonwebtoken");
+      const db = await getDb();
       
-      // Hardcoded credentials check
-      const ADMIN_EMAIL = 'turboresponsehq@gmail.com';
-      const ADMIN_PASSWORD = 'Turbo1234!';
-      
-      if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
-        console.warn('[Auth] Invalid login attempt for:', email);
-        return res.status(401).json({ error: 'Invalid email or password' });
+      if (!db) {
+        return res.status(500).json({ message: 'Database not available' });
       }
-      
-      // Generate JWT token
-      const jwt = await import('jsonwebtoken');
+
+      // Find user
+      const result: any = await db.execute(`SELECT * FROM users WHERE email = '${email}' LIMIT 1`);
+      const user = result.rows?.[0] || result[0];
+
+      if (!user || !user.password) {
+        return res.status(401).json({ message: 'Invalid credentials' });
+      }
+
+      // Verify password
+      const isValid = await bcrypt.default.compare(password, user.password);
+      if (!isValid) {
+        return res.status(401).json({ message: 'Invalid credentials' });
+      }
+
+      // Check admin role
+      if (user.role !== 'admin') {
+        return res.status(403).json({ message: 'Access denied' });
+      }
+
+      // Generate token
       const secret = process.env.JWT_SECRET;
       
       if (!secret) {
-        console.error('[Auth] JWT_SECRET not set');
-        return res.status(500).json({ error: 'Server configuration error' });
+        console.error('[Login] JWT_SECRET not set in environment');
+        return res.status(500).json({ message: 'Server configuration error' });
       }
       
+      console.log('[Login] Generating token with secret length:', secret.length);
       const token = jwt.default.sign(
-        { email, role: 'admin', id: 1 },
+        { userId: user.id, email: user.email, role: user.role },
         secret,
-        { expiresIn: '7d' }
+        { expiresIn: '365d' }
       );
-      
-      console.log('[Auth] Login successful for:', email);
-      
-      return res.json({
-        success: true,
+      console.log('[Login] Token generated successfully for:', user.email);
+
+      res.json({
         token,
-        user: { email, role: 'admin', id: 1 }
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role
+        }
       });
+      
     } catch (error: any) {
-      console.error('[Auth] Login error:', error);
-      return res.status(500).json({ error: 'Internal server error' });
+      console.error('❌ Login error:', error);
+      res.status(500).json({ message: 'Internal server error' });
     }
   });
-  
-  // PR #2: Cookie-based a  // DEPRECATED: Cookie-based password login (never implemented - OAuth only)
-  app.post("/api/auth/login-cookie", async (req, res) => {
-    console.warn('[Auth] Cookie login endpoint called - this is deprecated (OAuth-only system)');
-    return res.status(410).json({
-      error: 'Password login is no longer supported',
-      message: 'This system uses Google OAuth authentication only.',
-      deprecated: true
-    });
-  });
-  
-
   
   // Admin cases endpoints
   app.get("/api/admin/cases", verifyAdminToken, async (req: any, res: any) => {
