@@ -42,6 +42,10 @@ if [ ! -f "dist/server.mjs" ]; then
     echo -e "${RED}ERROR: dist/server.mjs does not exist${NC}"
     exit 1
 fi
+if [ ! -f "dist/server.js" ]; then
+    echo -e "${RED}ERROR: dist/server.js (shim) does not exist${NC}"
+    exit 1
+fi
 echo "✓ Backend built successfully to dist/"
 
 # Step 4: Copy frontend to dist/public
@@ -65,6 +69,7 @@ echo -e "\n${YELLOW}[6/6] Validating build output...${NC}"
 # Check required files
 REQUIRED_FILES=(
     "dist/server.mjs"
+    "dist/server.js"
     "dist/public/index.html"
     "dist/migrations/run-migrations.mjs"
 )
@@ -97,6 +102,7 @@ if [ "$ALL_VALID" = true ]; then
     echo "Build output structure:"
     echo "  dist/"
     echo "  ├── server.mjs (backend - ESM)"
+    echo "  ├── server.js (shim for Render)"
     echo "  ├── migrations/ (database)"
     echo "  └── public/ (frontend)"
     echo "      ├── index.html"

@@ -6,7 +6,7 @@
     "dev": "NODE_ENV=development tsx watch server/_core/index.ts",
     "build": "bash build.sh",
     "build:frontend": "rm -rf dist-frontend && vite build",
-    "build:backend": "rm -rf dist && esbuild server/_core/index.ts --bundle --platform=node --packages=external --format=esm --outfile=dist/server.mjs && cp -r src/migrations dist/migrations 2>/dev/null || true",
+    "build:backend": "rm -rf dist && esbuild server/_core/index.ts --bundle --platform=node --packages=external --format=esm --outfile=dist/server.mjs && cp server-shim.js dist/server.js && cp -r src/migrations dist/migrations 2>/dev/null || true",
     "build:full": "bash build.sh",
     "start": "node dist/server.mjs",
     "check": "tsc --noEmit",
