@@ -308,3 +308,132 @@
 - [ ] Auto-deploy to Render
 - [ ] Monitor mobile intake success rate
 - [ ] Confirm "Failed to create case/user" errors disappear
+
+
+---
+
+## 🔐 AUTH STANDARDIZATION AUDIT (FEB 5 2026)
+
+**GOAL:** Eliminate weekly browser-specific glitches by standardizing authentication to cookie-only system
+
+### Audit Phase (COMPLETED)
+- [x] Inventory all authentication read/write locations
+- [x] Map request flows for critical paths (/admin, /admin/cases/:id, /client-portal, /api/turbo-intake)
+- [x] Identify inconsistencies (localStorage vs httpOnly cookies)
+- [x] Document browser-specific risks (Chrome/Edge/Safari)
+- [x] Create AUTH-AUDIT.md with findings and migration plan
+- [x] Add /api/version endpoint for deployment tracking
+- [x] Update todo.md with migration tasks
+
+### Migration Phase (PENDING USER APPROVAL)
+
+**PR #1: Add Deployment Version Endpoint** (30 minutes, Risk: 🟢 Low)
+- [x] Create src/routes/version.js
+- [x] Register route in src/server.js
+- [ ] Test /api/version endpoint returns commit SHA
+- [ ] Add version display in admin footer
+- [ ] Verify version logged on server startup
+- [ ] Save checkpoint
+- [ ] Deploy to production
+- [ ] Verify /api/version works on production
+
+**PR #2: Add Cookie-Based Auth Endpoint** (1 hour, Risk: 🟢 Low)
+- [ ] Add loginWithCookie() function to src/controllers/authController.js
+- [ ] Add POST /api/auth/login-cookie route
+- [ ] Set httpOnly cookie instead of returning token
+- [ ] Test with Postman - verify Set-Cookie header
+- [ ] Verify cookie has httpOnly, secure, sameSite flags
+- [ ] Verify existing /api/auth/login still works
+- [ ] Save checkpoint
+- [ ] Deploy to production
+
+**PR #3: Add Cookie-Based Auth Middleware** (45 minutes, Risk: 🟢 Low)
+- [ ] Add authenticateTokenFromCookie() to src/middleware/auth.js
+- [ ] Check req.cookies.auth_token first, fallback to Authorization header
+- [ ] Test endpoint with cookie → 200
+- [ ] Test endpoint with Bearer token → 200
+- [ ] Test endpoint with neither → 401
+- [ ] Save checkpoint
+- [ ] Deploy to production
+
+**PR #4: Update Admin Login to Use Cookie Auth** (2 hours, Risk: 🟡 Medium)
+- [ ] Update client/src/pages/AdminLogin.tsx to call /api/auth/login-cookie
+- [ ] Remove localStorage.setItem() calls
+- [ ] Update client/src/contexts/AdminAuthContext.tsx to check /api/auth/me
+- [ ] Keep fallback to localStorage for backward compatibility
+- [ ] Test login sets cookie (check Network tab)
+- [ ] Test refresh page → still authenticated
+- [ ] Test close browser, reopen → still authenticated
+- [ ] Test in Chrome, Edge, Firefox
+- [ ] Save checkpoint
+- [ ] Deploy to production
+
+**PR #5: Update Admin API Calls to Use Cookie Auth** (1.5 hours, Risk: 🟡 Medium)
+- [ ] Remove Authorization: Bearer ${token} headers from AdminDashboard.tsx
+- [ ] Remove Authorization headers from AdminCaseDetail.tsx
+- [ ] Ensure credentials: 'include' is set on all fetch calls
+- [ ] Test admin dashboard loads cases
+- [ ] Test admin case detail loads
+- [ ] Verify Network tab shows cookie sent (no Authorization header)
+- [ ] Save checkpoint
+- [ ] Deploy to production
+
+**PR #6: Update Backend Routes to Use Cookie Middleware** (1 hour, Risk: 🟡 Medium)
+- [ ] Replace authenticateToken with authenticateTokenFromCookie in src/routes/cases.js
+- [ ] Replace in src/routes/admin.js
+- [ ] Replace in src/routes/adminCases.js
+- [ ] Test all admin routes work with cookie auth
+- [ ] Test all admin routes work with Bearer token (fallback)
+- [ ] Verify no 401 errors
+- [ ] Save checkpoint
+- [ ] Deploy to production
+
+**PR #7: Remove localStorage Fallback** (30 minutes, Risk: 🟢 Low)
+- [ ] Remove all localStorage.getItem('admin_session') calls
+- [ ] Remove all localStorage.setItem('admin_session') calls
+- [ ] Remove all localStorage.removeItem('admin_session') calls
+- [ ] Remove admin_user localStorage key
+- [ ] Test admin auth still works
+- [ ] Verify no console errors about localStorage
+- [ ] Verify logout clears cookie (not localStorage)
+- [ ] Save checkpoint
+- [ ] Deploy to production
+
+**PR #8: Tighten CORS Policy** (45 minutes, Risk: 🟡 Medium)
+- [ ] Replace origin: true with whitelist in src/server.js
+- [ ] Add ALLOWED_ORIGINS environment variable
+- [ ] Set ALLOWED_ORIGINS=https://turboresponsehq.ai,https://www.turboresponsehq.ai
+- [ ] Test requests from turboresponsehq.ai work
+- [ ] Test requests from other domains blocked
+- [ ] Verify CORS errors logged
+- [ ] Save checkpoint
+- [ ] Deploy to production
+
+### Testing Checklist (After Each PR)
+- [ ] Test in Chrome (latest)
+- [ ] Test in Edge (latest)
+- [ ] Test in Firefox (latest)
+- [ ] Test in Safari (latest)
+- [ ] Test on Android Chrome
+- [ ] Test on iOS Safari
+- [ ] Monitor Render logs for errors
+- [ ] Check /api/version to confirm deployment
+
+### Success Metrics (After Full Migration)
+- [ ] Zero weekly glitches reported (target: 0, current: 1-2)
+- [ ] Zero auth-related support tickets
+- [ ] Chrome "View" button works consistently
+- [ ] Average issue resolution time < 15 minutes (current: 3 hours)
+- [ ] All browsers work identically (no browser-specific bugs)
+
+### Documentation
+- [x] docs/AUTH-AUDIT.md - Complete audit with findings and migration plan
+- [ ] docs/TROUBLESHOOTING-SOP.md - Update with cookie auth system after migration
+- [ ] docs/POLICY_REGISTRY.md - Add auth standardization policy after migration
+
+### Rollback Plan
+- If any PR causes issues, immediately revert on GitHub
+- Render auto-deploys previous version (~3-5 minutes)
+- Check /api/version to confirm rollback
+- Document issue in GitHub issue
+- Update SOP with new failure case
