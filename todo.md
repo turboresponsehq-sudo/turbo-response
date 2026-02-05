@@ -513,3 +513,11 @@
 - [x] Fixed import.meta.dirname issue in server/_core/vite.ts
 - [ ] Test /admin shows dashboard when authenticated
 - [ ] Deploy and verify on production
+
+
+## 🎨 PRODUCTION FIXES (FEB 5 2026)
+- [x] Fix TypeError: Invalid URL crash on /admin route (added validation to getLoginUrl)
+- [x] Changed default theme from light to dark in App.tsx
+- [ ] Deploy fixes to production
+- [ ] Verify /admin loads without crashing
+- [ ] Verify homepage shows navy blue background (still burgundy in dev - needs investigation)
