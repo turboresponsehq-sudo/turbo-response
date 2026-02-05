@@ -36,6 +36,7 @@ const adminCasesRoutes = require('./routes/adminCases'); // Admin Case File Uplo
 const adminDiagnosticRoutes = require('./routes/adminDiagnostic'); // Admin diagnostic and reset
 const createAdminCasesTableRoutes = require('./routes/createAdminCasesTable'); // Create admin_cases table
 const createBusinessIntakesTableRoutes = require('./routes/createBusinessIntakesTable'); // Create business_intakes table
+const versionRoutes = require('./routes/version'); // Deployment version tracking
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -107,6 +108,7 @@ app.use('/api/admin/cases', adminCasesRoutes); // Admin case file upload center
 app.use('/api', adminDiagnosticRoutes); // Admin diagnostic
 app.use('/api', createAdminCasesTableRoutes); // Create admin_cases table
 app.use('/api', createBusinessIntakesTableRoutes); // Create business_intakes table
+app.use('/api/version', versionRoutes); // Deployment version endpoint
 
 // Serve frontend static files and SPA fallback
 const { serveFrontend } = require('../serve-frontend');
