@@ -328,14 +328,15 @@
 ### Migration Phase (PENDING USER APPROVAL)
 
 **PR #1: Add Deployment Version Endpoint** (30 minutes, Risk: 🟢 Low)
-- [x] Create src/routes/version.js
-- [x] Register route in src/server.js
-- [ ] Test /api/version endpoint returns commit SHA
-- [ ] Add version display in admin footer
-- [ ] Verify version logged on server startup
-- [ ] Save checkpoint
-- [ ] Deploy to production
-- [ ] Verify /api/version works on production
+- [x] Create system.version tRPC procedure in server/_core/systemRouter.ts
+- [x] Returns commit SHA, build time, uptime, environment, feature flags
+- [x] Security verified: No secrets exposed
+- [x] Test script created: test-version-endpoint.sh
+- [x] Save checkpoint
+- [ ] Deploy to production (Render auto-deploy from GitHub)
+- [ ] Run test script on production: ./test-version-endpoint.sh https://turboresponsehq.ai
+- [ ] Verify tRPC endpoint returns JSON with version info
+- [ ] Add version display in admin footer (future PR)
 
 **PR #2: Add Cookie-Based Auth Endpoint** (1 hour, Risk: 🟢 Low)
 - [ ] Add loginWithCookie() function to src/controllers/authController.js
