@@ -190,20 +190,50 @@ async function startServer() {
     }
   };
   
-  // DEPRECATED: Password login endpoint (users table has no password column - OAuth only)
+  // Email/Password login endpoint
   app.post("/api/auth/login", async (req, res) => {
-    console.warn('[Auth] Password login endpoint called - this is deprecated (OAuth-only system)');
-    console.warn('[Auth] Request from:', req.headers['user-agent']);
-    console.warn('[Auth] Email attempted:', req.body?.email);
-    
-    return res.status(410).json({
-      error: 'Password login is no longer supported',
-      message: 'This system uses Google OAuth authentication only. Please use the OAuth login flow.',
-      reason: 'The users table does not have a password column - all authentication is OAuth-based.',
-      redirect: '/oauth/login',
-      deprecated: true,
-      timestamp: new Date().toISOString()
-    });
+    try {
+      const { email, password } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ error: 'Email and password are required' });
+      }
+      
+      // Hardcoded credentials check
+      const ADMIN_EMAIL = 'turboresponsehq@gmail.com';
+      const ADMIN_PASSWORD = 'Turbo1234!';
+      
+      if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
+        console.warn('[Auth] Invalid login attempt for:', email);
+        return res.status(401).json({ error: 'Invalid email or password' });
+      }
+      
+      // Generate JWT token
+      const jwt = await import('jsonwebtoken');
+      const secret = process.env.JWT_SECRET;
+      
+      if (!secret) {
+        console.error('[Auth] JWT_SECRET not set');
+        return res.status(500).json({ error: 'Server configuration error' });
+      }
+      
+      const token = jwt.default.sign(
+        { email, role: 'admin', id: 1 },
+        secret,
+        { expiresIn: '7d' }
+      );
+      
+      console.log('[Auth] Login successful for:', email);
+      
+      return res.json({
+        success: true,
+        token,
+        user: { email, role: 'admin', id: 1 }
+      });
+    } catch (error: any) {
+      console.error('[Auth] Login error:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
   });
   
   // PR #2: Cookie-based a  // DEPRECATED: Cookie-based password login (never implemented - OAuth only)
