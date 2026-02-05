@@ -1,7 +1,16 @@
 import { Link } from "wouter";
+import { useEffect } from "react";
 import "./Home.css";
 
 export default function Home() {
+  useEffect(() => {
+    // Add home-page class to body for background styling
+    document.body.classList.add("home-page");
+    return () => {
+      // Remove class when component unmounts
+      document.body.classList.remove("home-page");
+    };
+  }, []);
   return (
     <>
       {/* Animated Background */}

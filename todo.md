@@ -513,3 +513,10 @@
 - [x] Fixed import.meta.dirname issue in server/_core/vite.ts
 - [ ] Test /admin shows dashboard when authenticated
 - [ ] Deploy and verify on production
+
+
+## 🎨 FIX BURGUNDY BACKGROUND COLOR (FEB 5 2026)
+- [ ] Investigate why homepage shows burgundy instead of navy blue
+- [ ] Check Home.css and index.css for color conflicts
+- [ ] Restore navy blue background (#0f172a, #1e293b, #334155)
+- [ ] Deploy and verify navy blue shows on production
