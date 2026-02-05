@@ -115,39 +115,6 @@
   box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
 }
 
-.admin-login-page .google-login-button {
-  width: 100%;
-  padding: 14px 24px;
-  background: #ffffff;
-  color: #3c4043;
-  border: 1px solid #dadce0;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.admin-login-page .google-login-button:hover:not(:disabled) {
-  background: #f8f9fa;
-  border-color: #d2d4d6;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.admin-login-page .google-login-button:active:not(:disabled) {
-  background: #f1f3f4;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.admin-login-page .google-login-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 .admin-login-page .btn-login {
   width: 100%;
   padding: 14px 24px;

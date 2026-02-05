@@ -13,9 +13,9 @@
   --border-glow: rgba(6, 182, 212, 0.2);
 }
 
-body.home-page {
-  background: var(--primary-gradient) !important;
-  color: var(--text-primary) !important;
+body {
+  background: var(--primary-gradient);
+  color: var(--text-primary);
   overflow-x: hidden;
 }
 
