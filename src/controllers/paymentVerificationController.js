@@ -44,7 +44,7 @@ async function verifyPayment(req, res) {
     const caseData = caseResult.rows[0];
 
     // Check if already verified
-    if (caseData.payment_verified) {
+    if (caseData.payment_status === 'paid') {
       return res.status(400).json({
         success: false,
         message: 'Payment already verified'
@@ -55,13 +55,11 @@ async function verifyPayment(req, res) {
     await query(
       `UPDATE cases
        SET funnel_stage = 'Active Case',
-           payment_verified = true,
-           payment_verified_at = CURRENT_TIMESTAMP,
-           payment_verified_by = $1,
+           payment_status = 'paid',
            portal_enabled = true,
            updated_at = CURRENT_TIMESTAMP
-       WHERE id = $2`,
-      [adminId, caseId]
+       WHERE id = $1`,
+      [caseId]
     );
 
     // Create timeline event
@@ -143,7 +141,7 @@ async function verifyPayment(req, res) {
       case: {
         id: caseId,
         funnel_stage: 'Active Case',
-        payment_verified: true
+        payment_status: 'paid'
       }
     });
   } catch (error) {
