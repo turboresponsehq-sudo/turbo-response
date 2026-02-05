@@ -10,14 +10,25 @@ export const APP_LOGO =
 export const getLoginUrl = () => {
   const oauthPortalUrl = import.meta.env.VITE_OAUTH_PORTAL_URL;
   const appId = import.meta.env.VITE_APP_ID;
+  
+  // Validate required environment variables
+  if (!oauthPortalUrl || !appId) {
+    console.error('Missing OAuth configuration:', { oauthPortalUrl, appId });
+    throw new Error('OAuth configuration is missing. Please check environment variables.');
+  }
+  
   const redirectUri = `${window.location.origin}/api/oauth/callback`;
   const state = btoa(redirectUri);
 
-  const url = new URL(`${oauthPortalUrl}/app-auth`);
-  url.searchParams.set("appId", appId);
-  url.searchParams.set("redirectUri", redirectUri);
-  url.searchParams.set("state", state);
-  url.searchParams.set("type", "signIn");
-
-  return url.toString();
+  try {
+    const url = new URL(`${oauthPortalUrl}/app-auth`);
+    url.searchParams.set("appId", appId);
+    url.searchParams.set("redirectUri", redirectUri);
+    url.searchParams.set("state", state);
+    url.searchParams.set("type", "signIn");
+    return url.toString();
+  } catch (error) {
+    console.error('Failed to construct OAuth URL:', error);
+    throw new Error(`Invalid OAuth Portal URL: ${oauthPortalUrl}`);
+  }
 };
