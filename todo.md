@@ -327,26 +327,37 @@
 
 ### Migration Phase (PENDING USER APPROVAL)
 
-**PR #1: Add Deployment Version Endpoint** (30 minutes, Risk: 🟢 Low)
+**PR #1: Add Deployment Version Endpoint** ✅ COMPLETE
 - [x] Create system.version tRPC procedure in server/_core/systemRouter.ts
 - [x] Returns commit SHA, build time, uptime, environment, feature flags
 - [x] Security verified: No secrets exposed
 - [x] Test script created: test-version-endpoint.sh
-- [x] Save checkpoint
-- [ ] Deploy to production (Render auto-deploy from GitHub)
-- [ ] Run test script on production: ./test-version-endpoint.sh https://turboresponsehq.ai
-- [ ] Verify tRPC endpoint returns JSON with version info
+- [x] Fixed build system to use tRPC server (ESM) instead of legacy Express
+- [x] Added shim file for Render compatibility
+- [x] Save checkpoint (66cde05)
+- [x] Deploy to production
+- [x] Verified endpoint works: https://turboresponsehq.ai/api/trpc/system.version?batch=1
 - [ ] Add version display in admin footer (future PR)
 
-**PR #2: Add Cookie-Based Auth Endpoint** (1 hour, Risk: 🟢 Low)
-- [ ] Add loginWithCookie() function to src/controllers/authController.js
-- [ ] Add POST /api/auth/login-cookie route
-- [ ] Set httpOnly cookie instead of returning token
-- [ ] Test with Postman - verify Set-Cookie header
-- [ ] Verify cookie has httpOnly, secure, sameSite flags
-- [ ] Verify existing /api/auth/login still works
+**PR #2: Add Cookie-Based Auth Endpoint** (1 hour, Risk: 🟢 Low) - IN PROGRESS
+- [ ] Add cookie-based login tRPC procedure to server/routers.ts
+- [ ] Set httpOnly session cookie with proper security flags:
+  - httpOnly: true
+  - secure: true (production)
+  - sameSite: 'lax' (or 'none' if cross-site needed)
+  - maxAge: 7 days (604800 seconds)
+- [ ] Add hidden test switch: ?useCookieAuth=true for safe testing
+- [ ] Document endpoint in docs/AUTH-AUDIT.md
+- [ ] Test locally: verify cookie is set and readable
+- [ ] Verify existing localStorage auth still works (parallel mode)
 - [ ] Save checkpoint
 - [ ] Deploy to production
+- [ ] Verification proof:
+  - [ ] Cookie name + flags documented
+  - [ ] Example login response captured
+  - [ ] DevTools screenshot showing cookie
+  - [ ] Test in Chrome: login → refresh → still logged in
+  - [ ] Test in Edge: login → refresh → still logged in
 
 **PR #3: Add Cookie-Based Auth Middleware** (45 minutes, Risk: 🟢 Low)
 - [ ] Add authenticateTokenFromCookie() to src/middleware/auth.js
@@ -438,3 +449,56 @@
 - Check /api/version to confirm rollback
 - Document issue in GitHub issue
 - Update SOP with new failure case
+
+
+---
+
+## 🔄 PR #2 FINAL FIX (OAuth-Only Auth) - IN PROGRESS
+
+**ROOT CAUSE DISCOVERED:**
+- Password login endpoint = broken dead code (users table has NO password column)
+- OAuth + cookies = already working perfectly (backend is correct)
+- Admin frontend = ignoring cookies, using localStorage (source of weekly glitches)
+
+**THE FIX:**
+
+### Phase 1: Replace AdminLogin with OAuth-Only ✅ COMPLETE
+- [x] Deprecate broken password endpoints (return 410 Gone)
+- [x] Replace AdminLogin.tsx with Google OAuth button
+- [x] Remove email/password form fields
+- [x] Add "Sign in with Google" button that redirects to OAuth flow
+- [x] After OAuth callback, check if role === 'admin'
+- [x] If admin → redirect to /admin, else show "Access denied"
+- [x] Add CSS styling for Google button
+
+### Phase 2: Remove localStorage from Admin Frontend
+- [ ] Remove localStorage from AdminAuthContext.tsx
+- [ ] Remove localStorage from AdminCasesList.tsx (8 occurrences)
+- [ ] Remove localStorage from AdminCaseDetail.tsx (8 occurrences)
+- [ ] Remove localStorage from AdminBrainUpload.tsx (1 occurrence)
+- [ ] Remove all Authorization: Bearer REDACTED_RETIRED_BEARER_TOKEN
+- [ ] Add credentials: 'include' to all fetch calls
+- [ ] Trust app_session_id cookie only
+
+### Phase 3: Update Documentation
+- [ ] Update docs/ADMIN_AUTH_FLOW.md with OAuth-only reality
+- [ ] Document that password login is removed/deprecated
+- [ ] Document cookie-based session flow
+- [ ] Add Chrome/Edge testing checklist
+
+### Testing & Deployment
+- [ ] Test locally: OAuth login → admin dashboard loads
+- [ ] Test: Refresh page → still logged in
+- [ ] Test: Close browser, reopen → still logged in
+- [ ] Test in Chrome: All above scenarios
+- [ ] Test in Edge: All above scenarios
+- [ ] Deploy to production
+- [ ] Verify in production: Chrome + Edge
+
+**Success Criteria:**
+- ✅ Admin page shows Google Sign-In only
+- ✅ No email/password fields
+- ✅ No auth tokens in localStorage
+- ✅ All admin API calls work via cookie
+- ✅ Refresh does not log you out
+- ✅ Works in Chrome + Edge
