@@ -520,3 +520,13 @@
 - [ ] Check Home.css and index.css for color conflicts
 - [ ] Restore navy blue background (#0f172a, #1e293b, #334155)
 - [ ] Deploy and verify navy blue shows on production
+
+
+## 🚨 URGENT: CREATE BACKEND AUTH ENDPOINT (FEB 5 2026)
+- [x] OAuth error removed from frontend (deployed successfully)
+- [x] Create /api/auth/login endpoint in backend
+- [x] Validate email/password (turboresponsehq@gmail.com / Turbo1234!)
+- [x] Return session token on successful login
+- [x] Fix AdminLogin redirect to /admin/cases
+- [x] Test login on dev - works successfully!
+- [ ] Deploy and verify login works on production

@@ -14,7 +14,7 @@ export default function AdminLogin() {
     // Check if already logged in
     const session = localStorage.getItem("admin_session");
     if (session) {
-      setLocation("/admin");
+      setLocation("/admin/cases");
     }
   }, [setLocation]);
 
@@ -35,7 +35,7 @@ export default function AdminLogin() {
       if (response.user) {
         localStorage.setItem("admin_user", JSON.stringify(response.user));
       }
-      setLocation("/admin");
+      setLocation("/admin/cases");
     } catch (error: any) {
       setError(`❌ ${error.message}`);
       setIsLoading(false);
