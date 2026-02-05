@@ -38,8 +38,8 @@ if [ ! -d "dist" ]; then
     echo -e "${RED}ERROR: dist/ was not created by esbuild${NC}"
     exit 1
 fi
-if [ ! -f "dist/server.js" ]; then
-    echo -e "${RED}ERROR: dist/server.js does not exist${NC}"
+if [ ! -f "dist/server.mjs" ]; then
+    echo -e "${RED}ERROR: dist/server.mjs does not exist${NC}"
     exit 1
 fi
 echo "✓ Backend built successfully to dist/"
@@ -64,7 +64,7 @@ echo -e "\n${YELLOW}[6/6] Validating build output...${NC}"
 
 # Check required files
 REQUIRED_FILES=(
-    "dist/server.js"
+    "dist/server.mjs"
     "dist/public/index.html"
     "dist/migrations/run-migrations.mjs"
 )
@@ -96,7 +96,7 @@ if [ "$ALL_VALID" = true ]; then
     echo ""
     echo "Build output structure:"
     echo "  dist/"
-    echo "  ├── server.js (backend)"
+    echo "  ├── server.mjs (backend - ESM)"
     echo "  ├── migrations/ (database)"
     echo "  └── public/ (frontend)"
     echo "      ├── index.html"
