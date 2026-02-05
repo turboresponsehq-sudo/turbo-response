@@ -502,3 +502,14 @@
 - ✅ All admin API calls work via cookie
 - ✅ Refresh does not log you out
 - ✅ Works in Chrome + Edge
+
+
+## 🚨 PHASE 1: OAUTH-ONLY ADMIN LOGIN - ROUTING FIX (FEB 5 2026)
+- [x] Fix /admin route to show login page when not authenticated
+- [x] Create smart /admin route that handles both login and dashboard
+- [x] Remove /admin/login route (consolidate to /admin)
+- [x] Update AdminDashboard redirect logic
+- [x] Test /admin shows login page when not authenticated
+- [x] Fixed import.meta.dirname issue in server/_core/vite.ts
+- [ ] Test /admin shows dashboard when authenticated
+- [ ] Deploy and verify on production

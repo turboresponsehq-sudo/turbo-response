@@ -28,19 +28,12 @@ interface CaseItem {
 
 export default function AdminDashboard() {
   const [, setLocation] = useLocation();
-  const { token, isAuthenticated, clearTokenAndRedirect } = useAdminAuth();
+  const { token, clearTokenAndRedirect } = useAdminAuth();
   const [cases, setCases] = useState<CaseItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check authentication
-    if (!isAuthenticated) {
-      console.warn('[AdminDashboard] Not authenticated - redirecting to login');
-      setLocation("/admin/login");
-      return;
-    }
-
     const fetchCases = async () => {
       try {
         console.log('[AdminDashboard] Fetching cases...');
@@ -83,7 +76,7 @@ export default function AdminDashboard() {
     };
 
     fetchCases();
-  }, [isAuthenticated, token, setLocation, clearTokenAndRedirect]);
+  }, [token, clearTokenAndRedirect]);
 
   const handleCaseClick = (caseId: number) => {
     setLocation(`/admin/cases/${caseId}`);

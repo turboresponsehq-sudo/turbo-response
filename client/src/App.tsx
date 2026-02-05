@@ -11,7 +11,7 @@ import Violations from "./pages/Violations";
 import AdminDashboard from "./pages/AdminDashboard";
 import IntakeForm from "./pages/IntakeForm";
 import Payment from "./pages/Payment";
-import AdminLogin from "./pages/AdminLogin";
+import Admin from "./pages/Admin";
 import ClientContract from "./pages/ClientContract";
 import ServiceAgreement from "./pages/ServiceAgreement";
 import Disclaimer from "./pages/Disclaimer";
@@ -74,14 +74,13 @@ function Router() {
       {/* Public Payment Page */}
       <Route path="/pay/:caseId" component={PaymentPage} />
       
-      <Route path="/admin/login" component={AdminLogin} />
       {/* Admin workflow routes - restored to specification */}
       <Route path="/admin/brain" component={AdminBrainUpload} />
       <Route path="/admin/case-upload" component={CaseUploadCenter} />
 
       <Route path="/admin/cases/:id" component={AdminCasesDetail} />
       <Route path="/admin/cases" component={AdminCasesList} />
-      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin" component={Admin} />
       
       {/* Legacy AI analysis routes - separate system */}
       <Route path="/admin/consumer/case/:id" component={AdminConsumerCaseDetail} />
