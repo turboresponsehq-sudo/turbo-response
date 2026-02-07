@@ -499,3 +499,8 @@
 - [x] Check backend DELETE endpoint
 - [x] Review request payload and validation
 - [x] Fix and test delete functionality (changed id type from string to number)
+
+### Issue 3: iOS Still Opens Camera (Feb 9, 2026)
+- [x] Change accept="image/*" to accept="image/*,application/pdf" or remove accept to show full file picker
+- [ ] Test on iOS Safari to verify file picker menu appears
+- [ ] Ensure both camera and photo library options are available
