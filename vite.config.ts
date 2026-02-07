@@ -6,8 +6,9 @@ import { fileURLToPath } from "url";
 import { defineConfig } from "vite";
 import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
 
-// Node 22 compatibility: import.meta.dirname fallback
-const __dirname = import.meta.dirname || path.dirname(fileURLToPath(import.meta.url));
+// ES module compatibility: get __dirname equivalent
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const plugins = [react(), tailwindcss(), vitePluginManusRuntime()];
 
