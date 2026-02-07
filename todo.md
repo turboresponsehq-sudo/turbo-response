@@ -390,3 +390,29 @@
 - [ ] Create handoff document
 - [ ] Update knowledge base
 
+
+
+---
+
+## 🚨 URGENT: Fix Blank Intake Form (Phase A Testing)
+- [ ] Debug React rendering issue causing blank /intake page
+- [ ] Check browser console for JavaScript errors
+- [ ] Verify IntakeForm.tsx imports and component structure
+- [ ] Test form loads correctly in browser
+- [ ] Submit sample Defense Intake case with eligibility profile
+- [ ] Verify data saves to database (cases + eligibility_profiles tables)
+- [ ] Verify notification sent to owner
+- [ ] Deploy checkpoint 627a3c21 to production after fix confirmed
+
+
+---
+
+## 🚨 URGENT: Fix Blank Intake Form (Phase A Testing)
+- [ ] Debug React rendering issue causing blank /intake page
+- [ ] Check browser console for JavaScript errors
+- [ ] Verify IntakeForm.tsx imports and component structure
+- [ ] Test form loads correctly in browser
+- [ ] Submit sample Defense Intake case with eligibility profile
+- [ ] Verify data saves to database (cases + eligibility_profiles tables)
+- [ ] Verify notification sent to owner
+- [ ] Create new checkpoint after fix confirmed
