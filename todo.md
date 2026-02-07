@@ -459,3 +459,27 @@
 - [ ] Verify report quality
 - [ ] Check accuracy of eligibility calculations
 - [ ] Review founder before any user communication
+
+
+---
+
+## 🎯 FINAL WRAP-UP (Feb 7, 2026)
+
+### 1. Production Verification
+- [ ] Test Defense Intake (/intake) - verify DB insert + email notification
+- [ ] Test Offense Intake (/turbo-intake) - verify DB insert + email notification
+- [ ] Capture screenshots/logs of successful submissions
+
+### 2. Database Hygiene
+- [ ] Confirm `cases` table is the ONLY active table for intakes
+- [ ] Verify defense_cases, offense_cases, eligibility_profiles are NOT referenced in main branch
+- [ ] Mark new tables as "unused/experimental" in docs
+
+### 3. GitHub Documentation
+- [ ] Verify docs/SYSTEM_STATUS.md is accurate
+- [ ] Add note to README: "People Matching archived in feature/people-matching-archive"
+
+### 4. Safety Hardening
+- [ ] Add basic rate limiting to intake endpoints
+- [ ] Add simple spam protection
+- [ ] Add submission logging (timestamp + case id)

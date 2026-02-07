@@ -1,0 +1,78 @@
+{
+  "query": "SELECT \n  TABLE_NAME, \n  TABLE_ROWS \nFROM information_schema.TABLES \nWHERE TABLE_SCHEMA = DATABASE() \nORDER BY TABLE_NAME;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute SELECT \n  TABLE_NAME, \n  TABLE_ROWS \nFROM information_schema.TABLES \nWHERE TABLE_SCHEMA = DATABASE() \nORDER BY TABLE_NAME;",
+  "rows": [
+    {
+      "TABLE_NAME": "__drizzle_migrations",
+      "TABLE_ROWS": "11"
+    },
+    {
+      "TABLE_NAME": "brain_embeddings",
+      "TABLE_ROWS": "0"
+    },
+    {
+      "TABLE_NAME": "business_intakes",
+      "TABLE_ROWS": "0"
+    },
+    {
+      "TABLE_NAME": "case_analyses",
+      "TABLE_ROWS": "0"
+    },
+    {
+      "TABLE_NAME": "case_documents",
+      "TABLE_ROWS": "0"
+    },
+    {
+      "TABLE_NAME": "case_messages",
+      "TABLE_ROWS": "0"
+    },
+    {
+      "TABLE_NAME": "cases",
+      "TABLE_ROWS": "0"
+    },
+    {
+      "TABLE_NAME": "conversations",
+      "TABLE_ROWS": "21"
+    },
+    {
+      "TABLE_NAME": "defense_cases",
+      "TABLE_ROWS": "1"
+    },
+    {
+      "TABLE_NAME": "eligibility_profiles",
+      "TABLE_ROWS": "0"
+    },
+    {
+      "TABLE_NAME": "evidence_uploads",
+      "TABLE_ROWS": "0"
+    },
+    {
+      "TABLE_NAME": "lead_notes",
+      "TABLE_ROWS": "0"
+    },
+    {
+      "TABLE_NAME": "leads",
+      "TABLE_ROWS": "0"
+    },
+    {
+      "TABLE_NAME": "messages",
+      "TABLE_ROWS": "0"
+    },
+    {
+      "TABLE_NAME": "offense_cases",
+      "TABLE_ROWS": "0"
+    },
+    {
+      "TABLE_NAME": "turbo_intake_submissions",
+      "TABLE_ROWS": "0"
+    },
+    {
+      "TABLE_NAME": "users",
+      "TABLE_ROWS": "2"
+    }
+  ],
+  "messages": [],
+  "stdout": "TABLE_NAME\tTABLE_ROWS\n__drizzle_migrations\t11\nbrain_embeddings\t0\nbusiness_intakes\t0\ncase_analyses\t0\ncase_documents\t0\ncase_messages\t0\ncases\t0\nconversations\t21\ndefense_cases\t1\neligibility_profiles\t0\nevidence_uploads\t0\nlead_notes\t0\nleads\t0\nmessages\t0\noffense_cases\t0\nturbo_intake_submissions\t0\nusers\t2\n",
+  "stderr": "",
+  "execution_time_ms": 408
+}
