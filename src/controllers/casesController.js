@@ -75,16 +75,15 @@ const getCaseById = async (req, res, next) => {
 // Get all cases (admin only)
 const getAllCases = async (req, res, next) => {
   try {
-    // Query admin_cases table (updated schema)
+    // Query cases table (production data)
     const result = await query(
-      `SELECT id, title, category, status, 
-              client_name as first_name, 
+      `SELECT id, case_number, category, status, 
+              full_name as first_name, 
               NULL as last_name,
-              client_email as email, 
-              client_phone as phone,
+              email, phone,
               created_at, updated_at, 
-              'admin' as case_type
-       FROM admin_cases
+              'consumer' as case_type
+       FROM cases
        ORDER BY created_at DESC`
     );
 
