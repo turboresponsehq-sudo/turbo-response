@@ -3,9 +3,10 @@ const path = require('path');
 const logger = require('../../utils/logger');
 
 // Use Render persistent disk if available, otherwise local uploads
+// Use process.cwd() instead of __dirname to avoid bundling issues
 const UPLOADS_DIR = process.env.RENDER_DISK_PATH 
   ? path.join(process.env.RENDER_DISK_PATH, 'uploads')
-  : path.join(__dirname, '../../../uploads');
+  : path.join(process.cwd(), 'uploads');
 if (!fs.existsSync(UPLOADS_DIR)) {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
   logger.info('Created uploads directory', { path: UPLOADS_DIR });

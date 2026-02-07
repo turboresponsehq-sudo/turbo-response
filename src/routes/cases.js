@@ -7,10 +7,9 @@ const {
   getAdminCaseById,
   updateCaseStatus,
   updateCaseDocuments,
-  runAIAnalysis,
-  getAIAnalysis,
   deleteCase
 } = require('../controllers/casesController');
+// runAIAnalysis and getAIAnalysis not exported from casesController
 const { verifyPayment } = require('../controllers/paymentVerificationController');
 const { authenticateToken } = require('../middleware/auth');
 const { authenticateClient } = require('../middleware/clientAuth');
@@ -39,10 +38,12 @@ router.get('/cases/:id', authenticateToken, requireAdmin, getAdminCaseById);
 router.patch('/cases/:id', authenticateToken, requireAdmin, updateCaseStatus);
 
 // POST /api/cases/:id/analyze - Run AI analysis with pricing (admin only)
-router.post('/cases/:id/analyze', authenticateToken, requireAdmin, runAIAnalysis);
+// DISABLED: runAIAnalysis not exported from casesController
+// router.post('/cases/:id/analyze', authenticateToken, requireAdmin, runAIAnalysis);
 
 // GET /api/cases/:id/analysis - Get last saved AI analysis (admin only)
-router.get('/cases/:id/analysis', authenticateToken, requireAdmin, getAIAnalysis);
+// DISABLED: getAIAnalysis not exported from casesController
+// router.get('/cases/:id/analysis', authenticateToken, requireAdmin, getAIAnalysis);
 
 // DELETE /api/cases/:id - Delete case (admin only)
 router.delete('/cases/:id', authenticateToken, requireAdmin, deleteCase);
