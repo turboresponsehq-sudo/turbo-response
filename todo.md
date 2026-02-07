@@ -483,3 +483,19 @@
 - [ ] Add basic rate limiting to intake endpoints
 - [ ] Add simple spam protection
 - [ ] Add submission logging (timestamp + case id)
+
+
+---
+
+## 🚨 URGENT: Mobile Screenshot Upload & Brain Delete Fixes (Feb 9, 2026)
+
+### Issue 1: Browse Button Opens Camera Only
+- [x] Remove `capture="environment"` attribute from file input in ScreenshotCapture.tsx
+- [x] Allow users to choose between camera or existing photos on mobile
+- [ ] Test on iPhone to verify file picker appears
+
+### Issue 2: Brain Delete Button Not Working
+- [x] Investigate Brain delete button 400 error
+- [x] Check backend DELETE endpoint
+- [x] Review request payload and validation
+- [x] Fix and test delete functionality (changed id type from string to number)
