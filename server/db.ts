@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, cases, caseDocuments, InsertCase, InsertCaseDocument } from "../drizzle/schema";
+import { InsertUser, users, screenshots, Screenshot, InsertScreenshot } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,48 +89,103 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// Case management helpers
-export async function createCase(caseData: InsertCase) {
+/**
+ * Save a screenshot with metadata
+ */
+export async function saveScreenshot(screenshot: InsertScreenshot): Promise<Screenshot | null> {
   const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  const result = await db.insert(cases).values(caseData);
-  return result;
+  if (!db) {
+    console.warn("[Database] Cannot save screenshot: database not available");
+    return null;
+  }
+
+  try {
+    const result = await db.insert(screenshots).values(screenshot);
+    const id = result[0];
+    
+    if (id) {
+      const saved = await db.select().from(screenshots).where(eq(screenshots.id, id)).limit(1);
+      return saved.length > 0 ? saved[0] : null;
+    }
+    return null;
+  } catch (error) {
+    console.error("[Database] Failed to save screenshot:", error);
+    throw error;
+  }
 }
 
-export async function getCaseById(id: number) {
+/**
+ * Get all screenshots for a user
+ */
+export async function getUserScreenshots(userId: number): Promise<Screenshot[]> {
   const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  const result = await db.select().from(cases).where(eq(cases.id, id)).limit(1);
-  return result.length > 0 ? result[0] : null;
+  if (!db) {
+    console.warn("[Database] Cannot get screenshots: database not available");
+    return [];
+  }
+
+  try {
+    const result = await db.select().from(screenshots).where(eq(screenshots.userId, userId));
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get screenshots:", error);
+    return [];
+  }
 }
 
-export async function listCases() {
+/**
+ * Get a single screenshot by ID
+ */
+export async function getScreenshot(id: number): Promise<Screenshot | null> {
   const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  return await db.select().from(cases).orderBy(cases.createdAt);
+  if (!db) {
+    console.warn("[Database] Cannot get screenshot: database not available");
+    return null;
+  }
+
+  try {
+    const result = await db.select().from(screenshots).where(eq(screenshots.id, id)).limit(1);
+    return result.length > 0 ? result[0] : null;
+  } catch (error) {
+    console.error("[Database] Failed to get screenshot:", error);
+    return null;
+  }
 }
 
-export async function createCaseDocument(docData: InsertCaseDocument) {
+/**
+ * Mark a screenshot as saved (prevents auto-delete)
+ */
+export async function markScreenshotAsSaved(id: number): Promise<void> {
   const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  const result = await db.insert(caseDocuments).values(docData);
-  return result;
+  if (!db) {
+    console.warn("[Database] Cannot update screenshot: database not available");
+    return;
+  }
+
+  try {
+    await db.update(screenshots).set({ isSaved: 1 }).where(eq(screenshots.id, id));
+  } catch (error) {
+    console.error("[Database] Failed to mark screenshot as saved:", error);
+    throw error;
+  }
 }
 
-export async function getCaseDocuments(caseId: number) {
+/**
+ * Delete a screenshot record
+ */
+export async function deleteScreenshot(id: number): Promise<void> {
   const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  return await db.select().from(caseDocuments).where(eq(caseDocuments.caseId, caseId)).orderBy(caseDocuments.uploadedAt);
+  if (!db) {
+    console.warn("[Database] Cannot delete screenshot: database not available");
+    return;
+  }
+
+  try {
+    await db.delete(screenshots).where(eq(screenshots.id, id));
+  } catch (error) {
+    console.error("[Database] Failed to delete screenshot:", error);
+    throw error;
+  }
 }
 
-export async function deleteCaseDocument(id: number) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  await db.delete(caseDocuments).where(eq(caseDocuments.id, id));
-}
+// TODO: add feature queries here as your schema grows.
