@@ -10,6 +10,10 @@ import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+if (!__dirname) {
+  throw new Error('Failed to resolve __dirname from import.meta.url');
+}
+
 const plugins = [react(), tailwindcss(), vitePluginManusRuntime()];
 
 export default defineConfig({
