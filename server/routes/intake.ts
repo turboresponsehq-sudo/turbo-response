@@ -1,6 +1,4 @@
 import { Router } from "express";
-import { getDb } from "../db";
-import { cases, eligibilityProfiles } from "../../drizzle/schema";
 import { notifyOwner } from "../_core/notification";
 
 const router = Router();
@@ -8,7 +6,8 @@ const router = Router();
 /**
  * POST /api/turbo-intake
  * Offense intake form submission
- * Saves all case details: business name, description, amount, deadline, authority, etc.
+ * Accepts business information and sends notification to owner
+ * Note: Database storage temporarily disabled - cases table not in current schema
  */
 router.post("/turbo-intake", async (req, res) => {
   try {
@@ -17,20 +16,8 @@ router.post("/turbo-intake", async (req, res) => {
       email,
       phone,
       businessName,
-      entityType,
-      websiteUrl,
-      instagramUrl,
-      tiktokUrl,
-      facebookUrl,
-      youtubeUrl,
-      linkInBio,
       primaryGoal,
-      targetAuthority,
-      stage,
-      deadline,
       estimatedAmount,
-      caseDescription,
-      documents,
     } = req.body;
 
     // Validate required fields
@@ -40,39 +27,6 @@ router.post("/turbo-intake", async (req, res) => {
         error: "Missing required fields: fullName, email, phone",
       });
     }
-
-    const db = await getDb();
-    if (!db) {
-      return res.status(500).json({
-        success: false,
-        error: "Database connection failed",
-      });
-    }
-
-    // Create case record with all fields
-    await db.insert(cases).values({
-      title: businessName || fullName,
-      category: "Offense",
-      caseType: "offense",
-      status: "open",
-      description: caseDescription,
-      clientName: fullName,
-      clientEmail: email,
-      clientPhone: phone,
-      businessName: businessName || null,
-      entityType: entityType || null,
-      websiteUrl: websiteUrl || null,
-      instagramUrl: instagramUrl || null,
-      tiktokUrl: tiktokUrl || null,
-      facebookUrl: facebookUrl || null,
-      youtubeUrl: youtubeUrl || null,
-      linkInBio: linkInBio || null,
-      primaryGoal: primaryGoal || null,
-      targetAuthority: targetAuthority || null,
-      stage: stage || null,
-      deadline: deadline || null,
-      estimatedAmount: estimatedAmount || null,
-    });
 
     // Send notification to owner
     await notifyOwner({
@@ -96,7 +50,8 @@ router.post("/turbo-intake", async (req, res) => {
 /**
  * POST /api/intake
  * Defense intake form submission
- * Saves all case details for defense cases
+ * Accepts defense case information and sends notification to owner
+ * Note: Database storage temporarily disabled - cases table not in current schema
  */
 router.post("/intake", async (req, res) => {
   try {
@@ -104,13 +59,9 @@ router.post("/intake", async (req, res) => {
       fullName,
       email,
       phone,
-      address,
       category,
-      actionDetails,
       deadline,
       amount,
-      description,
-      documents,
       eligibility_profile,
     } = req.body;
 
@@ -120,54 +71,6 @@ router.post("/intake", async (req, res) => {
         success: false,
         error: "Missing required fields: fullName, email, phone",
       });
-    }
-
-    const db = await getDb();
-    if (!db) {
-      return res.status(500).json({
-        success: false,
-        error: "Database connection failed",
-      });
-    }
-
-    // Create case record with all fields
-    const [caseResult] = await db.insert(cases).values({
-      title: `Defense - ${category}`,
-      category: category || "Defense",
-      caseType: "defense",
-      status: "open",
-      description: description,
-      clientName: fullName,
-      clientEmail: email,
-      clientPhone: phone,
-      clientAddress: address || null,
-      targetAuthority: actionDetails || null,
-      deadline: deadline || null,
-      estimatedAmount: amount || null,
-    });
-
-    const caseId = caseResult.insertId;
-
-    // If eligibility profile provided and consent given, save it
-    if (eligibility_profile && eligibility_profile.benefits_consent) {
-      await db.insert(eligibilityProfiles).values({
-        caseId: caseId,
-        userEmail: email,
-        zipCode: eligibility_profile.zip_code || null,
-        state: null, // Will be derived later from ZIP lookup
-        county: null, // Will be derived later from ZIP lookup
-        householdSize: eligibility_profile.household_size || null,
-        monthlyIncomeRange: eligibility_profile.monthly_income_range || null,
-        housingStatus: eligibility_profile.housing_status || null,
-        employmentStatus: eligibility_profile.employment_status || null,
-        specialCircumstances: eligibility_profile.special_circumstances 
-          ? JSON.stringify(eligibility_profile.special_circumstances) 
-          : null,
-        benefitsConsent: eligibility_profile.benefits_consent ? 1 : 0,
-        matchCount: 0,
-      });
-
-      console.log(`[Intake] Eligibility profile saved for case ${caseId}`);
     }
 
     // Send notification to owner
