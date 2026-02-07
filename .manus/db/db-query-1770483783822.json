@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE eligibility_profiles \nADD COLUMN matchingStatus VARCHAR(20) DEFAULT 'pending',\nADD COLUMN matchingScore INT,\nADD COLUMN matchedPrograms JSON,\nADD COLUMN reportGeneratedAt TIMESTAMP NULL,\nADD COLUMN approvedBy VARCHAR(255),\nADD COLUMN approvedAt TIMESTAMP NULL;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute ALTER TABLE eligibility_profiles \nADD COLUMN matchingStatus VARCHAR(20) DEFAULT 'pending',\nADD COLUMN matchingScore INT,\nADD COLUMN matchedPrograms JSON,\nADD COLUMN reportGeneratedAt TIMESTAMP NULL,\nADD COLUMN approvedBy VARCHAR(255),\nADD COLUMN approvedAt TIMESTAMP NULL;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 3741
+}
