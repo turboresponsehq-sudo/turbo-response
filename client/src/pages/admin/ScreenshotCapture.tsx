@@ -121,7 +121,7 @@ export default function ScreenshotCapture() {
               <Input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*"
+                accept="image/*,.pdf,.doc,.docx"
                 onChange={handleFileSelect}
                 className="flex-1"
               />
