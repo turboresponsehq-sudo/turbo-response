@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS eligibility_profiles (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  caseId INT NOT NULL,\n  userEmail VARCHAR(320) NOT NULL,\n  zipCode VARCHAR(10),\n  state VARCHAR(2),\n  county VARCHAR(100),\n  householdSize INT,\n  monthlyIncomeRange VARCHAR(50),\n  housingStatus VARCHAR(50),\n  employmentStatus VARCHAR(50),\n  specialCircumstances TEXT,\n  benefitsConsent INT NOT NULL DEFAULT 0,\n  lastMatchedAt TIMESTAMP NULL,\n  matchCount INT NOT NULL DEFAULT 0,\n  createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  INDEX idx_case_id (caseId),\n  INDEX idx_user_email (userEmail),\n  INDEX idx_benefits_consent (benefitsConsent),\n  INDEX idx_zip_code (zipCode)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute CREATE TABLE IF NOT EXISTS eligibility_profiles (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  caseId INT NOT NULL,\n  userEmail VARCHAR(320) NOT NULL,\n  zipCode VARCHAR(10),\n  state VARCHAR(2),\n  county VARCHAR(100),\n  householdSize INT,\n  monthlyIncomeRange VARCHAR(50),\n  housingStatus VARCHAR(50),\n  employmentStatus VARCHAR(50),\n  specialCircumstances TEXT,\n  benefitsConsent INT NOT NULL DEFAULT 0,\n  lastMatchedAt TIMESTAMP NULL,\n  matchCount INT NOT NULL DEFAULT 0,\n  createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  INDEX idx_case_id (caseId),\n  INDEX idx_user_email (userEmail),\n  INDEX idx_benefits_consent (benefitsConsent),\n  INDEX idx_zip_code (zipCode)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 579
+}

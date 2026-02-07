@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getDb } from "../db";
-import { cases } from "../../drizzle/schema";
+import { cases, eligibilityProfiles } from "../../drizzle/schema";
 import { notifyOwner } from "../_core/notification";
 
 const router = Router();
@@ -111,6 +111,7 @@ router.post("/intake", async (req, res) => {
       amount,
       description,
       documents,
+      eligibility_profile,
     } = req.body;
 
     // Validate required fields
@@ -130,7 +131,7 @@ router.post("/intake", async (req, res) => {
     }
 
     // Create case record with all fields
-    await db.insert(cases).values({
+    const [caseResult] = await db.insert(cases).values({
       title: `Defense - ${category}`,
       category: category || "Defense",
       caseType: "defense",
@@ -145,10 +146,38 @@ router.post("/intake", async (req, res) => {
       estimatedAmount: amount || null,
     });
 
+    const caseId = caseResult.insertId;
+
+    // If eligibility profile provided and consent given, save it
+    if (eligibility_profile && eligibility_profile.benefits_consent) {
+      await db.insert(eligibilityProfiles).values({
+        caseId: caseId,
+        userEmail: email,
+        zipCode: eligibility_profile.zip_code || null,
+        state: null, // Will be derived later from ZIP lookup
+        county: null, // Will be derived later from ZIP lookup
+        householdSize: eligibility_profile.household_size || null,
+        monthlyIncomeRange: eligibility_profile.monthly_income_range || null,
+        housingStatus: eligibility_profile.housing_status || null,
+        employmentStatus: eligibility_profile.employment_status || null,
+        specialCircumstances: eligibility_profile.special_circumstances 
+          ? JSON.stringify(eligibility_profile.special_circumstances) 
+          : null,
+        benefitsConsent: eligibility_profile.benefits_consent ? 1 : 0,
+        matchCount: 0,
+      });
+
+      console.log(`[Intake] Eligibility profile saved for case ${caseId}`);
+    }
+
     // Send notification to owner
+    const profileStatus = eligibility_profile && eligibility_profile.benefits_consent 
+      ? "✅ Eligibility profile provided (benefits matching enabled)" 
+      : "❌ No eligibility profile";
+
     await notifyOwner({
       title: "🛡️ New Defense Case Submitted",
-      content: `${fullName} (${email}) submitted a defense case.\n\nCategory: ${category || "N/A"}\nDeadline: ${deadline || "N/A"}\nAmount: ${amount || "N/A"}\n\nView in admin dashboard: https://turboresponsehq.ai/admin/cases`,
+      content: `${fullName} (${email}) submitted a defense case.\n\nCategory: ${category || "N/A"}\nDeadline: ${deadline || "N/A"}\nAmount: ${amount || "N/A"}\n\n${profileStatus}\n\nView in admin dashboard: https://turboresponsehq.ai/admin/cases`,
     });
 
     res.status(201).json({

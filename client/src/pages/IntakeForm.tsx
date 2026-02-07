@@ -39,6 +39,14 @@ export default function IntakeForm() {
     deadline: "",
     whoIsActing: "",
     noticeType: "",
+    // Eligibility Profile fields (optional)
+    zipCode: "",
+    householdSize: "",
+    monthlyIncome: "",
+    housingStatus: "",
+    employmentStatus: "",
+    specialCircumstances: [] as string[],
+    benefitsConsent: false,
   });
 
   // Simulate initial loading
@@ -67,10 +75,20 @@ export default function IntakeForm() {
   }, [formData, selectedCategory, termsAccepted]);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleCheckboxChange = (circumstance: string) => {
+    setFormData((prev) => {
+      const current = prev.specialCircumstances;
+      const updated = current.includes(circumstance)
+        ? current.filter((c) => c !== circumstance)
+        : [...current, circumstance];
+      return { ...prev, specialCircumstances: updated };
+    });
   };
 
   // Handle multi-file upload completion from MultiFileUploader
@@ -129,7 +147,7 @@ export default function IntakeForm() {
         .filter(f => f.url) // Only include successfully uploaded files
         .map(f => f.url);
 
-      // Submit intake form to backend with document URLs and terms acceptance
+      // Submit intake form to backend with document URLs, terms acceptance, and eligibility profile
       const response = await api.post("/api/intake", {
         email: formData.email,
         full_name: formData.fullName,
@@ -144,6 +162,16 @@ export default function IntakeForm() {
         documents: documentUrls,
         terms_accepted_at: new Date().toISOString(),
         terms_accepted_ip: clientIP,
+        // Eligibility Profile (optional)
+        eligibility_profile: {
+          zip_code: formData.zipCode || null,
+          household_size: formData.householdSize ? parseInt(formData.householdSize) : null,
+          monthly_income_range: formData.monthlyIncome || null,
+          housing_status: formData.housingStatus || null,
+          employment_status: formData.employmentStatus || null,
+          special_circumstances: formData.specialCircumstances.length > 0 ? formData.specialCircumstances : null,
+          benefits_consent: formData.benefitsConsent,
+        },
       });
 
       // Show success message
@@ -304,6 +332,202 @@ export default function IntakeForm() {
                 value={formData.address}
                 onChange={handleInputChange}
               />
+            </div>
+          </div>
+
+          {/* Benefits Eligibility Profile (Optional) */}
+          <div className="form-section" style={{
+            backgroundColor: '#f0f9ff',
+            border: '2px solid #3b82f6',
+            borderRadius: '12px',
+            padding: '1.5rem'
+          }}>
+            <h2 className="section-title" style={{ color: '#1e40af' }}>
+              <span className="section-icon">📊</span>
+              Benefits Eligibility Profile (Optional)
+            </h2>
+            <p style={{ fontSize: '0.9rem', color: '#475569', marginBottom: '1.5rem', lineHeight: '1.6' }}>
+              Help us connect you to government programs you may qualify for. All fields are optional but recommended.
+            </p>
+
+            <div className="form-group">
+              <label className="form-label" htmlFor="zipCode">
+                ZIP Code
+              </label>
+              <input
+                type="text"
+                id="zipCode"
+                name="zipCode"
+                className="form-input"
+                placeholder="30301"
+                maxLength={5}
+                pattern="[0-9]{5}"
+                value={formData.zipCode}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label" htmlFor="householdSize">
+                How many people live in your household?
+              </label>
+              <input
+                type="number"
+                id="householdSize"
+                name="householdSize"
+                className="form-input"
+                placeholder="1"
+                min="1"
+                max="20"
+                value={formData.householdSize}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label" htmlFor="monthlyIncome">
+                Monthly household income (before taxes)
+              </label>
+              <select
+                id="monthlyIncome"
+                name="monthlyIncome"
+                className="form-input"
+                value={formData.monthlyIncome}
+                onChange={handleInputChange}
+                style={{ cursor: 'pointer' }}
+              >
+                <option value="">Prefer not to say</option>
+                <option value="0-1000">$0 - $1,000</option>
+                <option value="1001-2000">$1,001 - $2,000</option>
+                <option value="2001-3000">$2,001 - $3,000</option>
+                <option value="3001-4000">$3,001 - $4,000</option>
+                <option value="4001-5000">$4,001 - $5,000</option>
+                <option value="5001-7500">$5,001 - $7,500</option>
+                <option value="7501-10000">$7,501 - $10,000</option>
+                <option value="10001+">$10,001+</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label" htmlFor="housingStatus">
+                Current housing situation
+              </label>
+              <select
+                id="housingStatus"
+                name="housingStatus"
+                className="form-input"
+                value={formData.housingStatus}
+                onChange={handleInputChange}
+                style={{ cursor: 'pointer' }}
+              >
+                <option value="">Prefer not to say</option>
+                <option value="rent">Rent</option>
+                <option value="own">Own</option>
+                <option value="homeless">Homeless</option>
+                <option value="at-risk">At risk of homelessness</option>
+                <option value="with-family">Living with family/friends</option>
+                <option value="temporary">Temporary housing</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label" htmlFor="employmentStatus">
+                Employment status
+              </label>
+              <select
+                id="employmentStatus"
+                name="employmentStatus"
+                className="form-input"
+                value={formData.employmentStatus}
+                onChange={handleInputChange}
+                style={{ cursor: 'pointer' }}
+              >
+                <option value="">Prefer not to say</option>
+                <option value="employed-full">Employed full-time</option>
+                <option value="employed-part">Employed part-time</option>
+                <option value="self-employed">Self-employed</option>
+                <option value="unemployed">Unemployed</option>
+                <option value="disabled">Disabled/unable to work</option>
+                <option value="retired">Retired</option>
+                <option value="student">Student</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label" style={{ marginBottom: '0.75rem', display: 'block' }}>
+                Check any that apply (optional)
+              </label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                {[
+                  { id: 'veteran', label: 'Veteran' },
+                  { id: 'disability', label: 'Person with disability' },
+                  { id: 'student', label: 'Student' },
+                  { id: 'senior', label: 'Senior (65+)' },
+                  { id: 'single-parent', label: 'Single parent' },
+                  { id: 'pregnant', label: 'Pregnant or new parent' },
+                ].map((circumstance) => (
+                  <label
+                    key={circumstance.id}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      cursor: 'pointer',
+                      fontSize: '0.95rem',
+                      padding: '0.5rem',
+                      borderRadius: '6px',
+                      backgroundColor: formData.specialCircumstances.includes(circumstance.id) ? '#dbeafe' : 'transparent',
+                      transition: 'background-color 0.2s'
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={formData.specialCircumstances.includes(circumstance.id)}
+                      onChange={() => handleCheckboxChange(circumstance.id)}
+                      style={{
+                        width: '18px',
+                        height: '18px',
+                        cursor: 'pointer',
+                        accentColor: '#3b82f6'
+                      }}
+                    />
+                    <span>{circumstance.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="form-group" style={{
+              marginTop: '1.5rem',
+              padding: '1rem',
+              backgroundColor: '#fff',
+              borderRadius: '8px',
+              border: '2px solid #3b82f6'
+            }}>
+              <label style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '0.75rem',
+                cursor: 'pointer',
+                fontSize: '0.95rem',
+                lineHeight: '1.6'
+              }}>
+                <input
+                  type="checkbox"
+                  checked={formData.benefitsConsent}
+                  onChange={(e) => setFormData(prev => ({ ...prev, benefitsConsent: e.target.checked }))}
+                  style={{
+                    marginTop: '0.25rem',
+                    width: '18px',
+                    height: '18px',
+                    cursor: 'pointer',
+                    accentColor: '#3b82f6'
+                  }}
+                />
+                <span style={{ color: '#1e40af', fontWeight: '500' }}>
+                  I want Turbo Response to match me to government programs and contact me about them. We will only contact you about programs you may qualify for. You can opt out anytime.
+                </span>
+              </label>
             </div>
           </div>
 
