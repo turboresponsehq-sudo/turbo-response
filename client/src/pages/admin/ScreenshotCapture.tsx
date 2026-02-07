@@ -172,6 +172,12 @@ export default function ScreenshotCapture() {
           {/* Upload Button */}
           <Button
             onClick={handleUpload}
+            onTouchEnd={(e) => {
+              if (!isUploading && selectedFile && description.trim()) {
+                e.preventDefault();
+                handleUpload();
+              }
+            }}
             disabled={isUploading || !selectedFile || !description.trim()}
             className="w-full"
           >
