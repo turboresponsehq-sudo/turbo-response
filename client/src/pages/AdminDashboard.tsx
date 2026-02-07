@@ -135,7 +135,7 @@ export default function AdminDashboard() {
   return (
     <div style={{ 
       minHeight: '100vh', 
-      backgroundColor: '#f3f4f6',
+      backgroundColor: '#1f2937',
       padding: '20px',
       fontFamily: 'system-ui, -apple-system, sans-serif'
     }}>
@@ -145,12 +145,12 @@ export default function AdminDashboard() {
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: '32px',
-        backgroundColor: 'white',
+        backgroundColor: '#374151',
         padding: '20px',
         borderRadius: '8px',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+        boxShadow: '0 4px 6px rgba(0,0,0,0.3)'
       }}>
-        <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 'bold' }}>
+        <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 'bold', color: '#f3f4f6' }}>
           ⚡ Admin Dashboard ({cases.length} cases)
         </h1>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
@@ -229,9 +229,9 @@ export default function AdminDashboard() {
         </div>
       ) : (
         <div style={{
-          backgroundColor: 'white',
+          backgroundColor: '#374151',
           borderRadius: '8px',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.3)',
           overflow: 'hidden'
         }}>
           <table style={{
@@ -241,14 +241,14 @@ export default function AdminDashboard() {
           }}>
             <thead>
               <tr style={{
-                backgroundColor: '#f9fafb',
-                borderBottom: '2px solid #e5e7eb'
+                backgroundColor: '#4b5563',
+                borderBottom: '2px solid #6b7280'
               }}>
-                <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#374151' }}>Name</th>
-                <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#374151' }}>Case #</th>
-                <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#374151' }}>Email</th>
-                <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#374151' }}>Category</th>
-                <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#374151' }}>Status</th>
+                <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#f3f4f6', fontSize: '15px' }}>Name</th>
+                <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#f3f4f6', fontSize: '15px' }}>Case #</th>
+                <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#f3f4f6', fontSize: '15px' }}>Email</th>
+                <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#f3f4f6', fontSize: '15px' }}>Category</th>
+                <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600', color: '#f3f4f6', fontSize: '15px' }}>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -256,17 +256,24 @@ export default function AdminDashboard() {
                 <tr
                   key={caseItem.id}
                   onClick={() => handleCaseClick(caseItem.id)}
-                  className="border-b border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors bg-white"
+                  style={{
+                    borderBottom: '1px solid #6b7280',
+                    cursor: 'pointer',
+                    backgroundColor: '#374151',
+                    transition: 'background-color 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#4b5563'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#374151'}
                 >
-                  <td className="px-4 py-3 text-black font-medium">{caseItem.full_name}</td>
-                  <td className="px-4 py-3 text-black font-semibold">{caseItem.case_number}</td>
-                  <td className="px-4 py-3 text-black text-sm">{caseItem.email}</td>
+                  <td style={{ padding: '12px 16px', color: '#f3f4f6', fontWeight: '500', fontSize: '14px' }}>{caseItem.full_name || 'N/A'}</td>
+                  <td style={{ padding: '12px 16px', color: '#60a5fa', fontWeight: '600', fontSize: '14px' }}>#{caseItem.id}</td>
+                  <td style={{ padding: '12px 16px', color: '#d1d5db', fontSize: '14px' }}>{caseItem.email}</td>
                   <td className="px-4 py-3">
                     <span className="inline-block px-2 py-1 bg-indigo-100 text-indigo-700 rounded text-xs font-medium">
                       {caseItem.category}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-black">{caseItem.status || 'Pending'}</td>
+                  <td style={{ padding: '12px 16px', color: '#f3f4f6', fontSize: '14px' }}>{caseItem.status || 'Pending'}</td>
                 </tr>
               ))}
             </tbody>
