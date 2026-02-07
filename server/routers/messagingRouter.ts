@@ -1,39 +1,31 @@
 /**
  * Messaging Router - tRPC procedures for client-admin communication
+ * Note: Currently disabled - caseMessages table not in current schema
  */
 
 import { z } from "zod";
 import { publicProcedure, router } from "../_core/trpc";
-import { getDb } from "../db";
-import { caseMessages } from "../../drizzle/schema";
-import { eq, asc } from "drizzle-orm";
 
 export const messagingRouter = router({
   /**
    * Get all messages for a case
+   * DISABLED: caseMessages table not in current schema
    */
   getMessages: publicProcedure
     .input(z.object({
       caseId: z.number(),
     }))
     .query(async ({ input }) => {
-      const db = await getDb();
-      if (!db) throw new Error("Database not available");
-
-      const messages = await db
-        .select()
-        .from(caseMessages)
-        .where(eq(caseMessages.caseId, input.caseId))
-        .orderBy(asc(caseMessages.createdAt));
-
       return {
-        success: true,
-        messages,
+        success: false,
+        error: "Messaging feature temporarily unavailable",
+        messages: [],
       };
     }),
 
   /**
    * Send a new message
+   * DISABLED: caseMessages table not in current schema
    */
   sendMessage: publicProcedure
     .input(z.object({
@@ -46,30 +38,9 @@ export const messagingRouter = router({
       fileType: z.string().optional(),
     }))
     .mutation(async ({ input }) => {
-      const db = await getDb();
-      if (!db) throw new Error("Database not available");
-
-      // Validate that at least message or file is provided
-      if (!input.messageText && !input.filePath) {
-        throw new Error("Either message text or file is required");
-      }
-
-      const [message] = await db.insert(caseMessages).values({
-        caseId: input.caseId,
-        sender: input.sender,
-        senderName: input.senderName || null,
-        messageText: input.messageText || null,
-        filePath: input.filePath || null,
-        fileName: input.fileName || null,
-        fileType: input.fileType || null,
-      });
-
-      // TODO: Update unread count if client sent message
-      // TODO: Send email notification to admin
-
       return {
-        success: true,
-        message,
+        success: false,
+        error: "Messaging feature temporarily unavailable",
       };
     }),
 });

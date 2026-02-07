@@ -95,7 +95,9 @@ export const screenshotRouter = router({
           });
 
           if (response.choices?.[0]?.message?.content) {
-            const extracted = JSON.parse(response.choices[0].message.content);
+            const content = response.choices[0].message.content;
+            const contentStr = typeof content === 'string' ? content : JSON.stringify(content);
+            const extracted = JSON.parse(contentStr);
             extractedText = extracted.text || "";
             extractedDates = extracted.dates || "";
             extractedContacts = JSON.stringify({

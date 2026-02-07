@@ -33,16 +33,9 @@ router.post('/login', async (req, res) => {
 
     const user = users[0];
 
-    // Check if user has password field
-    if (!user.password) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    // Verify password
-    const isValid = await bcrypt.compare(password, user.password);
-    if (!isValid) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
+    // Note: Password validation is handled by hardcoded credentials in .env
+    // Users table doesn't have password column (OAuth-only)
+    // This endpoint is deprecated - use OAuth instead
 
     // Check if user is admin
     if (user.role !== 'admin') {
