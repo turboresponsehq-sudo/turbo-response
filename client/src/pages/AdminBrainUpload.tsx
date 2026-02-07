@@ -11,7 +11,7 @@ const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turboresponsehq.ai"
 const BRAIN_ACCESS_TOKEN = "TR-SECURE-2025";
 
 interface BrainDocument {
-  id: string;
+  id: number;
   title: string;
   description: string | null;
   file_name: string;
@@ -176,7 +176,7 @@ export default function AdminBrainUpload() {
     }
   };
 
-  const handleDelete = async (id: string, fileName: string) => {
+  const handleDelete = async (id: number, fileName: string) => {
     if (!confirm(`Delete "${fileName}"?`)) return;
 
     try {

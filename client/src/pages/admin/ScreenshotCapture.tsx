@@ -122,7 +122,6 @@ export default function ScreenshotCapture() {
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"
-                capture="environment"
                 onChange={handleFileSelect}
                 className="flex-1"
               />
