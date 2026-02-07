@@ -121,17 +121,13 @@ export default function ScreenshotCapture() {
               <Input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*,.pdf,.doc,.docx"
+                accept="image/*"
                 onChange={handleFileSelect}
                 className="flex-1"
               />
               <Button
                 variant="outline"
                 onClick={() => fileInputRef.current?.click()}
-                onTouchEnd={(e) => {
-                  e.preventDefault();
-                  fileInputRef.current?.click();
-                }}
               >
                 <Upload className="w-4 h-4 mr-2" />
                 Browse
@@ -176,14 +172,8 @@ export default function ScreenshotCapture() {
           {/* Upload Button */}
           <Button
             onClick={handleUpload}
-            onTouchEnd={(e) => {
-              if (!isUploading && selectedFile && description.trim()) {
-                e.preventDefault();
-                handleUpload();
-              }
-            }}
             disabled={isUploading || !selectedFile || !description.trim()}
-            className="w-full text-base py-6"
+            className="w-full"
           >
             {isUploading ? (
               <>
