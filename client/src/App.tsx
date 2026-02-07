@@ -21,7 +21,6 @@ import AdminConsumerCases from "./pages/AdminConsumerCases";
 import AdminConsumerCaseDetail from "./pages/AdminConsumerCaseDetail";
 import AdminBrainUpload from "./pages/AdminBrainUpload";
 import CaseUploadCenter from "./pages/CaseUploadCenter";
-import ScreenshotCapture from "./pages/admin/ScreenshotCapture";
 import ConsumerConfirmation from "./pages/ConsumerConfirmation";
 import TurboHQ from "./pages/TurboHQ";
 import Services from "./pages/Services";
@@ -79,7 +78,6 @@ function Router() {
       {/* Admin workflow routes - restored to specification */}
       <Route path="/admin/brain" component={AdminBrainUpload} />
       <Route path="/admin/case-upload" component={CaseUploadCenter} />
-      <Route path="/admin/screenshots" component={ScreenshotCapture} />
 
       <Route path="/admin/cases/:id" component={AdminCasesDetail} />
       <Route path="/admin/cases" component={AdminCasesList} />
