@@ -273,3 +273,46 @@ export const caseDocuments = mysqlTable("case_documents", {
 
 export type CaseDocument = typeof caseDocuments.$inferSelect;
 export type InsertCaseDocument = typeof caseDocuments.$inferInsert;
+
+/**
+ * Eligibility Profiles table - stores optional benefits eligibility data for people matching
+ * Linked to cases table to track which cases have eligibility profiles
+ */
+export const eligibilityProfiles = mysqlTable("eligibility_profiles", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Foreign key to cases table */
+  caseId: int("caseId").notNull(),
+  /** User email (duplicated from cases for quick lookup) */
+  userEmail: varchar("userEmail", { length: 320 }).notNull(),
+  
+  /** Geographic data */
+  zipCode: varchar("zipCode", { length: 10 }),
+  state: varchar("state", { length: 2 }), // Extracted from ZIP or address
+  county: varchar("county", { length: 100 }), // Derived from ZIP lookup
+  
+  /** Household data */
+  householdSize: int("householdSize"),
+  monthlyIncomeRange: varchar("monthlyIncomeRange", { length: 50 }), // Store range string
+  
+  /** Housing status */
+  housingStatus: varchar("housingStatus", { length: 50 }),
+  
+  /** Employment status */
+  employmentStatus: varchar("employmentStatus", { length: 50 }),
+  
+  /** Special circumstances (JSON array) */
+  specialCircumstances: text("specialCircumstances"), // JSON: ["veteran", "disability", etc.]
+  
+  /** Consent for benefits matching */
+  benefitsConsent: int("benefitsConsent").default(0).notNull(), // 0 = false, 1 = true
+  
+  /** Matching metadata */
+  lastMatchedAt: timestamp("lastMatchedAt"),
+  matchCount: int("matchCount").default(0).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EligibilityProfile = typeof eligibilityProfiles.$inferSelect;
+export type InsertEligibilityProfile = typeof eligibilityProfiles.$inferInsert;

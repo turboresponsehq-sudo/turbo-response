@@ -308,3 +308,85 @@
 - [ ] Auto-deploy to Render
 - [ ] Monitor mobile intake success rate
 - [ ] Confirm "Failed to create case/user" errors disappear
+
+
+---
+
+## 🎯 PEOPLE MATCHING SYSTEM - 48 HOUR SPRINT (FEB 7-9 2026)
+
+### Phase A: Capture Data (8 hours - Day 1)
+- [x] Find and read Defense Intake frontend component
+- [x] Add "Benefits Eligibility Profile" section with 7 optional fields
+- [x] Add ZIP code field (text, 5 digits)
+- [x] Add household size field (number, 1-20)
+- [x] Add monthly income dropdown (9 ranges)
+- [x] Add housing status dropdown (7 options)
+- [x] Add employment status dropdown (7 options)
+- [x] Add special circumstances checkboxes (6 options: veteran, disability, student, senior, single parent, pregnant)
+- [x] Add benefits consent checkbox (required if any profile field filled)
+- [x] Add form validation for consent requirement
+- [x] Update form state management for new fields
+- [ ] Test mobile + desktop rendering
+- [x] Find and read Defense Intake backend controller
+- [x] Update backend to accept eligibility profile fields
+- [x] Create database migration for eligibility_profiles table
+- [x] Update backend to insert eligibility profile when case created
+- [x] Handle optional fields gracefully
+- [ ] Test intake with full profile
+- [ ] Test intake with partial profile
+- [ ] Test intake with no profile
+- [ ] Verify data stored in database
+
+### Phase B: Matching Engine (12 hours - Day 1-2)
+- [ ] Create /matching-engine/eligibility-matcher.js
+- [ ] Implement income-based eligibility logic (FPL calculations)
+- [ ] Implement geographic eligibility (state, county, ZIP)
+- [ ] Implement categorical eligibility (veteran, disability, etc.)
+- [ ] Implement match scoring algorithm (0-100)
+- [ ] Modify daily-intel-scanner.js to tag programs with eligibility criteria
+- [ ] Create /data/tagged-programs.json storage
+- [ ] Create /matching-engine/run-matcher.js
+- [ ] Fetch profiles with benefits_consent = true
+- [ ] Run matching algorithm for each profile
+- [ ] Generate match results with scores
+- [ ] Test with sample profiles and programs
+
+### Phase C: Reports & Approval Workflow (16 hours - Day 2)
+- [ ] Create /matching-engine/generate-people-reports.js
+- [ ] Generate individual reports (/docs/people-benefits-reports/{email}_{date}.md)
+- [ ] Include profile summary, top 10 matches, eligibility notes, documents, deadlines, instructions
+- [ ] Generate daily summary report (total profiles, top matches, urgent deadlines)
+- [ ] Create /matching-engine/approval-queue.json structure
+- [ ] Create /matching-engine/approve-matches.js CLI tool
+- [ ] Implement list command
+- [ ] Implement approve command
+- [ ] Implement reject command
+- [ ] Implement approve-all command
+- [ ] Create /matching-engine/send-people-report.js
+- [ ] Build email template with SendGrid
+- [ ] Add opt-out link
+- [ ] Log sent emails to database
+- [ ] Test report generation
+- [ ] Test approval workflow
+- [ ] Test email delivery
+
+### Phase D: Integration & Deployment (12 hours - Day 2)
+- [ ] Update .github/workflows/bi-ops-automation.yml
+- [ ] Add people-matching job (6:15am ET)
+- [ ] Add report generation job (6:20am ET)
+- [ ] Add approval queue summary job (6:25am ET)
+- [ ] Create /docs/PEOPLE_MATCHING_SYSTEM.md
+- [ ] Create /docs/MATCHING_ALGORITHM.md
+- [ ] Create /docs/APPROVAL_WORKFLOW.md
+- [ ] Create /docs/PRIVACY_COMPLIANCE.md
+- [ ] Push code to GitHub
+- [ ] Run database migration on production
+- [ ] Test Defense Intake on production
+- [ ] Submit test intake with profile
+- [ ] Run matcher manually on production
+- [ ] Generate test report
+- [ ] Send test email
+- [ ] End-to-end test: intake → match → report → approve → email
+- [ ] Create handoff document
+- [ ] Update knowledge base
+
