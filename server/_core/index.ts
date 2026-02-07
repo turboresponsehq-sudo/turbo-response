@@ -10,8 +10,6 @@ import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { brainRouter } from "./brainRouter";
 import intakeRouter from "../routes/intake";
-// @ts-ignore - JS module in TS project
-import adminMatchingRouter from "../routes/admin-matching.js";
 import { getDb } from "../db"; // Already imported above
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -70,9 +68,6 @@ async function startServer() {
   
   // Intake form routes (Offense and Defense)
   app.use("/api", intakeRouter);
-  
-  // Admin matching routes (controlled benefits matching)
-  app.use("/api/admin", adminMatchingRouter);
   
   // Setup admin user (one-time)
   app.get("/api/setup-admin", async (req, res) => {

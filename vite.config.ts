@@ -1,18 +1,11 @@
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
-import fs from "node:fs";
 import path from "path";
-import { fileURLToPath } from "url";
 import { defineConfig } from "vite";
 import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
 
-// ES module compatibility: get __dirname equivalent
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-if (!__dirname) {
-  throw new Error('Failed to resolve __dirname from import.meta.url');
-}
+// Use process.cwd() for reliable __dirname equivalent in all contexts
+const __dirname = process.cwd();
 
 const plugins = [react(), tailwindcss(), vitePluginManusRuntime()];
 
