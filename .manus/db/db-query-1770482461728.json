@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE cases ADD COLUMN caseType VARCHAR(20) AFTER category;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute ALTER TABLE cases ADD COLUMN caseType VARCHAR(20) AFTER category;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 751
+}
