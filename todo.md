@@ -416,3 +416,46 @@
 - [ ] Verify data saves to database (cases + eligibility_profiles tables)
 - [ ] Verify notification sent to owner
 - [ ] Create new checkpoint after fix confirmed
+
+
+---
+
+## 🎯 Phase B: Build Matching Engine (CONTROLLED TEST MODE)
+**IMPORTANT: This is a sandbox feature test. NO automatic sending. Founder approval required.**
+
+### Matching Engine Core
+- [x] Create `server/matching/eligibility-matcher.js`
+- [x] Implement scoring algorithm (income thresholds, geographic matching, categorical matching)
+- [x] Add sample program database (5 federal programs)
+- [ ] Connect to Benefits.gov API (future)
+- [ ] Add state/local program database (future)
+- [ ] Add federal grants database (future)
+- [x] Calculate eligibility scores (0-100)
+- [x] Rank programs by best fit
+- [x] Generate match metadata (deadline, estimated value, documents needed)
+
+### Report Generation
+- [x] Create `server/matching/report-generator.js`
+- [x] Generate markdown reports with program details
+- [x] Include eligibility notes, next steps, deadlines
+- [x] Save to `/docs/people-benefits-reports/{profile_id}-{date}.md`
+- [x] Create daily summary report for founder
+
+### Background Processing
+- [x] Create manual trigger endpoint: POST /api/admin/run-matching
+- [x] Process all profiles with `benefits_consent = true` and `matching_status = pending`
+- [x] Update `matching_status` to `draft` after report generated
+- [x] Log all matching runs to database
+
+### Database Updates
+- [x] Add `matching_status` column to eligibility_profiles (pending, draft, approved, rejected)
+- [x] Add `matching_score` column
+- [x] Add `matched_programs` JSON column
+- [x] Add `report_generated_at` timestamp
+- [x] Add `approved_by` and `approved_at` columns
+
+### Testing
+- [ ] Test matching engine with sample profiles
+- [ ] Verify report quality
+- [ ] Check accuracy of eligibility calculations
+- [ ] Review founder before any user communication
