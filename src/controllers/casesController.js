@@ -75,30 +75,22 @@ const getCaseById = async (req, res, next) => {
 // Get all cases (admin only)
 const getAllCases = async (req, res, next) => {
   try {
-    // Query both tables and merge results
-    const consumerCases = await query(
-      `SELECT id, case_number, category, status, first_name, last_name, email, phone, 
-              created_at, updated_at, 'consumer' as case_type
-       FROM cases
-       WHERE category NOT IN ('Business Audit')
+    // Query admin_cases table (updated schema)
+    const result = await query(
+      `SELECT id, title, category, status, 
+              client_name as first_name, 
+              NULL as last_name,
+              client_email as email, 
+              client_phone as phone,
+              created_at, updated_at, 
+              'admin' as case_type
+       FROM admin_cases
        ORDER BY created_at DESC`
     );
 
-    const businessCases = await query(
-      `SELECT id, NULL as case_number, 'Offense' as category, NULL as status, 
-              full_name as first_name, NULL as last_name, email, phone,
-              created_at, updated_at, 'business' as case_type
-       FROM business_intakes
-       ORDER BY created_at DESC`
-    );
-
-    const allCases = [...consumerCases.rows, ...businessCases.rows].sort(
-      (a, b) => new Date(b.created_at) - new Date(a.created_at)
-    );
+    const allCases = result.rows || [];
 
     logger.info('Retrieved all cases', {
-      consumerCount: consumerCases.rows.length,
-      businessCount: businessCases.rows.length,
       totalCount: allCases.length
     });
 
