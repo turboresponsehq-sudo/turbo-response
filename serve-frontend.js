@@ -16,9 +16,9 @@ function serveFrontend(app) {
   // SPA fallback - serve index.html for all non-API routes
   // This MUST be registered AFTER all API routes
   app.get('*', (req, res, next) => {
-    // Only serve index.html for non-API routes
-    if (req.path.startsWith('/api/')) {
-      return next(); // Let API 404 handler catch it
+    // Skip SPA fallback for API routes and backend-rendered routes
+    if (req.path.startsWith('/api/') || req.path.startsWith('/resources')) {
+      return next(); // Let backend routes handle it
     }
     
     // Serve index.html for all other routes (React Router will handle routing)
