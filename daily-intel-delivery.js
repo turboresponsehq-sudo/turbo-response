@@ -18,7 +18,7 @@ const https = require('https');
 // Configuration
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || '';
 const TO_EMAIL = 'Turboresponsehq@gmail.com';
-const FROM_EMAIL = 'intel@turboresponsehq.ai';
+const FROM_EMAIL = 'Turboresponsehq@gmail.com';
 const FROM_NAME = 'Turbo Response Intel';
 
 const REPORT_DIR = path.join(__dirname, 'docs', 'intel-reports');
