@@ -40,7 +40,7 @@ queryClient.getMutationCache().subscribe(event => {
 const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
-      url: "https://turbo-response-backend.onrender.com/api/trpc",
+      url: "https://turbo-response-production.up.railway.app/api/trpc",
       transformer: superjson,
       fetch(input, init) {
         return globalThis.fetch(input, {
