@@ -82,6 +82,10 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
       
+      - name: Install dependencies
+        run: |
+          npm install --legacy-peer-deps
+      
       - name: Send email
         env:
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
