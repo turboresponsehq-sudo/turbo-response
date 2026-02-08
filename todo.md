@@ -508,20 +508,6 @@
 
 ---
 
-## ✅ FIXED - Railway → Render Migration (Feb 8, 2026)
-
-### Root Cause
-- Frontend was calling DEAD Railway backend (trial expired Dec 12, 2025)
-- All 3 Render services were active but not being used
-- This caused ALL CORS, 404, and 400 errors
-
-### Fixes Applied
-- [x] Updated tRPC URL in main.tsx: Railway → Render backend
-- [x] Updated Brain API_URL in AdminBrainUpload.tsx: Frontend domain → Render backend
-- [x] Verified CORS already configured for turboresponsehq.ai
-
----
-
 ## 🔴 CRITICAL - PICK UP HERE (Feb 7, 2026 - End of Session)
 
 ### Upload Screenshot Button Still Not Working on Mobile
