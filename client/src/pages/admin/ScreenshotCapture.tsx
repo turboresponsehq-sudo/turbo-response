@@ -4,7 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { Loader2, Upload, Trash2, Eye } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import { Loader2, Upload, Trash2, Eye, Brain } from 'lucide-react';
 
 const API_URL = 'https://turbo-response-backend.onrender.com';
 const ACCESS_TOKEN = 'TR-SECURE-2025';
@@ -18,14 +20,19 @@ interface Screenshot {
   mime_type: string;
   file_size: number;
   created_at: string;
+  in_brain: boolean;
+  brain_document_id: string | null;
+  sent_to_brain_at: string | null;
 }
 
 export default function ScreenshotCapture() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [description, setDescription] = useState('');
   const [researchNotes, setResearchNotes] = useState('');
+  const [addToBrain, setAddToBrain] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [expandedNotes, setExpandedNotes] = useState(false);
+  const [sendingToBrain, setSendingToBrain] = useState<number | null>(null);
   const [screenshots, setScreenshots] = useState<Screenshot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -84,6 +91,7 @@ export default function ScreenshotCapture() {
       setSelectedFile(null);
       setDescription('');
       setResearchNotes('');
+      setAddToBrain(false);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -96,6 +104,26 @@ export default function ScreenshotCapture() {
       alert(`Failed to upload screenshot: ${error.response?.data?.error || error.message}`);
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleSendToBrain = async (id: number) => {
+    if (!confirm('Send this screenshot to the Brain system? OCR will extract text from the image.')) return;
+
+    try {
+      setSendingToBrain(id);
+      await axios.post(`${API_URL}/api/screenshots/${id}/send-to-brain`, {}, {
+        headers: {
+          'x-access-token': ACCESS_TOKEN,
+        },
+      });
+      await fetchScreenshots();
+      alert('Screenshot sent to Brain successfully!');
+    } catch (error: any) {
+      console.error('Send to Brain error:', error);
+      alert(`Failed to send to Brain: ${error.response?.data?.error || error.message}`);
+    } finally {
+      setSendingToBrain(null);
     }
   };
 
@@ -185,6 +213,21 @@ export default function ScreenshotCapture() {
             )}
           </div>
 
+          {/* Add to Brain Checkbox */}
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="addToBrain"
+              checked={addToBrain}
+              onCheckedChange={(checked) => setAddToBrain(checked as boolean)}
+            />
+            <label
+              htmlFor="addToBrain"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+            >
+              Add to Brain (OCR will extract text from image)
+            </label>
+          </div>
+
           {/* Upload Button */}
           <Button
             onClick={handleUpload}
@@ -238,7 +281,15 @@ export default function ScreenshotCapture() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
-                        <p className="font-medium text-sm">{screenshot.description}</p>
+                        <div className="flex items-center gap-2 mb-1">
+                          <p className="font-medium text-sm">{screenshot.description}</p>
+                          {screenshot.in_brain && (
+                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                              <Brain className="w-3 h-3 mr-1" />
+                              In Brain
+                            </Badge>
+                          )}
+                        </div>
 
                         {/* Research Notes */}
                         {screenshot.research_notes && (
@@ -269,6 +320,22 @@ export default function ScreenshotCapture() {
                         >
                           <Eye className="w-4 h-4" />
                         </Button>
+                        {!screenshot.in_brain && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleSendToBrain(screenshot.id)}
+                            disabled={sendingToBrain === screenshot.id}
+                            title="Send to Brain with OCR"
+                            className="text-blue-600 hover:text-blue-700"
+                          >
+                            {sendingToBrain === screenshot.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Brain className="w-4 h-4" />
+                            )}
+                          </Button>
+                        )}
                         <Button
                           variant="outline"
                           size="sm"

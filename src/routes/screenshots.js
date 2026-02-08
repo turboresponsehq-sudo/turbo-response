@@ -190,3 +190,168 @@ router.delete('/:id', accessToken, async (req, res) => {
 });
 
 module.exports = router;
+
+
+/**
+ * POST /api/screenshots/:id/send-to-brain
+ * Send a screenshot to the Brain system with OCR
+ */
+router.post('/:id/send-to-brain', accessToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const screenshotId = parseInt(id);
+
+    if (!id || isNaN(screenshotId) || screenshotId <= 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid screenshot ID'
+      });
+    }
+
+    logger.info('[Screenshot → Brain] Request received', { screenshotId });
+
+    // 1. Get screenshot from database
+    const screenshotResult = await query(
+      'SELECT * FROM screenshots WHERE id = $1',
+      [screenshotId]
+    );
+
+    if (screenshotResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'Screenshot not found'
+      });
+    }
+
+    const screenshot = screenshotResult.rows[0];
+
+    // 2. Check if already in Brain
+    if (screenshot.in_brain) {
+      return res.status(400).json({
+        success: false,
+        error: 'Screenshot already in Brain',
+        brain_document_id: screenshot.brain_document_id
+      });
+    }
+
+    // 3. Download image and perform OCR
+    const axios = require('axios');
+    const { extractTextFromImage } = require('../services/ocrService');
+    
+    logger.info('[Screenshot → Brain] Downloading image for OCR', { 
+      url: screenshot.file_url 
+    });
+
+    const imageResponse = await axios.get(screenshot.file_url, {
+      responseType: 'arraybuffer'
+    });
+    const imageBuffer = Buffer.from(imageResponse.data);
+
+    logger.info('[Screenshot → Brain] Performing OCR');
+    const extractedText = await extractTextFromImage(imageBuffer);
+
+    // 4. Upload to Supabase Brain
+    const { getBrainBucket, getSupabaseDB } = require('../services/supabase/client');
+    
+    const bucket = getBrainBucket();
+    const supabase = getSupabaseDB();
+
+    // Generate unique filename for Brain storage
+    const timestamp = Date.now();
+    const sanitizedFilename = screenshot.file_name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const brainFilename = `screenshot_${timestamp}_${sanitizedFilename}`;
+
+    logger.info('[Screenshot → Brain] Uploading to Brain storage', { brainFilename });
+
+    // Upload image to Brain bucket
+    const { data: uploadData, error: uploadError } = await bucket.upload(
+      brainFilename,
+      imageBuffer,
+      {
+        contentType: screenshot.mime_type,
+        cacheControl: '3600',
+        upsert: false
+      }
+    );
+
+    if (uploadError) {
+      logger.error('[Screenshot → Brain] Storage upload failed', { error: uploadError });
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to upload to Brain storage',
+        details: uploadError.message
+      });
+    }
+
+    // Get public URL
+    const { data: urlData } = bucket.getPublicUrl(brainFilename);
+    const brainFileUrl = urlData.publicUrl;
+
+    // 5. Create brain_documents entry
+    const { data: brainDoc, error: brainError } = await supabase
+      .from('brain_documents')
+      .insert({
+        title: screenshot.description || `Screenshot ${screenshot.id}`,
+        description: `Screenshot uploaded on ${new Date(screenshot.created_at).toLocaleDateString()}\n\nExtracted Text:\n${extractedText}`,
+        file_name: brainFilename,
+        file_path: brainFilename,
+        file_url: brainFileUrl,
+        mime_type: screenshot.mime_type,
+        size_bytes: screenshot.file_size,
+        source: 'screenshot'
+      })
+      .select()
+      .single();
+
+    if (brainError) {
+      logger.error('[Screenshot → Brain] Database insert failed', { error: brainError });
+      // Clean up uploaded file
+      await bucket.remove([brainFilename]);
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to create Brain document',
+        details: brainError.message
+      });
+    }
+
+    logger.info('[Screenshot → Brain] Brain document created', { 
+      brainDocId: brainDoc.id 
+    });
+
+    // 6. Update screenshot record
+    await query(
+      `UPDATE screenshots 
+       SET in_brain = TRUE, 
+           brain_document_id = $1, 
+           sent_to_brain_at = NOW() 
+       WHERE id = $2`,
+      [brainDoc.id, screenshotId]
+    );
+
+    logger.info('[Screenshot → Brain] Success', {
+      screenshotId,
+      brainDocId: brainDoc.id
+    });
+
+    res.json({
+      success: true,
+      message: 'Screenshot sent to Brain successfully',
+      brain_document: {
+        id: brainDoc.id,
+        title: brainDoc.title,
+        file_url: brainDoc.file_url,
+        extracted_text: extractedText
+      }
+    });
+
+  } catch (error) {
+    logger.error('[Screenshot → Brain] Error', { error: error.message });
+    res.status(500).json({
+      success: false,
+      error: 'Failed to send screenshot to Brain',
+      details: error.message
+    });
+  }
+});
+
+module.exports = router;
