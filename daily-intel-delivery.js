@@ -21,9 +21,12 @@ const TO_EMAIL = 'Turboresponsehq@gmail.com';
 const FROM_EMAIL = 'Turboresponsehq@gmail.com';
 const FROM_NAME = 'Turbo Response Intel';
 
-const REPORT_DIR = path.join(__dirname, 'doc// Utility: Send email via SendGrid SDK
+const REPORT_DIR = path.join(__dirname, 'docs', 'intel-reports');
+
+// Initialize SendGrid
 sgMail.setApiKey(SENDGRID_API_KEY);
 
+// Utility: Send email via SendGrid SDK
 async function sendEmail(to, subject, htmlBody, textBody) {
   const msg = {
     to: to,
@@ -42,7 +45,9 @@ async function sendEmail(to, subject, htmlBody, textBody) {
   } catch (error) {
     throw new Error(`SendGrid error: ${error.message}`);
   }
-}ML email
+}
+
+// Convert markdown report to HTML email
 function markdownToHTML(markdown) {
   let html = markdown;
   
@@ -90,66 +95,59 @@ function markdownToHTML(markdown) {
 // Main execution
 async function main() {
   console.log('=== Daily Intel Delivery - Consumer Defense Intelligence ===');
-  console.log(`Started at: ${new Date().toISOString()}`);
+  console.log('Started at:', new Date().toISOString());
   console.log('');
-  
-  // Find today's report
-  const date = new Date().toISOString().split('T')[0];
-  const reportPath = path.join(REPORT_DIR, `intel-${date}.md`);
-  
-  if (!fs.existsSync(reportPath)) {
-    console.error(`[Error] Report not found: ${reportPath}`);
-    console.error('Scanner must run before delivery');
-    process.exit(1);
-  }
-  
-  // Read report
-  const reportMarkdown = fs.readFileSync(reportPath, 'utf8');
-  
-  // Check if Stop Rule applies (no actionable updates)
-  const isStopRule = reportMarkdown.includes('**Status:** No actionable updates today');
-  
-  if (isStopRule) {
-    console.log('[Stop Rule] No actionable updates today - skipping email');
-    console.log('Email will only be sent when there are actionable consumer defense updates');
-    process.exit(0);
-  }
-  
-  // Extract item count from report
-  const countMatch = reportMarkdown.match(/\*\*Total Actionable Items:\*\* (\d+)/);
-  const itemCount = countMatch ? countMatch[1] : '?';
-  
-  // Determine priority for subject line
-  let priorityLabel = '';
-  if (reportMarkdown.includes('## 🚨 CRITICAL (P0)')) {
-    priorityLabel = '🚨 CRITICAL - ';
-  } else if (reportMarkdown.includes('## ⚠️ HIGH PRIORITY (P1)')) {
-    priorityLabel = '⚠️ ';
-  }
-  
-  // Generate email
-  const subject = `${priorityLabel}Daily Intel Report - ${itemCount} Actionable Items - ${date}`;
-  const htmlBody = markdownToHTML(reportMarkdown);
-  const textBody = reportMarkdown;
-  
-  // Send email
-  console.log(`[Email] Sending to ${TO_EMAIL}...`);
-  console.log(`[Email] Subject: ${subject}`);
-  
+
   try {
-    const result = await sendEmail(TO_EMAIL, subject, htmlBody, textBody);
-    console.log(`[Email] ✅ Sent successfully (status: ${result.status})`);
+    // Get today's report file
+    const today = new Date().toISOString().split('T')[0];
+    const reportPath = path.join(REPORT_DIR, `intel-${today}.md`);
+
+    // Check if report exists
+    if (!fs.existsSync(reportPath)) {
+      console.log(`[Report] No report found for ${today} at ${reportPath}`);
+      console.log('Exiting - no report to send');
+      process.exit(0);
+    }
+
+    // Read report
+    const reportMarkdown = fs.readFileSync(reportPath, 'utf8');
+    console.log('[Report] Loaded report from:', reportPath);
+
+    // Check if Stop Rule applies (no actionable updates)
+    const isStopRule = reportMarkdown.includes('**Status:** No actionable updates today');
+
+    if (isStopRule) {
+      console.log('[Stop Rule] No actionable updates today - skipping email');
+      console.log('Email will only be sent when there are actionable consumer defense updates');
+      process.exit(0);
+    }
+
+    // Extract actionable count from report
+    const actionableMatch = reportMarkdown.match(/\*\*Total Actionable Items:\*\* (\d+)/);
+    const actionableCount = actionableMatch ? actionableMatch[1] : '0';
+
+    // Generate email
+    const subject = `⚠️ Daily Intel Report - ${actionableCount} Actionable Items - ${today}`;
+    const htmlBody = markdownToHTML(reportMarkdown);
+    const textBody = reportMarkdown;
+
+    // Send email
+    console.log('[Email] Sending to', TO_EMAIL + '...');
+    console.log('[Email] Subject:', subject);
+
+    await sendEmail(TO_EMAIL, subject, htmlBody, textBody);
+
+    console.log('[Email] ✅ Sent successfully!');
+    console.log('');
+    console.log('=== Delivery Complete ===');
+    process.exit(0);
+
   } catch (error) {
-    console.error(`[Email] ❌ Failed to send:`, error.message);
+    console.error('[Email] ❌ Failed to send:', error.message);
     process.exit(1);
   }
-  
-  console.log('');
-  console.log('=== Delivery Complete ===');
 }
 
 // Run
-main().catch(error => {
-  console.error('Fatal error:', error);
-  process.exit(1);
-});
+main();
