@@ -13,7 +13,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const https = require('https');
+const sgMail = require('@sendgrid/mail');
 
 // Configuration
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || '';
@@ -21,63 +21,28 @@ const TO_EMAIL = 'Turboresponsehq@gmail.com';
 const FROM_EMAIL = 'Turboresponsehq@gmail.com';
 const FROM_NAME = 'Turbo Response Intel';
 
-const REPORT_DIR = path.join(__dirname, 'docs', 'intel-reports');
+const REPORT_DIR = path.join(__dirname, 'doc// Utility: Send email via SendGrid SDK
+sgMail.setApiKey(SENDGRID_API_KEY);
 
-// Utility: Send email via SendGrid
-function sendEmail(to, subject, htmlBody, textBody) {
-  return new Promise((resolve, reject) => {
-    const data = JSON.stringify({
-      personalizations: [{
-        to: [{ email: to }]
-      }],
-      from: {
-        email: FROM_EMAIL,
-        name: FROM_NAME
-      },
-      subject: subject,
-      content: [
-        {
-          type: 'text/plain',
-          value: textBody
-        },
-        {
-          type: 'text/html',
-          value: htmlBody
-        }
-      ]
-    });
-    console.log("[DEBUG] SendGrid payload:", data);
-
-    const options = {
-      hostname: 'api.sendgrid.com',
-      path: '/v3/mail/send',
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${SENDGRID_API_KEY}`,
-        'Content-Type': 'application/json',
-        'Content-Length': data.length
-      }
-    };
-
-    const req = https.request(options, (res) => {
-      let responseData = '';
-      res.on('data', chunk => responseData += chunk);
-      res.on('end', () => {
-        if (res.statusCode === 202) {
-          resolve({ success: true, status: res.statusCode });
-        } else {
-          reject(new Error(`SendGrid returned ${res.statusCode}: ${responseData}`));
-        }
-      });
-    });
-
-    req.on('error', reject);
-    req.write(data);
-    req.end();
-  });
-}
-
-// Convert markdown report to HTML email
+async function sendEmail(to, subject, htmlBody, textBody) {
+  const msg = {
+    to: to,
+    from: {
+      email: FROM_EMAIL,
+      name: FROM_NAME
+    },
+    subject: subject,
+    text: textBody,
+    html: htmlBody
+  };
+  
+  try {
+    await sgMail.send(msg);
+    return { success: true };
+  } catch (error) {
+    throw new Error(`SendGrid error: ${error.message}`);
+  }
+}ML email
 function markdownToHTML(markdown) {
   let html = markdown;
   
