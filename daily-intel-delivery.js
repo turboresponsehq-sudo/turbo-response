@@ -28,13 +28,13 @@ function sendEmail(to, subject, htmlBody, textBody) {
   return new Promise((resolve, reject) => {
     const data = JSON.stringify({
       personalizations: [{
-        to: [{ email: to }],
-        subject: subject
+        to: [{ email: to }]
       }],
       from: {
         email: FROM_EMAIL,
         name: FROM_NAME
       },
+      subject: subject,
       content: [
         {
           type: 'text/plain',
