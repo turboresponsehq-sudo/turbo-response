@@ -29,6 +29,7 @@ export default function Home() {
             <Link href="/pricing" className="nav-link">Pricing</Link>
             <Link href="/results" className="nav-link">Results</Link>
             <Link href="/testimonials" className="nav-link">Testimonials</Link>
+            <Link href="/resources" className="nav-link">Resources</Link>
             <Link href="/intake" className="nav-link nav-link-cta">Start Your Case</Link>
           </nav>
         </div>
