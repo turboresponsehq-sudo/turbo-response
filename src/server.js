@@ -37,6 +37,7 @@ const adminDiagnosticRoutes = require('./routes/adminDiagnostic'); // Admin diag
 const createAdminCasesTableRoutes = require('./routes/createAdminCasesTable'); // Create admin_cases table
 const createBusinessIntakesTableRoutes = require('./routes/createBusinessIntakesTable'); // Create business_intakes table
 const screenshotRoutes = require('./routes/screenshots'); // Screenshot upload
+const resourcesRoutes = require('./routes/resources'); // Grant & Resource Matching System
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -109,6 +110,7 @@ app.use('/api', adminDiagnosticRoutes); // Admin diagnostic
 app.use('/api', createAdminCasesTableRoutes); // Create admin_cases table
 app.use('/api', createBusinessIntakesTableRoutes); // Create business_intakes table
 app.use('/api/screenshots', screenshotRoutes); // Screenshot upload
+app.use('/resources', resourcesRoutes); // Grant & Resource Matching System
 
 // Serve frontend static files and SPA fallback
 const { serveFrontend } = require('../serve-frontend');
