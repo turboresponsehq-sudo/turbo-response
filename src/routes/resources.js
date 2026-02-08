@@ -3,11 +3,14 @@ const router = express.Router();
 const { createClient } = require('@supabase/supabase-js');
 const sgMail = require('@sendgrid/mail');
 
-// Initialize Supabase client
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_KEY
-);
+// Initialize Supabase client (only if credentials are available)
+let supabase = null;
+if (process.env.SUPABASE_URL && process.env.SUPABASE_KEY) {
+  supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_KEY
+  );
+}
 
 // Initialize SendGrid
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -418,10 +421,11 @@ router.post('/submit', async (req, res) => {
     const resourcesArray = Array.isArray(resources) ? resources : (resources ? [resources] : []);
     const demographicsArray = Array.isArray(demographics) ? demographics : (demographics ? [demographics] : []);
 
-    // Store in database
-    const { data, error } = await supabase
-      .from('resource_requests')
-      .insert([
+    // Store in database (if Supabase is configured)
+    if (supabase) {
+      const { data, error } = await supabase
+        .from('resource_requests')
+        .insert([
         {
           name,
           email,
@@ -435,11 +439,14 @@ router.post('/submit', async (req, res) => {
           status: 'pending'
         }
       ])
-      .select();
+        .select();
 
-    if (error) {
-      console.error('Database error:', error);
-      throw error;
+      if (error) {
+        console.error('Database error:', error);
+        throw error;
+      }
+    } else {
+      console.log('Supabase not configured - skipping database storage');
     }
 
     // Send email notification to admin
