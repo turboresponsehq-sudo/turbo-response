@@ -504,3 +504,46 @@
 - [x] Change accept="image/*" to accept="image/*,application/pdf" or remove accept to show full file picker
 - [ ] Test on iOS Safari to verify file picker menu appears
 - [ ] Ensure both camera and photo library options are available
+
+
+---
+
+## ✅ FIXED - Railway → Render Migration (Feb 8, 2026)
+
+### Root Cause
+- Frontend was calling DEAD Railway backend (trial expired Dec 12, 2025)
+- All 3 Render services were active but not being used
+- This caused ALL CORS, 404, and 400 errors
+
+### Fixes Applied
+- [x] Updated tRPC URL in main.tsx: Railway → Render backend
+- [x] Updated Brain API_URL in AdminBrainUpload.tsx: Frontend domain → Render backend
+- [x] Verified CORS already configured for turboresponsehq.ai
+
+---
+
+## 🔴 CRITICAL - PICK UP HERE (Feb 7, 2026 - End of Session)
+
+### Upload Screenshot Button Still Not Working on Mobile
+- [x] Browse button FIXED and LOCKED IN - opens photo library correctly (NO capture attribute)
+- [ ] Blue "Upload Screenshot" button NOT responding on iPhone
+- [ ] Tried: Added onTouchEnd handler - did not fix the issue
+- [ ] Need to investigate: Form submission, button disabled state, event propagation, or backend upload endpoint
+- [ ] Test on dev server with browser console to see errors
+- [ ] Consider: May need to check if description field is filled, file is selected, or if there's a validation blocking submission
+
+**Current Status:**
+- Browse works ✅
+- Upload button does nothing when tapped ❌
+
+**What's been deployed:**
+- Commit b0c8650 on production (turboresponsehq.ai)
+- File input: type="file" accept="image/*" (NO capture) - WORKING
+- Upload button: Has onClick and onTouchEnd handlers - NOT WORKING
+
+**Next Steps:**
+1. Check browser console for errors when tapping Upload button
+2. Verify handleUpload function is being called
+3. Check if button disabled state is preventing clicks
+4. Test if form validation is blocking submission
+5. Consider alternative: Use form onSubmit instead of button onClick
