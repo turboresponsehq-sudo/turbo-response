@@ -110,11 +110,13 @@ app.use('/api', adminDiagnosticRoutes); // Admin diagnostic
 app.use('/api', createAdminCasesTableRoutes); // Create admin_cases table
 app.use('/api', createBusinessIntakesTableRoutes); // Create business_intakes table
 app.use('/api/screenshots', screenshotRoutes); // Screenshot upload
-app.use('/resources', resourcesRoutes); // Grant & Resource Matching System
 
 // Serve frontend static files and SPA fallback
 const { serveFrontend } = require('../serve-frontend');
 serveFrontend(app);
+
+// Resources route MUST come after frontend serving because it renders HTML
+app.use('/resources', resourcesRoutes); // Grant & Resource Matching System
 
 // 404 handler for API routes only
 app.use((req, res, next) => {
