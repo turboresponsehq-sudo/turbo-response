@@ -4,18 +4,25 @@
 
 ## Render Services (3 Active)
 
-1. **turbo-response-backend** (Node.js)
-   - Backend API server
-   - Handles all /api/* routes
+1. **turbo-response-backend** (srv-d49k7rs9c44c73bnku40)
+   - Node.js web service (Standard plan)
+   - Repo: turboresponsehq-sudo/turbo-response (main branch)
+   - Domain: turboresponsehq.ai
+   - Internal: turbo-response-backend:10000
+   - Handles all /api/* routes + serves frontend
    - Connected to turbo-response-db
 
-2. **turboresponsehq-staging** (Static Site)
-   - Frontend React app
-   - Serves turboresponsehq.ai domain
+2. **turboresponsehq-staging** (srv-d49i48fdiees73a7tm4g)
+   - Node.js web service (Starter plan)
+   - Repo: turboresponsehq-sudo/turbo-response (feat/admin-auth branch)
+   - URL: https://turboresponsehq-staging.onrender.com
+   - Used for testing admin features
 
-3. **turbo-response-db** (PostgreSQL 17)
-   - Production database
-   - Connected to backend
+3. **turbo-response-db** (dpg-d49jde15pdvs73cuts60-a)
+   - PostgreSQL 17 (Basic-256mb)
+   - Region: Virginia (US East)
+   - Status: Available
+   - Connected to both backend services
 
 ## Domain Configuration
 
