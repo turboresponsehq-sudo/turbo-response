@@ -5,11 +5,22 @@ const sgMail = require('@sendgrid/mail');
 
 // Initialize Supabase client (only if credentials are available)
 let supabase = null;
+console.log('[RESOURCES] Checking Supabase credentials...');
+console.log('[RESOURCES] SUPABASE_URL exists:', !!process.env.SUPABASE_URL);
+console.log('[RESOURCES] SUPABASE_KEY exists:', !!process.env.SUPABASE_KEY);
+
 if (process.env.SUPABASE_URL && process.env.SUPABASE_KEY) {
-  supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_KEY
-  );
+  try {
+    supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_KEY
+    );
+    console.log('[RESOURCES] Supabase client initialized successfully');
+  } catch (error) {
+    console.error('[RESOURCES] Failed to initialize Supabase client:', error);
+  }
+} else {
+  console.warn('[RESOURCES] Supabase credentials not found - database storage will be skipped');
 }
 
 // Initialize SendGrid
@@ -422,6 +433,7 @@ router.post('/submit', async (req, res) => {
     const demographicsArray = Array.isArray(demographics) ? demographics : (demographics ? [demographics] : []);
 
     // Store in database (if Supabase is configured)
+    console.log('[RESOURCES] Attempting database storage, supabase client exists:', !!supabase);
     if (supabase) {
       const { data, error } = await supabase
         .from('resource_requests')
