@@ -46,6 +46,7 @@ function sendEmail(to, subject, htmlBody, textBody) {
         }
       ]
     });
+    console.log("[DEBUG] SendGrid payload:", data);
 
     const options = {
       hostname: 'api.sendgrid.com',
