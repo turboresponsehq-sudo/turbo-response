@@ -37,7 +37,8 @@ const adminDiagnosticRoutes = require('./routes/adminDiagnostic'); // Admin diag
 const createAdminCasesTableRoutes = require('./routes/createAdminCasesTable'); // Create admin_cases table
 const createBusinessIntakesTableRoutes = require('./routes/createBusinessIntakesTable'); // Create business_intakes table
 const screenshotRoutes = require('./routes/screenshots'); // Screenshot upload
-const resourcesRoutes = require('./routes/resources'); // Grant & Resource Matching System
+const resourcesRoutes = require('./routes/resources'); // Grant & Resource Matching System (HTML form)
+const resourcesApiRoutes = require('./routes/resourcesApi'); // Grant & Resource Matching API (email-only)
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -116,7 +117,8 @@ const { serveFrontend } = require('../serve-frontend');
 serveFrontend(app);
 
 // Resources route MUST come after frontend serving because it renders HTML
-app.use('/resources', resourcesRoutes); // Grant & Resource Matching System
+app.use('/resources', resourcesRoutes); // Grant & Resource Matching System (HTML form)
+app.use('/api/resources', resourcesApiRoutes); // Grant & Resource Matching API (email-only, no Supabase)
 
 // 404 handler for API routes only
 app.use((req, res, next) => {

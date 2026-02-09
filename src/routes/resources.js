@@ -229,7 +229,7 @@ router.get('/', (req, res) => {
           From home repairs to business funding, food assistance to energy rebates - we'll match you with programs you may be eligible for.
         </p>
         
-        <form id="resourceForm" action="/resources/submit" method="POST">
+        <form id="resourceForm" action="/api/resources/submit" method="POST">
           <!-- Basic Info -->
           <div class="form-group">
             <label for="name">Full Name *</label>
