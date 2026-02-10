@@ -52,9 +52,9 @@ router.post('/sessions', async (req, res) => {
     const result = await pool.query(`
       INSERT INTO chat_sessions (
         session_id, visitor_id, page_url, referrer_url, 
-        device_type, user_agent, ip_address, started_at, message_count
+        device_type, user_agent, ip_address, created_at, message_count
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), 0)
-      RETURNING id, session_id, started_at
+      RETURNING id, session_id, created_at
     `, [session_id, visitor_id, page_url, referrer_url, device_type, user_agent, ip_address]);
 
     res.status(201).json({
@@ -166,9 +166,9 @@ router.post('/sessions/:sessionId/end', async (req, res) => {
 
     const result = await pool.query(`
       UPDATE chat_sessions
-      SET ended_at = NOW()
+      SET status = 'completed', updated_at = NOW()
       WHERE session_id = $1
-      RETURNING id, session_id, ended_at
+      RETURNING id, session_id, updated_at
     `, [sessionId]);
 
     if (result.rows.length === 0) {
