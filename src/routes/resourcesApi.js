@@ -50,49 +50,8 @@ if (rawKey && !(/\s/.test(rawKey))) {
   console.error('[SENDGRID INIT] ERROR: No SENDGRID_API_KEY found in environment');
 }
 
-// ─── Ensure resource_requests table exists (run once on startup) ─────
-async function ensureResourceTable() {
-  try {
-    await query(`
-      CREATE TABLE IF NOT EXISTS resource_requests (
-        id SERIAL PRIMARY KEY,
-        name TEXT NOT NULL,
-        email TEXT NOT NULL,
-        phone TEXT NOT NULL,
-        location TEXT NOT NULL,
-        resources TEXT,
-        income_level TEXT,
-        household_size TEXT,
-        description TEXT NOT NULL,
-        demographics TEXT,
-        status TEXT DEFAULT 'new',
-        ip_address TEXT,
-        honeypot_triggered BOOLEAN DEFAULT FALSE,
-        deleted_at TIMESTAMP WITH TIME ZONE,
-        deleted_by TEXT,
-        delete_reason TEXT,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-    // Add columns if they don't exist (for tables created before soft-delete was added)
-    const alterQueries = [
-      `ALTER TABLE resource_requests ADD COLUMN IF NOT EXISTS ip_address TEXT`,
-      `ALTER TABLE resource_requests ADD COLUMN IF NOT EXISTS honeypot_triggered BOOLEAN DEFAULT FALSE`,
-      `ALTER TABLE resource_requests ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP WITH TIME ZONE`,
-      `ALTER TABLE resource_requests ADD COLUMN IF NOT EXISTS deleted_by TEXT`,
-      `ALTER TABLE resource_requests ADD COLUMN IF NOT EXISTS delete_reason TEXT`
-    ];
-    for (const q of alterQueries) {
-      try { await query(q); } catch (e) { /* column already exists */ }
-    }
-    console.log('[RESOURCES API] resource_requests table ready');
-  } catch (err) {
-    console.error('[RESOURCES API] Failed to ensure resource_requests table:', err.message);
-  }
-}
-
-// Run table creation on module load
-ensureResourceTable();
+// NOTE: resource_requests table is created in schema.sql on app startup.
+// No inline table creation needed here.
 
 /**
  * POST /api/resources/submit
@@ -157,6 +116,49 @@ router.post('/submit', async (req, res) => {
         ok: false,
         error: 'Missing required fields: name, email, phone, location, description'
       });
+    }
+
+    // ── GUARDRAIL 4: Stronger validation (email format, phone format, description length) ──
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Please provide a valid email address.'
+      });
+    }
+
+    const phoneDigits = phone.replace(/\D/g, '');
+    if (phoneDigits.length < 10 || phoneDigits.length > 15) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Please provide a valid phone number (at least 10 digits).'
+      });
+    }
+
+    if (description.trim().length < 20) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Please provide a more detailed description (at least 20 characters).'
+      });
+    }
+
+    // ── GUARDRAIL 5: Duplicate detection (same email + similar timeframe) ──
+    try {
+      const dupeCheck = await query(
+        `SELECT id, created_at FROM resource_requests 
+         WHERE LOWER(email) = LOWER($1) 
+           AND deleted_at IS NULL 
+           AND created_at > NOW() - INTERVAL '24 hours'
+         ORDER BY created_at DESC LIMIT 1`,
+        [email.trim()]
+      );
+      if (dupeCheck.rows.length > 0) {
+        console.warn(`[RESOURCES API] Duplicate detected: ${email} submitted within 24h (existing #${dupeCheck.rows[0].id})`);
+        // Still allow but flag — redirect to success so user isn't confused
+        // The admin will see the duplicate in the dashboard
+      }
+    } catch (dupeErr) {
+      console.error('[RESOURCES API] Duplicate check failed (non-blocking):', dupeErr.message);
     }
 
     // Ensure arrays

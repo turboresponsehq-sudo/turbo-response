@@ -70,6 +70,29 @@ CREATE TABLE IF NOT EXISTS admin_logs (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Resource requests table (grant/resource intake submissions)
+-- Source of truth for all intake form submissions
+CREATE TABLE IF NOT EXISTS resource_requests (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  location TEXT NOT NULL,
+  resources TEXT,                                    -- JSON array of selected resource types
+  income_level TEXT,                                 -- Selected income bracket
+  household_size TEXT,                               -- Household count
+  description TEXT NOT NULL,                         -- Free-text situation description
+  demographics TEXT,                                 -- JSON array of demographic tags
+  status TEXT DEFAULT 'new'                          -- Workflow: new/reviewed/matched/closed/spam/deleted
+    CHECK (status IN ('new', 'reviewed', 'matched', 'closed', 'spam', 'deleted')),
+  ip_address TEXT,                                   -- Client IP for audit/rate-limit tracking
+  honeypot_triggered BOOLEAN DEFAULT FALSE,          -- Spam flag (honeypot field was filled)
+  deleted_at TIMESTAMP WITH TIME ZONE,               -- Soft delete timestamp
+  deleted_by TEXT,                                   -- Who deleted (admin email)
+  delete_reason TEXT,                                -- Why deleted
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_cases_user_id ON cases(user_id);
@@ -77,6 +100,9 @@ CREATE INDEX IF NOT EXISTS idx_cases_case_number ON cases(case_number);
 CREATE INDEX IF NOT EXISTS idx_cases_status ON cases(status);
 CREATE INDEX IF NOT EXISTS idx_chat_history_case_id ON chat_history(case_id);
 CREATE INDEX IF NOT EXISTS idx_chat_history_user_id ON chat_history(user_id);
+CREATE INDEX IF NOT EXISTS idx_resource_requests_status ON resource_requests(status);
+CREATE INDEX IF NOT EXISTS idx_resource_requests_email ON resource_requests(email);
+CREATE INDEX IF NOT EXISTS idx_resource_requests_created_at ON resource_requests(created_at DESC);
 
 -- Create updated_at trigger function (idempotent)
 CREATE OR REPLACE FUNCTION update_updated_at_column()
