@@ -22,6 +22,13 @@ function getVisitorId(): string {
 async function getSessionId(): Promise<string> {
   let sessionId = localStorage.getItem('turbo_session_id');
   
+  // Clear invalid local_* session IDs (fallback IDs that don't exist in DB)
+  if (sessionId && sessionId.startsWith('local_')) {
+    console.log('[Chat] Clearing invalid local session ID:', sessionId);
+    localStorage.removeItem('turbo_session_id');
+    sessionId = null;
+  }
+  
   if (!sessionId) {
     // Create new session via API
     try {
@@ -42,14 +49,14 @@ async function getSessionId(): Promise<string> {
         const data = await response.json();
         sessionId = data.session.session_id;
         localStorage.setItem('turbo_session_id', sessionId);
+        console.log('[Chat] Session created:', sessionId);
       } else {
         throw new Error('Failed to create session');
       }
     } catch (error) {
       console.error('[Chat] Session creation failed:', error);
-      // Fallback: create local session ID
-      sessionId = `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      localStorage.setItem('turbo_session_id', sessionId);
+      // DO NOT create fallback session - throw error instead
+      throw new Error('Cannot create chat session - please refresh and try again');
     }
   }
   
