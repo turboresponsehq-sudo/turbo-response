@@ -93,6 +93,36 @@ CREATE TABLE IF NOT EXISTS resource_requests (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Chat sessions table (Floating Chat Widget intelligence capture)
+-- Stores every visitor chat session with metadata
+CREATE TABLE IF NOT EXISTS chat_sessions (
+  id SERIAL PRIMARY KEY,
+  session_id TEXT UNIQUE NOT NULL,              -- UUID for this session
+  visitor_id TEXT NOT NULL,                      -- Persistent visitor ID (localStorage)
+  page_url TEXT NOT NULL,                        -- Page where chat was opened
+  referrer_url TEXT,                             -- Where visitor came from
+  device_type TEXT,                              -- mobile/desktop
+  user_agent TEXT,                               -- Full UA string
+  ip_address TEXT,                               -- Client IP
+  status TEXT DEFAULT 'active'                   -- active/completed/abandoned
+    CHECK (status IN ('active', 'completed', 'abandoned')),
+  message_count INTEGER DEFAULT 0,               -- Number of messages in this session
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Chat messages table (Floating Chat Widget intelligence capture)
+-- Stores every message (user + AI) in every chat session
+CREATE TABLE IF NOT EXISTS chat_messages (
+  id SERIAL PRIMARY KEY,
+  session_id TEXT NOT NULL REFERENCES chat_sessions(session_id) ON DELETE CASCADE,
+  role TEXT NOT NULL CHECK (role IN ('user', 'assistant', 'system')),
+  content TEXT NOT NULL,                         -- Message text
+  tokens_used INTEGER DEFAULT 0,                 -- Tokens consumed (if using external AI)
+  model TEXT,                                    -- AI model used (if applicable)
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_cases_user_id ON cases(user_id);
@@ -103,6 +133,10 @@ CREATE INDEX IF NOT EXISTS idx_chat_history_user_id ON chat_history(user_id);
 CREATE INDEX IF NOT EXISTS idx_resource_requests_status ON resource_requests(status);
 CREATE INDEX IF NOT EXISTS idx_resource_requests_email ON resource_requests(email);
 CREATE INDEX IF NOT EXISTS idx_resource_requests_created_at ON resource_requests(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_chat_sessions_visitor_id ON chat_sessions(visitor_id);
+CREATE INDEX IF NOT EXISTS idx_chat_sessions_session_id ON chat_sessions(session_id);
+CREATE INDEX IF NOT EXISTS idx_chat_messages_session_id ON chat_messages(session_id);
+CREATE INDEX IF NOT EXISTS idx_chat_messages_created_at ON chat_messages(created_at DESC);
 
 -- Create updated_at trigger function (idempotent)
 CREATE OR REPLACE FUNCTION update_updated_at_column()
