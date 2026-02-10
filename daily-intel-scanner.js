@@ -462,7 +462,215 @@ async function scanGeorgiaDHS() {
   return updates;
 }
 
-// Scanner: Georgia Courts - Weekly (P1)
+// Scanner: DeKalb County Assistance Programs (P1)
+async function scanDeKalbCounty() {
+  console.log('[DeKalb County] Scanning for assistance programs...');
+  const updates = [];
+  
+  try {
+    const response = await httpGet('https://www.dekalbcountyga.gov/human-services');
+    if (response.status !== 200) {
+      console.error(`[DeKalb County] HTTP ${response.status}`);
+      return updates;
+    }
+    
+    const $ = cheerio.load(response.data);
+    
+    // Look for assistance programs
+    $('article, .news, .program, .update, .alert').each((i, elem) => {
+      const title = $(elem).find('h2, h3, .title, a').first().text().trim();
+      const link = $(elem).find('a').attr('href');
+      const text = $(elem).text().toLowerCase();
+      
+      if (!title) return;
+      
+      // Actionable: assistance, rent relief, emergency funds, benefits
+      const isActionable =
+        text.includes('assistance') ||
+        text.includes('rent') ||
+        text.includes('emergency') ||
+        text.includes('benefit') ||
+        text.includes('relief') ||
+        text.includes('program') ||
+        text.includes('funding');
+      
+      if (isActionable) {
+        updates.push({
+          source: 'DeKalb County Assistance',
+          priority: PRIORITY.P1,
+          title: title,
+          link: link ? (link.startsWith('http') ? link : `https://www.dekalbcountyga.gov${link}`) : 'https://www.dekalbcountyga.gov/human-services',
+          date: 'Recent',
+          why: 'DeKalb County assistance program may help your clients',
+          action: 'Review eligibility, share application link with qualifying clients'
+        });
+      }
+    });
+  } catch (error) {
+    console.error('[DeKalb County] Error:', error.message);
+  }
+  
+  console.log(`[DeKalb County] Found ${updates.length} actionable items`);
+  return updates;
+}
+
+// Scanner: Fulton County Assistance Programs (P1)
+async function scanFultonCounty() {
+  console.log('[Fulton County] Scanning for assistance programs...');
+  const updates = [];
+  
+  try {
+    const response = await httpGet('https://www.fultoncountyga.gov/human-services');
+    if (response.status !== 200) {
+      console.error(`[Fulton County] HTTP ${response.status}`);
+      return updates;
+    }
+    
+    const $ = cheerio.load(response.data);
+    
+    // Look for assistance programs
+    $('article, .news, .program, .update, .alert').each((i, elem) => {
+      const title = $(elem).find('h2, h3, .title, a').first().text().trim();
+      const link = $(elem).find('a').attr('href');
+      const text = $(elem).text().toLowerCase();
+      
+      if (!title) return;
+      
+      // Actionable: assistance, rent relief, emergency funds, benefits
+      const isActionable =
+        text.includes('assistance') ||
+        text.includes('rent') ||
+        text.includes('emergency') ||
+        text.includes('benefit') ||
+        text.includes('relief') ||
+        text.includes('program') ||
+        text.includes('funding');
+      
+      if (isActionable) {
+        updates.push({
+          source: 'Fulton County Assistance',
+          priority: PRIORITY.P1,
+          title: title,
+          link: link ? (link.startsWith('http') ? link : `https://www.fultoncountyga.gov${link}`) : 'https://www.fultoncountyga.gov/human-services',
+          date: 'Recent',
+          why: 'Fulton County assistance program may help your clients',
+          action: 'Review eligibility, share application link with qualifying clients'
+        });
+      }
+    });
+  } catch (error) {
+    console.error('[Fulton County] Error:', error.message);
+  }
+  
+  console.log(`[Fulton County] Found ${updates.length} actionable items`);
+  return updates;
+}
+
+// Scanner: Clayton County Assistance Programs (P1)
+async function scanClaytonCounty() {
+  console.log('[Clayton County] Scanning for assistance programs...');
+  const updates = [];
+  
+  try {
+    const response = await httpGet('https://www.claytoncountyga.gov/human-services');
+    if (response.status !== 200) {
+      console.error(`[Clayton County] HTTP ${response.status}`);
+      return updates;
+    }
+    
+    const $ = cheerio.load(response.data);
+    
+    // Look for assistance programs
+    $('article, .news, .program, .update, .alert').each((i, elem) => {
+      const title = $(elem).find('h2, h3, .title, a').first().text().trim();
+      const link = $(elem).find('a').attr('href');
+      const text = $(elem).text().toLowerCase();
+      
+      if (!title) return;
+      
+      // Actionable: assistance, rent relief, emergency funds, benefits
+      const isActionable =
+        text.includes('assistance') ||
+        text.includes('rent') ||
+        text.includes('emergency') ||
+        text.includes('benefit') ||
+        text.includes('relief') ||
+        text.includes('program') ||
+        text.includes('funding');
+      
+      if (isActionable) {
+        updates.push({
+          source: 'Clayton County Assistance',
+          priority: PRIORITY.P1,
+          title: title,
+          link: link ? (link.startsWith('http') ? link : `https://www.claytoncountyga.gov${link}`) : 'https://www.claytoncountyga.gov/human-services',
+          date: 'Recent',
+          why: 'Clayton County assistance program may help your clients',
+          action: 'Review eligibility, share application link with qualifying clients'
+        });
+      }
+    });
+  } catch (error) {
+    console.error('[Clayton County] Error:', error.message);
+  }
+  
+  console.log(`[Clayton County] Found ${updates.length} actionable items`);
+  return updates;
+}
+
+// Scanner: City of Atlanta Assistance Programs (P1)
+async function scanCityOfAtlanta() {
+  console.log('[City of Atlanta] Scanning for assistance programs...');
+  const updates = [];
+  
+  try {
+    const response = await httpGet('https://www.atlantaga.gov/government/departments/human-services');
+    if (response.status !== 200) {
+      console.error(`[City of Atlanta] HTTP ${response.status}`);
+      return updates;
+    }
+    
+    const $ = cheerio.load(response.data);
+    
+    // Look for assistance programs
+    $('article, .news, .program, .update, .alert').each((i, elem) => {
+      const title = $(elem).find('h2, h3, .title, a').first().text().trim();
+      const link = $(elem).find('a').attr('href');
+      const text = $(elem).text().toLowerCase();
+      
+      if (!title) return;
+      
+      // Actionable: assistance, rent relief, emergency funds, benefits
+      const isActionable =
+        text.includes('assistance') ||
+        text.includes('rent') ||
+        text.includes('emergency') ||
+        text.includes('benefit') ||
+        text.includes('relief') ||
+        text.includes('program') ||
+        text.includes('funding');
+      
+      if (isActionable) {
+        updates.push({
+          source: 'City of Atlanta Assistance',
+          priority: PRIORITY.P1,
+          title: title,
+          link: link ? (link.startsWith('http') ? link : `https://www.atlantaga.gov${link}`) : 'https://www.atlantaga.gov/government/departments/human-services',
+          date: 'Recent',
+          why: 'City of Atlanta assistance program may help your clients',
+          action: 'Review eligibility, share application link with qualifying clients'
+        });
+      }
+    });
+  } catch (error) {
+    console.error('[City of Atlanta] Error:', error.message);
+  }
+  
+  console.log(`[City of Atlanta] Found ${updates.length} actionable items`);
+  return updates;
+}
+
+// Scanner: Georgia Courts - Eviction & Debt Filings (P1)
 async function scanGeorgiaCourts() {
   console.log('[GA Courts] Scanning for eviction policy changes...');
   const updates = [];
@@ -539,11 +747,17 @@ Daily scan completed. No regulatory, enforcement, or assistance updates requirin
 - CFPB Enforcement
 - Federal Register (FCRA/FDCPA)
 
-**Coming in Phase 1.1:**
+**Sources Scanned (Phase 1.1 - Tier 1):**
 - Benefits.gov
-- Georgia Housing Assistance
+- Georgia Housing Assistance (DCA)
 - Georgia DHS/DFCS
 - Georgia Courts
+
+**Sources Scanned (Phase 1.2 - Metro Atlanta):**
+- DeKalb County Assistance Programs
+- Fulton County Assistance Programs
+- Clayton County Assistance Programs
+- City of Atlanta Assistance Programs
 
 **Next Scan:** Tomorrow at 6:00am ET
 `;
@@ -606,13 +820,20 @@ Daily scan completed. No regulatory, enforcement, or assistance updates requirin
   
   // Quick Links
   report += `## 🔗 QUICK LINKS\n\n`;
+  report += `### Federal Sources\n`;
   report += `- [FTC Enforcement Actions](https://www.ftc.gov/news-events/news/press-releases)\n`;
   report += `- [CFPB Enforcement](https://www.consumerfinance.gov/enforcement/actions/)\n`;
-  report += `- [Federal Register](https://www.federalregister.gov/)\n`;
+  report += `- [Federal Register](https://www.federalregister.gov/)\n\n`;
+  report += `### Georgia Assistance (Tier 1)\n`;
   report += `- [Benefits.gov](https://www.benefits.gov/)\n`;
-  report += `- [Georgia Housing Assistance](https://www.dca.ga.gov/safe-affordable-housing)\n`;
-  report += `- [Georgia DHS](https://dhs.georgia.gov/)\n`;
+  report += `- [Georgia Housing Assistance (DCA)](https://www.dca.ga.gov/safe-affordable-housing)\n`;
+  report += `- [Georgia DHS/DFCS](https://dhs.georgia.gov/)\n`;
   report += `- [Georgia Courts](https://www.gasupreme.us/)\n\n`;
+  report += `### Metro Atlanta Counties (Tier 1)\n`;
+  report += `- [DeKalb County Human Services](https://www.dekalbcountyga.gov/human-services)\n`;
+  report += `- [Fulton County Human Services](https://www.fultoncountyga.gov/human-services)\n`;
+  report += `- [Clayton County Human Services](https://www.claytoncountyga.gov/human-services)\n`;
+  report += `- [City of Atlanta Human Services](https://www.atlantaga.gov/government/departments/human-services)\n\n`;
   
   fs.writeFileSync(reportPath, report);
   console.log(`\n[Report] Generated report with ${allUpdates.length} items: ${reportPath}`);
@@ -634,22 +855,33 @@ async function main() {
   const cfpbEnforcement = await scanCFPBEnforcement();
   const federalRegister = await scanFederalRegister();
   
-  // Phase 1.1: Georgia sources (deferred)
-  // const benefitsGov = await scanBenefitsGov();
-  // const gaHousing = await scanGeorgiaHousing();
-  // const gaDHS = await scanGeorgiaDHS();
-  // const gaCourts = await scanGeorgiaCourts();
+  // Phase 1.1: Georgia Tier 1 sources (NOW ACTIVE)
+  const benefitsGov = await scanBenefitsGov();
+  const gaHousing = await scanGeorgiaHousing();
+  const gaDHS = await scanGeorgiaDHS();
+  const gaCourts = await scanGeorgiaCourts();
+  
+  // Phase 1.2: Metro Atlanta County sources (NOW ACTIVE)
+  const deKalb = await scanDeKalbCounty();
+  const fulton = await scanFultonCounty();
+  const clayton = await scanClaytonCounty();
+  const atlanta = await scanCityOfAtlanta();
   
   // Combine all updates
   allUpdates.push(...ftcEnforcement);
   allUpdates.push(...ftcAlerts);
   allUpdates.push(...cfpbEnforcement);
   allUpdates.push(...federalRegister);
-  // Phase 1.1:
-  // allUpdates.push(...benefitsGov);
-  // allUpdates.push(...gaHousing);
-  // allUpdates.push(...gaDHS);
-  // allUpdates.push(...gaCourts);
+  // Phase 1.1: Georgia sources
+  allUpdates.push(...benefitsGov);
+  allUpdates.push(...gaHousing);
+  allUpdates.push(...gaDHS);
+  allUpdates.push(...gaCourts);
+  // Phase 1.2: Metro Atlanta counties
+  allUpdates.push(...deKalb);
+  allUpdates.push(...fulton);
+  allUpdates.push(...clayton);
+  allUpdates.push(...atlanta);
   
   // Generate report
   const reportPath = generateReport(allUpdates);
