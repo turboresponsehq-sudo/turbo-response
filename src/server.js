@@ -15,7 +15,7 @@ console.log('[ROUTES] authRoutes loaded:', !!authRoutes, typeof authRoutes);
 const intakeRoutes = require('./routes/intake');
 // LEGACY_ROUTES_DISABLED – not used by React app (2025-11-13)
 // const blueprintRoutes = require('./routes/blueprint');
-// const chatRoutes = require('./routes/chat');
+const chatRoutes = require('./routes/chat'); // Intelligence Capture - Chat API
 const paymentRoutes = require('./routes/payment');
 const adminRoutes = require('./routes/admin');
 const casesRoutes = require('./routes/cases');
@@ -92,7 +92,7 @@ app.use('/api/intake', intakeRoutes);
 app.use('/api/turbo-intake', turboIntakeRoutes);
 // LEGACY_ROUTES_DISABLED – not used by React app (2025-11-13)
 // app.use('/api/blueprint', blueprintRoutes);
-// app.use('/api/chat', chatRoutes);
+app.use('/api/chat', chatRoutes); // Intelligence Capture - Chat API
 app.use('/api/payment', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api', casesRoutes);  // Mount at /api for admin case routes
