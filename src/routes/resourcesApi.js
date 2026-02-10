@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const sgMail = require('@sendgrid/mail');
-const { getDb } = require('../services/database/drizzle');
-const { resourceRequests } = require('../../drizzle/schema');
+const { query } = require('../services/database/db');
 
 // ─── Permanent SendGrid key sanitizing ───────────────────────────────
 // Strips quotes, whitespace, newlines, carriage returns, and "Bearer " prefix
@@ -29,7 +28,7 @@ if (rawKey && !(/\s/.test(rawKey))) {
 
 /**
  * POST /api/resources/submit
- * Email-only resource request submission (no database)
+ * Resource request submission with email + database storage
  */
 router.post('/submit', async (req, res) => {
   try {
@@ -204,26 +203,25 @@ This is an automated notification from Turbo Response Grant & Resource Matching 
     await sgMail.send(emailContent);
     console.log('[RESOURCES API] Email sent successfully to:', emailContent.to);
 
-    // Insert into database (source of truth)
+    // Insert into database (source of truth) using raw SQL
     try {
-      const db = await getDb();
-      if (db) {
-        await db.insert(resourceRequests).values({
-          fullName: name,
-          email: email,
-          phone: phone,
-          location: location,
-          resourceTypes: JSON.stringify(resourcesArray),
-          incomeLevel: income || null,
-          householdSize: household || null,
-          demographics: JSON.stringify(demographicsArray),
-          description: description,
-          status: 'new'
-        });
-        console.log('[RESOURCES API] Submission stored in database successfully');
-      } else {
-        console.warn('[RESOURCES API] Database not available - submission not stored (email sent as backup)');
-      }
+      await query(
+        `INSERT INTO resource_requests (full_name, email, phone, location, resource_types, income_level, household_size, demographics, description, status, submitted_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW())`,
+        [
+          name,
+          email,
+          phone,
+          location,
+          JSON.stringify(resourcesArray),
+          income || null,
+          household || null,
+          JSON.stringify(demographicsArray),
+          description,
+          'new'
+        ]
+      );
+      console.log('[RESOURCES API] Submission stored in database successfully');
     } catch (dbError) {
       console.error('[RESOURCES API] Failed to store submission in database:', dbError.message);
       // Continue anyway - email was sent successfully
