@@ -37,6 +37,7 @@ import AdminCasesList from "./pages/AdminCasesList";
 import AdminCasesDetail from "./pages/AdminCaseDetail";
 import GrantDemo from "./pages/GrantDemo";
 import EvictionDemo from "./pages/EvictionDemo";
+import AdminResourceSubmissions from "./pages/admin/AdminResourceSubmissions";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -80,6 +81,7 @@ function Router() {
       <Route path="/admin/brain" component={AdminBrainUpload} />
       <Route path="/admin/case-upload" component={CaseUploadCenter} />
       <Route path="/admin/screenshots" component={ScreenshotCapture} />
+      <Route path="/admin/resources" component={AdminResourceSubmissions} />
 
       <Route path="/admin/cases/:id" component={AdminCasesDetail} />
       <Route path="/admin/cases" component={AdminCasesList} />

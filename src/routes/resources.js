@@ -230,6 +230,11 @@ router.get('/', (req, res) => {
         </p>
         
         <form id="resourceForm" action="/api/resources/submit" method="POST">
+          <!-- Honeypot field - hidden from humans, bots will fill it -->
+          <div style="position:absolute;left:-9999px;top:-9999px;height:0;width:0;overflow:hidden;" aria-hidden="true">
+            <label for="website_url">Website URL</label>
+            <input type="text" id="website_url" name="website_url" tabindex="-1" autocomplete="off">
+          </div>
           <!-- Basic Info -->
           <div class="form-group">
             <label for="name">Full Name *</label>
