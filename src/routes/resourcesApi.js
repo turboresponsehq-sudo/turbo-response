@@ -205,8 +205,26 @@ This is an automated notification from Turbo Response Grant & Resource Matching 
 
     // Insert into database (source of truth) using raw SQL
     try {
+      // Auto-create table if it doesn't exist yet
+      await query(`
+        CREATE TABLE IF NOT EXISTS resource_requests (
+          id SERIAL PRIMARY KEY,
+          name TEXT NOT NULL,
+          email TEXT NOT NULL,
+          phone TEXT NOT NULL,
+          location TEXT NOT NULL,
+          resources TEXT,
+          income_level TEXT,
+          household_size TEXT,
+          description TEXT NOT NULL,
+          demographics TEXT,
+          status TEXT DEFAULT 'pending',
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+
       await query(
-        `INSERT INTO resource_requests (full_name, email, phone, location, resource_types, income_level, household_size, demographics, description, status, submitted_at)
+        `INSERT INTO resource_requests (name, email, phone, location, resources, income_level, household_size, demographics, description, status, created_at)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW())`,
         [
           name,
