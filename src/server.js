@@ -39,6 +39,7 @@ const createBusinessIntakesTableRoutes = require('./routes/createBusinessIntakes
 const screenshotRoutes = require('./routes/screenshots'); // Screenshot upload
 const resourcesRoutes = require('./routes/resources'); // Grant & Resource Matching System (HTML form)
 const resourcesApiRoutes = require('./routes/resourcesApi'); // Grant & Resource Matching API (email-only)
+const resourceSuccessRoutes = require('./routes/resourceSuccess'); // Grant & Resource Success Page
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -118,6 +119,7 @@ serveFrontend(app);
 
 // Resources route MUST come after frontend serving because it renders HTML
 app.use('/resources', resourcesRoutes); // Grant & Resource Matching System (HTML form)
+app.use('/resources/success', resourceSuccessRoutes); // Grant & Resource Success Page
 app.use('/api/resources', resourcesApiRoutes); // Grant & Resource Matching API (email-only, no Supabase)
 
 // 404 handler for API routes only

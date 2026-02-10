@@ -66,3 +66,42 @@ export const screenshots = mysqlTable("screenshots", {
 
 export type Screenshot = typeof screenshots.$inferSelect;
 export type InsertScreenshot = typeof screenshots.$inferInsert;
+
+/**
+ * Resource requests table - stores grant/resource intake form submissions
+ * This is the system of record for all client resource requests
+ * Email notifications are backups; this table is the source of truth
+ */
+export const resourceRequests = mysqlTable("resource_requests", {
+  /** Unique identifier for each request */
+  id: int("id").autoincrement().primaryKey(),
+  /** Submitter's full name */
+  fullName: varchar("fullName", { length: 255 }).notNull(),
+  /** Submitter's email address */
+  email: varchar("email", { length: 320 }).notNull(),
+  /** Submitter's phone number */
+  phone: varchar("phone", { length: 20 }).notNull(),
+  /** Submitter's location (city/state or region) */
+  location: varchar("location", { length: 255 }).notNull(),
+  /** JSON array of resource types requested: housing, legal, financial, food, healthcare, etc. */
+  resourceTypes: longtext("resourceTypes").notNull(), // JSON array stored as string
+  /** Income level: under_30k, 30k_50k, 50k_75k, 75k_100k, over_100k */
+  incomeLevel: varchar("incomeLevel", { length: 50 }),
+  /** Household size: number of people in household */
+  householdSize: varchar("householdSize", { length: 50 }),
+  /** JSON array of demographics: veteran, elderly, disabled, student, parent, etc. */
+  demographics: longtext("demographics"), // JSON array stored as string
+  /** Detailed description of situation/needs */
+  description: longtext("description").notNull(),
+  /** Status of the request: new, processing, matched, closed, archived */
+  status: mysqlEnum("status", ["new", "processing", "matched", "closed", "archived"]).default("new").notNull(),
+  /** When the request was submitted */
+  submittedAt: timestamp("submittedAt").defaultNow().notNull(),
+  /** When the request was last updated */
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  /** Admin notes about this request (internal use only) */
+  adminNotes: longtext("adminNotes"),
+});
+
+export type ResourceRequest = typeof resourceRequests.$inferSelect;
+export type InsertResourceRequest = typeof resourceRequests.$inferInsert;
