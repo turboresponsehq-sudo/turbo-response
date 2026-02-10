@@ -8,6 +8,54 @@ interface Message {
   timestamp: Date;
 }
 
+// Helper: Get or create visitor ID
+function getVisitorId(): string {
+  let visitorId = localStorage.getItem('turbo_visitor_id');
+  if (!visitorId) {
+    visitorId = `visitor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    localStorage.setItem('turbo_visitor_id', visitorId);
+  }
+  return visitorId;
+}
+
+// Helper: Get or create session ID
+async function getSessionId(): Promise<string> {
+  let sessionId = localStorage.getItem('turbo_session_id');
+  
+  if (!sessionId) {
+    // Create new session via API
+    try {
+      const response = await fetch('/api/chat/sessions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          visitor_id: getVisitorId(),
+          page_url: window.location.href,
+          referrer_url: document.referrer || null,
+          device_type: /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+          user_agent: navigator.userAgent,
+          ip_address: null // Backend will capture this
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        sessionId = data.session.session_id;
+        localStorage.setItem('turbo_session_id', sessionId);
+      } else {
+        throw new Error('Failed to create session');
+      }
+    } catch (error) {
+      console.error('[Chat] Session creation failed:', error);
+      // Fallback: create local session ID
+      sessionId = `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem('turbo_session_id', sessionId);
+    }
+  }
+  
+  return sessionId;
+}
+
 export default function FloatingChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
@@ -18,6 +66,7 @@ export default function FloatingChatWidget() {
     },
   ]);
   const [currentMessage, setCurrentMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -33,54 +82,87 @@ export default function FloatingChatWidget() {
   };
 
   const sendMessage = async () => {
-    if (!currentMessage.trim()) return;
+    if (!currentMessage.trim() || isLoading) return;
 
+    const userMessageContent = currentMessage;
     const userMessage: Message = {
       role: "user",
-      content: currentMessage,
+      content: userMessageContent,
       timestamp: new Date(),
     };
 
     setMessages((prev) => [...prev, userMessage]);
     setCurrentMessage("");
+    setIsLoading(true);
 
-    // Simulate AI response (replace with actual API call)
-    setTimeout(() => {
-      const aiResponse: Message = {
+    try {
+      // Get session ID (creates session if needed)
+      const sessionId = await getSessionId();
+
+      // Save user message to database
+      await fetch('/api/chat/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          session_id: sessionId,
+          role: 'user',
+          content: userMessageContent,
+          tokens_used: 0,
+          model: null
+        })
+      });
+
+      // Get AI response from backend
+      const aiResponse = await fetch('/api/chat/ai-response', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          session_id: sessionId,
+          message: userMessageContent
+        })
+      });
+
+      if (!aiResponse.ok) {
+        throw new Error('AI response failed');
+      }
+
+      const aiData = await aiResponse.json();
+      const aiMessageContent = aiData.response || "I'm having trouble responding right now. Please try again.";
+
+      // Save AI message to database
+      await fetch('/api/chat/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          session_id: sessionId,
+          role: 'assistant',
+          content: aiMessageContent,
+          tokens_used: aiData.tokens_used || 0,
+          model: aiData.model || 'gpt-4'
+        })
+      });
+
+      // Display AI response
+      const aiMessage: Message = {
         role: "assistant",
-        content: getAIResponse(currentMessage),
+        content: aiMessageContent,
         timestamp: new Date(),
       };
-      setMessages((prev) => [...prev, aiResponse]);
-    }, 1000);
-  };
+      setMessages((prev) => [...prev, aiMessage]);
 
-  const getAIResponse = (userInput: string): string => {
-    const input = userInput.toLowerCase();
-
-    // Knowledge base responses
-    if (input.includes("case") || input.includes("help")) {
-      return "If you've received a notice for eviction, debt collection, IRS issues, repossession, or benefits denial, you likely have grounds for a legal response. Click the 'Get Started' button on the homepage to begin your case analysis.";
+    } catch (error) {
+      console.error('[Chat] Error:', error);
+      
+      // Fallback response on error
+      const errorMessage: Message = {
+        role: "assistant",
+        content: "I'm having trouble connecting right now. Please try again in a moment, or click 'Get Started' on the homepage to begin your case.",
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
     }
-
-    if (input.includes("price") || input.includes("cost") || input.includes("free")) {
-      return "Turbo Response offers professional legal game plans starting at $149 for case analysis. This is much more affordable than hiring a lawyer who typically charges $250-$500 per letter. Click 'Get Started' to see our pricing options.";
-    }
-
-    if (input.includes("time") || input.includes("long")) {
-      return "Most game plans are generated within 24-48 hours. Our AI analyzes your case instantly, and our expert team reviews everything to ensure maximum effectiveness before delivery.";
-    }
-
-    if (input.includes("eviction") || input.includes("rent")) {
-      return "For eviction cases, we can help you draft responses citing tenant rights laws. Start your case analysis now by clicking 'Get Started' on the homepage.";
-    }
-
-    if (input.includes("debt") || input.includes("collector")) {
-      return "Debt collectors must follow strict rules under the FDCPA. We can help you fight back with professional legal responses. Click 'Get Started' to begin.";
-    }
-
-    // Default response
-    return "I can help you with evictions, debt collection, IRS issues, and more. To get started with your case, click the 'Get Started' button on the homepage, or tell me more about your specific situation.";
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -127,6 +209,11 @@ export default function FloatingChatWidget() {
                 <div className="message-bubble">{msg.content}</div>
               </div>
             ))}
+            {isLoading && (
+              <div className="chat-message ai-message">
+                <div className="message-bubble">Typing...</div>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
 
@@ -139,8 +226,13 @@ export default function FloatingChatWidget() {
               value={currentMessage}
               onChange={(e) => setCurrentMessage(e.target.value)}
               onKeyPress={handleKeyPress}
+              disabled={isLoading}
             />
-            <button className="chat-send-button" onClick={sendMessage}>
+            <button 
+              className="chat-send-button" 
+              onClick={sendMessage}
+              disabled={isLoading}
+            >
               <Send size={18} />
             </button>
           </div>

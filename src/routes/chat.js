@@ -191,4 +191,73 @@ router.post('/sessions/:sessionId/end', async (req, res) => {
   }
 });
 
+/**
+ * POST /api/chat/ai-response
+ * Get AI response for user message
+ * 
+ * Body: {
+ *   session_id: string,
+ *   message: string
+ * }
+ */
+router.post('/ai-response', async (req, res) => {
+  try {
+    const { session_id, message } = req.body;
+
+    if (!session_id || !message) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: session_id, message'
+      });
+    }
+
+    // Call OpenAI API
+    const OpenAI = require('openai');
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY
+    });
+
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4',
+      messages: [
+        {
+          role: 'system',
+          content: `You are Turbo AI, a consumer defense assistant for Turbo Response. Help users with:
+- Eviction notices and tenant rights
+- Debt collection violations (FDCPA)
+- IRS notices and tax issues
+- Auto repossession and yo-yo financing
+- Benefit denials and administrative actions
+
+Be helpful, professional, and encourage users to click "Get Started" on the homepage to begin their case analysis. Keep responses concise (2-3 sentences).`
+        },
+        {
+          role: 'user',
+          content: message
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: 150
+    });
+
+    const aiResponse = completion.choices[0].message.content;
+    const tokensUsed = completion.usage.total_tokens;
+
+    res.json({
+      success: true,
+      response: aiResponse,
+      tokens_used: tokensUsed,
+      model: 'gpt-4'
+    });
+
+  } catch (error) {
+    console.error('[CHAT API] Error getting AI response:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get AI response',
+      response: "I can help you with evictions, debt collection, IRS issues, and more. To get started with your case, click the 'Get Started' button on the homepage."
+    });
+  }
+});
+
 module.exports = router;
