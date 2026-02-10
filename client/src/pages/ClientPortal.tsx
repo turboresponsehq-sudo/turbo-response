@@ -465,18 +465,18 @@ export default function ClientPortal() {
           {caseData?.pricing_tier_name && (
             <div style={{
               padding: "1rem",
-              background: "linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1))",
-              border: "2px solid rgba(102, 126, 234, 0.3)",
+              background: "linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(59, 130, 246, 0.1))",
+              border: "2px solid rgba(6, 182, 212, 0.3)",
               borderRadius: "8px",
               marginBottom: "1rem"
             }}>
-              <div style={{ fontSize: "0.875rem", color: "#667eea", marginBottom: "0.5rem", fontWeight: 600 }}>
+              <div style={{ fontSize: "0.875rem", color: "#06b6d4", marginBottom: "0.5rem", fontWeight: 600 }}>
                 Your Package
               </div>
               <div style={{ fontSize: "1.125rem", fontWeight: 700, color: "#212529", marginBottom: "0.25rem" }}>
                 {caseData.pricing_tier_name}
               </div>
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "#667eea" }}>
+              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "#06b6d4" }}>
                 ${caseData.pricing_tier_amount}
               </div>
             </div>

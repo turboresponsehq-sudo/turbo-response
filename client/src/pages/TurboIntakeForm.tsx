@@ -524,7 +524,7 @@ export default function TurboIntakeForm() {
                       width: '18px',
                       height: '18px',
                       cursor: 'pointer',
-                      accentColor: '#667eea'
+                      accentColor: '#06b6d4'
                     }}
                   />
                   <span style={{ color: '#374151' }}>
