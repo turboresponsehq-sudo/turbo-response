@@ -33,52 +33,90 @@ setInterval(() => {
 }, 30 * 60 * 1000);
 
 // ─── Permanent SendGrid key sanitizing ───────────────────────────────
-// Strips quotes, whitespace, newlines, carriage returns, and "Bearer " prefix
 const rawKey = (process.env.SENDGRID_API_KEY || "").trim().replace(/^["']|["']$/g, '').replace(/^Bearer\s+/i, '').trim();
 
-// Safe debug logging (NO secrets exposed)
 console.log('[SENDGRID INIT] Key present:', !!rawKey);
 console.log('[SENDGRID INIT] Key length:', rawKey.length);
 console.log('[SENDGRID INIT] Key starts with SG.:', rawKey.startsWith('SG.'));
-console.log('[SENDGRID INIT] Has whitespace:', /\s/.test(rawKey));
-console.log('[SENDGRID INIT] Has newline:', /[\r\n]/.test(rawKey));
 
 if (rawKey && !(/\s/.test(rawKey))) {
   sgMail.setApiKey(rawKey);
   console.log('[SENDGRID INIT] API key set successfully (clean)');
 } else if (rawKey) {
-  // Key exists but has whitespace - still try after aggressive clean
   const aggressiveClean = rawKey.replace(/\s+/g, '');
   sgMail.setApiKey(aggressiveClean);
-  console.log('[SENDGRID INIT] WARNING: Key had whitespace, used aggressive clean. Length after:', aggressiveClean.length);
+  console.log('[SENDGRID INIT] WARNING: Key had whitespace, used aggressive clean.');
 } else {
   console.error('[SENDGRID INIT] ERROR: No SENDGRID_API_KEY found in environment');
 }
 
+// ─── Ensure resource_requests table exists (run once on startup) ─────
+async function ensureResourceTable() {
+  try {
+    await query(`
+      CREATE TABLE IF NOT EXISTS resource_requests (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL,
+        phone TEXT NOT NULL,
+        location TEXT NOT NULL,
+        resources TEXT,
+        income_level TEXT,
+        household_size TEXT,
+        description TEXT NOT NULL,
+        demographics TEXT,
+        status TEXT DEFAULT 'new',
+        ip_address TEXT,
+        honeypot_triggered BOOLEAN DEFAULT FALSE,
+        deleted_at TIMESTAMP WITH TIME ZONE,
+        deleted_by TEXT,
+        delete_reason TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    // Add columns if they don't exist (for tables created before soft-delete was added)
+    const alterQueries = [
+      `ALTER TABLE resource_requests ADD COLUMN IF NOT EXISTS ip_address TEXT`,
+      `ALTER TABLE resource_requests ADD COLUMN IF NOT EXISTS honeypot_triggered BOOLEAN DEFAULT FALSE`,
+      `ALTER TABLE resource_requests ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP WITH TIME ZONE`,
+      `ALTER TABLE resource_requests ADD COLUMN IF NOT EXISTS deleted_by TEXT`,
+      `ALTER TABLE resource_requests ADD COLUMN IF NOT EXISTS delete_reason TEXT`
+    ];
+    for (const q of alterQueries) {
+      try { await query(q); } catch (e) { /* column already exists */ }
+    }
+    console.log('[RESOURCES API] resource_requests table ready');
+  } catch (err) {
+    console.error('[RESOURCES API] Failed to ensure resource_requests table:', err.message);
+  }
+}
+
+// Run table creation on module load
+ensureResourceTable();
+
 /**
  * POST /api/resources/submit
- * Resource request submission with email + database storage
+ * 
+ * PRIORITY ORDER:
+ *   1. Validate input + guardrails (rate limit, honeypot)
+ *   2. INSERT into database (source of truth)
+ *   3. Send email notification (secondary, non-blocking)
+ *   4. Redirect to success page
+ * 
+ * If DB fails → return error (submission not recorded = not accepted)
+ * If email fails → still redirect to success (submission is in DB)
  */
 router.post('/submit', async (req, res) => {
   try {
     // Get client IP for rate limiting and audit
     const clientIp = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.ip || 'unknown';
 
-    // Rate limiting check
+    // ── GUARDRAIL 1: Rate limiting ──
     if (!checkRateLimit(clientIp)) {
       console.warn(`[RESOURCES API] Rate limit exceeded for IP: ${clientIp}`);
       return res.status(429).json({
         ok: false,
         error: 'Too many submissions. Please try again in 15 minutes.'
-      });
-    }
-
-    // Check if SendGrid is configured before attempting to send
-    if (!rawKey) {
-      console.error('[RESOURCES API] SendGrid API key is missing');
-      return res.status(500).json({
-        ok: false,
-        error: 'Email service not configured. Please contact support.'
       });
     }
 
@@ -95,23 +133,12 @@ router.post('/submit', async (req, res) => {
       website_url: honeypotField // Honeypot field - should be empty
     } = req.body;
 
-    // Honeypot check - if this hidden field has a value, it's a bot
+    // ── GUARDRAIL 2: Honeypot check ──
     const honeypotTriggered = !!honeypotField;
     if (honeypotTriggered) {
       console.warn(`[RESOURCES API] Honeypot triggered from IP: ${clientIp}`);
-      // Still store in DB for tracking but skip email
+      // Store in DB as spam for tracking, skip email
       try {
-        await query(`
-          CREATE TABLE IF NOT EXISTS resource_requests (
-            id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL,
-            phone TEXT NOT NULL, location TEXT NOT NULL, resources TEXT,
-            income_level TEXT, household_size TEXT, description TEXT NOT NULL,
-            demographics TEXT, status TEXT DEFAULT 'spam', ip_address TEXT,
-            honeypot_triggered BOOLEAN DEFAULT FALSE, deleted_at TIMESTAMP WITH TIME ZONE,
-            deleted_by TEXT, delete_reason TEXT,
-            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-          )
-        `);
         await query(
           `INSERT INTO resource_requests (name, email, phone, location, resources, income_level, household_size, demographics, description, status, ip_address, honeypot_triggered)
            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'spam', $10, true)`,
@@ -124,7 +151,7 @@ router.post('/submit', async (req, res) => {
       return res.redirect(303, '/resources/success');
     }
 
-    // Validate required fields
+    // ── GUARDRAIL 3: Validate required fields ──
     if (!name || !email || !phone || !location || !description) {
       return res.status(400).json({
         ok: false,
@@ -136,22 +163,62 @@ router.post('/submit', async (req, res) => {
     const resourcesArray = Array.isArray(resources) ? resources : (resources ? [resources] : []);
     const demographicsArray = Array.isArray(demographics) ? demographics : (demographics ? [demographics] : []);
 
-    // Format data for email
-    const resourcesList = resourcesArray.length > 0
-      ? resourcesArray.map(r => `✓ ${r.replace(/_/g, ' ')}`).join('\n')
-      : 'None selected';
-    
-    const demographicsList = demographicsArray.length > 0 
-      ? demographicsArray.map(d => `✓ ${d.replace(/_/g, ' ')}`).join('\n')
-      : 'None specified';
+    // ══════════════════════════════════════════════════════════════
+    // STEP 1: INSERT INTO DATABASE (SOURCE OF TRUTH)
+    // If this fails, the submission is NOT accepted.
+    // ══════════════════════════════════════════════════════════════
+    let dbRecord;
+    try {
+      const insertResult = await query(
+        `INSERT INTO resource_requests (name, email, phone, location, resources, income_level, household_size, demographics, description, status, ip_address, honeypot_triggered, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, false, NOW())
+         RETURNING id, created_at`,
+        [
+          name,
+          email,
+          phone,
+          location,
+          JSON.stringify(resourcesArray),
+          income || null,
+          household || null,
+          JSON.stringify(demographicsArray),
+          description,
+          'new',
+          clientIp
+        ]
+      );
+      dbRecord = insertResult.rows[0];
+      console.log(`[RESOURCES API] Submission #${dbRecord.id} stored in database (source of truth)`);
+    } catch (dbError) {
+      console.error('[RESOURCES API] DATABASE INSERT FAILED — submission NOT accepted:', dbError.message);
+      return res.status(500).json({
+        ok: false,
+        error: 'Failed to save your submission. Please try again later.'
+      });
+    }
 
-    // Send email notification to admin
-    const emailContent = {
-      to: process.env.ADMIN_EMAIL || 'turboresponsehq@gmail.com',
-      from: process.env.SENDGRID_FROM_EMAIL || 'turboresponsehq@gmail.com',
-      subject: `🎯 New Grant Resource Request - ${name}`,
-      text: `
-New Grant & Resource Request Submitted
+    // ══════════════════════════════════════════════════════════════
+    // STEP 2: SEND EMAIL NOTIFICATION (SECONDARY, NON-BLOCKING)
+    // If this fails, the submission is still saved in DB.
+    // ══════════════════════════════════════════════════════════════
+    try {
+      if (!rawKey) {
+        console.warn('[RESOURCES API] SendGrid API key missing — skipping email notification');
+      } else {
+        const resourcesList = resourcesArray.length > 0
+          ? resourcesArray.map(r => `✓ ${r.replace(/_/g, ' ')}`).join('\n')
+          : 'None selected';
+        
+        const demographicsList = demographicsArray.length > 0 
+          ? demographicsArray.map(d => `✓ ${d.replace(/_/g, ' ')}`).join('\n')
+          : 'None specified';
+
+        const emailContent = {
+          to: process.env.ADMIN_EMAIL || 'turboresponsehq@gmail.com',
+          from: process.env.SENDGRID_FROM_EMAIL || 'turboresponsehq@gmail.com',
+          subject: `🎯 New Grant Resource Request #${dbRecord.id} - ${name}`,
+          text: `
+New Grant & Resource Request Submitted (DB Record #${dbRecord.id})
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 CONTACT INFORMATION
@@ -188,19 +255,20 @@ ${description}
 SUBMISSION DETAILS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+Record ID: #${dbRecord.id}
 Submitted: ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })} EST
-Status: Pending Review
+Status: New (Pending Review)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Next Steps:
-1. Review the request details above
+1. Review the request in Admin Dashboard → Resources
 2. Determine which grants/resources match their needs
 3. Contact them via email or phone to discuss options
 
 This is an automated notification from Turbo Response Grant & Resource Matching System.
-      `,
-      html: `
+          `,
+          html: `
 <!DOCTYPE html>
 <html>
 <head>
@@ -216,6 +284,7 @@ This is an automated notification from Turbo Response Grant & Resource Matching 
     .list-item { padding: 5px 0; padding-left: 20px; }
     .description { background: white; padding: 15px; border-radius: 5px; margin-top: 10px; white-space: pre-wrap; }
     .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+    .record-id { background: #06b6d4; color: white; padding: 4px 12px; border-radius: 20px; font-size: 13px; display: inline-block; margin-top: 8px; }
   </style>
 </head>
 <body>
@@ -223,6 +292,7 @@ This is an automated notification from Turbo Response Grant & Resource Matching 
     <div class="header">
       <h1 style="margin: 0;">🎯 New Grant Resource Request</h1>
       <p style="margin: 10px 0 0 0;">Turbo Response Grant & Resource Matching System</p>
+      <span class="record-id">Record #${dbRecord.id}</span>
     </div>
 
     <div class="section">
@@ -253,13 +323,14 @@ This is an automated notification from Turbo Response Grant & Resource Matching 
 
     <div class="section">
       <div class="section-title">Submission Details</div>
+      <div class="field"><span class="field-label">Record ID:</span><span class="field-value">#${dbRecord.id}</span></div>
       <div class="field"><span class="field-label">Submitted:</span><span class="field-value">${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })} EST</span></div>
-      <div class="field"><span class="field-label">Status:</span><span class="field-value">Pending Review</span></div>
+      <div class="field"><span class="field-label">Status:</span><span class="field-value">New (Pending Review)</span></div>
     </div>
 
     <div class="footer">
       <p><strong>Next Steps:</strong></p>
-      <p>1. Review the request details above<br>
+      <p>1. Review in Admin Dashboard → Resources<br>
       2. Determine which grants/resources match their needs<br>
       3. Contact them via email or phone to discuss options</p>
       <p style="margin-top: 20px; color: #999;">This is an automated notification from Turbo Response.</p>
@@ -267,90 +338,28 @@ This is an automated notification from Turbo Response Grant & Resource Matching 
   </div>
 </body>
 </html>
-      `
-    };
+          `
+        };
 
-    // Send email
-    await sgMail.send(emailContent);
-    console.log('[RESOURCES API] Email sent successfully to:', emailContent.to);
-
-    // Insert into database (source of truth) using raw SQL
-    try {
-      // Auto-create table if it doesn't exist yet
-      await query(`
-        CREATE TABLE IF NOT EXISTS resource_requests (
-          id SERIAL PRIMARY KEY,
-          name TEXT NOT NULL,
-          email TEXT NOT NULL,
-          phone TEXT NOT NULL,
-          location TEXT NOT NULL,
-          resources TEXT,
-          income_level TEXT,
-          household_size TEXT,
-          description TEXT NOT NULL,
-          demographics TEXT,
-          status TEXT DEFAULT 'new',
-          ip_address TEXT,
-          honeypot_triggered BOOLEAN DEFAULT FALSE,
-          deleted_at TIMESTAMP WITH TIME ZONE,
-          deleted_by TEXT,
-          delete_reason TEXT,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-        )
-      `);
-
-      // Add columns if they don't exist (for existing tables)
-      const alterQueries = [
-        `ALTER TABLE resource_requests ADD COLUMN IF NOT EXISTS ip_address TEXT`,
-        `ALTER TABLE resource_requests ADD COLUMN IF NOT EXISTS honeypot_triggered BOOLEAN DEFAULT FALSE`,
-        `ALTER TABLE resource_requests ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP WITH TIME ZONE`,
-        `ALTER TABLE resource_requests ADD COLUMN IF NOT EXISTS deleted_by TEXT`,
-        `ALTER TABLE resource_requests ADD COLUMN IF NOT EXISTS delete_reason TEXT`
-      ];
-      for (const q of alterQueries) {
-        try { await query(q); } catch (e) { /* column may already exist */ }
+        await sgMail.send(emailContent);
+        console.log(`[RESOURCES API] Email notification sent for submission #${dbRecord.id}`);
       }
-
-      await query(
-        `INSERT INTO resource_requests (name, email, phone, location, resources, income_level, household_size, demographics, description, status, ip_address, honeypot_triggered, created_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, false, NOW())`,
-        [
-          name,
-          email,
-          phone,
-          location,
-          JSON.stringify(resourcesArray),
-          income || null,
-          household || null,
-          JSON.stringify(demographicsArray),
-          description,
-          'new',
-          clientIp
-        ]
-      );
-      console.log('[RESOURCES API] Submission stored in database successfully');
-    } catch (dbError) {
-      console.error('[RESOURCES API] Failed to store submission in database:', dbError.message);
-      // Continue anyway - email was sent successfully
+    } catch (emailError) {
+      // Email failed but submission is already in DB — log and continue
+      console.error(`[RESOURCES API] Email notification FAILED for submission #${dbRecord.id}:`, emailError.message);
+      // Do NOT return error — the submission is saved, that's what matters
     }
 
-    // Redirect to branded success page instead of returning JSON
+    // ══════════════════════════════════════════════════════════════
+    // STEP 3: REDIRECT TO SUCCESS PAGE
+    // ══════════════════════════════════════════════════════════════
     res.redirect(303, '/resources/success');
 
   } catch (error) {
-    console.error('[RESOURCES API] Error processing submission:', error.message);
-    
-    // Provide clear error without exposing secrets
-    let userMessage = 'Failed to process resource request';
-    if (error.message && error.message.includes('Invalid character in header')) {
-      userMessage = 'Email service configuration error. The API key contains invalid characters. Please contact admin to re-paste the SendGrid key in Render (raw key only, no quotes/spaces/newlines).';
-    } else if (error.code === 401 || error.message.includes('Unauthorized')) {
-      userMessage = 'Email service authentication failed. Please verify the SendGrid API key.';
-    }
-
+    console.error('[RESOURCES API] Unexpected error:', error.message);
     res.status(500).json({
       ok: false,
-      error: userMessage
+      error: 'Failed to process resource request. Please try again.'
     });
   }
 });

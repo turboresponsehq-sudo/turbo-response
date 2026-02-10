@@ -8,6 +8,33 @@ router.use(authenticateToken);
 router.use(requireAdmin);
 
 /**
+ * GET /api/admin/resources/stats/summary
+ * Get summary statistics for the dashboard
+ * MUST be defined BEFORE /:id to avoid Express matching "stats" as an id
+ */
+router.get('/stats/summary', async (req, res) => {
+  try {
+    const result = await query(`
+      SELECT 
+        COUNT(*) FILTER (WHERE deleted_at IS NULL) as total_active,
+        COUNT(*) FILTER (WHERE status = 'new' AND deleted_at IS NULL) as new_count,
+        COUNT(*) FILTER (WHERE status = 'reviewed' AND deleted_at IS NULL) as reviewed_count,
+        COUNT(*) FILTER (WHERE status = 'matched' AND deleted_at IS NULL) as matched_count,
+        COUNT(*) FILTER (WHERE status = 'closed' AND deleted_at IS NULL) as closed_count,
+        COUNT(*) FILTER (WHERE status = 'spam' AND deleted_at IS NULL) as spam_count,
+        COUNT(*) FILTER (WHERE deleted_at IS NOT NULL) as deleted_count,
+        COUNT(*) as total_all
+      FROM resource_requests
+    `);
+
+    res.json({ ok: true, stats: result.rows[0] });
+  } catch (error) {
+    console.error('[ADMIN RESOURCES] Error fetching stats:', error.message);
+    res.status(500).json({ ok: false, error: 'Failed to fetch stats' });
+  }
+});
+
+/**
  * GET /api/admin/resources
  * List all resource submissions with search, filter, pagination
  * Query params: ?search=&status=&showDeleted=true&page=1&limit=25
@@ -131,7 +158,7 @@ router.get('/:id', async (req, res) => {
 
 /**
  * PATCH /api/admin/resources/:id/status
- * Update submission status (new, reviewed, matched, closed, deleted)
+ * Update submission status (new, reviewed, matched, closed, spam)
  */
 router.patch('/:id/status', async (req, res) => {
   try {
@@ -228,32 +255,6 @@ router.post('/:id/restore', async (req, res) => {
   } catch (error) {
     console.error('[ADMIN RESOURCES] Error restoring submission:', error.message);
     res.status(500).json({ ok: false, error: 'Failed to restore submission' });
-  }
-});
-
-/**
- * GET /api/admin/resources/stats/summary
- * Get summary statistics for the dashboard
- */
-router.get('/stats/summary', async (req, res) => {
-  try {
-    const result = await query(`
-      SELECT 
-        COUNT(*) FILTER (WHERE deleted_at IS NULL) as total_active,
-        COUNT(*) FILTER (WHERE status = 'new' AND deleted_at IS NULL) as new_count,
-        COUNT(*) FILTER (WHERE status = 'reviewed' AND deleted_at IS NULL) as reviewed_count,
-        COUNT(*) FILTER (WHERE status = 'matched' AND deleted_at IS NULL) as matched_count,
-        COUNT(*) FILTER (WHERE status = 'closed' AND deleted_at IS NULL) as closed_count,
-        COUNT(*) FILTER (WHERE status = 'spam' AND deleted_at IS NULL) as spam_count,
-        COUNT(*) FILTER (WHERE deleted_at IS NOT NULL) as deleted_count,
-        COUNT(*) as total_all
-      FROM resource_requests
-    `);
-
-    res.json({ ok: true, stats: result.rows[0] });
-  } catch (error) {
-    console.error('[ADMIN RESOURCES] Error fetching stats:', error.message);
-    res.status(500).json({ ok: false, error: 'Failed to fetch stats' });
   }
 });
 
