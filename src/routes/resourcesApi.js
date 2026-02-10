@@ -137,9 +137,9 @@ This is an automated notification from Turbo Response Grant & Resource Matching 
   <style>
     body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-    .section { background: #f8f9fa; padding: 20px; margin: 20px 0; border-left: 4px solid #667eea; }
-    .section-title { font-size: 14px; font-weight: bold; color: #667eea; text-transform: uppercase; margin-bottom: 10px; }
+    .header { background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+    .section { background: #f8f9fa; padding: 20px; margin: 20px 0; border-left: 4px solid #06b6d4; }
+    .section-title { font-size: 14px; font-weight: bold; color: #06b6d4; text-transform: uppercase; margin-bottom: 10px; }
     .field { margin: 10px 0; }
     .field-label { font-weight: bold; color: #555; }
     .field-value { color: #333; margin-left: 10px; }
