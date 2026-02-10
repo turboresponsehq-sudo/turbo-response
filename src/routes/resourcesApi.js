@@ -3,6 +3,35 @@ const router = express.Router();
 const sgMail = require('@sendgrid/mail');
 const { query } = require('../services/database/db');
 
+// ─── Rate Limiting (in-memory, per IP) ──────────────────────────────
+const rateLimitMap = new Map();
+const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
+const RATE_LIMIT_MAX = 5; // max 5 submissions per window per IP
+
+function checkRateLimit(ip) {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW) {
+    rateLimitMap.set(ip, { windowStart: now, count: 1 });
+    return true; // allowed
+  }
+  entry.count++;
+  if (entry.count > RATE_LIMIT_MAX) {
+    return false; // blocked
+  }
+  return true;
+}
+
+// Clean up stale entries every 30 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, entry] of rateLimitMap.entries()) {
+    if (now - entry.windowStart > RATE_LIMIT_WINDOW) {
+      rateLimitMap.delete(ip);
+    }
+  }
+}, 30 * 60 * 1000);
+
 // ─── Permanent SendGrid key sanitizing ───────────────────────────────
 // Strips quotes, whitespace, newlines, carriage returns, and "Bearer " prefix
 const rawKey = (process.env.SENDGRID_API_KEY || "").trim().replace(/^["']|["']$/g, '').replace(/^Bearer\s+/i, '').trim();
@@ -32,6 +61,18 @@ if (rawKey && !(/\s/.test(rawKey))) {
  */
 router.post('/submit', async (req, res) => {
   try {
+    // Get client IP for rate limiting and audit
+    const clientIp = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.ip || 'unknown';
+
+    // Rate limiting check
+    if (!checkRateLimit(clientIp)) {
+      console.warn(`[RESOURCES API] Rate limit exceeded for IP: ${clientIp}`);
+      return res.status(429).json({
+        ok: false,
+        error: 'Too many submissions. Please try again in 15 minutes.'
+      });
+    }
+
     // Check if SendGrid is configured before attempting to send
     if (!rawKey) {
       console.error('[RESOURCES API] SendGrid API key is missing');
@@ -50,8 +91,38 @@ router.post('/submit', async (req, res) => {
       income,
       household,
       description,
-      'demographics[]': demographics
+      'demographics[]': demographics,
+      website_url: honeypotField // Honeypot field - should be empty
     } = req.body;
+
+    // Honeypot check - if this hidden field has a value, it's a bot
+    const honeypotTriggered = !!honeypotField;
+    if (honeypotTriggered) {
+      console.warn(`[RESOURCES API] Honeypot triggered from IP: ${clientIp}`);
+      // Still store in DB for tracking but skip email
+      try {
+        await query(`
+          CREATE TABLE IF NOT EXISTS resource_requests (
+            id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL,
+            phone TEXT NOT NULL, location TEXT NOT NULL, resources TEXT,
+            income_level TEXT, household_size TEXT, description TEXT NOT NULL,
+            demographics TEXT, status TEXT DEFAULT 'spam', ip_address TEXT,
+            honeypot_triggered BOOLEAN DEFAULT FALSE, deleted_at TIMESTAMP WITH TIME ZONE,
+            deleted_by TEXT, delete_reason TEXT,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          )
+        `);
+        await query(
+          `INSERT INTO resource_requests (name, email, phone, location, resources, income_level, household_size, demographics, description, status, ip_address, honeypot_triggered)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'spam', $10, true)`,
+          [name||'', email||'', phone||'', location||'', '[]', income||null, household||null, '[]', description||'', clientIp]
+        );
+      } catch (dbErr) {
+        console.error('[RESOURCES API] Failed to store honeypot submission:', dbErr.message);
+      }
+      // Return success to fool the bot
+      return res.redirect(303, '/resources/success');
+    }
 
     // Validate required fields
     if (!name || !email || !phone || !location || !description) {
@@ -218,14 +289,31 @@ This is an automated notification from Turbo Response Grant & Resource Matching 
           household_size TEXT,
           description TEXT NOT NULL,
           demographics TEXT,
-          status TEXT DEFAULT 'pending',
+          status TEXT DEFAULT 'new',
+          ip_address TEXT,
+          honeypot_triggered BOOLEAN DEFAULT FALSE,
+          deleted_at TIMESTAMP WITH TIME ZONE,
+          deleted_by TEXT,
+          delete_reason TEXT,
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
         )
       `);
 
+      // Add columns if they don't exist (for existing tables)
+      const alterQueries = [
+        `ALTER TABLE resource_requests ADD COLUMN IF NOT EXISTS ip_address TEXT`,
+        `ALTER TABLE resource_requests ADD COLUMN IF NOT EXISTS honeypot_triggered BOOLEAN DEFAULT FALSE`,
+        `ALTER TABLE resource_requests ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP WITH TIME ZONE`,
+        `ALTER TABLE resource_requests ADD COLUMN IF NOT EXISTS deleted_by TEXT`,
+        `ALTER TABLE resource_requests ADD COLUMN IF NOT EXISTS delete_reason TEXT`
+      ];
+      for (const q of alterQueries) {
+        try { await query(q); } catch (e) { /* column may already exist */ }
+      }
+
       await query(
-        `INSERT INTO resource_requests (name, email, phone, location, resources, income_level, household_size, demographics, description, status, created_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW())`,
+        `INSERT INTO resource_requests (name, email, phone, location, resources, income_level, household_size, demographics, description, status, ip_address, honeypot_triggered, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, false, NOW())`,
         [
           name,
           email,
@@ -236,7 +324,8 @@ This is an automated notification from Turbo Response Grant & Resource Matching 
           household || null,
           JSON.stringify(demographicsArray),
           description,
-          'new'
+          'new',
+          clientIp
         ]
       );
       console.log('[RESOURCES API] Submission stored in database successfully');

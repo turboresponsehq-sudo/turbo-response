@@ -533,3 +533,54 @@
 3. Check if button disabled state is preventing clicks
 4. Test if form validation is blocking submission
 5. Consider alternative: Use form onSubmit instead of button onClick
+
+
+---
+
+## 🎯 PHASE 2: ADMIN CONTROL PANEL + SYSTEM INTELLIGENCE (FEB 9 2026)
+
+### Priority 1: Admin Resource Submissions Panel
+- [ ] Create database migration (soft delete + spam fields)
+- [ ] Build admin API: list all submissions with search/filter
+- [ ] Build admin API: get submission detail
+- [ ] Build admin API: update status (new/reviewed/matched/closed/deleted)
+- [ ] Build admin API: soft delete with audit trail
+- [ ] Build admin API: restore deleted submission
+- [ ] Build admin UI: submissions list page at /admin/resources
+- [ ] Build admin UI: search and filter controls
+- [ ] Build admin UI: status badges and status change dropdown
+- [ ] Build admin UI: delete button with confirm dialog
+- [ ] Build admin UI: "Show Deleted" toggle filter
+- [ ] Build admin UI: full submission detail view
+- [ ] Build admin UI: audit trail display (who deleted + when)
+- [ ] Add admin nav link to main admin dashboard
+- [ ] Add honeypot field to intake form
+- [ ] Add rate limiting to form submission endpoint
+- [ ] Test full admin flow end-to-end
+- [ ] Push to GitHub and deploy
+
+### Priority 2: AI Matching Pipeline (Foundation)
+- [ ] Design matching pipeline architecture
+- [ ] Build daily agent job skeleton
+- [ ] Build profile extraction from submissions
+- [ ] Build resource search module
+- [ ] Build match + rank algorithm
+- [ ] Store results with reasoning
+- [ ] Admin review interface for matches
+
+### Priority 3: Knowledge Base Documentation
+- [ ] Document DB schema
+- [ ] Document submission flow
+- [ ] Document agent workflow
+- [ ] Document deployment rules
+
+### Priority 4: Full-Site Regression Testing
+- [ ] Test every page loads correctly
+- [ ] Test all major flows (submit -> store -> notify -> review)
+- [ ] Provide checklist + proof
+
+## PHASE 2: ADMIN CONTROL PANEL (FEB 9 2026)
+- [ ] Admin resource submissions panel
+- [ ] AI matching pipeline foundation
+- [ ] Knowledge base documentation
+- [ ] Full-site regression testing

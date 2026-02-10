@@ -170,6 +170,21 @@ export default function AdminDashboard() {
             🧠 Brain
           </button>
           <button
+            onClick={() => setLocation('/admin/resources')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#06b6d4',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            📋 Resources
+          </button>
+          <button
             onClick={() => setLocation('/admin/screenshots')}
             style={{
               padding: '8px 16px',
