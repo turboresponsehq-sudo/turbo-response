@@ -2,16 +2,44 @@ const express = require('express');
 const router = express.Router();
 const sgMail = require('@sendgrid/mail');
 
-// Initialize SendGrid
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+// ─── Permanent SendGrid key sanitizing ───────────────────────────────
+// Strips quotes, whitespace, newlines, carriage returns, and "Bearer " prefix
+const rawKey = (process.env.SENDGRID_API_KEY || "").trim().replace(/^["']|["']$/g, '').replace(/^Bearer\s+/i, '').trim();
+
+// Safe debug logging (NO secrets exposed)
+console.log('[SENDGRID INIT] Key present:', !!rawKey);
+console.log('[SENDGRID INIT] Key length:', rawKey.length);
+console.log('[SENDGRID INIT] Key starts with SG.:', rawKey.startsWith('SG.'));
+console.log('[SENDGRID INIT] Has whitespace:', /\s/.test(rawKey));
+console.log('[SENDGRID INIT] Has newline:', /[\r\n]/.test(rawKey));
+
+if (rawKey && !(/\s/.test(rawKey))) {
+  sgMail.setApiKey(rawKey);
+  console.log('[SENDGRID INIT] API key set successfully (clean)');
+} else if (rawKey) {
+  // Key exists but has whitespace - still try after aggressive clean
+  const aggressiveClean = rawKey.replace(/\s+/g, '');
+  sgMail.setApiKey(aggressiveClean);
+  console.log('[SENDGRID INIT] WARNING: Key had whitespace, used aggressive clean. Length after:', aggressiveClean.length);
+} else {
+  console.error('[SENDGRID INIT] ERROR: No SENDGRID_API_KEY found in environment');
+}
 
 /**
  * POST /api/resources/submit
  * Email-only resource request submission (no database)
- * Avoids React routing conflicts and Supabase initialization issues
  */
 router.post('/submit', async (req, res) => {
   try {
+    // Check if SendGrid is configured before attempting to send
+    if (!rawKey) {
+      console.error('[RESOURCES API] SendGrid API key is missing');
+      return res.status(500).json({
+        ok: false,
+        error: 'Email service not configured. Please contact support.'
+      });
+    }
+
     const {
       name,
       email,
@@ -174,18 +202,26 @@ This is an automated notification from Turbo Response Grant & Resource Matching 
     await sgMail.send(emailContent);
     console.log('[RESOURCES API] Email sent successfully to:', emailContent.to);
 
-    // Return JSON success (for API clients)
+    // Return JSON success
     res.status(200).json({
       ok: true,
       message: 'Resource request submitted successfully'
     });
 
   } catch (error) {
-    console.error('[RESOURCES API] Error processing submission:', error);
+    console.error('[RESOURCES API] Error processing submission:', error.message);
+    
+    // Provide clear error without exposing secrets
+    let userMessage = 'Failed to process resource request';
+    if (error.message && error.message.includes('Invalid character in header')) {
+      userMessage = 'Email service configuration error. The API key contains invalid characters. Please contact admin to re-paste the SendGrid key in Render (raw key only, no quotes/spaces/newlines).';
+    } else if (error.code === 401 || error.message.includes('Unauthorized')) {
+      userMessage = 'Email service authentication failed. Please verify the SendGrid API key.';
+    }
+
     res.status(500).json({
       ok: false,
-      error: 'Failed to process resource request',
-      details: error.message
+      error: userMessage
     });
   }
 });
