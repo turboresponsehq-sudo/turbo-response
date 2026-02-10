@@ -45,6 +45,16 @@ CREATE TABLE IF NOT EXISTS cases (
   payment_plan VARCHAR(50),
   stripe_payment_id VARCHAR(255),
   
+  -- Source/Session Tracking (Gap 2: Intelligence Capture)
+  referrer_url TEXT,                                 -- Where visitor came from
+  utm_source TEXT,                                   -- Marketing source
+  utm_medium TEXT,                                   -- Marketing medium
+  utm_campaign TEXT,                                 -- Marketing campaign
+  landing_page TEXT,                                 -- First page visited
+  device_type TEXT,                                  -- mobile/desktop/tablet
+  session_id TEXT,                                   -- Session identifier
+  visitor_id TEXT,                                   -- Persistent visitor ID
+  
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -90,6 +100,60 @@ CREATE TABLE IF NOT EXISTS resource_requests (
   deleted_at TIMESTAMP WITH TIME ZONE,               -- Soft delete timestamp
   deleted_by TEXT,                                   -- Who deleted (admin email)
   delete_reason TEXT,                                -- Why deleted
+  
+  -- Source/Session Tracking (Gap 2: Intelligence Capture)
+  referrer_url TEXT,                                 -- Where visitor came from
+  utm_source TEXT,                                   -- Marketing source
+  utm_medium TEXT,                                   -- Marketing medium
+  utm_campaign TEXT,                                 -- Marketing campaign
+  landing_page TEXT,                                 -- First page visited
+  device_type TEXT,                                  -- mobile/desktop/tablet
+  session_id TEXT,                                   -- Session identifier
+  visitor_id TEXT,                                   -- Persistent visitor ID
+  
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- File uploads metadata (Gap 5: Upload Intelligence)
+-- Tracks every file upload with entity linkage and metadata
+CREATE TABLE IF NOT EXISTS file_uploads (
+  id SERIAL PRIMARY KEY,
+  entity_type TEXT NOT NULL,                         -- cases, resource_requests, chat_sessions, etc.
+  entity_id INTEGER NOT NULL,                        -- ID of the related entity
+  file_name TEXT NOT NULL,                           -- Original filename
+  file_size INTEGER,                                 -- Size in bytes
+  mime_type TEXT,                                    -- MIME type (image/png, application/pdf, etc.)
+  storage_path TEXT NOT NULL,                        -- Where file is stored (S3 path, local path, etc.)
+  storage_url TEXT,                                  -- Public URL if applicable
+  uploaded_by TEXT,                                  -- User email or 'anonymous'
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Login audit trail (Gap 4: Security + Intelligence)
+-- Tracks every login attempt for security and user behavior intelligence
+CREATE TABLE IF NOT EXISTS login_audit (
+  id SERIAL PRIMARY KEY,
+  user_type TEXT NOT NULL,                           -- admin, user, visitor
+  email TEXT NOT NULL,                               -- Email used for login attempt
+  success BOOLEAN NOT NULL,                          -- TRUE if login succeeded
+  ip_address TEXT,                                   -- Client IP
+  user_agent TEXT,                                   -- Browser/device info
+  failure_reason TEXT,                               -- Why login failed (if applicable)
+  session_id TEXT,                                   -- Session ID if login succeeded
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Intelligence outcomes table (Gap 3: Feedback Loop)
+-- Records every outcome/feedback for every action to make the system smarter
+CREATE TABLE IF NOT EXISTS intelligence_outcomes (
+  id SERIAL PRIMARY KEY,
+  entity_type TEXT NOT NULL,                         -- cases, resource_requests, chat_sessions, etc.
+  entity_id INTEGER NOT NULL,                        -- ID of the related entity
+  outcome_type TEXT NOT NULL,                        -- match_applied, match_approved, case_won, letter_sent, chat_converted, etc.
+  outcome_details JSONB,                             -- Structured details about the outcome
+  confidence_score DECIMAL(3, 2),                    -- 0.00-1.00 confidence in this outcome
+  recorded_by TEXT,                                  -- admin email or 'system'
+  notes TEXT,                                        -- Free-text notes
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -137,6 +201,11 @@ CREATE INDEX IF NOT EXISTS idx_chat_sessions_visitor_id ON chat_sessions(visitor
 CREATE INDEX IF NOT EXISTS idx_chat_sessions_session_id ON chat_sessions(session_id);
 CREATE INDEX IF NOT EXISTS idx_chat_messages_session_id ON chat_messages(session_id);
 CREATE INDEX IF NOT EXISTS idx_chat_messages_created_at ON chat_messages(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_file_uploads_entity ON file_uploads(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_login_audit_email ON login_audit(email);
+CREATE INDEX IF NOT EXISTS idx_login_audit_created_at ON login_audit(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_intelligence_outcomes_entity ON intelligence_outcomes(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_intelligence_outcomes_type ON intelligence_outcomes(outcome_type);
 
 -- Create updated_at trigger function (idempotent)
 CREATE OR REPLACE FUNCTION update_updated_at_column()
