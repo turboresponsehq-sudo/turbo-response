@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const sgMail = require('@sendgrid/mail');
+const { getDb } = require('../services/database/drizzle');
+const { resourceRequests } = require('../../drizzle/schema');
 
 // ─── Permanent SendGrid key sanitizing ───────────────────────────────
 // Strips quotes, whitespace, newlines, carriage returns, and "Bearer " prefix
@@ -202,11 +204,33 @@ This is an automated notification from Turbo Response Grant & Resource Matching 
     await sgMail.send(emailContent);
     console.log('[RESOURCES API] Email sent successfully to:', emailContent.to);
 
-    // Return JSON success
-    res.status(200).json({
-      ok: true,
-      message: 'Resource request submitted successfully'
-    });
+    // Insert into database (source of truth)
+    try {
+      const db = await getDb();
+      if (db) {
+        await db.insert(resourceRequests).values({
+          fullName: name,
+          email: email,
+          phone: phone,
+          location: location,
+          resourceTypes: JSON.stringify(resourcesArray),
+          incomeLevel: income || null,
+          householdSize: household || null,
+          demographics: JSON.stringify(demographicsArray),
+          description: description,
+          status: 'new'
+        });
+        console.log('[RESOURCES API] Submission stored in database successfully');
+      } else {
+        console.warn('[RESOURCES API] Database not available - submission not stored (email sent as backup)');
+      }
+    } catch (dbError) {
+      console.error('[RESOURCES API] Failed to store submission in database:', dbError.message);
+      // Continue anyway - email was sent successfully
+    }
+
+    // Redirect to branded success page instead of returning JSON
+    res.redirect(303, '/resources/success');
 
   } catch (error) {
     console.error('[RESOURCES API] Error processing submission:', error.message);
