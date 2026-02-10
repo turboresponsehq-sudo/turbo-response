@@ -57,6 +57,7 @@ router.post('/sessions', async (req, res) => {
       RETURNING id, session_id, created_at
     `, [session_id, visitor_id, page_url, referrer_url, device_type, user_agent, ip_address]);
 
+    console.log('[CHAT] Session created:', result.rows[0].session_id);
     res.status(201).json({
       success: true,
       session: result.rows[0]
@@ -99,6 +100,20 @@ router.post('/messages', async (req, res) => {
         error: 'Missing required fields: session_id, role, content'
       });
     }
+    
+    // Validate session exists
+    const sessionCheck = await pool.query(
+      'SELECT id FROM chat_sessions WHERE session_id = $1',
+      [session_id]
+    );
+    
+    if (sessionCheck.rows.length === 0) {
+      console.error('[CHAT] Invalid session_id:', session_id);
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid session_id - session does not exist'
+      });
+    }
 
     // Insert message into database
     const result = await pool.query(`
@@ -115,6 +130,7 @@ router.post('/messages', async (req, res) => {
       WHERE session_id = $1
     `, [session_id]);
 
+    console.log('[CHAT] Message saved:', result.rows[0].id, 'session=', session_id, 'role=', role);
     res.status(201).json({
       success: true,
       message: result.rows[0]
