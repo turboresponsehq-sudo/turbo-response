@@ -935,18 +935,18 @@ export default function AdminCaseDetail() {
           {/* Payment Status */}
           <div>
             <p style={{ margin: 0, fontSize: "0.875rem", color: "#856404" }}>Payment Status:</p>
-            <p style={{ 
-              margin: "0.5rem 0 0 0", 
-              fontSize: "1rem",
+            <p style={{
+              margin: 0,
+              fontSize: "0.875rem",
               fontWeight: 600,
-              color: caseData.payment_verified ? "#28a745" : "#dc3545"
+              color: caseData.payment_status === 'paid' ? "#28a745" : "#dc3545"
             }}>
-              {caseData.payment_verified ? "✅ Verified" : "❌ Not Verified"}
+              {caseData.payment_status === 'paid' ? "✅ Verified" : "❌ Not Verified"}
             </p>
           </div>
 
           {/* Mark as Paid Button */}
-          {!caseData.payment_verified && (
+          {caseData.payment_status !== 'paid' && (
             <button
               onClick={async () => {
                 if (!window.confirm('Are you sure you want to mark this payment as verified? This will activate the case and create a client account.')) {
