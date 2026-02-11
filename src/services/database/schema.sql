@@ -45,9 +45,6 @@ CREATE TABLE IF NOT EXISTS cases (
   payment_plan VARCHAR(50),
   stripe_payment_id VARCHAR(255),
   
-  -- Client Portal
-  portal_enabled BOOLEAN DEFAULT FALSE,
-  
   -- Source/Session Tracking (Gap 2: Intelligence Capture)
   referrer_url TEXT,                                 -- Where visitor came from
   utm_source TEXT,                                   -- Marketing source
