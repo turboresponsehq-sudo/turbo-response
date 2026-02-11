@@ -100,24 +100,31 @@ const submit = async (req, res, next) => {
     // This ensures data appears in admin dashboard
     const result = await query(
       `INSERT INTO cases (
-        case_number, title, category, case_type, status, description, 
+        case_number, category, status, case_details, 
         full_name, email, phone, 
+        funnel_stage, portal_enabled, payment_verified,
+        deadline, title, case_type, description,
         business_name, entity_type, website_url, instagram_url, tiktok_url, 
         facebook_url, youtube_url, link_in_bio, primary_goal, target_authority, 
-        stage, deadline, estimated_amount, funnel_stage, portal_enabled, payment_verified,
+        stage, estimated_amount,
         created_at
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, NOW())
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, NOW())
       RETURNING id, case_number, full_name, email, status, created_at`,
       [
         case_number,                    // case_number
-        businessName || fullName,       // title
-        'Offense',                      // category
-        'offense',                      // case_type
+        'offense',                      // category
         'Pending Review',               // status
-        caseDescription || `Business: ${businessName}`,  // description
+        caseDescription || `Business: ${businessName}`,  // case_details
         fullName,                       // full_name
         email,                          // email
         phone || null,                  // phone
+        'Lead Submitted',               // funnel_stage
+        false,                          // portal_enabled
+        false,                          // payment_verified
+        deadline || null,               // deadline
+        businessName || fullName,       // title
+        'offense',                      // case_type
+        caseDescription || `Business: ${businessName}`,  // description
         businessName || null,           // business_name
         entityType || null,             // entity_type
         websiteUrl || null,             // website_url
@@ -129,11 +136,7 @@ const submit = async (req, res, next) => {
         primaryGoal || null,            // primary_goal
         targetAuthority || null,        // target_authority
         stage || null,                  // stage
-        deadline || null,               // deadline
-        estimatedAmount || null,        // estimated_amount
-        'Lead Submitted',               // funnel_stage
-        false,                          // portal_enabled
-        false                           // payment_verified
+        estimatedAmount || null         // estimated_amount
       ]
     );
 
