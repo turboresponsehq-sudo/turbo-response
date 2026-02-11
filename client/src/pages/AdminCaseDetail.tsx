@@ -431,7 +431,7 @@ export default function AdminCaseDetail() {
                 setAiError(null);
                 try {
                   const res = await axios.post(
-                    `${API_URL}/api/case/${params?.id}/analyze`,
+                    `${API_URL}/api/cases/${params?.id}/analyze`,
                     {},
                     { headers: { Authorization: `Bearer ${storedToken}` } }
                   );
@@ -725,7 +725,7 @@ export default function AdminCaseDetail() {
               const storedToken = localStorage.getItem("admin_session");
               try {
                 await axios.patch(
-                  `${API_URL}/api/case/${params?.id}`,
+                  `${API_URL}/api/cases/${params?.id}`,
                   {
                     client_status: caseData.client_status,
                     client_notes: caseData.client_notes,
@@ -865,7 +865,7 @@ export default function AdminCaseDetail() {
               try {
                 const token = localStorage.getItem('admin_session');
                 await axios.patch(
-                  `${API_URL}/api/case/${params?.id}/status`,
+                  `${API_URL}/api/cases/${params?.id}`,
                   {
                     pricing_tier: pricingTier,
                     pricing_tier_amount: parseInt(pricingAmount),
@@ -955,7 +955,7 @@ export default function AdminCaseDetail() {
                 try {
                   const token = localStorage.getItem('admin_session');
                   await axios.patch(
-                    `${API_URL}/api/case/${params?.id}/verify-payment`,
+                    `${API_URL}/api/cases/${params?.id}/verify-payment`,
                     {},
                     { headers: { Authorization: `Bearer ${token}` } }
                   );
