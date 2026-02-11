@@ -33,8 +33,8 @@ import ClientPortal from "./pages/ClientPortal";
 import PaymentPage from "./pages/PaymentPage";
 import SignContract from "./pages/SignContract";
 import TurboIntakeForm from "./pages/TurboIntakeForm";
-import AdminCasesList from "./pages/AdminCasesList";
-import AdminCasesDetail from "./pages/AdminCaseDetail";
+// Archived: AdminCasesList and AdminCaseDetail (moved to _archived/admin-cases-system/)
+// Use AdminConsumerCases and AdminConsumerCaseDetail instead
 import GrantDemo from "./pages/GrantDemo";
 import EvictionDemo from "./pages/EvictionDemo";
 import AdminResourceSubmissions from "./pages/admin/AdminResourceSubmissions";
@@ -83,8 +83,7 @@ function Router() {
       <Route path="/admin/screenshots" component={ScreenshotCapture} />
       <Route path="/admin/resources" component={AdminResourceSubmissions} />
 
-      <Route path="/admin/cases/:id" component={AdminCasesDetail} />
-      <Route path="/admin/cases" component={AdminCasesList} />
+      {/* Archived: Old admin_cases routes - use /admin/consumer/cases instead */}
       <Route path="/admin" component={AdminDashboard} />
       
       {/* Legacy AI analysis routes - separate system */}
