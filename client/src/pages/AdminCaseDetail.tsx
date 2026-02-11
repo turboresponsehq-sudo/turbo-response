@@ -68,7 +68,7 @@ export default function AdminCaseDetail() {
         console.log('🔍 Case Data:', res.data.case);
         console.log('🔍 Case Number:', res.data.case?.case_number);
         console.log('🔍 Full Name:', res.data.case?.full_name);
-        setCaseData(res.data.case);
+        setCaseData({ ...res.data.case, case_type: res.data.case_type });
         setSelectedStatus(res.data.case.status);
         
         // Initialize pricing tier state from case data
