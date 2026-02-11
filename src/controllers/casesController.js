@@ -164,26 +164,49 @@ const getAdminCaseById = async (req, res, next) => {
 const updateCaseStatus = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const body = req.body;
 
-    if (!status) {
+    // Build dynamic SET clause from allowed fields
+    const allowedFields = [
+      'status', 'portal_enabled', 'client_status', 'client_notes',
+      'payment_link', 'pricing_tier', 'pricing_tier_amount', 'pricing_tier_name'
+    ];
+    const setClauses = [];
+    const values = [];
+    let paramIndex = 1;
+
+    for (const field of allowedFields) {
+      if (body[field] !== undefined) {
+        setClauses.push(`${field} = $${paramIndex}`);
+        values.push(body[field]);
+        paramIndex++;
+      }
+    }
+
+    // Validate status if provided
+    if (body.status) {
+      const validStatuses = ['open', 'in_progress', 'completed', 'closed', 'pending_review', 'pending', 'processing', 'cancelled'];
+      if (!validStatuses.includes(body.status)) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`
+        });
+      }
+    }
+
+    if (setClauses.length === 0) {
       return res.status(400).json({
         success: false,
-        message: 'Status is required'
+        message: 'No valid fields to update'
       });
     }
 
-    const validStatuses = ['open', 'in_progress', 'completed', 'closed', 'pending_review'];
-    if (!validStatuses.includes(status)) {
-      return res.status(400).json({
-        success: false,
-        message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`
-      });
-    }
+    setClauses.push('updated_at = NOW()');
+    values.push(id);
 
     const result = await query(
-      `UPDATE cases SET status = $1, updated_at = NOW() WHERE id = $2 RETURNING *`,
-      [status, id]
+      `UPDATE cases SET ${setClauses.join(', ')} WHERE id = $${paramIndex} RETURNING *`,
+      values
     );
 
     if (result.rows.length === 0) {
@@ -198,13 +221,13 @@ const updateCaseStatus = async (req, res, next) => {
       case: result.rows[0]
     });
   } catch (error) {
-    logger.error('Failed to update case status', {
+    logger.error('Failed to update case', {
       error: error.message,
       caseId: req.params.id
     });
     return res.status(500).json({
       success: false,
-      message: 'Failed to update case status',
+      message: 'Failed to update case',
       error: error.message
     });
   }
