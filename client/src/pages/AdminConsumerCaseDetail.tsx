@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from 'react';
 import DocumentGallery from '../components/DocumentGallery';
 import { useLocation, useRoute } from 'wouter';
 import AIUsageTracker from '@/components/AIUsageTracker';
 import './AdminConsumerCaseDetail.css';
+
+const API_URL = import.meta.env.VITE_BACKEND_URL || 'https://turboresponsehq.ai';
 
 interface CaseDetail {
   id: number;
@@ -21,6 +23,7 @@ interface CaseDetail {
   payment_method?: string;
   payment_confirmed_at?: string;
   payment_verified_at?: string;
+  portal_enabled?: boolean;
   // AI Analysis fields (now part of case object)
   violations: string[];
   laws_cited: string[];
@@ -428,7 +431,23 @@ export default function AdminConsumerCaseDetail() {
           )}
         </div>
         
-        {/* Payment Verification Buttons */}
+        {/* Mark as Paid Button for Unpaid Cases */}
+        {caseData.payment_status === 'unpaid' && (
+          <div className="payment-verification-section">
+            <h3>💳 Manual Payment Verification</h3>
+            <p>Mark this case as paid if payment was received outside the system.</p>
+            <button 
+              className="btn btn-success"
+              onClick={handleVerifyPayment}
+              disabled={verifyingPayment}
+              style={{ width: '100%', padding: '1rem', fontSize: '1rem', fontWeight: 700 }}
+            >
+              ✓ Mark as Paid (Verify Manually)
+            </button>
+          </div>
+        )}
+        
+        {/* Payment Verification Buttons for Pending */}
         {caseData.payment_status === 'payment_pending' && (
           <div className="payment-verification-section">
             <h3>💳 Payment Verification</h3>
@@ -466,6 +485,57 @@ export default function AdminConsumerCaseDetail() {
         <div className="documents-section">
           <label>📎 Attached Documents ({caseData.documents?.length || 0}):</label>
           <DocumentGallery documents={caseData.documents || []} />
+        </div>
+        
+        {/* Client Portal Settings */}
+        <div className="portal-settings-section" style={{
+          marginTop: '2rem',
+          padding: '1.5rem',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '8px',
+          border: '1px solid #dee2e6'
+        }}>
+          <h3 style={{ marginBottom: '1rem' }}>🚪 Client Portal Access</h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+              <input 
+                type="checkbox"
+                checked={caseData.portal_enabled || false}
+                onChange={(e) => {
+                  setCaseData({ ...caseData, portal_enabled: e.target.checked });
+                }}
+                style={{ width: '20px', height: '20px', cursor: 'pointer' }}
+              />
+              <span style={{ fontSize: '1rem', fontWeight: 500 }}>
+                Enable client portal access
+              </span>
+            </label>
+          </div>
+          <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#6c757d' }}>
+            When enabled, the client can view case updates and documents through their portal.
+          </p>
+          <button 
+            onClick={async () => {
+              try {
+                const token = localStorage.getItem('admin_session');
+                await fetch(`${API_URL}/api/cases/${caseData.id}`, {
+                  method: 'PATCH',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                  },
+                  body: JSON.stringify({ portal_enabled: caseData.portal_enabled })
+                });
+                alert('Portal settings saved successfully!');
+              } catch (err) {
+                alert('Failed to save portal settings');
+              }
+            }}
+            className="btn btn-primary"
+            style={{ marginTop: '1rem', padding: '0.75rem 1.5rem' }}
+          >
+            💾 Save Portal Settings
+          </button>
         </div>
       </div>
 
