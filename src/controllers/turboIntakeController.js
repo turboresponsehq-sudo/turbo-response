@@ -102,13 +102,13 @@ const submit = async (req, res, next) => {
       `INSERT INTO cases (
         case_number, category, status, case_details, 
         full_name, email, phone, 
-        funnel_stage, portal_enabled, payment_verified,
+        funnel_stage, portal_enabled, payment_status,
         deadline, title, case_type, description,
         business_name, entity_type, website_url, instagram_url, tiktok_url, 
         facebook_url, youtube_url, link_in_bio, primary_goal, target_authority, 
-        stage, estimated_amount,
+        stage, estimated_amount, documents,
         created_at
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, NOW())
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, NOW())
       RETURNING id, case_number, full_name, email, status, created_at`,
       [
         case_number,                    // case_number
@@ -120,7 +120,7 @@ const submit = async (req, res, next) => {
         phone || null,                  // phone
         'Lead Submitted',               // funnel_stage
         false,                          // portal_enabled
-        false,                          // payment_verified
+        'unpaid',                       // payment_status
         deadline || null,               // deadline
         businessName || fullName,       // title
         'offense',                      // case_type
@@ -136,7 +136,8 @@ const submit = async (req, res, next) => {
         primaryGoal || null,            // primary_goal
         targetAuthority || null,        // target_authority
         stage || null,                  // stage
-        estimatedAmount || null         // estimated_amount
+        estimatedAmount || null,        // estimated_amount
+        JSON.stringify(documents)       // documents (JSONB)
       ]
     );
 
