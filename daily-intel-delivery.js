@@ -15,6 +15,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 const sgMail = require('@sendgrid/mail');
 
 // Configuration
@@ -196,15 +197,42 @@ ${reportMarkdown}
     console.log('[Email] Sending to', TO_EMAIL + '...');
     console.log('[Email] Subject:', subject);
 
-    await sendEmail(TO_EMAIL, subject, htmlBody, textBody);
+    const emailResult = await sendEmail(TO_EMAIL, subject, htmlBody, textBody);
 
     console.log('[Email] ✅ Sent successfully!');
+    
+    // CRITICAL: Final confirmation log (required for reliability monitoring)
+    const timestamp = new Date().toISOString();
+    console.log(`[DAILY_EMAIL_FINAL_STATUS] sent=true to=${TO_EMAIL} sendgrid_id=${emailResult.messageId} timestamp=${timestamp}`);
+    
     console.log('');
     console.log('=== Delivery Complete ===');
     process.exit(0);
 
   } catch (error) {
     console.error('[Email] ❌ Failed to send:', error.message);
+    
+    // CRITICAL: Final failure log
+    const timestamp = new Date().toISOString();
+    console.error(`[DAILY_EMAIL_FINAL_STATUS] sent=false to=${TO_EMAIL} sendgrid_id=n/a timestamp=${timestamp} error="${error.message}"`);
+    
+    // FAILSAFE: Create GitHub issue for email failure
+    try {
+      console.log('[CRITICAL] DAILY EMAIL FAILED - NOT SENT');
+      console.log('[FAILSAFE] Attempting to create GitHub issue...');
+      
+      const issueTitle = `[CRITICAL] Daily Email Failed - ${timestamp}`;
+      const issueBody = `## 🚨 Daily Email Delivery Failure\n\n**Timestamp:** ${timestamp}\n**Status:** FAILED\n**Error:** ${error.message}\n\n---\n\n## What Happened\n\nThe daily intel email delivery script failed to send the email via SendGrid.\n\n**Expected:** Email sent successfully with 202 status code\n**Actual:** SendGrid API call failed\n\n---\n\n## Investigation Required\n\n1. Check SendGrid API key validity\n2. Check SendGrid account status (quota, suspension)\n3. Check network connectivity\n4. Review full workflow logs\n\n---\n\n## Impact\n\n⚠️ **Owner did NOT receive daily email**\n\nThis breaks the daily email reliability guarantee.\n\n---\n\n## Next Steps\n\n1. Investigate root cause\n2. Fix issue\n3. Run manual test\n4. Verify email received\n5. Close this issue with proof`;
+      
+      const command = `gh issue create --title "${issueTitle}" --body "${issueBody}" --label "critical,email-delivery,automation" --repo turboresponsehq-sudo/turbo-response`;
+      
+      const result = execSync(command, { encoding: 'utf8', stdio: 'pipe' });
+      console.log('[FAILSAFE] ✅ GitHub issue created:', result.trim());
+    } catch (issueError) {
+      console.error('[FAILSAFE] ❌ Failed to create GitHub issue:', issueError.message);
+      // Continue - failsafe failure should not block exit
+    }
+    
     process.exit(1);
   }
 }

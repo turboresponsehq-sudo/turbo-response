@@ -19,6 +19,7 @@ on:
           - daily-delivery
           - daily-tasks
           - weekly-review
+          - weekly-heartbeat
           - all-daily
 
 permissions:
@@ -142,3 +143,28 @@ jobs:
           git add docs/weekly-reviews/
           git diff --quiet && git diff --staged --quiet || git commit -m "📈 Weekly review - $(date -u +%Y-%m-%d)"
           git push
+
+  # Job 5: Weekly Heartbeat Email (Sunday 8:00pm ET) - runs with weekly review
+  weekly-heartbeat-email:
+    name: Weekly Heartbeat Email
+    runs-on: ubuntu-latest
+    if: (github.event_name == 'schedule' && github.event.schedule == '0 1 * * 1') || github.event.inputs.job == 'weekly-heartbeat'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      
+      - name: Install dependencies
+        run: |
+          npm install --legacy-peer-deps
+      
+      - name: Send heartbeat email
+        env:
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+        run: |
+          node weekly-heartbeat-email.js
