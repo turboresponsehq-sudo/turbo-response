@@ -79,6 +79,11 @@ router.post('/submit', async (req, res) => {
       });
     }
 
+    // Debug logging to see what's actually received
+    console.log('[RESOURCES API] Raw req.body keys:', Object.keys(req.body));
+    console.log('[RESOURCES API] resources[] value:', req.body['resources[]']);
+    console.log('[RESOURCES API] demographics[] value:', req.body['demographics[]']);
+
     const {
       name,
       email,
@@ -91,6 +96,9 @@ router.post('/submit', async (req, res) => {
       'demographics[]': demographics,
       website_url: honeypotField // Honeypot field - should be empty
     } = req.body;
+
+    console.log('[RESOURCES API] After destructuring - resources:', resources);
+    console.log('[RESOURCES API] After destructuring - demographics:', demographics);
 
     // ── GUARDRAIL 2: Honeypot check ──
     const honeypotTriggered = !!honeypotField;
@@ -161,9 +169,28 @@ router.post('/submit', async (req, res) => {
       console.error('[RESOURCES API] Duplicate check failed (non-blocking):', dupeErr.message);
     }
 
-    // Ensure arrays
-    const resourcesArray = Array.isArray(resources) ? resources : (resources ? [resources] : []);
-    const demographicsArray = Array.isArray(demographics) ? demographics : (demographics ? [demographics] : []);
+    // Ensure arrays - handle undefined, null, empty string, and single values
+    const resourcesArray = (() => {
+      if (!resources) return [];
+      if (Array.isArray(resources)) return resources.filter(Boolean);
+      if (typeof resources === 'string' && resources.trim()) return [resources];
+      return [];
+    })();
+
+    const demographicsArray = (() => {
+      if (!demographics) return [];
+      if (Array.isArray(demographics)) return demographics.filter(Boolean);
+      if (typeof demographics === 'string' && demographics.trim()) return [demographics];
+      return [];
+    })();
+
+    console.log('[RESOURCES API] Final resourcesArray:', resourcesArray);
+    console.log('[RESOURCES API] Final demographicsArray:', demographicsArray);
+
+    // Warn if no resources selected (should have been caught by frontend validation)
+    if (resourcesArray.length === 0) {
+      console.warn('[RESOURCES API] WARNING: No resources selected in submission from', email);
+    }
 
     // ══════════════════════════════════════════════════════════════
     // STEP 1: INSERT INTO DATABASE (SOURCE OF TRUTH)
