@@ -2,12 +2,8 @@ name: Business Intelligence + Operations System
 
 on:
   schedule:
-    # Daily Intel Scan: 6:00am ET = 11:00am UTC (ET is UTC-5)
+    # Daily workflow: 6:00am ET = 11:00am UTC (runs scan → delivery → tasks in sequence)
     - cron: '0 11 * * *'
-    # Daily Delivery: 6:30am ET = 11:30am UTC
-    - cron: '30 11 * * *'
-    # Daily Task Creation: 7:00am ET = 12:00pm UTC
-    - cron: '0 12 * * *'
     # Weekly Review: Sunday 8:00pm ET = Monday 1:00am UTC
     - cron: '0 1 * * 1'
   
@@ -37,7 +33,7 @@ jobs:
   daily-intel-scan:
     name: Daily Intel Scan
     runs-on: ubuntu-latest
-    if: github.event.schedule == '0 11 * * *' || github.event.inputs.job == 'daily-scan' || github.event.inputs.job == 'all-daily'
+    if: github.event_name == 'schedule' || github.event.inputs.job == 'daily-scan' || github.event.inputs.job == 'all-daily'
     
     steps:
       - name: Checkout repository
@@ -67,11 +63,12 @@ jobs:
           git diff --quiet && git diff --staged --quiet || git commit -m "📊 Daily intel report - $(date -u +%Y-%m-%d)"
           git push
 
-  # Job 2: Daily Delivery (6:30am ET)
+  # Job 2: Daily Delivery (runs after scan)
   daily-intel-delivery:
     name: Daily Intel Delivery
     runs-on: ubuntu-latest
-    if: github.event.schedule == '30 11 * * *' || github.event.inputs.job == 'daily-delivery' || github.event.inputs.job == 'all-daily'
+    needs: daily-intel-scan
+    if: github.event_name == 'schedule' || github.event.inputs.job == 'daily-delivery' || github.event.inputs.job == 'all-daily'
     
     steps:
       - name: Checkout repository
@@ -92,12 +89,12 @@ jobs:
         run: |
           node daily-intel-delivery.js
 
-  # Job 3: Daily Task Creation (7:00am ET)
+  # Job 3: Daily Task Creation (runs after delivery)
   daily-task-creation:
     name: Daily Task Creation
     runs-on: ubuntu-latest
     needs: daily-intel-delivery
-    if: github.event.schedule == '0 12 * * *' || github.event.inputs.job == 'daily-tasks' || github.event.inputs.job == 'all-daily'
+    if: github.event_name == 'schedule' || github.event.inputs.job == 'daily-tasks' || github.event.inputs.job == 'all-daily'
     
     steps:
       - name: Checkout repository
@@ -114,11 +111,11 @@ jobs:
         run: |
           node daily-task-creator.js
 
-  # Job 4: Weekly Review (Sunday 8:00pm ET)
+  # Job 4: Weekly Review (Sunday 8:00pm ET) - separate schedule
   weekly-review:
     name: Weekly Review
     runs-on: ubuntu-latest
-    if: github.event.schedule == '0 1 * * 1' || github.event.inputs.job == 'weekly-review'
+    if: (github.event_name == 'schedule' && github.event.schedule == '0 1 * * 1') || github.event.inputs.job == 'weekly-review'
     
     steps:
       - name: Checkout repository
