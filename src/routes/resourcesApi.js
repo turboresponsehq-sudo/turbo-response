@@ -82,23 +82,28 @@ router.post('/submit', async (req, res) => {
     // Debug logging to see what's actually received
     console.log('[RESOURCES API] Raw req.body keys:', Object.keys(req.body));
     console.log('[RESOURCES API] resources[] value:', req.body['resources[]']);
+    console.log('[RESOURCES API] resources value:', req.body['resources']);
     console.log('[RESOURCES API] demographics[] value:', req.body['demographics[]']);
+    console.log('[RESOURCES API] demographics value:', req.body['demographics']);
 
     const {
       name,
       email,
       phone,
       location,
-      'resources[]': resources,
       income,
       household,
       description,
-      'demographics[]': demographics,
       website_url: honeypotField // Honeypot field - should be empty
     } = req.body;
 
-    console.log('[RESOURCES API] After destructuring - resources:', resources);
-    console.log('[RESOURCES API] After destructuring - demographics:', demographics);
+    // Handle both naming conventions: 'resources[]' (with brackets) and 'resources' (without)
+    // Some browsers/submission methods send without brackets
+    const resources = req.body['resources[]'] || req.body['resources'];
+    const demographics = req.body['demographics[]'] || req.body['demographics'];
+
+    console.log('[RESOURCES API] After extraction - resources:', resources);
+    console.log('[RESOURCES API] After extraction - demographics:', demographics);
 
     // ── GUARDRAIL 2: Honeypot check ──
     const honeypotTriggered = !!honeypotField;
