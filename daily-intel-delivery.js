@@ -6,9 +6,11 @@
  * Purpose: Send daily intel email with consumer defense updates
  * Focus: FTC, CFPB, Federal Register enforcement and rule changes
  * 
- * Stop Rule: Only send if there are actionable updates
+ * Configuration: ALWAYS_SEND_DAILY_EMAIL (default: true)
+ *   - true: Send email every day, even if 0 actionable items
+ *   - false: Only send when there are actionable updates
  * 
- * Runs: 6:30am ET daily via GitHub Actions (after scanner completes)
+ * Runs: 6:00am ET daily via GitHub Actions (after scanner completes)
  */
 
 const fs = require('fs');
@@ -20,6 +22,9 @@ const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || '';
 const TO_EMAIL = 'Turboresponsehq@gmail.com';
 const FROM_EMAIL = 'Turboresponsehq@gmail.com';
 const FROM_NAME = 'Turbo Response Intel';
+
+// NEW: Configurable flag (default: true = always send)
+const ALWAYS_SEND_DAILY_EMAIL = process.env.ALWAYS_SEND_DAILY_EMAIL !== 'false';
 
 const REPORT_DIR = path.join(__dirname, 'docs', 'intel-reports');
 
@@ -40,9 +45,18 @@ async function sendEmail(to, subject, htmlBody, textBody) {
   };
   
   try {
-    await sgMail.send(msg);
-    return { success: true };
+    console.log('[EMAIL_SEND_ATTEMPT] Calling SendGrid API...');
+    const response = await sgMail.send(msg);
+    
+    // Extract message ID from SendGrid response
+    const messageId = response[0]?.headers?.['x-message-id'] || 'n/a';
+    const statusCode = response[0]?.statusCode || 'n/a';
+    
+    console.log(`[SENDGRID_RESULT] status=${statusCode} message_id=${messageId}`);
+    
+    return { success: true, messageId, statusCode };
   } catch (error) {
+    console.error(`[SENDGRID_RESULT] status=error message_id=n/a error="${error.message}"`);
     throw new Error(`SendGrid error: ${error.message}`);
   }
 }
@@ -114,23 +128,69 @@ async function main() {
     const reportMarkdown = fs.readFileSync(reportPath, 'utf8');
     console.log('[Report] Loaded report from:', reportPath);
 
-    // Check if Stop Rule applies (no actionable updates)
-    const isStopRule = reportMarkdown.includes('**Status:** No actionable updates today');
-
-    if (isStopRule) {
-      console.log('[Stop Rule] No actionable updates today - skipping email');
-      console.log('Email will only be sent when there are actionable consumer defense updates');
-      process.exit(0);
-    }
-
+    // Check if there are actionable updates
+    const isNoUpdates = reportMarkdown.includes('**Status:** No actionable updates today');
+    
     // Extract actionable count from report
     const actionableMatch = reportMarkdown.match(/\*\*Total Actionable Items:\*\* (\d+)/);
     const actionableCount = actionableMatch ? actionableMatch[1] : '0';
 
-    // Generate email
-    const subject = `⚠️ Daily Intel Report - ${actionableCount} Actionable Items - ${today}`;
-    const htmlBody = markdownToHTML(reportMarkdown);
-    const textBody = reportMarkdown;
+    // NEW: Decision logging
+    console.log(`[EMAIL_DECISION] always_send=${ALWAYS_SEND_DAILY_EMAIL} actionable_count=${actionableCount}`);
+
+    // NEW: Conditional logic based on ALWAYS_SEND_DAILY_EMAIL flag
+    if (!ALWAYS_SEND_DAILY_EMAIL && isNoUpdates) {
+      console.log('[Skip Rule] No actionable updates today - skipping email (ALWAYS_SEND_DAILY_EMAIL=false)');
+      console.log('Email will only be sent when there are actionable consumer defense updates');
+      process.exit(0);
+    }
+
+    // Generate email subject and body
+    let subject, htmlBody, textBody;
+
+    if (isNoUpdates || actionableCount === '0') {
+      // NEW: Email template for "0 updates" days
+      subject = `Daily Intel Report — No actionable updates — ${today}`;
+      
+      const noUpdatesReport = `
+# Daily Intel Report — ${today}
+
+**Status:** System ran successfully
+
+**Actionable Items Found:** 0
+
+---
+
+## Summary
+
+The daily intelligence scanner successfully completed its monitoring of:
+- Federal Trade Commission (FTC) enforcement actions
+- Consumer Financial Protection Bureau (CFPB) updates
+- Federal Register consumer protection rules
+
+**No actionable consumer defense updates were found today.**
+
+---
+
+## Report Details
+
+Full report available at: \`docs/intel-reports/intel-${today}.md\`
+
+${reportMarkdown}
+
+---
+
+*This is an automated daily report. You will receive this email every day, even when there are no actionable items, to confirm the system is working correctly.*
+      `.trim();
+      
+      htmlBody = markdownToHTML(noUpdatesReport);
+      textBody = noUpdatesReport;
+    } else {
+      // Standard email for days with actionable updates
+      subject = `⚠️ Daily Intel Report - ${actionableCount} Actionable Items - ${today}`;
+      htmlBody = markdownToHTML(reportMarkdown);
+      textBody = reportMarkdown;
+    }
 
     // Send email
     console.log('[Email] Sending to', TO_EMAIL + '...');
