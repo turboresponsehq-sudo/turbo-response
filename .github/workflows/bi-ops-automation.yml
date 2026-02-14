@@ -74,6 +74,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: main  # ← FIX: Pull latest commit from main branch
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -89,6 +91,20 @@ jobs:
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
         run: |
           node daily-intel-delivery.js
+      
+      - name: Create failure issue if email not sent
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const date = new Date().toISOString().split('T')[0];
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚨 Daily Intel Email Delivery Failed - ${date}`,
+              body: `Email delivery job failed on ${date}.\n\n**Workflow Run:** ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}\n\n**Action Required:** Investigate logs and verify email delivery.`,
+              labels: ['bug', 'urgent', 'email-delivery']
+            });
 
   # Job 3: Daily Task Creation (runs after delivery)
   daily-task-creation:
@@ -100,6 +116,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: main  # ← FIX: Pull latest commit from main branch
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -111,6 +129,20 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           node daily-task-creator.js
+      
+      - name: Create failure issue if task creation failed
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const date = new Date().toISOString().split('T')[0];
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `⚠️ Daily Task Creation Failed - ${date}`,
+              body: `Task creation job failed on ${date}.\n\n**Workflow Run:** ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}\n\n**Note:** This does NOT affect email delivery. Email was sent successfully.`,
+              labels: ['bug', 'task-creation']
+            });
 
   # Job 4: Weekly Review (Sunday 8:00pm ET) - separate schedule
   weekly-review:
