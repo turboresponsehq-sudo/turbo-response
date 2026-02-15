@@ -276,6 +276,7 @@ async function getClientCase(req, res) {
         client_notes,
         payment_link,
         payment_verified,
+        payment_status,
         funnel_stage,
         pricing_tier,
         pricing_tier_amount,
