@@ -13,6 +13,11 @@ echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}Turbo Response - Unified Build Pipeline${NC}"
 echo -e "${GREEN}========================================${NC}"
 
+# Inject build metadata for /api/version beacon
+export GIT_SHA=${RENDER_GIT_COMMIT:-$(git rev-parse HEAD 2>/dev/null || echo 'unknown')}
+export BUILD_TIME_UTC=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+echo "Build metadata: GIT_SHA=$GIT_SHA BUILD_TIME_UTC=$BUILD_TIME_UTC"
+
 # Step 1: Clean all output directories
 echo -e "\n${YELLOW}[1/6] Cleaning output directories...${NC}"
 rm -rf dist dist-frontend
@@ -43,6 +48,10 @@ if [ ! -f "dist/server.js" ]; then
     exit 1
 fi
 echo "✓ Backend built successfully to dist/"
+
+# Write build metadata JSON for /api/version beacon
+echo "{\"git_sha\": \"$GIT_SHA\", \"build_time_utc\": \"$BUILD_TIME_UTC\"}" > dist/build-meta.json
+echo "✓ Build metadata written to dist/build-meta.json"
 
 # Step 4: Copy frontend to dist/public
 echo -e "\n${YELLOW}[4/6] Copying frontend to dist/public/...${NC}"

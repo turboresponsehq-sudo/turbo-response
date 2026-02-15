@@ -90,6 +90,13 @@ const updateSubmission = async (req, res, next) => {
       updates.push(`payment_status = $${paramCount}`);
       params.push(payment_status);
       paramCount++;
+      // Sync payment_verified with payment_status to prevent field drift
+      if (payment_status === 'paid') {
+        updates.push(`payment_verified = true`);
+        updates.push(`payment_verified_at = NOW()`);
+      } else {
+        updates.push(`payment_verified = false`);
+      }
     }
 
     if (updates.length === 0) {
