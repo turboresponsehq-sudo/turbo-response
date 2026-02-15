@@ -79,6 +79,37 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
+// Also mount at /api/health for consistency
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    service: 'Turbo Response API',
+    version: '1.0.0',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Version beacon endpoint — never guess what's deployed again
+let buildMeta = { git_sha: 'unknown', build_time_utc: 'unknown' };
+try {
+  const fs = require('fs');
+  const metaPath = path.join(__dirname, 'build-meta.json');
+  if (fs.existsSync(metaPath)) {
+    buildMeta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+  }
+} catch (e) {
+  // build-meta.json not available (dev mode)
+}
+app.get('/api/version', (req, res) => {
+  res.json({
+    git_sha: buildMeta.git_sha || process.env.RENDER_GIT_COMMIT || 'unknown',
+    build_time_utc: buildMeta.build_time_utc || 'unknown',
+    env: process.env.NODE_ENV || 'unknown',
+    service: 'turbo-response-backend',
+    deployment_version: 'VERSION-BEACON-1',
+    uptime_seconds: Math.floor(process.uptime())
+  });
+});
 
 // API Routes
 // Test route to verify routing works
