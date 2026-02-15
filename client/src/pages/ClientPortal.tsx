@@ -151,7 +151,8 @@ export default function ClientPortal() {
   const documents = caseData?.documents || [];
 
   // Payment Gating: Check if payment is required
-  const isPaymentRequired = !caseData?.payment_verified;
+  // Emergency patch: Check BOTH fields (dual-field drift fix)
+  const isPaymentRequired = !(caseData?.payment_verified === true || caseData?.payment_status === 'paid');
   const isPaymentPending = caseData?.funnel_stage === 'Payment Pending';
   const hasPaymentLink = caseData?.payment_link;
 
