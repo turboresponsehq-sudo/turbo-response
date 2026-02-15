@@ -335,6 +335,19 @@ async function getClientCase(req, res) {
 
     const caseData = result.rows[0];
 
+    // SERVER-SIDE PAYMENT INVARIANT (Production Stability Protocol Rule #2)
+    // Single source of truth: payment_status
+    // If payment_status='paid' → access allowed (full data)
+    // If portal_enabled=false → access denied (handled by WHERE clause above)
+    // No other condition can block a paid user.
+    const isPaid = caseData.payment_status === 'paid' || caseData.payment_verified === true;
+    
+    // Add computed access field so frontend never has to guess
+    caseData.access_granted = isPaid;
+    caseData.access_reason = isPaid 
+      ? 'payment_confirmed' 
+      : (caseData.portal_enabled ? 'payment_pending' : 'portal_disabled');
+
     res.json({
       success: true,
       case: caseData

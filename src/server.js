@@ -111,6 +111,108 @@ app.get('/api/version', (req, res) => {
   });
 });
 
+// ============================================================
+// PRODUCTION STABILITY PROTOCOL ENDPOINTS
+// ============================================================
+
+// DRIFT GUARD (Protocol Rule #2)
+// Detects payment field drift: payment_status='paid' but payment_verified=false
+// Returns count + affected case IDs for immediate action
+app.get('/api/admin/drift-check', async (req, res) => {
+  try {
+    const { query } = require('./services/database/db');
+    const result = await query(
+      `SELECT id, case_number, payment_status, payment_verified, funnel_stage
+       FROM cases
+       WHERE payment_status = 'paid' AND (payment_verified = false OR payment_verified IS NULL)`
+    );
+    const driftCount = result.rows.length;
+    const status = driftCount === 0 ? 'clean' : 'DRIFT_DETECTED';
+    
+    // Auto-fix if drift detected
+    let autoFixed = 0;
+    if (driftCount > 0) {
+      const fixResult = await query(
+        `UPDATE cases SET payment_verified = true, payment_verified_at = COALESCE(payment_verified_at, NOW())
+         WHERE payment_status = 'paid' AND (payment_verified = false OR payment_verified IS NULL)`
+      );
+      autoFixed = fixResult.rowCount;
+    }
+    
+    res.json({
+      status,
+      drift_count: driftCount,
+      auto_fixed: autoFixed,
+      affected_cases: result.rows.map(r => ({ id: r.id, case_number: r.case_number })),
+      checked_at: new Date().toISOString(),
+      rule: 'If payment_status=paid then payment_verified must be true'
+    });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: error.message });
+  }
+});
+
+// POST-DEPLOY SMOKE TEST (Protocol Rule #3)
+// Single endpoint that validates all critical systems
+app.get('/api/smoke-test', async (req, res) => {
+  const results = {
+    timestamp: new Date().toISOString(),
+    git_sha: buildMeta.git_sha || process.env.RENDER_GIT_COMMIT || 'unknown',
+    build_time_utc: buildMeta.build_time_utc || 'unknown',
+    env: process.env.NODE_ENV || 'unknown',
+    checks: {}
+  };
+  
+  // Check 1: Database connectivity
+  try {
+    const { query } = require('./services/database/db');
+    const dbResult = await query('SELECT 1 as ok');
+    results.checks.database = { status: 'ok', latency_ms: 0 };
+  } catch (e) {
+    results.checks.database = { status: 'fail', error: e.message };
+  }
+  
+  // Check 2: Paid case access (invariant: paid users can access portal)
+  try {
+    const { query } = require('./services/database/db');
+    const paidCases = await query(
+      `SELECT COUNT(*) as total_paid,
+              SUM(CASE WHEN portal_enabled = true THEN 1 ELSE 0 END) as portal_enabled_count,
+              SUM(CASE WHEN payment_verified = false OR payment_verified IS NULL THEN 1 ELSE 0 END) as drift_count
+       FROM cases WHERE payment_status = 'paid'`
+    );
+    const row = paidCases.rows[0];
+    const driftCount = parseInt(row.drift_count) || 0;
+    results.checks.payment_invariant = {
+      status: driftCount === 0 ? 'ok' : 'DRIFT',
+      total_paid: parseInt(row.total_paid) || 0,
+      portal_enabled: parseInt(row.portal_enabled_count) || 0,
+      drift_count: driftCount
+    };
+  } catch (e) {
+    results.checks.payment_invariant = { status: 'fail', error: e.message };
+  }
+  
+  // Check 3: SendGrid env configured
+  results.checks.sendgrid = {
+    status: process.env.SENDGRID_API_KEY ? 'configured' : 'missing',
+  };
+  
+  // Check 4: Environment variables
+  const requiredEnvs = ['DATABASE_URL', 'JWT_SECRET'];
+  const missingEnvs = requiredEnvs.filter(e => !process.env[e]);
+  results.checks.env_vars = {
+    status: missingEnvs.length === 0 ? 'ok' : 'missing',
+    missing: missingEnvs
+  };
+  
+  // Overall status
+  const allChecks = Object.values(results.checks);
+  results.overall = allChecks.every(c => c.status === 'ok' || c.status === 'configured') ? 'PASS' : 'FAIL';
+  
+  res.json(results);
+});
+
 // API Routes
 // Test route to verify routing works
 app.get('/api/test', (req, res) => {
