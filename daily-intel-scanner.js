@@ -440,8 +440,16 @@ function getDateDaysAgo(days) {
 
 // Generate report
 function generateReport(allUpdates) {
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const reportPath = path.join(__dirname, `intel-report-${timestamp}.md`);
+  // Use simple date format (YYYY-MM-DD) to match delivery and task creator expectations
+  const today = new Date().toISOString().split('T')[0];
+  const reportDir = path.join(__dirname, 'docs', 'intel-reports');
+  
+  // Ensure directory exists
+  if (!fs.existsSync(reportDir)) {
+    fs.mkdirSync(reportDir, { recursive: true });
+  }
+  
+  const reportPath = path.join(reportDir, `intel-${today}.md`);
   
   // Sort by priority
   const p0Items = allUpdates.filter(u => u.priority === PRIORITY.P0);
