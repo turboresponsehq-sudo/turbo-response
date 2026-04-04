@@ -38,6 +38,7 @@ import AdminCasesDetail from "./pages/AdminCaseDetail";
 import GrantDemo from "./pages/GrantDemo";
 import EvictionDemo from "./pages/EvictionDemo";
 import AdminResourceSubmissions from "./pages/admin/AdminResourceSubmissions";
+import TurboSystems from "./pages/TurboSystems";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -60,6 +61,7 @@ function Router() {
       {/* Payment route - NOT part of consumer intake flow, used for business audit workflow */}
       <Route path="/payment" component={Payment} />
       <Route path="/turbo" component={TurboHQ} />
+      <Route path="/turbo-systems" component={TurboSystems} />
       
       {/* Offense Intake - Business */}
       <Route path="/intake-offense" component={TurboIntakeForm} />
