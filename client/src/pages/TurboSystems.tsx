@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "wouter";
 import "./TurboSystems.css";
 
@@ -97,6 +98,7 @@ const process = [
 ];
 
 export default function TurboSystems() {
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <div className="ts-root">
       {/* Animated background */}
@@ -116,17 +118,24 @@ export default function TurboSystems() {
               TURBO <span className="ts-logo-accent">SYSTEMS</span>
             </span>
           </Link>
-          <nav className="ts-nav-links">
-            <Link href="/" className="ts-nav-link">
+          <button
+            className={`ts-hamburger${menuOpen ? " ts-is-open" : ""}`}
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle navigation"
+          >
+            <span /><span /><span />
+          </button>
+          <nav className={`ts-nav-links${menuOpen ? " ts-mobile-open" : ""}`}>
+            <Link href="/" className="ts-nav-link" onClick={() => setMenuOpen(false)}>
               ← Back to Turbo Response
             </Link>
-            <a href="#services" className="ts-nav-link">
+            <a href="#services" className="ts-nav-link" onClick={() => setMenuOpen(false)}>
               Services
             </a>
-            <a href="#process" className="ts-nav-link">
+            <a href="#process" className="ts-nav-link" onClick={() => setMenuOpen(false)}>
               Process
             </a>
-            <a href="#contact" className="ts-nav-cta">
+            <a href="#contact" className="ts-nav-cta" onClick={() => setMenuOpen(false)}>
               Book a Call
             </a>
           </nav>

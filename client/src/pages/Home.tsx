@@ -1,8 +1,9 @@
+import { useState } from "react";
 import { Link } from "wouter";
 import "./Home.css";
-
 export default function Home() {
-  return (
+  const [menuOpen, setMenuOpen] = useState(false);
+  return ((
     <>
       {/* Animated Background */}
       <div className="bg-animation">
@@ -23,15 +24,22 @@ export default function Home() {
             <div className="logo-icon">⚡</div>
             TURBO RESPONSE
           </Link>
-          <nav className="nav-menu">
-            <Link href="/" className="nav-link">Home</Link>
-            <Link href="/services" className="nav-link">Services</Link>
-            <Link href="/pricing" className="nav-link">Pricing</Link>
-            <Link href="/results" className="nav-link">Results</Link>
-            <Link href="/testimonials" className="nav-link">Testimonials</Link>
-            <Link href="/resources" className="nav-link">Resources</Link>
-            <Link href="/turbo-systems" className="nav-link nav-link-systems">⚡ Turbo Systems</Link>
-            <Link href="/intake" className="nav-link nav-link-cta">Start Your Case</Link>
+          <button
+            className={`hamburger${menuOpen ? " is-open" : ""}`}
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle navigation"
+          >
+            <span /><span /><span />
+          </button>
+          <nav className={`nav-menu${menuOpen ? " mobile-open" : ""}`}>
+            <Link href="/" className="nav-link" onClick={() => setMenuOpen(false)}>Home</Link>
+            <Link href="/services" className="nav-link" onClick={() => setMenuOpen(false)}>Services</Link>
+            <Link href="/pricing" className="nav-link" onClick={() => setMenuOpen(false)}>Pricing</Link>
+            <Link href="/results" className="nav-link" onClick={() => setMenuOpen(false)}>Results</Link>
+            <Link href="/testimonials" className="nav-link" onClick={() => setMenuOpen(false)}>Testimonials</Link>
+            <Link href="/resources" className="nav-link" onClick={() => setMenuOpen(false)}>Resources</Link>
+            <Link href="/turbo-systems" className="nav-link nav-link-systems" onClick={() => setMenuOpen(false)}>⚡ Turbo Systems</Link>
+            <Link href="/intake" className="nav-link nav-link-cta" onClick={() => setMenuOpen(false)}>Start Your Case</Link>
           </nav>
         </div>
       </header>
