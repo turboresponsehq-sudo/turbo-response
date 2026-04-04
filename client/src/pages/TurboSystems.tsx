@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import "./TurboSystems.css";
 
@@ -103,6 +103,11 @@ const systemFlow = [
 
 export default function TurboSystems() {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    document.title = "Turbo Systems ⚡ AI Infrastructure Platform — Turbo Response HQ";
+  }, []);
+
   return (
     <div className="ts-root">
       {/* Animated background */}
