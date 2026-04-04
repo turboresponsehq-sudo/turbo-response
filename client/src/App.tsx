@@ -37,6 +37,7 @@ import AdminCasesList from "./pages/AdminCasesList";
 import AdminCasesDetail from "./pages/AdminCaseDetail";
 import GrantDemo from "./pages/GrantDemo";
 import EvictionDemo from "./pages/EvictionDemo";
+import TurboSystemsPage from "./pages/TurboSystems";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -46,6 +47,7 @@ function Router() {
       <Route path="/violations" component={Violations} />
       <Route path="/grant-demo" component={GrantDemo} />
       <Route path="/eviction-demo" component={EvictionDemo} />
+      <Route path="/turbo-systems" component={TurboSystemsPage} />
       <Route path="/services" component={Services} />
       <Route path="/pricing" component={Pricing} />
       <Route path="/results" component={Results} />
