@@ -30,6 +30,7 @@ export default function Home() {
             <Link href="/results" className="nav-link">Results</Link>
             <Link href="/testimonials" className="nav-link">Testimonials</Link>
             <Link href="/resources" className="nav-link">Resources</Link>
+            <Link href="/turbo-systems" className="nav-link nav-link-systems">⚡ Turbo Systems</Link>
             <Link href="/intake" className="nav-link nav-link-cta">Start Your Case</Link>
           </nav>
         </div>
