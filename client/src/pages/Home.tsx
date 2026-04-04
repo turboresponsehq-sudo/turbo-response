@@ -1,8 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import "./Home.css";
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    document.title = "Turbo Response HQ — AI-Powered Consumer Defense & Documentation";
+  }, []);
+
   return (
     <>
       {/* Animated Background */}
@@ -37,7 +42,6 @@ export default function Home() {
             <Link href="/pricing" className="nav-link" onClick={() => setMenuOpen(false)}>Pricing</Link>
             <Link href="/results" className="nav-link" onClick={() => setMenuOpen(false)}>Results</Link>
             <Link href="/testimonials" className="nav-link" onClick={() => setMenuOpen(false)}>Testimonials</Link>
-            <Link href="/resources" className="nav-link" onClick={() => setMenuOpen(false)}>Resources</Link>
             <Link href="/turbo-systems" className="nav-link nav-link-systems" onClick={() => setMenuOpen(false)}>⚡ Turbo Systems</Link>
             <Link href="/intake" className="nav-link nav-link-cta" onClick={() => setMenuOpen(false)}>Start Your Case</Link>
           </nav>
@@ -47,11 +51,16 @@ export default function Home() {
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-content">
+          {/* Identity badge — visible in under 2 seconds */}
+          <div className="hero-identity-badge">
+            <span className="hero-badge-dot" />
+            AI-Powered Consumer Defense Platform — Built &amp; Operated by Turbo Response HQ
+          </div>
           <h1 className="hero-title">
             AI‑DRIVEN DOCUMENTATION & RESPONSE
           </h1>
           <p className="hero-description">
-            Turbo Response helps clients prepare, organize, and respond when entities require proof, records, or formal responses. We use AI‑driven systems to move faster, stay consistent, and keep documentation structured — so clients are positioned correctly before decisions are made.
+            Turbo Response is a digital-native AI platform that helps individuals and businesses prepare, organize, and respond when entities require proof, records, or formal responses. Our AI-driven systems move faster, stay consistent, and keep documentation structured — so clients are positioned correctly before decisions are made.
           </p>
 
           {/* Dual Intake Buttons */}
@@ -68,6 +77,14 @@ export default function Home() {
               </Link>
               <p className="button-helper">Use this if you received a notice, denial, demand, or enforcement action.</p>
             </div>
+          </div>
+
+          {/* AI Infrastructure signal */}
+          <div className="hero-systems-callout">
+            <span className="hero-systems-label">Also building AI infrastructure for businesses →</span>
+            <Link href="/turbo-systems" className="hero-systems-link">
+              ⚡ Turbo Systems
+            </Link>
           </div>
         </div>
       </section>
@@ -216,6 +233,30 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Founder / About Section */}
+      <section className="founder-section">
+        <div className="section-container">
+          <div className="founder-card">
+            <div className="founder-avatar">DC</div>
+            <div className="founder-info">
+              <div className="founder-tag-row">
+                <span className="founder-tag">Founder</span>
+                <span className="founder-tag">Google Developer</span>
+                <span className="founder-tag">Manus AI Builder</span>
+              </div>
+              <h3 className="founder-name">Demarcus Collins</h3>
+              <p className="founder-title">Founder &amp; Builder — Turbo Response HQ &amp; Turbo Systems</p>
+              <p className="founder-bio">
+                Turbo Response HQ is a digital-native AI business designed and operated by Demarcus Collins — a Google developer and active builder of production AI infrastructure. The platform was built entirely using AI-driven development tools, combining consumer defense services with a full AI infrastructure layer (Turbo Systems) for businesses that need automation, intelligence pipelines, and production-grade systems.
+              </p>
+              <Link href="/turbo-systems" className="founder-systems-link">
+                View Turbo Systems — AI Infrastructure Platform →
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Final CTA */}
       <section className="final-cta">
         <div className="section-container">
@@ -235,8 +276,20 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="footer">
-        <div className="footer-text">
-          © 2025 Turbo Response. Documentation and procedural support.
+        <div className="footer-inner">
+          <div className="footer-brand">
+            <span className="footer-logo-icon">⚡</span>
+            <span>Turbo Response HQ — AI-Powered Consumer Defense &amp; Documentation Platform</span>
+          </div>
+          <div className="footer-links-row">
+            <Link href="/turbo-systems" className="footer-link-systems">⚡ Turbo Systems</Link>
+            <Link href="/services" className="footer-link">Services</Link>
+            <Link href="/pricing" className="footer-link">Pricing</Link>
+            <Link href="/disclaimer" className="footer-link">Disclaimer</Link>
+          </div>
+          <div className="footer-text">
+            © 2026 Turbo Response HQ. Documentation and procedural support. Not a law firm.
+          </div>
         </div>
       </footer>
     </>
