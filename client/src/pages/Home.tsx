@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import "./Home.css";
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
-  return ((
+  return (
     <>
       {/* Animated Background */}
       <div className="bg-animation">
