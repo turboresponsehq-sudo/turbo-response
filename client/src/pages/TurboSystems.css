@@ -434,7 +434,7 @@
   margin-top: 1px;
 }
 
-/* ── Process Grid ── */
+/* ── Process Grid (kept for legacy) ── */
 .ts-process-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -682,4 +682,239 @@
   .ts-proof-bar { grid-template-columns: repeat(2, 1fr); }
   .ts-cta-card { padding: 48px 24px; }
   .ts-footer-inner { flex-direction: column; align-items: flex-start; }
+}
+
+/* ===========================
+   WHAT THIS PRODUCT IS
+   =========================== */
+.ts-product-section {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.03) 0%, transparent 60%);
+}
+
+.ts-product-body {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.ts-product-lead {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--ts-white);
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+  border-left: 3px solid var(--ts-cyan);
+  padding-left: 1.25rem;
+}
+
+.ts-product-desc {
+  font-size: 1.05rem;
+  color: var(--ts-muted);
+  line-height: 1.8;
+  margin-bottom: 2.5rem;
+}
+
+.ts-product-pillars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.ts-pillar {
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.ts-pillar:hover {
+  border-color: var(--ts-border-bright);
+  transform: translateY(-3px);
+}
+
+.ts-pillar-icon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.ts-pillar h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ts-white);
+  margin-bottom: 0.5rem;
+}
+
+.ts-pillar p {
+  font-size: 0.875rem;
+  color: var(--ts-muted);
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .ts-product-pillars {
+    grid-template-columns: 1fr;
+  }
+  .ts-product-lead {
+    font-size: 1.1rem;
+  }
+}
+
+/* ===========================
+   HOW IT WORKS — SYSTEM FLOW
+   =========================== */
+.ts-flow-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  position: relative;
+}
+
+.ts-flow-card {
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-border);
+  border-radius: 16px;
+  padding: 1.75rem 1.25rem;
+  text-align: center;
+  position: relative;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.ts-flow-card:hover {
+  border-color: var(--ts-border-bright);
+  transform: translateY(-4px);
+  box-shadow: var(--ts-glow-cyan);
+}
+
+.ts-flow-step {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--ts-cyan);
+  letter-spacing: 0.1em;
+  margin-bottom: 0.75rem;
+  opacity: 0.7;
+}
+
+.ts-flow-icon {
+  font-size: 2.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.ts-flow-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ts-white);
+  margin-bottom: 0.75rem;
+}
+
+.ts-flow-desc {
+  font-size: 0.875rem;
+  color: var(--ts-muted);
+  line-height: 1.6;
+}
+
+.ts-flow-arrow {
+  position: absolute;
+  right: -1.1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.5rem;
+  color: var(--ts-cyan);
+  opacity: 0.5;
+  z-index: 2;
+}
+
+@media (max-width: 1024px) {
+  .ts-flow-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .ts-flow-arrow {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .ts-flow-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===========================
+   FOUNDER / TEAM
+   =========================== */
+.ts-founder-section {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.04) 0%, transparent 60%);
+}
+
+.ts-founder-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 2.5rem;
+  background: var(--ts-surface-2);
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  border-radius: 20px;
+  padding: 2.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.ts-founder-avatar {
+  width: 80px;
+  height: 80px;
+  min-width: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ts-cyan), var(--ts-violet));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.05em;
+}
+
+.ts-founder-info {
+  flex: 1;
+}
+
+.ts-founder-name {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--ts-white);
+  margin-bottom: 0.25rem;
+}
+
+.ts-founder-title {
+  font-size: 0.9rem;
+  color: var(--ts-cyan);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  letter-spacing: 0.02em;
+}
+
+.ts-founder-bio {
+  font-size: 0.95rem;
+  color: var(--ts-muted);
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+}
+
+.ts-founder-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .ts-founder-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1.75rem 1.25rem;
+    gap: 1.5rem;
+  }
+  .ts-founder-tags {
+    justify-content: center;
+  }
 }

@@ -70,30 +70,34 @@ const proofPoints = [
   },
 ];
 
-const process = [
+const systemFlow = [
   {
     step: "01",
-    title: "Discovery Call",
+    icon: "📡",
+    title: "Data Ingestion",
     description:
-      "We map your current operations, identify the highest-value automation targets, and define success metrics before writing a single line of code.",
+      "Data is ingested from multiple sources — federal databases, APIs, RSS feeds, web sources, and internal systems — on a scheduled or event-driven basis.",
   },
   {
     step: "02",
-    title: "Architecture Design",
+    icon: "🧠",
+    title: "AI Classification",
     description:
-      "We design the system architecture — data flows, integrations, deployment strategy — and document it so you own it completely.",
+      "AI pipelines classify, prioritize, and structure the incoming data. Signals are ranked P0/P1/P2 and routed to the appropriate workflow automatically.",
   },
   {
     step: "03",
-    title: "Build & Deploy",
+    icon: "⚙️",
+    title: "Workflow Execution",
     description:
-      "We build in production-ready increments with checkpoints, version control, and live preview at every stage. No black boxes.",
+      "Automation agents execute multi-step workflows — generating documents, creating tasks, sending notifications, updating records, and triggering downstream actions.",
   },
   {
     step: "04",
-    title: "Handoff & Stability",
+    icon: "📤",
+    title: "Output Delivery",
     description:
-      "Every system ships with monitoring, incident templates, runbooks, and a stability protocol. You get infrastructure that proves it's working every day.",
+      "Outputs are delivered to their destinations: reports emailed, tasks created, dashboards updated, clients notified — all without human intervention.",
   },
 ];
 
@@ -129,11 +133,14 @@ export default function TurboSystems() {
             <Link href="/" className="ts-nav-link" onClick={() => setMenuOpen(false)}>
               ← Back to Turbo Response
             </Link>
+            <a href="#product" className="ts-nav-link" onClick={() => setMenuOpen(false)}>
+              The Platform
+            </a>
             <a href="#services" className="ts-nav-link" onClick={() => setMenuOpen(false)}>
               Services
             </a>
-            <a href="#process" className="ts-nav-link" onClick={() => setMenuOpen(false)}>
-              Process
+            <a href="#how-it-works" className="ts-nav-link" onClick={() => setMenuOpen(false)}>
+              How It Works
             </a>
             <a href="#contact" className="ts-nav-cta" onClick={() => setMenuOpen(false)}>
               Book a Call
@@ -144,23 +151,23 @@ export default function TurboSystems() {
 
       {/* Hero */}
       <section className="ts-hero">
-        <div className="ts-hero-badge">⚡ AI Infrastructure Layer</div>
+        <div className="ts-hero-badge">⚡ AI Infrastructure Platform</div>
         <h1 className="ts-hero-title">
           Build Systems That
           <br />
           <span className="ts-gradient-text">Run Without You</span>
         </h1>
         <p className="ts-hero-sub">
-          Turbo Systems designs and deploys AI-powered infrastructure for
-          businesses that need automation, intelligence pipelines, and
-          production-grade systems — not just tools.
+          Turbo Systems is an AI infrastructure platform that designs and deploys
+          automated business systems — intelligence pipelines, AI agents, and
+          production-grade infrastructure that operates without manual intervention.
         </p>
         <div className="ts-hero-actions">
           <a href="#contact" className="ts-btn-primary">
             Book a Strategy Call
           </a>
-          <a href="#services" className="ts-btn-ghost">
-            See What We Build →
+          <a href="#product" className="ts-btn-ghost">
+            What This Product Is →
           </a>
         </div>
 
@@ -178,6 +185,45 @@ export default function TurboSystems() {
 
       {/* Divider */}
       <div className="ts-divider" />
+
+      {/* What This Product Is */}
+      <section id="product" className="ts-section ts-product-section">
+        <div className="ts-container">
+          <div className="ts-section-header">
+            <span className="ts-section-tag">The Platform</span>
+            <h2 className="ts-section-title">What This Product Is</h2>
+          </div>
+          <div className="ts-product-body">
+            <p className="ts-product-lead">
+              Turbo Systems is an AI infrastructure platform that builds and deploys
+              automated business systems.
+            </p>
+            <p className="ts-product-desc">
+              We don't just implement tools — we design production-grade systems that
+              ingest data, execute multi-step workflows, and deliver measurable outcomes
+              automatically. Every system is version-controlled, monitored, and shipped
+              with stability protocols so it runs without manual intervention.
+            </p>
+            <div className="ts-product-pillars">
+              <div className="ts-pillar">
+                <span className="ts-pillar-icon">🧠</span>
+                <h4>Intelligence Layer</h4>
+                <p>AI pipelines that classify, prioritize, and act on real-world data streams</p>
+              </div>
+              <div className="ts-pillar">
+                <span className="ts-pillar-icon">⚙️</span>
+                <h4>Automation Engine</h4>
+                <p>Multi-agent workflows that execute tasks, generate outputs, and trigger actions</p>
+              </div>
+              <div className="ts-pillar">
+                <span className="ts-pillar-icon">🏗️</span>
+                <h4>Production Infrastructure</h4>
+                <p>Deployed systems with CI/CD, monitoring, drift guards, and incident protocols</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Services */}
       <section id="services" className="ts-section">
@@ -210,11 +256,11 @@ export default function TurboSystems() {
         </div>
       </section>
 
-      {/* Proof / Live Systems */}
+      {/* Live Product / System in Action */}
       <section className="ts-proof-section">
         <div className="ts-container">
           <div className="ts-proof-card">
-            <div className="ts-proof-label-top">Live System — Proof of Build</div>
+            <div className="ts-proof-label-top">Live Product / System in Action</div>
             <h2 className="ts-proof-title">
               This site runs on Turbo Systems infrastructure.
             </h2>
@@ -259,22 +305,60 @@ export default function TurboSystems() {
         </div>
       </section>
 
-      {/* Process */}
-      <section id="process" className="ts-section">
+      {/* How It Works — System Flow */}
+      <section id="how-it-works" className="ts-section">
         <div className="ts-container">
           <div className="ts-section-header">
             <span className="ts-section-tag">How It Works</span>
-            <h2 className="ts-section-title">From Discovery to Deployed</h2>
+            <h2 className="ts-section-title">Data → AI System → Execution → Output</h2>
+            <p className="ts-section-sub">
+              Every Turbo Systems build follows the same production-proven flow.
+            </p>
           </div>
 
-          <div className="ts-process-grid">
-            {process.map((p) => (
-              <div key={p.step} className="ts-process-card">
-                <div className="ts-process-step">{p.step}</div>
-                <h3 className="ts-process-title">{p.title}</h3>
-                <p className="ts-process-desc">{p.description}</p>
+          <div className="ts-flow-grid">
+            {systemFlow.map((f, i) => (
+              <div key={f.step} className="ts-flow-card">
+                <div className="ts-flow-step">{f.step}</div>
+                <div className="ts-flow-icon">{f.icon}</div>
+                <h3 className="ts-flow-title">{f.title}</h3>
+                <p className="ts-flow-desc">{f.description}</p>
+                {i < systemFlow.length - 1 && (
+                  <div className="ts-flow-arrow">→</div>
+                )}
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Founder / Team */}
+      <section id="founder" className="ts-section ts-founder-section">
+        <div className="ts-container">
+          <div className="ts-section-header">
+            <span className="ts-section-tag">The Team</span>
+            <h2 className="ts-section-title">Who Builds This</h2>
+          </div>
+          <div className="ts-founder-card">
+            <div className="ts-founder-avatar">DC</div>
+            <div className="ts-founder-info">
+              <h3 className="ts-founder-name">Demarcus Collins</h3>
+              <p className="ts-founder-title">Founder, Turbo Response &amp; Turbo Systems</p>
+              <p className="ts-founder-bio">
+                AI systems builder focused on automation, document intelligence, and
+                multi-agent workflows. Google developer and active builder of production
+                AI infrastructure. Demarcus designed and shipped the entire Turbo Response
+                platform — including client portals, automated intelligence pipelines,
+                payment systems, and production stability protocols — using Manus AI and
+                modern full-stack tooling.
+              </p>
+              <div className="ts-founder-tags">
+                <span className="ts-tag">Google Developer</span>
+                <span className="ts-tag">Manus AI Builder</span>
+                <span className="ts-tag">Production Systems</span>
+                <span className="ts-tag">Multi-Agent Workflows</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
