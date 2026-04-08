@@ -28,12 +28,21 @@ interface CaseItem {
 
 export default function AdminDashboard() {
   const [, setLocation] = useLocation();
-  const { token, isAuthenticated, clearTokenAndRedirect } = useAdminAuth();
+  const { token, isAuthenticated, isLoading: authLoading, clearTokenAndRedirect } = useAdminAuth();
   const [cases, setCases] = useState<CaseItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Wait for auth context to finish reading from localStorage.
+    // On mobile browsers, the useEffect in AdminAuthContext runs asynchronously
+    // after the first render, so isAuthenticated is false until authLoading is false.
+    // Without this guard, mobile fires the API call with token=null and gets 401.
+    if (authLoading) {
+      console.log('[AdminDashboard] Auth context still initializing, waiting...');
+      return;
+    }
+
     // Check authentication
     if (!isAuthenticated) {
       console.warn('[AdminDashboard] Not authenticated - redirecting to login');
@@ -83,7 +92,7 @@ export default function AdminDashboard() {
     };
 
     fetchCases();
-  }, [isAuthenticated, token, setLocation, clearTokenAndRedirect]);
+  }, [authLoading, isAuthenticated, token, setLocation, clearTokenAndRedirect]);
 
   const handleCaseClick = (caseId: number) => {
     setLocation(`/admin/cases/${caseId}`);
