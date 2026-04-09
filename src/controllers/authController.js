@@ -64,10 +64,15 @@ const login = async (req, res, next) => {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    // Find user by email
+    // Normalize email to lowercase before querying
+    // This fixes iOS Safari autocapitalize which capitalizes the first letter,
+    // causing a case-sensitive mismatch in PostgreSQL (e.g. 'Turboresponsehq@...' vs 'turboresponsehq@...')
+    const normalizedEmail = email.trim().toLowerCase();
+
+    // Find user by email (case-insensitive)
     const result = await query(
-      'SELECT * FROM users WHERE email = $1',
-      [email]
+      'SELECT * FROM users WHERE LOWER(email) = $1',
+      [normalizedEmail]
     );
 
     // DEBUG: Log query result
