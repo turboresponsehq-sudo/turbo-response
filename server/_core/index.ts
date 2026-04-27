@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import { createServer } from "http";
 import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
@@ -59,6 +60,9 @@ async function startServer() {
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  
+  // Cookie parser for reading session cookies (used by scheduled task endpoint)
+  app.use(cookieParser());
   
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
@@ -307,6 +311,69 @@ async function startServer() {
     }
   });
   
+  // Scheduled task maintenance alert endpoint
+  // Accepts POST from Manus scheduled task agent with maintenance report summary
+  // Role check: allows "user" role (scheduled tasks run as user-level)
+  app.post("/api/scheduled/maintenance-alert", async (req: any, res: any) => {
+    try {
+      // Verify session cookie (scheduled tasks auto-inject app_session_id cookie)
+      const sessionCookie = req.cookies?.app_session_id;
+      const authHeader = req.headers.authorization;
+      
+      // Accept either session cookie or bearer token
+      if (!sessionCookie && !authHeader) {
+        return res.status(401).json({ error: 'Authentication required' });
+      }
+
+      const { summary, failedChecks, reportDate, reportFilename } = req.body;
+      
+      if (!summary) {
+        return res.status(400).json({ error: 'summary field is required' });
+      }
+
+      // Log the maintenance alert
+      console.log('[Maintenance Alert] Received alert:', { reportDate, failedChecks, reportFilename });
+
+      // Send notification to owner via built-in notification system
+      const notifyUrl = process.env.BUILT_IN_FORGE_API_URL;
+      const notifyKey = process.env.BUILT_IN_FORGE_API_KEY;
+      const appId = process.env.VITE_APP_ID;
+      const ownerOpenId = process.env.OWNER_OPEN_ID;
+
+      if (notifyUrl && notifyKey && appId && ownerOpenId) {
+        try {
+          const notifyResponse = await fetch(`${notifyUrl}/notification/send`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${notifyKey}`
+            },
+            body: JSON.stringify({
+              app_id: appId,
+              open_id: ownerOpenId,
+              title: `⚠️ Turbo Response HQ — Maintenance Alert (${reportDate || 'Weekly Check'})`,
+              content: summary
+            })
+          });
+          const notifyResult = await notifyResponse.json();
+          console.log('[Maintenance Alert] Notification sent:', notifyResult);
+        } catch (notifyError: any) {
+          console.error('[Maintenance Alert] Failed to send notification:', notifyError.message);
+        }
+      }
+
+      res.json({ 
+        success: true, 
+        message: 'Maintenance alert received and notification sent',
+        reportDate,
+        failedChecks: failedChecks || []
+      });
+    } catch (error: any) {
+      console.error('[Maintenance Alert] Error:', error);
+      res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
+  });
+
   // tRPC API
   app.use(
     "/api/trpc",

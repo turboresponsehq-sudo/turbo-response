@@ -555,3 +555,11 @@
 - [ ] Save checkpoint
 - [ ] Push to GitHub / deploy to production
 - [ ] Verify page renders on turboresponsehq.ai/turbo-systems
+
+## TURBO SYSTEMS MOBILE FIX (APR 4 2026)
+
+- [ ] Add hamburger mobile menu to Home.tsx (currently nav-menu is hidden on mobile)
+- [ ] Add Turbo Systems link to mobile hamburger menu
+- [ ] Fix TurboSystems.css mobile layout (hero text, grid, stats bar)
+- [ ] Fix TurboSystems.tsx mobile nav header
+- [ ] Push to GitHub and verify on production mobile
