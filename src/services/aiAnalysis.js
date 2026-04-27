@@ -7,9 +7,18 @@
 const OpenAI = require('openai');
 const { calculatePrice } = require('./pricingEngine');
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Lazy initialization — only create client when actually needed
+// This prevents startup crash when OPENAI_API_KEY is not set
+let _openai = null;
+function getOpenAI() {
+  if (!_openai) {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OPENAI_API_KEY environment variable is not set');
+    }
+    _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  }
+  return _openai;
+}
 
 /**
  * Generate comprehensive case analysis with violations, laws, and recommendations
@@ -58,7 +67,7 @@ Documents: ${caseData.uploadedFiles?.length || 0} uploaded
       setTimeout(() => reject(new Error('OpenAI API timeout after 60 seconds')), 60000)
     );
     
-    const apiPromise = openai.chat.completions.create({
+    const apiPromise = getOpenAI().chat.completions.create({
       model: 'gpt-4o', // Universal model for all Turbo Response agents
       messages: [
         { role: 'system', content: systemPrompt },
@@ -361,7 +370,7 @@ Create a formal, legally sound letter addressing the issues.`;
       .replace('{violations}', JSON.stringify(params.violations))
       .replace('{letter_type}', params.letterType);
 
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAI().chat.completions.create({
       model: 'gpt-4o', // Universal model for all Turbo Response agents
       messages: [
         {
