@@ -42,7 +42,9 @@ if [ ! -f "dist/server.js" ]; then
     echo -e "${RED}ERROR: dist/server.js does not exist${NC}"
     exit 1
 fi
-echo "✓ Backend built successfully to dist/"
+# Create dist/index.js as alias (some platforms expect dist/index.js as entry point)
+cp dist/server.js dist/index.js
+echo "✓ Backend built successfully to dist/ (server.js + index.js alias)"
 
 # Step 4: Copy frontend to dist/public
 echo -e "\n${YELLOW}[4/6] Copying frontend to dist/public/...${NC}"
