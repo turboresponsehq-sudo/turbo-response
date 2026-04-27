@@ -76,9 +76,11 @@ export default function AdminDashboard() {
         console.error('[AdminDashboard] Error fetching cases:', err);
         console.error('Error status:', err.response?.status);
         
-        // Handle 401 - token expired
-        if (err.response?.status === 401) {
-          console.warn('[AdminDashboard] 401 Unauthorized - token expired, redirecting');
+        // Handle 401 and 403 — both indicate an invalid or expired token.
+        // The server's auth middleware returns 403 (not 401) when jwt.verify() fails,
+        // so we must catch both codes and redirect to login.
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          console.warn(`[AdminDashboard] ${err.response.status} — token invalid/expired, redirecting to login`);
           clearTokenAndRedirect();
           return;
         }
