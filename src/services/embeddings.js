@@ -10,9 +10,15 @@ const logger = require('../utils/logger');
 
 // OpenAI client is already configured in openai.js
 const { OpenAI } = require('openai');
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+
+// Lazy initialization to prevent startup crash when OPENAI_API_KEY is not set
+let _openai = null;
+function getOpenAI() {
+  if (!_openai) {
+    _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || '' });
+  }
+  return _openai;
+}
 
 /**
  * Generate embedding for a single text
@@ -21,7 +27,7 @@ const openai = new OpenAI({
  */
 async function generateEmbedding(text) {
   try {
-    const response = await openai.embeddings.create({
+    const response = await getOpenAI().embeddings.create({
       model: 'text-embedding-3-small',
       input: text,
       encoding_format: 'float'
@@ -68,7 +74,7 @@ async function generateEmbeddingsBatch(texts, batchSize = 100) {
         totalTexts: texts.length
       });
 
-      const response = await openai.embeddings.create({
+      const response = await getOpenAI().embeddings.create({
         model: 'text-embedding-3-small',
         input: batch,
         encoding_format: 'float'
