@@ -5,6 +5,7 @@
  * Placeholder data — not connected to live APIs yet.
  */
 
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
@@ -288,36 +289,37 @@ export default function AdminCommandCenter() {
       setLocation("/admin/login");
       return;
     }
-    // Fetch live cases from real database
+    // Fetch live cases from real database — same pattern as AdminDashboard
     if (token) {
       setCasesLoading(true);
-      fetch(`${API_URL}/api/cases/admin/all`, {
-        headers: { Authorization: `Bearer ${token}` },
+      axios.get(`${API_URL}/api/cases/admin/all`, {
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       })
-        .then(r => r.json())
-        .then(data => {
-          if (Array.isArray(data)) setLiveCases(data);
-          else if (data?.cases && Array.isArray(data.cases)) setLiveCases(data.cases);
+        .then(res => {
+          const allCases = res.data.cases || res.data || [];
+          setLiveCases(Array.isArray(allCases) ? allCases : []);
         })
-        .catch(() => setLiveCases([]))
+        .catch(err => {
+          if (err.response?.status === 401 || err.response?.status === 403) {
+            clearTokenAndRedirect();
+          }
+          setLiveCases([]);
+        })
         .finally(() => setCasesLoading(false));
     }
-  }, [authLoading, isAuthenticated, token, setLocation]);
+  }, [authLoading, isAuthenticated, token, setLocation, clearTokenAndRedirect]);
 
   const saveDriveLink = async (caseId: number) => {
     if (!token || !driveInputVal.trim()) return;
     setDriveSaving(true);
     try {
-      const res = await fetch(`${API_URL}/api/cases/${caseId}`, {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ drive_folder_link: driveInputVal.trim() }),
-      });
-      if (res.ok) {
-        setLiveCases(prev => prev ? prev.map(c => c.id === caseId ? { ...c, drive_folder_link: driveInputVal.trim() } : c) : prev);
-        setDriveEditId(null);
-        setDriveInputVal("");
-      }
+      await axios.patch(`${API_URL}/api/cases/${caseId}`, 
+        { drive_folder_link: driveInputVal.trim() },
+        { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
+      );
+      setLiveCases(prev => prev ? prev.map(c => c.id === caseId ? { ...c, drive_folder_link: driveInputVal.trim() } : c) : prev);
+      setDriveEditId(null);
+      setDriveInputVal("");
     } catch {/* ignore */}
     finally { setDriveSaving(false); }
   };
