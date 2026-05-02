@@ -39,6 +39,7 @@ import GrantDemo from "./pages/GrantDemo";
 import EvictionDemo from "./pages/EvictionDemo";
 import AdminResourceSubmissions from "./pages/admin/AdminResourceSubmissions";
 import TurboSystems from "./pages/TurboSystems";
+import AdminCommandCenter from "./pages/AdminCommandCenter";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -87,6 +88,7 @@ function Router() {
 
       <Route path="/admin/cases/:id" component={AdminCasesDetail} />
       <Route path="/admin/cases" component={AdminCasesList} />
+      <Route path="/admin/command-center" component={AdminCommandCenter} />
       <Route path="/admin" component={AdminDashboard} />
       
       {/* Legacy AI analysis routes - separate system */}
