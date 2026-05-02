@@ -13,6 +13,21 @@ type Section = "operations" | "growth" | "ecosystem" | "marketing";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turboresponsehq.ai";
 
+interface LiveCase {
+  id: number;
+  case_number: string;
+  category: string;
+  status: string;
+  first_name: string;
+  email: string;
+  phone?: string;
+  drive_folder_link?: string;
+  internal_notes?: string;
+  priority?: string;
+  created_at: string;
+  updated_at: string;
+}
+
 // ── Static placeholder data ──────────────────────────────────────────────────
 
 const TOOLS = [
@@ -257,7 +272,14 @@ export default function AdminCommandCenter() {
   const [, setLocation] = useLocation();
   const { token, isAuthenticated, isLoading: authLoading, clearTokenAndRedirect } = useAdminAuth();
   const [section, setSection] = useState<Section>("operations");
-  const [caseCount, setCaseCount] = useState<number | null>(null);
+  const [liveCases, setLiveCases] = useState<LiveCase[] | null>(null);
+  const [casesLoading, setCasesLoading] = useState(false);
+  const [driveEditId, setDriveEditId] = useState<number | null>(null);
+  const [driveInputVal, setDriveInputVal] = useState("");
+  const [driveSaving, setDriveSaving] = useState(false);
+
+  const caseCount = liveCases !== null ? liveCases.length : null;
+  const pendingCount = liveCases ? liveCases.filter(c => c.status === "pending" || c.status === "pending_review").length : 0;
 
   // Auth guard — same pattern as AdminDashboard
   useEffect(() => {
@@ -266,19 +288,39 @@ export default function AdminCommandCenter() {
       setLocation("/admin/login");
       return;
     }
-    // Try to fetch live case count
+    // Fetch live cases from real database
     if (token) {
+      setCasesLoading(true);
       fetch(`${API_URL}/api/cases/admin/all`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then(r => r.json())
         .then(data => {
-          if (Array.isArray(data)) setCaseCount(data.length);
-          else if (data?.cases && Array.isArray(data.cases)) setCaseCount(data.cases.length);
+          if (Array.isArray(data)) setLiveCases(data);
+          else if (data?.cases && Array.isArray(data.cases)) setLiveCases(data.cases);
         })
-        .catch(() => {/* silently ignore — show placeholder */});
+        .catch(() => setLiveCases([]))
+        .finally(() => setCasesLoading(false));
     }
   }, [authLoading, isAuthenticated, token, setLocation]);
+
+  const saveDriveLink = async (caseId: number) => {
+    if (!token || !driveInputVal.trim()) return;
+    setDriveSaving(true);
+    try {
+      const res = await fetch(`${API_URL}/api/cases/${caseId}`, {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ drive_folder_link: driveInputVal.trim() }),
+      });
+      if (res.ok) {
+        setLiveCases(prev => prev ? prev.map(c => c.id === caseId ? { ...c, drive_folder_link: driveInputVal.trim() } : c) : prev);
+        setDriveEditId(null);
+        setDriveInputVal("");
+      }
+    } catch {/* ignore */}
+    finally { setDriveSaving(false); }
+  };
 
   if (authLoading) {
     return (
@@ -392,17 +434,53 @@ export default function AdminCommandCenter() {
             {s("operations") && (
               <div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 22 }}>
-                  <StatCard label="Active Cases" value={caseCount !== null ? String(caseCount) : "—"} delta={caseCount !== null ? "Live from database" : "Loading..."} accent="#3b82f6" />
-                  <StatCard label="Cases Resolved" value="91" delta="↑ 12 this month" accent="#22c55e" />
-                  <StatCard label="Pending Review" value="7" sub="Needs admin action" accent="#f59e0b" />
-                  <StatCard label="Portal Clients" value="18" sub="With active access" accent="#8b5cf6" />
+                  <StatCard label="Total Cases" value={caseCount !== null ? String(caseCount) : "—"} delta={caseCount !== null ? "Live · Real database" : "Loading..."} accent="#3b82f6" />
+                  <StatCard label="Pending Review" value={String(pendingCount)} sub={pendingCount > 0 ? "Needs admin action" : "All clear"} accent="#f59e0b" />
+                  <StatCard label="Active Cases" value={liveCases ? String(liveCases.filter(c => c.status === "active" || c.status === "in_progress" || c.status === "processing").length) : "—"} sub="In progress" accent="#22c55e" />
+                  <StatCard label="Drive Links" value={liveCases ? String(liveCases.filter(c => c.drive_folder_link).length) : "—"} sub="Cases with Drive folders" accent="#8b5cf6" />
                 </div>
 
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 16 }}>
                   <div style={{ gridColumn: "span 2" }}>
-                    <SectionCard title="Recent Cases" action="View All Cases →">
-                      {CASES.map(c => (
-                        <ItemRow key={c.id} icon="📁" iconBg={`${c.color}1a`} title={`${c.id} — ${c.type}`} sub={`${c.name} · ${c.days}`} right={<Badge label={c.status} />} />
+                    <SectionCard title={`Live Cases (${caseCount ?? "…"})`} action="View All →">
+                      {casesLoading && <div style={{ color: "#4b5368", fontSize: 12, padding: "12px 0" }}>Loading cases from database...</div>}
+                      {!casesLoading && liveCases && liveCases.length === 0 && <div style={{ color: "#4b5368", fontSize: 12, padding: "12px 0" }}>No cases found.</div>}
+                      {!casesLoading && liveCases && liveCases.slice(0, 8).map(c => (
+                        <div key={c.id} style={{ padding: "10px 0", borderBottom: "1px solid #1a1d28" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                            <div style={{ width: 34, height: 34, borderRadius: 9, background: "rgba(59,130,246,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, flexShrink: 0 }}>📁</div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontSize: 13, fontWeight: 500, color: "#e8eaf0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                #{c.case_number} — {c.category}
+                              </div>
+                              <div style={{ fontSize: 11, color: "#4b5368", marginTop: 2 }}>
+                                {c.first_name || c.email} · {new Date(c.created_at).toLocaleDateString()}
+                              </div>
+                            </div>
+                            <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+                              {c.drive_folder_link ? (
+                                <a href={c.drive_folder_link} target="_blank" rel="noopener noreferrer" style={{ fontSize: 10, fontWeight: 700, color: "#22c55e", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 6, padding: "2px 8px", textDecoration: "none" }}>📁 Drive</a>
+                              ) : (
+                                <button onClick={() => { setDriveEditId(c.id); setDriveInputVal(""); }} style={{ fontSize: 10, fontWeight: 600, color: "#4b5368", background: "rgba(75,83,104,0.1)", border: "1px solid #1e2130", borderRadius: 6, padding: "2px 8px", cursor: "pointer" }}>+ Drive</button>
+                              )}
+                              <Badge label={c.status === "pending" ? "Pending Review" : c.status === "active" ? "Active" : c.status === "in_progress" ? "In Review" : c.status === "completed" ? "Applied" : c.status} />
+                            </div>
+                          </div>
+                          {driveEditId === c.id && (
+                            <div style={{ marginTop: 8, display: "flex", gap: 6, paddingLeft: 46 }}>
+                              <input
+                                autoFocus
+                                value={driveInputVal}
+                                onChange={e => setDriveInputVal(e.target.value)}
+                                placeholder="Paste Google Drive folder URL..."
+                                style={{ flex: 1, background: "#181b24", border: "1px solid #3b82f6", borderRadius: 6, padding: "5px 10px", fontSize: 11, color: "#e8eaf0", outline: "none" }}
+                                onKeyDown={e => { if (e.key === "Enter") saveDriveLink(c.id); if (e.key === "Escape") setDriveEditId(null); }}
+                              />
+                              <button onClick={() => saveDriveLink(c.id)} disabled={driveSaving} style={{ fontSize: 11, fontWeight: 600, background: "#3b82f6", color: "#fff", border: "none", borderRadius: 6, padding: "5px 12px", cursor: "pointer" }}>{driveSaving ? "…" : "Save"}</button>
+                              <button onClick={() => setDriveEditId(null)} style={{ fontSize: 11, background: "transparent", color: "#4b5368", border: "1px solid #1e2130", borderRadius: 6, padding: "5px 10px", cursor: "pointer" }}>✕</button>
+                            </div>
+                          )}
+                        </div>
                       ))}
                       <div style={{ marginTop: 12 }}>
                         <a href="/admin/cases" style={{ textDecoration: "none" }}>
