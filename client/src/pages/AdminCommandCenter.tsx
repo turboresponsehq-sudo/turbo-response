@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
-type Section = "operations" | "growth" | "ecosystem" | "marketing" | "core_tools";
+type Section = "daily_ops" | "operations" | "growth" | "ecosystem" | "marketing" | "core_tools";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turboresponsehq.ai";
 
@@ -272,7 +272,18 @@ function ProgBar({ label, val, pct, color }: { label: string; val: string | numb
 export default function AdminCommandCenter() {
   const [, setLocation] = useLocation();
   const { token, isAuthenticated, isLoading: authLoading, clearTokenAndRedirect } = useAdminAuth();
-  const [section, setSection] = useState<Section>("operations");
+  const [section, setSection] = useState<Section>("daily_ops");
+  const [tasks, setTasks] = useState<{ id: number; text: string; bucket: "high" | "active" | "idea"; done: boolean }[]>([
+    { id: 1, text: "Finalize Command Center V1", bucket: "high", done: false },
+    { id: 2, text: "Post content this week", bucket: "high", done: false },
+    { id: 3, text: "Follow up on active cases", bucket: "high", done: false },
+    { id: 4, text: "Build email marketing system", bucket: "active", done: false },
+    { id: 5, text: "Set up social media schedule", bucket: "active", done: false },
+    { id: 6, text: "Explore media service idea", bucket: "idea", done: false },
+    { id: 7, text: "Future: AI intake automation", bucket: "idea", done: false },
+  ]);
+  const [newTask, setNewTask] = useState("");
+  const [newTaskBucket, setNewTaskBucket] = useState<"high" | "active" | "idea">("high");
   const [liveCases, setLiveCases] = useState<LiveCase[] | null>(null);
   const [casesLoading, setCasesLoading] = useState(false);
   const [driveEditId, setDriveEditId] = useState<number | null>(null);
@@ -335,6 +346,7 @@ export default function AdminCommandCenter() {
   if (!isAuthenticated) return null;
 
   const navItems: { id: Section; icon: string; label: string; badge?: string; badgeColor?: string }[] = [
+    { id: "daily_ops", icon: "⚡", label: "Daily Ops", badge: "NEW", badgeColor: "#ef4444" },
     { id: "operations", icon: "⚙️", label: "Operations", badge: "1", badgeColor: "#f59e0b" },
     { id: "growth", icon: "📈", label: "Growth", badge: "7", badgeColor: "#22c55e" },
     { id: "ecosystem", icon: "🌐", label: "Ecosystem" },
@@ -343,6 +355,7 @@ export default function AdminCommandCenter() {
   ];
 
   const topbarMeta: Record<Section, { title: string; crumb: string }> = {
+    daily_ops: { title: "⚡ Daily Ops", crumb: "Brain Dump · Tasks · Priorities · Quick Actions" },
     operations: { title: "⚙️ Operations", crumb: "Cases · Admin Dashboard · Maintenance · SOPs" },
     growth: { title: "📈 Growth", crumb: "Leads · Outreach · Pipeline · HubSpot CRM" },
     ecosystem: { title: "🌐 Ecosystem", crumb: "People · Organizations · Grants · Events" },
@@ -433,8 +446,125 @@ export default function AdminCommandCenter() {
 
           {/* PAGE CONTENT */}
           <div style={{ padding: "24px 26px", overflowY: "auto", flex: 1 }}>
+            {/* ── DAILY OPS ── */}
+            {s("daily_ops") && (
+              <div>
+                {/* Today's Date Banner */}
+                <div style={{ marginBottom: 20, padding: "14px 18px", background: "linear-gradient(135deg, rgba(239,68,68,0.12), rgba(245,158,11,0.08))", border: "1px solid rgba(239,68,68,0.25)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div>
+                    <div style={{ fontSize: 11, color: "#9ca3af", textTransform: "uppercase", letterSpacing: 1 }}>Today</div>
+                    <div style={{ fontSize: 18, fontWeight: 700, color: "#e8eaf0" }}>{new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</div>
+                  </div>
+                  <div style={{ display: "flex", gap: 10 }}>
+                    <a href="https://docs.google.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+                      <div style={{ padding: "8px 14px", background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 7, fontSize: 12, fontWeight: 600, color: "#ef4444", cursor: "pointer" }}>🧠 Open Brain Dump</div>
+                    </a>
+                    <a href="https://tasks.google.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+                      <div style={{ padding: "8px 14px", background: "rgba(245,158,11,0.15)", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 7, fontSize: 12, fontWeight: 600, color: "#f59e0b", cursor: "pointer" }}>📋 Google Tasks</div>
+                    </a>
+                    <a href="https://calendar.google.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+                      <div style={{ padding: "8px 14px", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 7, fontSize: 12, fontWeight: 600, color: "#3b82f6", cursor: "pointer" }}>📅 Calendar</div>
+                    </a>
+                  </div>
+                </div>
 
-            {/* ── OPERATIONS ── */}
+                {/* Add Task */}
+                <div style={{ marginBottom: 20, padding: "14px 18px", background: "#12151e", border: "1px solid #1e2130", borderRadius: 10 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#9ca3af", marginBottom: 10, textTransform: "uppercase", letterSpacing: 1 }}>Add Task</div>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <input
+                      value={newTask}
+                      onChange={e => setNewTask(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === "Enter" && newTask.trim()) {
+                          setTasks(prev => [...prev, { id: Date.now(), text: newTask.trim(), bucket: newTaskBucket, done: false }]);
+                          setNewTask("");
+                        }
+                      }}
+                      placeholder="Type a task and press Enter..."
+                      style={{ flex: 1, background: "#0b0d12", border: "1px solid #2a2d3a", borderRadius: 7, padding: "8px 12px", color: "#e8eaf0", fontSize: 13, outline: "none" }}
+                    />
+                    <select
+                      value={newTaskBucket}
+                      onChange={e => setNewTaskBucket(e.target.value as "high" | "active" | "idea")}
+                      style={{ background: "#0b0d12", border: "1px solid #2a2d3a", borderRadius: 7, padding: "8px 12px", color: "#e8eaf0", fontSize: 12, outline: "none" }}
+                    >
+                      <option value="high">🔴 High Priority</option>
+                      <option value="active">🟡 Active Project</option>
+                      <option value="idea">⚪ Idea / Later</option>
+                    </select>
+                    <button
+                      onClick={() => {
+                        if (newTask.trim()) {
+                          setTasks(prev => [...prev, { id: Date.now(), text: newTask.trim(), bucket: newTaskBucket, done: false }]);
+                          setNewTask("");
+                        }
+                      }}
+                      style={{ padding: "8px 16px", background: "#ef4444", border: "none", borderRadius: 7, color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer" }}
+                    >Add</button>
+                  </div>
+                </div>
+
+                {/* 3 Task Buckets */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
+                  {(["high", "active", "idea"] as const).map(bucket => {
+                    const config = {
+                      high: { label: "🔴 High Priority", sub: "Move business forward", color: "#ef4444", bg: "rgba(239,68,68,0.08)", border: "rgba(239,68,68,0.2)" },
+                      active: { label: "🟡 Active Projects", sub: "In progress now", color: "#f59e0b", bg: "rgba(245,158,11,0.08)", border: "rgba(245,158,11,0.2)" },
+                      idea: { label: "⚪ Ideas / Later", sub: "Future & experiments", color: "#6b7280", bg: "rgba(107,114,128,0.08)", border: "rgba(107,114,128,0.2)" },
+                    }[bucket];
+                    const bucketTasks = tasks.filter(t => t.bucket === bucket);
+                    return (
+                      <div key={bucket} style={{ background: config.bg, border: `1px solid ${config.border}`, borderRadius: 10, padding: "16px 16px 12px" }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: config.color, marginBottom: 4 }}>{config.label}</div>
+                        <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 14 }}>{config.sub}</div>
+                        {bucketTasks.length === 0 && <div style={{ fontSize: 12, color: "#4b5368", fontStyle: "italic" }}>No tasks yet</div>}
+                        {bucketTasks.map(task => (
+                          <div key={task.id} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                            <input
+                              type="checkbox"
+                              checked={task.done}
+                              onChange={() => setTasks(prev => prev.map(t => t.id === task.id ? { ...t, done: !t.done } : t))}
+                              style={{ accentColor: config.color, cursor: "pointer", flexShrink: 0 }}
+                            />
+                            <span style={{ fontSize: 12, color: task.done ? "#4b5368" : "#c8cad4", textDecoration: task.done ? "line-through" : "none", flex: 1 }}>{task.text}</span>
+                            <button
+                              onClick={() => setTasks(prev => prev.filter(t => t.id !== task.id))}
+                              style={{ background: "none", border: "none", color: "#4b5368", cursor: "pointer", fontSize: 14, lineHeight: 1, padding: 0 }}
+                            >×</button>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Quick Actions */}
+                <div style={{ marginTop: 20, padding: "16px 18px", background: "#12151e", border: "1px solid #1e2130", borderRadius: 10 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#9ca3af", marginBottom: 12, textTransform: "uppercase", letterSpacing: 1 }}>Quick Actions</div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 10 }}>
+                    {[
+                      { icon: "🛡️", label: "Admin Dashboard", href: "/admin" },
+                      { icon: "📋", label: "New Case Intake", href: "/intake-defense" },
+                      { icon: "👤", label: "Client Portal", href: "/client/login" },
+                      { icon: "🧠", label: "Turbo Brain", href: "/admin/brain" },
+                      { icon: "📁", label: "Google Drive", href: "https://drive.google.com" },
+                      { icon: "💬", label: "ChatGPT", href: "https://chat.openai.com" },
+                      { icon: "📓", label: "NotebookLM", href: "https://notebooklm.google.com" },
+                      { icon: "📊", label: "Render Status", href: "https://dashboard.render.com" },
+                    ].map(a => (
+                      <a key={a.label} href={a.href} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+                        <div style={{ padding: "10px 12px", background: "#0b0d12", border: "1px solid #1e2130", borderRadius: 8, cursor: "pointer", textAlign: "center" }}>
+                          <div style={{ fontSize: 18, marginBottom: 4 }}>{a.icon}</div>
+                          <div style={{ fontSize: 11, color: "#9ca3af", fontWeight: 500 }}>{a.label}</div>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+            {/* ── OPERATIONS ── */}}
             {s("operations") && (
               <div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 22 }}>
