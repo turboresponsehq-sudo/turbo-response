@@ -1,13 +1,12 @@
 import { Router } from "express";
 import { notifyOwner } from "../_core/notification";
+import { saveIntakeLead } from "../intakeLeadsDb";
 
 const router = Router();
 
 /**
  * POST /api/turbo-intake
- * Offense intake form submission
- * Accepts business information and sends notification to owner
- * Note: Database storage temporarily disabled - cases table not in current schema
+ * Offense intake form submission — saves to database + notifies owner
  */
 router.post("/turbo-intake", async (req, res) => {
   try {
@@ -18,20 +17,38 @@ router.post("/turbo-intake", async (req, res) => {
       businessName,
       primaryGoal,
       estimatedAmount,
+      caseDescription,
+      instagramUrl,
+      tiktokUrl,
+      facebookUrl,
     } = req.body;
 
-    // Validate required fields
-    if (!fullName || !email || !phone) {
+    if (!fullName || !email) {
       return res.status(400).json({
         success: false,
-        error: "Missing required fields: fullName, email, phone",
+        error: "Missing required fields: fullName, email",
       });
     }
 
-    // Send notification to owner
+    const handles = [instagramUrl, tiktokUrl, facebookUrl].filter(Boolean).join(", ");
+    const preview = caseDescription
+      ? caseDescription.slice(0, 500)
+      : `Goal: ${primaryGoal || "N/A"} | Business: ${businessName || "N/A"}`;
+
+    await saveIntakeLead({
+      fullName,
+      email,
+      phone: phone || null,
+      socialHandle: handles || null,
+      situationPreview: preview,
+      fullSituation: caseDescription || null,
+      source: "turbo-intake",
+      status: "new_lead",
+    });
+
     await notifyOwner({
       title: "🚀 New Offense Case Submitted",
-      content: `${fullName} (${email}) submitted an offense case.\n\nBusiness: ${businessName || "N/A"}\nGoal: ${primaryGoal || "N/A"}\nAmount: ${estimatedAmount || "N/A"}\n\nView in admin dashboard: https://turboresponsehq.ai/admin/cases`,
+      content: `${fullName} (${email}) submitted an offense case.\n\nBusiness: ${businessName || "N/A"}\nGoal: ${primaryGoal || "N/A"}\nAmount: ${estimatedAmount || "N/A"}\n\nView in Command Center: /admin/command-center`,
     });
 
     res.status(201).json({
@@ -49,9 +66,7 @@ router.post("/turbo-intake", async (req, res) => {
 
 /**
  * POST /api/intake
- * Defense intake form submission
- * Accepts defense case information and sends notification to owner
- * Note: Database storage temporarily disabled - cases table not in current schema
+ * Defense intake form submission — saves to database + notifies owner
  */
 router.post("/intake", async (req, res) => {
   try {
@@ -62,25 +77,36 @@ router.post("/intake", async (req, res) => {
       category,
       deadline,
       amount,
-      eligibility_profile,
+      description,
+      caseDescription,
+      instagramHandle,
+      socialHandle,
     } = req.body;
 
-    // Validate required fields
-    if (!fullName || !email || !phone) {
+    if (!fullName || !email) {
       return res.status(400).json({
         success: false,
-        error: "Missing required fields: fullName, email, phone",
+        error: "Missing required fields: fullName, email",
       });
     }
 
-    // Send notification to owner
-    const profileStatus = eligibility_profile && eligibility_profile.benefits_consent 
-      ? "✅ Eligibility profile provided (benefits matching enabled)" 
-      : "❌ No eligibility profile";
+    const situation = description || caseDescription || "";
+    const preview = situation.slice(0, 500) || `Category: ${category || "N/A"} | Amount: ${amount || "N/A"}`;
+
+    await saveIntakeLead({
+      fullName,
+      email,
+      phone: phone || null,
+      socialHandle: socialHandle || instagramHandle || null,
+      situationPreview: preview,
+      fullSituation: situation || null,
+      source: "intake",
+      status: "new_lead",
+    });
 
     await notifyOwner({
       title: "🛡️ New Defense Case Submitted",
-      content: `${fullName} (${email}) submitted a defense case.\n\nCategory: ${category || "N/A"}\nDeadline: ${deadline || "N/A"}\nAmount: ${amount || "N/A"}\n\n${profileStatus}\n\nView in admin dashboard: https://turboresponsehq.ai/admin/cases`,
+      content: `${fullName} (${email}) submitted a defense case.\n\nCategory: ${category || "N/A"}\nDeadline: ${deadline || "N/A"}\nAmount: ${amount || "N/A"}\n\nView in Command Center: /admin/command-center`,
     });
 
     res.status(201).json({

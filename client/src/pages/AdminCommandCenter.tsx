@@ -9,8 +9,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
+import { trpc } from "@/lib/trpc";
 
-type Section = "daily_ops" | "operator_input" | "social_media" | "growth_inbox" | "operations" | "growth" | "ecosystem" | "marketing" | "core_tools";
+type Section = "daily_ops" | "operator_input" | "social_media" | "growth_inbox" | "new_leads" | "operations" | "growth" | "ecosystem" | "marketing" | "core_tools";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turboresponsehq.ai";
 
@@ -202,6 +203,102 @@ function Badge({ label }: { label: string }) {
   );
 }
 
+function NewLeadsSection() {
+  const { data: leads, isLoading, refetch } = trpc.admin.getIntakeLeads.useQuery();
+  const updateStatus = trpc.admin.updateIntakeLeadStatus.useMutation({
+    onSuccess: () => refetch(),
+  });
+
+  const statusColors: Record<string, string> = {
+    new_lead: "#ef4444",
+    reviewing: "#f59e0b",
+    follow_up: "#3b82f6",
+    converted: "#22c55e",
+  };
+  const statusLabels: Record<string, string> = {
+    new_lead: "New Lead",
+    reviewing: "Reviewing",
+    follow_up: "Follow-Up",
+    converted: "Converted",
+  };
+
+  const counts = {
+    new_lead: leads?.filter(l => l.status === "new_lead").length ?? 0,
+    reviewing: leads?.filter(l => l.status === "reviewing").length ?? 0,
+    follow_up: leads?.filter(l => l.status === "follow_up").length ?? 0,
+    converted: leads?.filter(l => l.status === "converted").length ?? 0,
+  };
+
+  return (
+    <div>
+      {/* Pipeline stat row */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 22 }}>
+        {Object.entries(counts).map(([key, val]) => (
+          <div key={key} style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px", position: "relative", overflow: "hidden" }}>
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: statusColors[key] }} />
+            <div style={{ fontSize: 11, color: "#4b5368", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.7px", marginBottom: 8 }}>{statusLabels[key]}</div>
+            <div style={{ fontSize: 30, fontWeight: 800, color: "#e8eaf0", lineHeight: 1 }}>{val}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Leads table */}
+      <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+          <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px" }}>Intake Submissions</div>
+          <div style={{ fontSize: 11, fontWeight: 500, color: "#3b82f6", cursor: "pointer" }} onClick={() => refetch()}>Refresh ↻</div>
+        </div>
+
+        {isLoading && <div style={{ color: "#4b5368", fontSize: 13, padding: "20px 0", textAlign: "center" }}>Loading leads…</div>}
+        {!isLoading && (!leads || leads.length === 0) && (
+          <div style={{ color: "#4b5368", fontSize: 13, padding: "20px 0", textAlign: "center" }}>No submissions yet. When someone submits the intake form, they’ll appear here.</div>
+        )}
+        {!isLoading && leads && leads.length > 0 && (
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+              <thead>
+                <tr style={{ borderBottom: "1px solid #1e2130" }}>
+                  {["Name", "Email", "Phone", "Situation Preview", "Source", "Date", "Status"].map(h => (
+                    <th key={h} style={{ textAlign: "left", padding: "8px 12px", fontSize: 10, fontWeight: 700, color: "#4b5368", textTransform: "uppercase", letterSpacing: "0.7px", whiteSpace: "nowrap" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {leads.map(lead => (
+                  <tr key={lead.id} style={{ borderBottom: "1px solid #1a1e2e" }}>
+                    <td style={{ padding: "10px 12px", color: "#e8eaf0", fontWeight: 600, whiteSpace: "nowrap" }}>{lead.fullName}</td>
+                    <td style={{ padding: "10px 12px", color: "#94a3b8", whiteSpace: "nowrap" }}>{lead.email}</td>
+                    <td style={{ padding: "10px 12px", color: "#94a3b8", whiteSpace: "nowrap" }}>{lead.phone || "—"}</td>
+                    <td style={{ padding: "10px 12px", color: "#94a3b8", maxWidth: 260, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={lead.situationPreview || ""}>{lead.situationPreview || "—"}</td>
+                    <td style={{ padding: "10px 12px", whiteSpace: "nowrap" }}>
+                      <span style={{ background: lead.source === "turbo-intake" ? "rgba(139,92,246,0.15)" : "rgba(59,130,246,0.15)", color: lead.source === "turbo-intake" ? "#a78bfa" : "#60a5fa", fontSize: 10, fontWeight: 700, borderRadius: 6, padding: "2px 8px" }}>
+                        {lead.source === "turbo-intake" ? "Offense" : "Defense"}
+                      </span>
+                    </td>
+                    <td style={{ padding: "10px 12px", color: "#4b5368", whiteSpace: "nowrap", fontSize: 11 }}>{new Date(lead.submittedAt).toLocaleDateString()}</td>
+                    <td style={{ padding: "10px 12px", whiteSpace: "nowrap" }}>
+                      <select
+                        value={lead.status}
+                        onChange={e => updateStatus.mutate({ id: lead.id, status: e.target.value as any })}
+                        style={{ background: "#0d1017", border: `1px solid ${statusColors[lead.status]}`, borderRadius: 6, color: statusColors[lead.status], fontSize: 11, fontWeight: 700, padding: "3px 8px", cursor: "pointer" }}
+                      >
+                        <option value="new_lead">New Lead</option>
+                        <option value="reviewing">Reviewing</option>
+                        <option value="follow_up">Follow-Up</option>
+                        <option value="converted">Converted</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function StatCard({ label, value, sub, delta, accent }: { label: string; value: string; sub?: string; delta?: string; accent: string }) {
   return (
     <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px", position: "relative", overflow: "hidden" }}>
@@ -350,6 +447,7 @@ export default function AdminCommandCenter() {
     { id: "operator_input", icon: "🧠", label: "Operator Input", badge: "NEW", badgeColor: "#8b5cf6" },
     { id: "social_media", icon: "📱", label: "Social Media", badge: "NEW", badgeColor: "#06b6d4" },
     { id: "growth_inbox", icon: "📥", label: "Growth Inbox", badge: "NEW", badgeColor: "#22c55e" },
+    { id: "new_leads", icon: "🎯", label: "New Leads", badge: "LIVE", badgeColor: "#ef4444" },
     { id: "operations", icon: "⚙️", label: "Operations", badge: "1", badgeColor: "#f59e0b" },
     { id: "growth", icon: "📈", label: "Growth", badge: "7", badgeColor: "#22c55e" },
     { id: "ecosystem", icon: "🌐", label: "Ecosystem" },
@@ -362,6 +460,7 @@ export default function AdminCommandCenter() {
     operator_input: { title: "🧠 Operator Input", crumb: "Brain Dump → Process with AI → Execute · Content Audit" },
     social_media: { title: "📱 Social Media Command", crumb: "Create → Review → Approve → Publish · Instagram · Facebook · Content Audit" },
     growth_inbox: { title: "📥 Growth Inbox", crumb: "Social Inbox · Lead Capture · Booking · Follow-Up · Content → DM → Email → Book" },
+    new_leads: { title: "🎯 New Leads", crumb: "Intake Submissions · Review · Status Management · Pipeline" },
     operations: { title: "⚙️ Operations", crumb: "Cases · Admin Dashboard · Maintenance · SOPs" },
     growth: { title: "📈 Growth", crumb: "Leads · Outreach · Pipeline · HubSpot CRM" },
     ecosystem: { title: "🌐 Ecosystem", crumb: "People · Organizations · Grants · Events" },
@@ -1032,6 +1131,11 @@ export default function AdminCommandCenter() {
                   </div>
                 </div>
               </div>
+            )}
+
+            {/* ── NEW LEADS ── */}
+            {s("new_leads") && (
+              <NewLeadsSection />
             )}
 
             {/* ── OPERATIONS ── */}

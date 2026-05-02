@@ -105,3 +105,36 @@ export const resourceRequests = mysqlTable("resource_requests", {
 
 export type ResourceRequest = typeof resourceRequests.$inferSelect;
 export type InsertResourceRequest = typeof resourceRequests.$inferInsert;
+
+/**
+ * Intake leads table - stores all form submissions from TurboIntakeForm and IntakeForm
+ * This is the central lead database for the Command Center
+ */
+export const intakeLeads = mysqlTable("intake_leads", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Full name of the submitter */
+  fullName: varchar("fullName", { length: 255 }).notNull(),
+  /** Email address */
+  email: varchar("email", { length: 320 }).notNull(),
+  /** Phone number */
+  phone: varchar("phone", { length: 100 }),
+  /** Instagram/TikTok/Facebook handle if provided */
+  socialHandle: varchar("socialHandle", { length: 255 }),
+  /** Short preview of their situation (first 500 chars of description) */
+  situationPreview: text("situationPreview"),
+  /** Full situation description */
+  fullSituation: longtext("fullSituation"),
+  /** Source of submission: turbo-intake (offense) or intake (defense) */
+  source: varchar("source", { length: 50 }).default("intake").notNull(),
+  /** Lead status for pipeline tracking */
+  status: mysqlEnum("status", ["new_lead", "reviewing", "follow_up", "converted"]).default("new_lead").notNull(),
+  /** Internal admin notes */
+  adminNotes: longtext("adminNotes"),
+  /** When the lead was submitted */
+  submittedAt: timestamp("submittedAt").defaultNow().notNull(),
+  /** When the record was last updated */
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type IntakeLead = typeof intakeLeads.$inferSelect;
+export type InsertIntakeLead = typeof intakeLeads.$inferInsert;
