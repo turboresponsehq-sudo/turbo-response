@@ -188,4 +188,76 @@ export async function deleteScreenshot(id: number): Promise<void> {
   }
 }
 
+/**
+ * List all cases from leads table
+ */
+export async function listCases() {
+  const db = await getDb();
+  if (!db) {
+    console.warn('[Database] Cannot list cases: database not available');
+    return [];
+  }
+
+  try {
+    // Query leads table which contains the actual cases
+    const result = await db.raw(`
+      SELECT 
+        id,
+        conversationId,
+        clientName as client_name,
+        clientEmail as client_email,
+        clientPhone as client_phone,
+        caseTitle as title,
+        caseCategory as category,
+        caseDescription as description,
+        status,
+        createdAt
+      FROM leads
+      ORDER BY createdAt DESC
+    `);
+    return result || [];
+  } catch (error) {
+    console.error('[Database] Failed to list cases:', error);
+    return [];
+  }
+}
+
+/**
+ * Create a new case in leads table
+ */
+export async function createCase(caseData: any) {
+  const db = await getDb();
+  if (!db) {
+    throw new Error('Database not available');
+  }
+
+  try {
+    const result = await db.raw(`
+      INSERT INTO leads (
+        clientName,
+        clientEmail,
+        clientPhone,
+        caseTitle,
+        caseCategory,
+        caseDescription,
+        status,
+        conversationId
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `, [
+      caseData.clientName || null,
+      caseData.clientEmail || null,
+      caseData.clientPhone || null,
+      caseData.title || null,
+      caseData.category || null,
+      caseData.description || null,
+      caseData.status || 'open',
+      caseData.conversationId || null
+    ]);
+    return result;
+  } catch (error) {
+    console.error('[Database] Failed to create case:', error);
+    throw error;
+  }
+}
+
 // TODO: add feature queries here as your schema grows.
