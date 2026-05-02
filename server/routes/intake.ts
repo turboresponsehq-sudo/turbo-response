@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { notifyOwner } from "../_core/notification";
 import { saveIntakeLead } from "../intakeLeadsDb";
+import { syncContactToHubSpot } from "../hubspotSync";
 
 const router = Router();
 
@@ -44,6 +45,21 @@ router.post("/turbo-intake", async (req, res) => {
       fullSituation: caseDescription || null,
       source: "turbo-intake",
       status: "new_lead",
+    });
+
+    // Sync to HubSpot
+    const nameParts = fullName.split(" ", 1);
+    const firstname = nameParts[0];
+    const lastname = fullName.slice(firstname.length).trim();
+    await syncContactToHubSpot({
+      firstname,
+      lastname,
+      email,
+      phone: phone || undefined,
+      website: handles || undefined,
+      description: `[Offense Case] ${preview}`,
+      hs_lead_status: "NEW",
+      lifecyclestage: "lead",
     });
 
     await notifyOwner({
@@ -102,6 +118,21 @@ router.post("/intake", async (req, res) => {
       fullSituation: situation || null,
       source: "intake",
       status: "new_lead",
+    });
+
+    // Sync to HubSpot
+    const nameParts = fullName.split(" ", 1);
+    const firstname = nameParts[0];
+    const lastname = fullName.slice(firstname.length).trim();
+    await syncContactToHubSpot({
+      firstname,
+      lastname,
+      email,
+      phone: phone || undefined,
+      website: socialHandle || instagramHandle || undefined,
+      description: `[Defense Case] ${preview}`,
+      hs_lead_status: "NEW",
+      lifecyclestage: "lead",
     });
 
     await notifyOwner({
