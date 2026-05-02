@@ -81,7 +81,6 @@ const getAllCases = async (req, res, next) => {
               full_name as first_name, 
               NULL as last_name,
               email, phone,
-              drive_folder_link, internal_notes, priority,
               created_at, updated_at, 
               'consumer' as case_type
        FROM cases
