@@ -485,7 +485,7 @@ export default function AdminCommandCenter() {
                         </div>
                       ))}
                       <div style={{ marginTop: 12 }}>
-                        <a href="/admin/cases" style={{ textDecoration: "none" }}>
+                        <a href="/admin" style={{ textDecoration: "none" }}>
                           <button style={{ width: "100%", padding: "9px", background: "transparent", border: "1px solid #1e2130", borderRadius: 8, color: "#4b5368", fontSize: 12, cursor: "pointer" }}>
                             View All Cases in Admin Dashboard →
                           </button>
