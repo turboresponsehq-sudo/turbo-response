@@ -564,7 +564,7 @@ export default function AdminCommandCenter() {
                 </div>
               </div>
             )}
-            {/* ── OPERATIONS ── */}}
+            {/* ── OPERATIONS ── */}
             {s("operations") && (
               <div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 22 }}>
