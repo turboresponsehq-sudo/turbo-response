@@ -38,6 +38,7 @@ import AdminCasesDetail from "./pages/AdminCaseDetail";
 import GrantDemo from "./pages/GrantDemo";
 import EvictionDemo from "./pages/EvictionDemo";
 import TurboSystemsPage from "./pages/TurboSystems";
+import HQControlPanel from "./pages/HQControlPanel";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -48,6 +49,7 @@ function Router() {
       <Route path="/grant-demo" component={GrantDemo} />
       <Route path="/eviction-demo" component={EvictionDemo} />
       <Route path="/turbo-systems" component={TurboSystemsPage} />
+      <Route path="/hq" component={HQControlPanel} />
       <Route path="/services" component={Services} />
       <Route path="/pricing" component={Pricing} />
       <Route path="/results" component={Results} />
