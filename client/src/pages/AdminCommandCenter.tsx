@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
-type Section = "daily_ops" | "operator_input" | "social_media" | "operations" | "growth" | "ecosystem" | "marketing" | "core_tools";
+type Section = "daily_ops" | "operator_input" | "social_media" | "growth_inbox" | "operations" | "growth" | "ecosystem" | "marketing" | "core_tools";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turboresponsehq.ai";
 
@@ -349,6 +349,7 @@ export default function AdminCommandCenter() {
     { id: "daily_ops", icon: "⚡", label: "Daily Ops", badge: "NEW", badgeColor: "#ef4444" },
     { id: "operator_input", icon: "🧠", label: "Operator Input", badge: "NEW", badgeColor: "#8b5cf6" },
     { id: "social_media", icon: "📱", label: "Social Media", badge: "NEW", badgeColor: "#06b6d4" },
+    { id: "growth_inbox", icon: "📥", label: "Growth Inbox", badge: "NEW", badgeColor: "#22c55e" },
     { id: "operations", icon: "⚙️", label: "Operations", badge: "1", badgeColor: "#f59e0b" },
     { id: "growth", icon: "📈", label: "Growth", badge: "7", badgeColor: "#22c55e" },
     { id: "ecosystem", icon: "🌐", label: "Ecosystem" },
@@ -360,6 +361,7 @@ export default function AdminCommandCenter() {
     daily_ops: { title: "⚡ Daily Ops", crumb: "Brain Dump · Tasks · Priorities · Quick Actions" },
     operator_input: { title: "🧠 Operator Input", crumb: "Brain Dump → Process with AI → Execute · Content Audit" },
     social_media: { title: "📱 Social Media Command", crumb: "Create → Review → Approve → Publish · Instagram · Facebook · Content Audit" },
+    growth_inbox: { title: "📥 Growth Inbox", crumb: "Social Inbox · Lead Capture · Booking · Follow-Up · Content → DM → Email → Book" },
     operations: { title: "⚙️ Operations", crumb: "Cases · Admin Dashboard · Maintenance · SOPs" },
     growth: { title: "📈 Growth", crumb: "Leads · Outreach · Pipeline · HubSpot CRM" },
     ecosystem: { title: "🌐 Ecosystem", crumb: "People · Organizations · Grants · Events" },
@@ -812,6 +814,221 @@ export default function AdminCommandCenter() {
                   <div style={{ marginTop: 14, padding: "10px 14px", background: "rgba(6,182,212,0.06)", border: "1px solid rgba(6,182,212,0.15)", borderRadius: 8 }}>
                     <div style={{ fontSize: 11, color: "#22d3ee", fontWeight: 600 }}>🔒 Approval Rule Active</div>
                     <div style={{ fontSize: 11, color: "#4b5368", marginTop: 3 }}>All content must be reviewed and approved before publishing. No automated posting without your sign-off.</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ── GROWTH INBOX ── */}
+            {s("growth_inbox") && (
+              <div>
+                {/* Workflow Banner */}
+                <div style={{ marginBottom: 22, padding: "16px 22px", background: "linear-gradient(135deg, rgba(34,197,94,0.1), rgba(59,130,246,0.06))", border: "1px solid rgba(34,197,94,0.22)", borderRadius: 12 }}>
+                  <div style={{ fontSize: 11, color: "#9ca3af", textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>Lead Capture Workflow</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 0, flexWrap: "wrap" }}>
+                    {[
+                      { step: "Content", icon: "✏️", color: "#8b5cf6" },
+                      { step: "DM / Comment", icon: "💬", color: "#3b82f6" },
+                      { step: "Capture Email", icon: "📧", color: "#f59e0b" },
+                      { step: "Book Consult", icon: "📅", color: "#22c55e" },
+                      { step: "Follow Up", icon: "🔄", color: "#06b6d4" },
+                    ].map((s, i) => (
+                      <div key={s.step} style={{ display: "flex", alignItems: "center" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 7, padding: "7px 14px", background: `${s.color}15`, border: `1px solid ${s.color}30`, borderRadius: 8 }}>
+                          <span style={{ fontSize: 14 }}>{s.icon}</span>
+                          <span style={{ fontSize: 12, fontWeight: 700, color: s.color }}>{s.step}</span>
+                        </div>
+                        {i < 4 && <div style={{ width: 20, textAlign: "center", color: "#4b5368", fontSize: 14, fontWeight: 700 }}>›</div>}
+                      </div>
+                    ))}
+                    <div style={{ marginLeft: "auto", fontSize: 11, color: "#4b5368", fontStyle: "italic" }}>Review required at every step</div>
+                  </div>
+                </div>
+
+                {/* Two-column: Social Inbox + Lead Capture */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+
+                  {/* Social Inbox */}
+                  <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                      <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px" }}>Social Inbox</div>
+                      <span style={{ fontSize: 10, fontWeight: 700, borderRadius: 6, padding: "2px 8px", background: "rgba(245,158,11,0.12)", color: "#fbbf24" }}>Manual Review Only</span>
+                    </div>
+                    {[
+                      {
+                        icon: "📸",
+                        label: "Instagram Inbox",
+                        sub: "DMs, comments, story replies",
+                        href: "https://business.facebook.com/latest/inbox",
+                        color: "#e1306c",
+                        badge: "Meta Business Suite",
+                      },
+                      {
+                        icon: "📘",
+                        label: "Facebook Group",
+                        sub: "Comments, DMs, member posts",
+                        href: "https://www.facebook.com/share/g/1B9qCfLEVG/?mibextid=wwXIfr",
+                        color: "#1877f2",
+                        badge: "Your Group",
+                      },
+                      {
+                        icon: "🎵",
+                        label: "TikTok",
+                        sub: "Comments, DMs, followers",
+                        href: "https://www.tiktok.com/@zakhytheaiboy?_r=1&_t=ZT-961m6Wcrub0",
+                        color: "#ff0050",
+                        badge: "@zakhytheaiboy",
+                      },
+                      {
+                        icon: "📧",
+                        label: "Email Inbox",
+                        sub: "Leads, inquiries, replies",
+                        href: "https://mail.google.com",
+                        color: "#f59e0b",
+                        badge: "Gmail",
+                      },
+                    ].map(item => (
+                      <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", display: "block", marginBottom: 8 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 14px", background: "#181b24", border: `1px solid ${item.color}20`, borderRadius: 10, cursor: "pointer" }}>
+                          <div style={{ width: 36, height: 36, borderRadius: 9, background: `${item.color}18`, border: `1px solid ${item.color}30`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>{item.icon}</div>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: 13, fontWeight: 600, color: "#e8eaf0" }}>{item.label}</div>
+                            <div style={{ fontSize: 11, color: "#4b5368", marginTop: 2 }}>{item.sub}</div>
+                          </div>
+                          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+                            <span style={{ fontSize: 9, fontWeight: 700, borderRadius: 5, padding: "2px 7px", background: `${item.color}18`, color: item.color }}>{item.badge}</span>
+                            <span style={{ color: "#4b5368", fontSize: 11 }}>↗</span>
+                          </div>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+
+                  {/* Lead Capture */}
+                  <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                      <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px" }}>Lead Capture</div>
+                      <span style={{ fontSize: 10, fontWeight: 700, borderRadius: 6, padding: "2px 8px", background: "rgba(34,197,94,0.12)", color: "#4ade80" }}>Active</span>
+                    </div>
+                    {[
+                      {
+                        icon: "📅",
+                        label: "Book Consultation",
+                        sub: "Google Calendar booking link",
+                        href: "https://calendar.app.google/FCwJTynqN7GMFfpb9",
+                        color: "#8b5cf6",
+                        badge: "Live",
+                      },
+                      {
+                        icon: "🎯",
+                        label: "HubSpot CRM",
+                        sub: "Contacts, deals, pipeline",
+                        href: "https://app.hubspot.com",
+                        color: "#ff7a59",
+                        badge: "CRM",
+                      },
+                      {
+                        icon: "📧",
+                        label: "Email Marketing",
+                        sub: "Mailchimp — campaigns & lists",
+                        href: "https://mailchimp.com",
+                        color: "#ffe01b",
+                        badge: "Mailchimp",
+                      },
+                      {
+                        icon: "📝",
+                        label: "Lead Form / Landing Page",
+                        sub: "Consumer defense intake form",
+                        href: "/intake-defense",
+                        color: "#22c55e",
+                        badge: "Live",
+                      },
+                    ].map(item => (
+                      <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", display: "block", marginBottom: 8 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 14px", background: "#181b24", border: `1px solid ${item.color}20`, borderRadius: 10, cursor: "pointer" }}>
+                          <div style={{ width: 36, height: 36, borderRadius: 9, background: `${item.color}18`, border: `1px solid ${item.color}30`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>{item.icon}</div>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: 13, fontWeight: 600, color: "#e8eaf0" }}>{item.label}</div>
+                            <div style={{ fontSize: 11, color: "#4b5368", marginTop: 2 }}>{item.sub}</div>
+                          </div>
+                          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+                            <span style={{ fontSize: 9, fontWeight: 700, borderRadius: 5, padding: "2px 7px", background: `${item.color}18`, color: item.color }}>{item.badge}</span>
+                            <span style={{ color: "#4b5368", fontSize: 11 }}>↗</span>
+                          </div>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Lead Pipeline Tracker */}
+                <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px", marginBottom: 16 }}>
+                  <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 16 }}>Lead Pipeline Status</div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 12 }}>
+                    {[
+                      { stage: "Attention", icon: "👀", sub: "Saw content", color: "#8b5cf6", count: "—" },
+                      { stage: "Engaged", icon: "💬", sub: "DM or comment", color: "#3b82f6", count: "—" },
+                      { stage: "Email Captured", icon: "📧", sub: "On list", color: "#f59e0b", count: "—" },
+                      { stage: "Booked", icon: "📅", sub: "Consult scheduled", color: "#22c55e", count: "—" },
+                      { stage: "Converted", icon: "✅", sub: "Paid client", color: "#10a37f", count: "—" },
+                    ].map(stage => (
+                      <div key={stage.stage} style={{ background: "#181b24", border: `1px solid ${stage.color}25`, borderRadius: 10, padding: "14px 16px", textAlign: "center" }}>
+                        <div style={{ fontSize: 22, marginBottom: 6 }}>{stage.icon}</div>
+                        <div style={{ fontSize: 20, fontWeight: 800, color: stage.color, marginBottom: 4 }}>{stage.count}</div>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: "#e8eaf0" }}>{stage.stage}</div>
+                        <div style={{ fontSize: 10, color: "#4b5368", marginTop: 3 }}>{stage.sub}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ marginTop: 12, padding: "8px 12px", background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.15)", borderRadius: 8, fontSize: 11, color: "#4b5368" }}>
+                    💡 Connect HubSpot or add manual counts to track pipeline conversion rates
+                  </div>
+                </div>
+
+                {/* Follow-Up Rules */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                  <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px" }}>
+                    <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 14 }}>Follow-Up Sequence</div>
+                    {[
+                      { step: "Day 0", action: "Reply to DM / comment manually", icon: "💬", color: "#3b82f6" },
+                      { step: "Day 1", action: "Send booking link if interested", icon: "📅", color: "#8b5cf6" },
+                      { step: "Day 3", action: "Follow-up email if no booking", icon: "📧", color: "#f59e0b" },
+                      { step: "Day 7", action: "Final follow-up or close loop", icon: "🔄", color: "#22c55e" },
+                    ].map(row => (
+                      <div key={row.step} style={{ display: "flex", alignItems: "center", gap: 12, padding: "9px 0", borderBottom: "1px solid #1a1d28" }}>
+                        <div style={{ width: 40, height: 34, borderRadius: 8, background: `${row.color}15`, border: `1px solid ${row.color}25`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 800, color: row.color, flexShrink: 0 }}>{row.step}</div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: 12, color: "#e8eaf0" }}>{row.action}</div>
+                        </div>
+                        <span style={{ fontSize: 16 }}>{row.icon}</span>
+                      </div>
+                    ))}
+                    <div style={{ marginTop: 12, padding: "8px 12px", background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.15)", borderRadius: 8, fontSize: 11, color: "#f87171" }}>
+                      🔒 No automated replies — all responses are manual and reviewed
+                    </div>
+                  </div>
+
+                  <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px" }}>
+                    <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 14 }}>Quick Access</div>
+                    {[
+                      { icon: "📊", label: "Meta Business Suite", sub: "Unified Instagram + Facebook", href: "https://business.facebook.com", color: "#1877f2" },
+                      { icon: "📸", label: "Instagram Profile", sub: "@turboresponse", href: "https://www.instagram.com", color: "#e1306c" },
+                      { icon: "📘", label: "Facebook Group", sub: "Your consumer rights group", href: "https://www.facebook.com/share/g/1B9qCfLEVG/?mibextid=wwXIfr", color: "#1877f2" },
+                      { icon: "🎵", label: "TikTok", sub: "@zakhytheaiboy", href: "https://www.tiktok.com/@zakhytheaiboy?_r=1&_t=ZT-961m6Wcrub0", color: "#ff0050" },
+                      { icon: "💼", label: "LinkedIn", sub: "Professional network", href: "https://www.linkedin.com", color: "#0a66c2" },
+                      { icon: "📧", label: "Gmail", sub: "Email inbox", href: "https://mail.google.com", color: "#f59e0b" },
+                    ].map(t => (
+                      <a key={t.label} href={t.href} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", display: "block", marginBottom: 7 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", background: "#181b24", border: "1px solid #1e2130", borderRadius: 9, cursor: "pointer" }}>
+                          <span style={{ fontSize: 15, flexShrink: 0 }}>{t.icon}</span>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: 12, fontWeight: 500, color: "#e8eaf0" }}>{t.label}</div>
+                            <div style={{ fontSize: 10, color: "#4b5368", marginTop: 1 }}>{t.sub}</div>
+                          </div>
+                          <span style={{ color: t.color, fontSize: 11 }}>↗</span>
+                        </div>
+                      </a>
+                    ))}
                   </div>
                 </div>
               </div>
