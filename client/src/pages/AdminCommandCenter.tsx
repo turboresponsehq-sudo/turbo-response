@@ -32,12 +32,12 @@ interface LiveCase {
 // ── Static placeholder data ──────────────────────────────────────────────────
 
 const TOOLS = [
-  { icon: "🛡️", label: "Admin Dashboard", sub: "turboresponsehq.ai/admin", href: "/admin" },
-  { icon: "👤", label: "Client Portal", sub: "Client login & cases", href: "/client-login" },
-  { icon: "📋", label: "Defense Intake", sub: "Consumer case intake", href: "/intake-defense" },
-  { icon: "🧠", label: "Turbo Brain", sub: "AI knowledge upload", href: "/admin/brain" },
-  { icon: "📸", label: "Screenshots", sub: "Screenshot capture tool", href: "/admin/screenshots" },
-  { icon: "📁", label: "Resources", sub: "Grant & resource intake", href: "/admin/resources" },
+  { icon: "🛡️", label: "Admin Dashboard", sub: "turboresponsehq.ai/admin", href: "/admin", external: true },
+  { icon: "👤", label: "Client Portal", sub: "Client login & cases", href: "/client-login", external: true },
+  { icon: "📋", label: "Defense Intake", sub: "Consumer case intake", href: "/intake-defense", external: true },
+  { icon: "🧠", label: "Turbo Brain", sub: "AI knowledge upload", href: "/admin/brain", external: true },
+  { icon: "📸", label: "Screenshots", sub: "Screenshot capture tool", href: "/admin/screenshots", external: true },
+  { icon: "📁", label: "Resources", sub: "Grant & resource intake", href: "/admin/resources", external: true },
   { icon: "📊", label: "Render Dashboard", sub: "Server & deploy status", href: "https://dashboard.render.com", external: true },
   { icon: "💻", label: "GitHub Repo", sub: "turboresponsehq-sudo", href: "https://github.com/turboresponsehq-sudo/turbo-response", external: true },
 ];
@@ -146,9 +146,9 @@ const CAMPAIGNS = [
 ];
 
 const ECOSYSTEM_TOOLS = [
-  { icon: "🧠", label: "NotebookLM", sub: "AI knowledge system", href: "https://notebooklm.google.com", external: true },
+      { icon: "🧠", label: "NotebookLM", sub: "AI knowledge system", href: "https://notebooklm.google.com", external: true },
   { icon: "📁", label: "Google Drive", sub: "Turbo Response Central", href: "https://drive.google.com", external: true },
-  { icon: "🌐", label: "Turbo Brain", sub: "Internal AI knowledge", href: "/admin/brain" },
+  { icon: "🌐", label: "Turbo Brain", sub: "Internal AI knowledge", href: "/admin/brain", external: true },
   { icon: "📊", label: "Render Dashboard", sub: "Server & deploy status", href: "https://dashboard.render.com", external: true },
 ];
 
@@ -423,7 +423,7 @@ export default function AdminCommandCenter() {
               <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, fontWeight: 600, color: "#22c55e", background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.18)", borderRadius: 20, padding: "4px 12px" }}>
                 <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e" }} /> All Systems Go
               </div>
-              <a href="/admin" style={{ textDecoration: "none" }}>
+              <a href="/admin" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
                 <button style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 7, border: "none", background: "#3b82f6", color: "#fff", cursor: "pointer" }}>
                   Admin Dashboard →
                 </button>
@@ -487,7 +487,7 @@ export default function AdminCommandCenter() {
                         </div>
                       ))}
                       <div style={{ marginTop: 12 }}>
-                        <a href="/admin" style={{ textDecoration: "none" }}>
+                        <a href="/admin" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
                           <button style={{ width: "100%", padding: "9px", background: "transparent", border: "1px solid #1e2130", borderRadius: 8, color: "#4b5368", fontSize: 12, cursor: "pointer" }}>
                             View All Cases in Admin Dashboard →
                           </button>
@@ -734,7 +734,7 @@ export default function AdminCommandCenter() {
                       { icon: "📄", label: "Google Docs", sub: "Documents & writing", href: "https://docs.google.com", color: "#4285f4" },
                       { icon: "📁", label: "Google Drive", sub: "Turbo Response Central", href: "https://drive.google.com", color: "#34a853" },
                       { icon: "🧠", label: "NotebookLM", sub: "AI knowledge system", href: "https://notebooklm.google.com", color: "#8b5cf6" },
-                      { icon: "🤖", label: "ChatGPT", sub: "OpenAI assistant", href: "https://chatgpt.com", color: "#10a37f" },
+                      { icon: "🤖", label: "ChatGPT", sub: "OpenAI assistant", href: "https://chat.openai.com", color: "#10a37f" },
                       { icon: "⚡", label: "Grok", sub: "xAI assistant", href: "https://grok.com", color: "#e5e7eb" },
                       { icon: "🚀", label: "Manus", sub: "AI agent platform", href: "https://manus.im", color: "#3b82f6" },
                       { icon: "✅", label: "Tasks", sub: "Google Tasks", href: "https://tasks.google.com", color: "#f59e0b" },
@@ -764,16 +764,16 @@ export default function AdminCommandCenter() {
                 <SectionCard title="Turbo Response Internal Tools">
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 14 }}>
                     {[
-                      { icon: "🛡️", label: "Admin Dashboard", sub: "Case management", href: "/admin", color: "#3b82f6" },
-                      { icon: "🧠", label: "Turbo Brain", sub: "AI knowledge upload", href: "/admin/brain", color: "#8b5cf6" },
-                      { icon: "📋", label: "Defense Intake", sub: "Consumer case intake", href: "/intake-defense", color: "#22c55e" },
-                      { icon: "👤", label: "Client Portal", sub: "Client login & cases", href: "/client-login", color: "#06b6d4" },
-                      { icon: "📸", label: "Screenshots", sub: "Screenshot capture tool", href: "/admin/screenshots", color: "#f59e0b" },
+                      { icon: "🛡️", label: "Admin Dashboard", sub: "Case management", href: "/admin", color: "#3b82f6", external: true },
+                      { icon: "🧠", label: "Turbo Brain", sub: "AI knowledge upload", href: "/admin/brain", color: "#8b5cf6", external: true },
+                      { icon: "📋", label: "Defense Intake", sub: "Consumer case intake", href: "/intake-defense", color: "#22c55e", external: true },
+                      { icon: "👤", label: "Client Portal", sub: "Client login & cases", href: "/client-login", color: "#06b6d4", external: true },
+                      { icon: "📸", label: "Screenshots", sub: "Screenshot capture tool", href: "/admin/screenshots", color: "#f59e0b", external: true },
                       { icon: "📊", label: "Render Dashboard", sub: "Server & deploy status", href: "https://dashboard.render.com", color: "#46e3b7", external: true },
                       { icon: "💻", label: "GitHub Repo", sub: "Source code", href: "https://github.com/turboresponsehq-sudo/turbo-response", color: "#e8eaf0", external: true },
-                      { icon: "📄", label: "Resources / Grants", sub: "Grant & resource intake", href: "/admin/resources", color: "#f59e0b" },
+                      { icon: "📄", label: "Resources / Grants", sub: "Grant & resource intake", href: "/admin/resources", color: "#f59e0b", external: true },
                     ].map(tool => (
-                      <a key={tool.label} href={tool.href} target={(tool as any).external ? "_blank" : "_self"} rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+                      <a key={tool.label} href={tool.href} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
                         <div style={{ background: "#181b24", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 16px", cursor: "pointer", display: "flex", flexDirection: "column", gap: 10 }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                             <div style={{ width: 40, height: 40, borderRadius: 10, background: `${tool.color}18`, border: `1px solid ${tool.color}30`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>
