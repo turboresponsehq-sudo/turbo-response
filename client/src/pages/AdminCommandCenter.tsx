@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
-type Section = "operations" | "growth" | "ecosystem" | "marketing";
+type Section = "operations" | "growth" | "ecosystem" | "marketing" | "core_tools";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turboresponsehq.ai";
 
@@ -339,13 +339,15 @@ export default function AdminCommandCenter() {
     { id: "growth", icon: "📈", label: "Growth", badge: "7", badgeColor: "#22c55e" },
     { id: "ecosystem", icon: "🌐", label: "Ecosystem" },
     { id: "marketing", icon: "📣", label: "Marketing", badge: "4", badgeColor: "#3b82f6" },
+    { id: "core_tools", icon: "🔗", label: "Core Tools", badge: "8", badgeColor: "#06b6d4" },
   ];
 
   const topbarMeta: Record<Section, { title: string; crumb: string }> = {
     operations: { title: "⚙️ Operations", crumb: "Cases · Admin Dashboard · Maintenance · SOPs" },
-    growth: { title: "📈 Growth", crumb: "Leads · Outreach · Pipeline · Contractors" },
+    growth: { title: "📈 Growth", crumb: "Leads · Outreach · Pipeline · HubSpot CRM" },
     ecosystem: { title: "🌐 Ecosystem", crumb: "People · Organizations · Grants · Events" },
     marketing: { title: "📣 Marketing", crumb: "Content · Schedule · Strategy · Campaigns" },
+    core_tools: { title: "🔗 Core Tools", crumb: "Google Docs · Drive · NotebookLM · ChatGPT · Grok · Manus · Tasks · HubSpot" },
   };
 
   const s = (id: Section) => section === id;
@@ -355,7 +357,7 @@ export default function AdminCommandCenter() {
       {/* BANNER */}
       <div style={{ background: "linear-gradient(90deg,#7c3aed,#2563eb)", color: "#fff", textAlign: "center", fontSize: 11, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", padding: "7px 20px", position: "sticky", top: 0, zIndex: 999 }}>
         ⚡ Turbo Response — Command Center V1 &nbsp;·&nbsp;
-        <span style={{ opacity: 0.65, fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>Internal · Admin Only · Placeholder Data</span>
+        <span style={{ opacity: 0.65, fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>Central Operating System · Admin Only · Internal</span>
       </div>
 
       <div style={{ display: "flex", flex: 1, minHeight: "calc(100vh - 33px)" }}>
@@ -719,9 +721,105 @@ export default function AdminCommandCenter() {
                     ))}
                   </div>
                 </SectionCard>
-              </div>
+               </div>
             )}
 
+            {/* ── CORE TOOLS ───────────────────────────────────────────── */}
+            {s("core_tools") && (
+              <div style={{ padding: "24px 28px", display: "flex", flexDirection: "column", gap: 24 }}>
+                {/* Daily Use Tools */}
+                <SectionCard title="Daily Use Tools">
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 14 }}>
+                    {[
+                      { icon: "📄", label: "Google Docs", sub: "Documents & writing", href: "https://docs.google.com", color: "#4285f4" },
+                      { icon: "📁", label: "Google Drive", sub: "Turbo Response Central", href: "https://drive.google.com", color: "#34a853" },
+                      { icon: "🧠", label: "NotebookLM", sub: "AI knowledge system", href: "https://notebooklm.google.com", color: "#8b5cf6" },
+                      { icon: "🤖", label: "ChatGPT", sub: "OpenAI assistant", href: "https://chatgpt.com", color: "#10a37f" },
+                      { icon: "⚡", label: "Grok", sub: "xAI assistant", href: "https://grok.com", color: "#e5e7eb" },
+                      { icon: "🚀", label: "Manus", sub: "AI agent platform", href: "https://manus.im", color: "#3b82f6" },
+                      { icon: "✅", label: "Tasks", sub: "Google Tasks", href: "https://tasks.google.com", color: "#f59e0b" },
+                      { icon: "🎯", label: "HubSpot", sub: "CRM & pipeline", href: "https://app.hubspot.com", color: "#ff7a59" },
+                    ].map(tool => (
+                      <a key={tool.label} href={tool.href} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+                        <div style={{ background: "#181b24", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 16px", cursor: "pointer", transition: "border-color 0.15s", display: "flex", flexDirection: "column", gap: 10 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                            <div style={{ width: 40, height: 40, borderRadius: 10, background: `${tool.color}18`, border: `1px solid ${tool.color}30`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>
+                              {tool.icon}
+                            </div>
+                            <div>
+                              <div style={{ fontSize: 14, fontWeight: 700, color: "#e8eaf0" }}>{tool.label}</div>
+                              <div style={{ fontSize: 11, color: "#4b5368", marginTop: 2 }}>{tool.sub}</div>
+                            </div>
+                          </div>
+                          <div style={{ fontSize: 11, fontWeight: 600, color: tool.color, display: "flex", alignItems: "center", gap: 4 }}>
+                            Open {tool.label} →
+                          </div>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </SectionCard>
+
+                {/* Internal Turbo Response Tools */}
+                <SectionCard title="Turbo Response Internal Tools">
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 14 }}>
+                    {[
+                      { icon: "🛡️", label: "Admin Dashboard", sub: "Case management", href: "/admin", color: "#3b82f6" },
+                      { icon: "🧠", label: "Turbo Brain", sub: "AI knowledge upload", href: "/admin/brain", color: "#8b5cf6" },
+                      { icon: "📋", label: "Defense Intake", sub: "Consumer case intake", href: "/intake-defense", color: "#22c55e" },
+                      { icon: "👤", label: "Client Portal", sub: "Client login & cases", href: "/client-login", color: "#06b6d4" },
+                      { icon: "📸", label: "Screenshots", sub: "Screenshot capture tool", href: "/admin/screenshots", color: "#f59e0b" },
+                      { icon: "📊", label: "Render Dashboard", sub: "Server & deploy status", href: "https://dashboard.render.com", color: "#46e3b7", external: true },
+                      { icon: "💻", label: "GitHub Repo", sub: "Source code", href: "https://github.com/turboresponsehq-sudo/turbo-response", color: "#e8eaf0", external: true },
+                      { icon: "📄", label: "Resources / Grants", sub: "Grant & resource intake", href: "/admin/resources", color: "#f59e0b" },
+                    ].map(tool => (
+                      <a key={tool.label} href={tool.href} target={(tool as any).external ? "_blank" : "_self"} rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+                        <div style={{ background: "#181b24", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 16px", cursor: "pointer", display: "flex", flexDirection: "column", gap: 10 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                            <div style={{ width: 40, height: 40, borderRadius: 10, background: `${tool.color}18`, border: `1px solid ${tool.color}30`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>
+                              {tool.icon}
+                            </div>
+                            <div>
+                              <div style={{ fontSize: 14, fontWeight: 700, color: "#e8eaf0" }}>{tool.label}</div>
+                              <div style={{ fontSize: 11, color: "#4b5368", marginTop: 2 }}>{tool.sub}</div>
+                            </div>
+                          </div>
+                          <div style={{ fontSize: 11, fontWeight: 600, color: tool.color, display: "flex", alignItems: "center", gap: 4 }}>
+                            Open →
+                          </div>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </SectionCard>
+
+                {/* SOP Reference */}
+                <SectionCard title="SOP & Phase Reference">
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
+                    {[
+                      { phase: "Phase 1 — Current", items: ["UI dashboard", "Navigation links", "Basic structure", "Core tool access"], color: "#22c55e", status: "Active" },
+                      { phase: "Phase 2 — Next", items: ["Live data (cases, leads)", "CRM integration (HubSpot)", "Google Drive linking", "Real-time metrics"], color: "#3b82f6", status: "Planned" },
+                      { phase: "Phase 3 — Future", items: ["AI assistant (Gemini/OpenAI)", "Automation workflows", "Timeline/calendar system", "System alerts & reporting"], color: "#8b5cf6", status: "Planned" },
+                    ].map(p => (
+                      <div key={p.phase} style={{ background: "#181b24", border: `1px solid ${p.color}30`, borderRadius: 12, padding: 18 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: "#e8eaf0" }}>{p.phase}</div>
+                          <Badge label={p.status} />
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+                          {p.items.map(item => (
+                            <div key={item} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#9ca3af" }}>
+                              <div style={{ width: 5, height: 5, borderRadius: "50%", background: p.color, flexShrink: 0 }} />
+                              {item}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </SectionCard>
+              </div>
+            )}
           </div>
         </div>
       </div>
