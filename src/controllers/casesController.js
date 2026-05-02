@@ -81,6 +81,7 @@ const getAllCases = async (req, res, next) => {
               full_name as first_name, 
               NULL as last_name,
               email, phone,
+              drive_folder_link, internal_notes, priority,
               created_at, updated_at, 
               'consumer' as case_type
        FROM cases
@@ -169,7 +170,8 @@ const updateCaseStatus = async (req, res, next) => {
     // Build dynamic SET clause from allowed fields
     const allowedFields = [
       'status', 'portal_enabled', 'client_status', 'client_notes',
-      'payment_link', 'pricing_tier', 'pricing_tier_amount', 'pricing_tier_name'
+      'payment_link', 'pricing_tier', 'pricing_tier_amount', 'pricing_tier_name',
+      'drive_folder_link', 'internal_notes', 'priority'
     ];
     const setClauses = [];
     const values = [];
