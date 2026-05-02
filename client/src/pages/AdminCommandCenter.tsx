@@ -33,7 +33,7 @@ interface LiveCase {
 
 const TOOLS = [
   { icon: "🛡️", label: "Admin Dashboard", sub: "turboresponsehq.ai/admin", href: "/admin", external: true },
-  { icon: "👤", label: "Client Portal", sub: "Client login & cases", href: "/client-login", external: true },
+  { icon: "👤", label: "Client Portal", sub: "Client login & cases", href: "/client/login", external: true },
   { icon: "📋", label: "Defense Intake", sub: "Consumer case intake", href: "/intake-defense", external: true },
   { icon: "🧠", label: "Turbo Brain", sub: "AI knowledge upload", href: "/admin/brain", external: true },
   { icon: "📸", label: "Screenshots", sub: "Screenshot capture tool", href: "/admin/screenshots", external: true },
@@ -767,7 +767,7 @@ export default function AdminCommandCenter() {
                       { icon: "🛡️", label: "Admin Dashboard", sub: "Case management", href: "/admin", color: "#3b82f6", external: true },
                       { icon: "🧠", label: "Turbo Brain", sub: "AI knowledge upload", href: "/admin/brain", color: "#8b5cf6", external: true },
                       { icon: "📋", label: "Defense Intake", sub: "Consumer case intake", href: "/intake-defense", color: "#22c55e", external: true },
-                      { icon: "👤", label: "Client Portal", sub: "Client login & cases", href: "/client-login", color: "#06b6d4", external: true },
+                      { icon: "👤", label: "Client Portal", sub: "Client login & cases", href: "/client/login", color: "#06b6d4", external: true },
                       { icon: "📸", label: "Screenshots", sub: "Screenshot capture tool", href: "/admin/screenshots", color: "#f59e0b", external: true },
                       { icon: "📊", label: "Render Dashboard", sub: "Server & deploy status", href: "https://dashboard.render.com", color: "#46e3b7", external: true },
                       { icon: "💻", label: "GitHub Repo", sub: "Source code", href: "https://github.com/turboresponsehq-sudo/turbo-response", color: "#e8eaf0", external: true },
