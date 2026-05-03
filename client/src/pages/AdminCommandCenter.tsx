@@ -463,17 +463,6 @@ export default function AdminCommandCenter() {
     { id: "core_tools", icon: "🔗", label: "Core Tools", group: "🧰 Systems" },
     { id: "ecosystem", icon: "🌐", label: "Ecosystem", group: "🧰 Systems" },
   ];
-    { id: "daily_ops", icon: "⚡", label: "Daily Ops", badge: "NEW", badgeColor: "#ef4444" },
-    { id: "operator_input", icon: "🧠", label: "Operator Input", badge: "NEW", badgeColor: "#8b5cf6" },
-    { id: "social_media", icon: "📱", label: "Social Media", badge: "NEW", badgeColor: "#06b6d4" },
-    { id: "growth_inbox", icon: "📥", label: "Growth Inbox", badge: "NEW", badgeColor: "#22c55e" },
-    { id: "new_leads", icon: "🎯", label: "New Leads", badge: "LIVE", badgeColor: "#ef4444" },
-    { id: "operations", icon: "⚙️", label: "Operations", badge: "1", badgeColor: "#f59e0b" },
-    { id: "growth", icon: "📈", label: "Growth", badge: "7", badgeColor: "#22c55e" },
-    { id: "ecosystem", icon: "🌐", label: "Ecosystem" },
-    { id: "marketing", icon: "📣", label: "Marketing", badge: "4", badgeColor: "#3b82f6" },
-    { id: "core_tools", icon: "🔗", label: "Core Tools", badge: "8", badgeColor: "#06b6d4" },
-  ];
 
   const topbarMeta: Record<Section, { title: string; crumb: string }> = {
     daily_ops: { title: "⚡ Daily Ops", crumb: "Brain Dump · Tasks · Priorities · Quick Actions" },
@@ -544,6 +533,10 @@ export default function AdminCommandCenter() {
                 </div>
               </a>
             ))}
+          </nav>
+          <div style={{ padding: "14px 18px", borderTop: "1px solid #1e2130" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg,#3b82f6,#8b5cf6)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: "#fff", flexShrink: 0 }}>Z</div>
               <div>
                 <div style={{ fontSize: 12, fontWeight: 600, color: "#e8eaf0" }}>Zakhy</div>
                 <div style={{ fontSize: 10, color: "#4b5368", marginTop: 1 }}>Owner · Admin</div>
