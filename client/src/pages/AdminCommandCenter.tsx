@@ -204,84 +204,82 @@ function Badge({ label }: { label: string }) {
 }
 
 function NewLeadsSection() {
-  const { data: leads, isLoading, refetch } = trpc.admin.getIntakeLeads.useQuery();
-  const updateStatus = trpc.admin.updateIntakeLeadStatus.useMutation({
-    onSuccess: () => refetch(),
-  });
+  const utils = trpc.useUtils();
+  // Intake leads from the existing intake form (source of truth = intake DB)
+  const { data: intakeLeads = [], isLoading, refetch } = trpc.leads.list.useQuery();
+  const updateStatus = trpc.leads.updateStatus.useMutation({ onSuccess: () => utils.leads.list.invalidate() });
+
+  // Dashboard leads (manually added with HubSpot links)
+  const { data: dashLeads = [] } = trpc.dashboard.leads.list.useQuery();
+  const addDashLead = trpc.dashboard.leads.add.useMutation({ onSuccess: () => utils.dashboard.leads.list.invalidate() });
+  const updateDashStatus = trpc.dashboard.leads.updateStatus.useMutation({ onSuccess: () => utils.dashboard.leads.list.invalidate() });
+  const deleteDashLead = trpc.dashboard.leads.delete.useMutation({ onSuccess: () => utils.dashboard.leads.list.invalidate() });
+
+  const [showAddForm, setShowAddForm] = React.useState(false);
+  const [newName, setNewName] = React.useState("");
+  const [newNote, setNewNote] = React.useState("");
+  const [newHubspotUrl, setNewHubspotUrl] = React.useState("");
+
+  const HUBSPOT_URL = "https://app.hubspot.com/contacts/";
 
   const statusColors: Record<string, string> = {
-    new_lead: "#ef4444",
-    reviewing: "#f59e0b",
-    follow_up: "#3b82f6",
-    converted: "#22c55e",
+    new_lead: "#3b82f6", reviewing: "#f59e0b", follow_up: "#a78bfa", converted: "#22c55e",
+    new: "#3b82f6", follow_up_dash: "#a78bfa", closed: "#4b5368",
   };
   const statusLabels: Record<string, string> = {
-    new_lead: "New Lead",
-    reviewing: "Reviewing",
-    follow_up: "Follow-Up",
-    converted: "Converted",
+    new_lead: "New Lead", reviewing: "Reviewing", follow_up: "Follow-Up", converted: "Converted",
+    new: "New", closed: "Closed",
   };
 
-  const counts = {
-    new_lead: leads?.filter(l => l.status === "new_lead").length ?? 0,
-    reviewing: leads?.filter(l => l.status === "reviewing").length ?? 0,
-    follow_up: leads?.filter(l => l.status === "follow_up").length ?? 0,
-    converted: leads?.filter(l => l.status === "converted").length ?? 0,
+  const addLead = () => {
+    if (!newName.trim()) return;
+    addDashLead.mutate({ name: newName.trim(), note: newNote.trim() || undefined, hubspotUrl: newHubspotUrl.trim() || undefined });
+    setNewName(""); setNewNote(""); setNewHubspotUrl(""); setShowAddForm(false);
   };
 
   return (
-    <div>
-      {/* Pipeline stat row */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 22 }}>
-        {Object.entries(counts).map(([key, val]) => (
-          <div key={key} style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px", position: "relative", overflow: "hidden" }}>
-            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: statusColors[key] }} />
-            <div style={{ fontSize: 11, color: "#4b5368", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.7px", marginBottom: 8 }}>{statusLabels[key]}</div>
-            <div style={{ fontSize: 30, fontWeight: 800, color: "#e8eaf0", lineHeight: 1 }}>{val}</div>
-          </div>
-        ))}
+    <div style={{ maxWidth: 900 }}>
+      {/* Header */}
+      <div style={{ background: "linear-gradient(135deg,rgba(59,130,246,0.08),rgba(99,102,241,0.06))", border: "1px solid rgba(59,130,246,0.15)", borderRadius: 12, padding: "20px 24px", marginBottom: 24, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: "#e8eaf0", marginBottom: 4 }}>Leads / Cases</div>
+          <div style={{ fontSize: 13, color: "#4b5368" }}>Who needs attention right now?</div>
+        </div>
+        <a href={HUBSPOT_URL} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.25)", borderRadius: 9, textDecoration: "none", color: "#f59e0b", fontSize: 13, fontWeight: 700 }}>
+          🔗 Open HubSpot ↗
+        </a>
       </div>
 
-      {/* Leads table */}
-      <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px" }}>
+      {/* Intake submissions (from intake form) */}
+      <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px", marginBottom: 20 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-          <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px" }}>Intake Submissions</div>
-          <div style={{ fontSize: 11, fontWeight: 500, color: "#3b82f6", cursor: "pointer" }} onClick={() => refetch()}>Refresh ↻</div>
+          <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px" }}>📥 Intake Form Submissions</div>
+          <button onClick={() => refetch()} style={{ fontSize: 11, color: "#3b82f6", background: "none", border: "none", cursor: "pointer" }}>Refresh ↻</button>
         </div>
-
-        {isLoading && <div style={{ color: "#4b5368", fontSize: 13, padding: "20px 0", textAlign: "center" }}>Loading leads…</div>}
-        {!isLoading && (!leads || leads.length === 0) && (
-          <div style={{ color: "#4b5368", fontSize: 13, padding: "20px 0", textAlign: "center" }}>No submissions yet. When someone submits the intake form, they’ll appear here.</div>
+        {isLoading && <div style={{ color: "#4b5368", fontSize: 13, padding: "12px 0" }}>Loading...</div>}
+        {!isLoading && intakeLeads.length === 0 && (
+          <div style={{ color: "#4b5368", fontSize: 13, padding: "12px 0", fontStyle: "italic" }}>No submissions yet. When someone submits the intake form, they appear here.</div>
         )}
-        {!isLoading && leads && leads.length > 0 && (
+        {!isLoading && intakeLeads.length > 0 && (
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid #1e2130" }}>
-                  {["Name", "Email", "Phone", "Situation Preview", "Source", "Date", "Status"].map(h => (
+                  {["Name", "Email", "Phone", "Preview", "Date", "Status"].map(h => (
                     <th key={h} style={{ textAlign: "left", padding: "8px 12px", fontSize: 10, fontWeight: 700, color: "#4b5368", textTransform: "uppercase", letterSpacing: "0.7px", whiteSpace: "nowrap" }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {leads.map(lead => (
+                {intakeLeads.map(lead => (
                   <tr key={lead.id} style={{ borderBottom: "1px solid #1a1e2e" }}>
                     <td style={{ padding: "10px 12px", color: "#e8eaf0", fontWeight: 600, whiteSpace: "nowrap" }}>{lead.fullName}</td>
                     <td style={{ padding: "10px 12px", color: "#94a3b8", whiteSpace: "nowrap" }}>{lead.email}</td>
                     <td style={{ padding: "10px 12px", color: "#94a3b8", whiteSpace: "nowrap" }}>{lead.phone || "—"}</td>
-                    <td style={{ padding: "10px 12px", color: "#94a3b8", maxWidth: 260, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={lead.situationPreview || ""}>{lead.situationPreview || "—"}</td>
-                    <td style={{ padding: "10px 12px", whiteSpace: "nowrap" }}>
-                      <span style={{ background: lead.source === "turbo-intake" ? "rgba(139,92,246,0.15)" : "rgba(59,130,246,0.15)", color: lead.source === "turbo-intake" ? "#a78bfa" : "#60a5fa", fontSize: 10, fontWeight: 700, borderRadius: 6, padding: "2px 8px" }}>
-                        {lead.source === "turbo-intake" ? "Offense" : "Defense"}
-                      </span>
-                    </td>
+                    <td style={{ padding: "10px 12px", color: "#94a3b8", maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{lead.situationPreview || "—"}</td>
                     <td style={{ padding: "10px 12px", color: "#4b5368", whiteSpace: "nowrap", fontSize: 11 }}>{new Date(lead.submittedAt).toLocaleDateString()}</td>
                     <td style={{ padding: "10px 12px", whiteSpace: "nowrap" }}>
-                      <select
-                        value={lead.status}
-                        onChange={e => updateStatus.mutate({ id: lead.id, status: e.target.value as any })}
-                        style={{ background: "#0d1017", border: `1px solid ${statusColors[lead.status]}`, borderRadius: 6, color: statusColors[lead.status], fontSize: 11, fontWeight: 700, padding: "3px 8px", cursor: "pointer" }}
-                      >
+                      <select value={lead.status} onChange={e => updateStatus.mutate({ id: lead.id, status: e.target.value as any })} style={{ background: "#0d1017", border: `1px solid ${statusColors[lead.status] ?? "#3b82f6"}`, borderRadius: 6, color: statusColors[lead.status] ?? "#3b82f6", fontSize: 11, fontWeight: 700, padding: "3px 8px", cursor: "pointer" }}>
                         <option value="new_lead">New Lead</option>
                         <option value="reviewing">Reviewing</option>
                         <option value="follow_up">Follow-Up</option>
@@ -295,10 +293,55 @@ function NewLeadsSection() {
           </div>
         )}
       </div>
+
+      {/* HubSpot-linked manual leads */}
+      <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+          <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px" }}>🔗 HubSpot Linked Cases</div>
+          <button onClick={() => setShowAddForm(v => !v)} style={{ fontSize: 12, color: "#3b82f6", background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 7, padding: "5px 12px", cursor: "pointer", fontWeight: 700 }}>+ Add Case</button>
+        </div>
+
+        {showAddForm && (
+          <div style={{ background: "#0d1017", border: "1px solid #1e2130", borderRadius: 10, padding: "16px", marginBottom: 16 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <input value={newName} onChange={e => setNewName(e.target.value)} placeholder="Person / company name *" style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "9px 12px", outline: "none" }} />
+              <input value={newNote} onChange={e => setNewNote(e.target.value)} placeholder="Short note (optional)" style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "9px 12px", outline: "none" }} />
+              <input value={newHubspotUrl} onChange={e => setNewHubspotUrl(e.target.value)} placeholder="HubSpot contact/deal URL (optional)" style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "9px 12px", outline: "none" }} />
+              <div style={{ display: "flex", gap: 8 }}>
+                <button onClick={addLead} disabled={addDashLead.isPending} style={{ padding: "8px 16px", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 7, color: "#3b82f6", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>{addDashLead.isPending ? "Saving..." : "Save"}</button>
+                <button onClick={() => setShowAddForm(false)} style={{ padding: "8px 12px", background: "none", border: "1px solid #1e2130", borderRadius: 7, color: "#4b5368", fontSize: 13, cursor: "pointer" }}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {dashLeads.length === 0 && !showAddForm && (
+          <div style={{ color: "#4b5368", fontSize: 13, fontStyle: "italic", padding: "8px 0" }}>No linked cases yet. Add a case with a HubSpot link to track it here.</div>
+        )}
+
+        {dashLeads.map(lead => (
+          <div key={lead.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", background: "#0d1017", border: "1px solid #1e2130", borderRadius: 9, marginBottom: 8 }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: "#e8eaf0", marginBottom: 2 }}>{lead.name}</div>
+              {lead.note && <div style={{ fontSize: 12, color: "#4b5368" }}>{lead.note}</div>}
+            </div>
+            <select value={lead.status} onChange={e => updateDashStatus.mutate({ id: lead.id, status: e.target.value as any })} style={{ background: "#111318", border: `1px solid ${statusColors[lead.status] ?? "#3b82f6"}`, borderRadius: 6, color: statusColors[lead.status] ?? "#3b82f6", fontSize: 11, fontWeight: 700, padding: "3px 8px", cursor: "pointer" }}>
+              <option value="new">New</option>
+              <option value="reviewing">Reviewing</option>
+              <option value="follow_up">Follow-Up</option>
+              <option value="converted">Converted</option>
+              <option value="closed">Closed</option>
+            </select>
+            {lead.hubspotUrl && (
+              <a href={lead.hubspotUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#f59e0b", textDecoration: "none", fontWeight: 700, padding: "4px 10px", background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 6 }}>HubSpot ↗</a>
+            )}
+            <button onClick={() => deleteDashLead.mutate({ id: lead.id })} style={{ background: "none", border: "none", color: "#4b5368", cursor: "pointer", fontSize: 16, padding: "0 4px" }}>×</button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
-
 function StatCard({ label, value, sub, delta, accent }: { label: string; value: string; sub?: string; delta?: string; accent: string }) {
   return (
     <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px", position: "relative", overflow: "hidden" }}>
@@ -368,39 +411,43 @@ function ProgBar({ label, val, pct, color }: { label: string; val: string | numb
 
 // ── CEO HOME COMPONENT ───────────────────────────────────────────────────────
 function CeoHomeSection() {
-  const [priorities, setPriorities] = React.useState([
-    { id: 1, text: "Review new intake submissions", urgent: true, done: false },
-    { id: 2, text: "Send dispute letter to Experian", urgent: true, done: false },
-    { id: 3, text: "Post 3x on social media this week", urgent: false, done: false },
-    { id: 4, text: "Follow up with intake automation setup", urgent: false, done: false },
-  ]);
+  const utils = trpc.useUtils();
+  const { data: prioritiesData = [], isLoading } = trpc.dashboard.priorities.list.useQuery();
+  const addMutation = trpc.dashboard.priorities.add.useMutation({ onSuccess: () => utils.dashboard.priorities.list.invalidate() });
+  const toggleMutation = trpc.dashboard.priorities.toggle.useMutation({ onSuccess: () => utils.dashboard.priorities.list.invalidate() });
+  const clearDoneMutation = trpc.dashboard.priorities.clearDone.useMutation({ onSuccess: () => utils.dashboard.priorities.list.invalidate() });
   const [newPriority, setNewPriority] = React.useState("");
+  const [isUrgent, setIsUrgent] = React.useState(false);
 
-  const toggleDone = (id: number) => setPriorities(p => p.map(x => x.id === id ? { ...x, done: !x.done } : x));
   const addPriority = () => {
     if (!newPriority.trim()) return;
-    setPriorities(p => [...p, { id: Date.now(), text: newPriority.trim(), urgent: false, done: false }]);
+    addMutation.mutate({ text: newPriority.trim(), urgent: isUrgent });
     setNewPriority("");
+    setIsUrgent(false);
   };
 
-  const urgent = priorities.filter(p => p.urgent && !p.done);
-  const regular = priorities.filter(p => !p.urgent && !p.done);
-  const done = priorities.filter(p => p.done);
+  const urgent = prioritiesData.filter(p => p.urgent === 1 && p.done === 0);
+  const regular = prioritiesData.filter(p => p.urgent === 0 && p.done === 0);
+  const done = prioritiesData.filter(p => p.done === 1);
+
+  if (isLoading) return <div style={{ color: "#4b5368", padding: 20 }}>Loading...</div>;
 
   return (
     <div style={{ maxWidth: 720 }}>
-      {/* Header question */}
       <div style={{ background: "linear-gradient(135deg,rgba(59,130,246,0.08),rgba(99,102,241,0.06))", border: "1px solid rgba(59,130,246,0.15)", borderRadius: 12, padding: "20px 24px", marginBottom: 24 }}>
         <div style={{ fontSize: 22, fontWeight: 800, color: "#e8eaf0", marginBottom: 4 }}>What do I do right now?</div>
         <div style={{ fontSize: 13, color: "#4b5368" }}>Focus on urgent first. Then work down the list.</div>
       </div>
 
-      {/* Urgent */}
+      {prioritiesData.length === 0 && (
+        <div style={{ fontSize: 13, color: "#4b5368", fontStyle: "italic", marginBottom: 20 }}>No priorities yet. Add your first one below.</div>
+      )}
+
       {urgent.length > 0 && (
         <div style={{ marginBottom: 20 }}>
           <div style={{ fontSize: 11, fontWeight: 800, color: "#ef4444", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 10 }}>🔴 Urgent</div>
           {urgent.map(p => (
-            <div key={p.id} onClick={() => toggleDone(p.id)} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", background: "rgba(239,68,68,0.05)", border: "1px solid rgba(239,68,68,0.15)", borderRadius: 9, marginBottom: 8, cursor: "pointer" }}>
+            <div key={p.id} onClick={() => toggleMutation.mutate({ id: p.id, done: true })} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", background: "rgba(239,68,68,0.05)", border: "1px solid rgba(239,68,68,0.15)", borderRadius: 9, marginBottom: 8, cursor: "pointer" }}>
               <div style={{ width: 18, height: 18, borderRadius: 4, border: "2px solid rgba(239,68,68,0.4)", flexShrink: 0 }} />
               <span style={{ fontSize: 14, color: "#e8eaf0", fontWeight: 500 }}>{p.text}</span>
             </div>
@@ -408,12 +455,11 @@ function CeoHomeSection() {
         </div>
       )}
 
-      {/* Regular */}
       {regular.length > 0 && (
         <div style={{ marginBottom: 20 }}>
           <div style={{ fontSize: 11, fontWeight: 800, color: "#3b82f6", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 10 }}>📋 Today's Priorities</div>
           {regular.map(p => (
-            <div key={p.id} onClick={() => toggleDone(p.id)} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", background: "#111318", border: "1px solid #1e2130", borderRadius: 9, marginBottom: 8, cursor: "pointer" }}>
+            <div key={p.id} onClick={() => toggleMutation.mutate({ id: p.id, done: true })} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", background: "#111318", border: "1px solid #1e2130", borderRadius: 9, marginBottom: 8, cursor: "pointer" }}>
               <div style={{ width: 18, height: 18, borderRadius: 4, border: "2px solid #2a3050", flexShrink: 0 }} />
               <span style={{ fontSize: 14, color: "#e8eaf0" }}>{p.text}</span>
             </div>
@@ -421,8 +467,7 @@ function CeoHomeSection() {
         </div>
       )}
 
-      {/* Add priority */}
-      <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
+      <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
         <input
           value={newPriority}
           onChange={e => setNewPriority(e.target.value)}
@@ -430,15 +475,18 @@ function CeoHomeSection() {
           placeholder="Add a priority for today..."
           style={{ flex: 1, background: "#111318", border: "1px solid #1e2130", borderRadius: 8, color: "#e8eaf0", fontSize: 13, padding: "10px 14px", outline: "none" }}
         />
-        <button onClick={addPriority} style={{ padding: "10px 16px", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 8, color: "#3b82f6", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>Add</button>
+        <button onClick={() => setIsUrgent(u => !u)} style={{ padding: "10px 12px", background: isUrgent ? "rgba(239,68,68,0.15)" : "transparent", border: `1px solid ${isUrgent ? "rgba(239,68,68,0.4)" : "#1e2130"}`, borderRadius: 8, color: isUrgent ? "#ef4444" : "#4b5368", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>🔴 Urgent</button>
+        <button onClick={addPriority} disabled={addMutation.isPending} style={{ padding: "10px 16px", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 8, color: "#3b82f6", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>{addMutation.isPending ? "..." : "Add"}</button>
       </div>
 
-      {/* Done */}
       {done.length > 0 && (
         <div>
-          <div style={{ fontSize: 11, fontWeight: 800, color: "#22c55e", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 10 }}>✅ Done Today</div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+            <div style={{ fontSize: 11, fontWeight: 800, color: "#22c55e", textTransform: "uppercase", letterSpacing: "1.2px" }}>✅ Done Today</div>
+            <button onClick={() => clearDoneMutation.mutate()} style={{ fontSize: 11, color: "#4b5368", background: "none", border: "none", cursor: "pointer" }}>Clear all done</button>
+          </div>
           {done.map(p => (
-            <div key={p.id} onClick={() => toggleDone(p.id)} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 16px", background: "rgba(34,197,94,0.04)", border: "1px solid rgba(34,197,94,0.1)", borderRadius: 9, marginBottom: 6, cursor: "pointer", opacity: 0.6 }}>
+            <div key={p.id} onClick={() => toggleMutation.mutate({ id: p.id, done: false })} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 16px", background: "rgba(34,197,94,0.04)", border: "1px solid rgba(34,197,94,0.1)", borderRadius: 9, marginBottom: 6, cursor: "pointer", opacity: 0.6 }}>
               <div style={{ width: 18, height: 18, borderRadius: 4, background: "rgba(34,197,94,0.3)", border: "2px solid rgba(34,197,94,0.4)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#22c55e", flexShrink: 0 }}>✓</div>
               <span style={{ fontSize: 13, color: "#4b5368", textDecoration: "line-through" }}>{p.text}</span>
             </div>
@@ -451,88 +499,38 @@ function CeoHomeSection() {
 // ── END CEO HOME ──────────────────────────────────────────────────────────────
 
 // ── TASKS COMPONENT ───────────────────────────────────────────────────────────
-type TaskBucket = "today" | "week" | "someday";
-interface Task {
-  id: number;
-  text: string;
-  bucket: TaskBucket;
-  done: boolean;
-}
-const BUCKET_META: Record<TaskBucket, { label: string; color: string; bg: string }> = {
-  today: { label: "Today", color: "#ef4444", bg: "rgba(239,68,68,0.08)" },
-  week: { label: "This Week", color: "#3b82f6", bg: "rgba(59,130,246,0.08)" },
-  someday: { label: "Someday", color: "#4b5368", bg: "rgba(75,83,104,0.1)" },
-};
-
+// Tasks live in Google Tasks — this section is a control layer link, not a duplicate system
 function TasksSection() {
-  const [tasks, setTasks] = React.useState<Task[]>([
-    { id: 1, text: "Send dispute letter to Experian", bucket: "today", done: false },
-    { id: 2, text: "Review 3 new intake submissions", bucket: "today", done: false },
-    { id: 3, text: "Post on Instagram (debt collector content)", bucket: "today", done: false },
-    { id: 4, text: "Set up Mailchimp account", bucket: "week", done: false },
-    { id: 5, text: "Connect intake form to HubSpot", bucket: "week", done: false },
-    { id: 6, text: "Define media service packages", bucket: "someday", done: false },
-    { id: 7, text: "Write email welcome sequence", bucket: "week", done: false },
-  ]);
-  const [newText, setNewText] = React.useState("");
-  const [newBucket, setNewBucket] = React.useState<TaskBucket>("today");
-
-  const toggle = (id: number) => setTasks(t => t.map(x => x.id === id ? { ...x, done: !x.done } : x));
-  const remove = (id: number) => setTasks(t => t.filter(x => x.id !== id));
-  const add = () => {
-    if (!newText.trim()) return;
-    setTasks(t => [...t, { id: Date.now(), text: newText.trim(), bucket: newBucket, done: false }]);
-    setNewText("");
-  };
+  const GOOGLE_TASKS_URL = "https://tasks.google.com/tasks/?pli=1";
 
   return (
     <div style={{ maxWidth: 680 }}>
-      {/* Add task */}
-      <div style={{ display: "flex", gap: 8, marginBottom: 28 }}>
-        <input
-          value={newText}
-          onChange={e => setNewText(e.target.value)}
-          onKeyDown={e => e.key === "Enter" && add()}
-          placeholder="Add a task..."
-          style={{ flex: 1, background: "#111318", border: "1px solid #1e2130", borderRadius: 8, color: "#e8eaf0", fontSize: 13, padding: "10px 14px", outline: "none" }}
-        />
-        <select value={newBucket} onChange={e => setNewBucket(e.target.value as TaskBucket)} style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 8, color: "#e8eaf0", fontSize: 12, padding: "10px 10px", outline: "none", cursor: "pointer" }}>
-          <option value="today">Today</option>
-          <option value="week">This Week</option>
-          <option value="someday">Someday</option>
-        </select>
-        <button onClick={add} style={{ padding: "10px 16px", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 8, color: "#3b82f6", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>Add</button>
+      {/* Header */}
+      <div style={{ background: "linear-gradient(135deg,rgba(59,130,246,0.08),rgba(99,102,241,0.06))", border: "1px solid rgba(59,130,246,0.15)", borderRadius: 12, padding: "20px 24px", marginBottom: 24 }}>
+        <div style={{ fontSize: 20, fontWeight: 800, color: "#e8eaf0", marginBottom: 4 }}>Tasks</div>
+        <div style={{ fontSize: 13, color: "#4b5368" }}>Your tasks live in Google Tasks. Open it below to add, check off, and manage.</div>
       </div>
 
-      {(["today", "week", "someday"] as TaskBucket[]).map(bucket => {
-        const bucketTasks = tasks.filter(t => t.bucket === bucket && !t.done);
-        const doneTasks = tasks.filter(t => t.bucket === bucket && t.done);
-        const meta = BUCKET_META[bucket];
-        return (
-          <div key={bucket} style={{ marginBottom: 28 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-              <div style={{ fontSize: 11, fontWeight: 800, color: meta.color, textTransform: "uppercase", letterSpacing: "1.2px" }}>{meta.label}</div>
-              <span style={{ fontSize: 11, color: "#4b5368" }}>{bucketTasks.length} remaining</span>
-            </div>
-            {bucketTasks.length === 0 && doneTasks.length === 0 && (
-              <div style={{ fontSize: 13, color: "#4b5368", fontStyle: "italic", padding: "8px 0" }}>No tasks here</div>
-            )}
-            {bucketTasks.map(t => (
-              <div key={t.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "#111318", border: "1px solid #1e2130", borderRadius: 8, marginBottom: 6 }}>
-                <div onClick={() => toggle(t.id)} style={{ width: 18, height: 18, borderRadius: 4, border: `2px solid ${meta.color}66`, flexShrink: 0, cursor: "pointer" }} />
-                <span style={{ flex: 1, fontSize: 13, color: "#e8eaf0" }}>{t.text}</span>
-                <button onClick={() => remove(t.id)} style={{ background: "none", border: "none", color: "#4b5368", cursor: "pointer", fontSize: 14, padding: "0 4px" }}>×</button>
-              </div>
-            ))}
-            {doneTasks.map(t => (
-              <div key={t.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 14px", opacity: 0.45, marginBottom: 4 }}>
-                <div onClick={() => toggle(t.id)} style={{ width: 18, height: 18, borderRadius: 4, background: `${meta.color}33`, border: `2px solid ${meta.color}55`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: meta.color, flexShrink: 0, cursor: "pointer" }}>✓</div>
-                <span style={{ flex: 1, fontSize: 12, color: "#4b5368", textDecoration: "line-through" }}>{t.text}</span>
-              </div>
-            ))}
-          </div>
-        );
-      })}
+      {/* Primary action */}
+      <a href={GOOGLE_TASKS_URL} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 14, padding: "18px 22px", background: "#111318", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 12, textDecoration: "none", marginBottom: 16, cursor: "pointer" }}>
+        <div style={{ width: 40, height: 40, borderRadius: 10, background: "rgba(59,130,246,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>✅</div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 15, fontWeight: 700, color: "#e8eaf0", marginBottom: 2 }}>Open Google Tasks</div>
+          <div style={{ fontSize: 12, color: "#4b5368" }}>tasks.google.com — your task list, reminders, and due dates</div>
+        </div>
+        <div style={{ fontSize: 18, color: "#3b82f6" }}>→</div>
+      </a>
+
+      {/* Info note */}
+      <div style={{ padding: "14px 18px", background: "rgba(75,83,104,0.08)", border: "1px solid #1e2130", borderRadius: 10 }}>
+        <div style={{ fontSize: 12, color: "#4b5368", lineHeight: 1.6 }}>
+          <strong style={{ color: "#6b7280" }}>Why not duplicate tasks here?</strong><br />
+          Google Tasks is already your system. Maintaining a second list creates extra work and drift. This dashboard links directly so you have one click access without rebuilding what already works.
+        </div>
+        <div style={{ marginTop: 12, fontSize: 11, color: "#374151" }}>
+          Future upgrade: connect Google Tasks API to show today's tasks inline (read-only).
+        </div>
+      </div>
     </div>
   );
 }
@@ -611,18 +609,27 @@ const STATUS_STYLES: Record<ProjectStatus, { label: string; color: string; bg: s
 };
 
 function ProjectsPage() {
-  const [projects, setProjects] = React.useState<Project[]>(DEFAULT_PROJECTS);
-  const [selected, setSelected] = React.useState<Project | null>(null);
+  const utils = trpc.useUtils();
+  const { data: projectsData = [], isLoading } = trpc.dashboard.projects.list.useQuery();
+  const addMutation = trpc.dashboard.projects.add.useMutation({ onSuccess: () => utils.dashboard.projects.list.invalidate() });
+  const updateMutation = trpc.dashboard.projects.update.useMutation({ onSuccess: () => utils.dashboard.projects.list.invalidate() });
+  const deleteMutation = trpc.dashboard.projects.delete.useMutation({ onSuccess: () => { utils.dashboard.projects.list.invalidate(); setSelected(null); } });
+
+  const [selected, setSelected] = React.useState<number | null>(null);
   const [editNotes, setEditNotes] = React.useState("");
   const [editingNotes, setEditingNotes] = React.useState(false);
   const [addingProject, setAddingProject] = React.useState(false);
   const [newName, setNewName] = React.useState("");
   const [newObjective, setNewObjective] = React.useState("");
   const [newNextStep, setNewNextStep] = React.useState("");
+  const [newDriveUrl, setNewDriveUrl] = React.useState("");
 
-  const handleSelect = (p: Project) => {
-    setSelected(p);
-    setEditNotes(p.notes);
+  const selectedProject = projectsData.find(p => p.id === selected) ?? null;
+
+  const handleSelect = (id: number) => {
+    setSelected(id);
+    const p = projectsData.find(x => x.id === id);
+    setEditNotes(p?.notes ?? "");
     setEditingNotes(false);
   };
 
@@ -630,49 +637,48 @@ function ProjectsPage() {
 
   const handleSaveNotes = () => {
     if (!selected) return;
-    const updated = projects.map(p => p.id === selected.id ? { ...p, notes: editNotes } : p);
-    setProjects(updated);
-    setSelected({ ...selected, notes: editNotes });
+    updateMutation.mutate({ id: selected, notes: editNotes });
     setEditingNotes(false);
   };
 
   const handleProgressChange = (id: number, val: number) => {
-    setProjects(prev => prev.map(p => p.id === id ? { ...p, progress: val } : p));
-    if (selected?.id === id) setSelected(prev => prev ? { ...prev, progress: val } : prev);
+    updateMutation.mutate({ id, progress: val });
   };
 
   const handleStatusChange = (id: number, status: ProjectStatus) => {
-    setProjects(prev => prev.map(p => p.id === id ? { ...p, status } : p));
-    if (selected?.id === id) setSelected(prev => prev ? { ...prev, status } : prev);
+    updateMutation.mutate({ id, status });
   };
 
   const handleAddProject = () => {
     if (!newName.trim()) return;
-    const newProject: Project = {
-      id: Date.now(),
+    addMutation.mutate({
       name: newName.trim(),
       status: "active",
       progress: 0,
       nextStep: newNextStep.trim() || "Define first step",
       objective: newObjective.trim() || "",
-      keySteps: [],
       notes: "",
-    };
-    setProjects(prev => [...prev, newProject]);
+      driveUrl: newDriveUrl.trim() || undefined,
+    });
     setNewName("");
     setNewObjective("");
     setNewNextStep("");
+    setNewDriveUrl("");
     setAddingProject(false);
   };
 
   // DETAIL VIEW
-  if (selected) {
-    const st = STATUS_STYLES[selected.status];
+  if (selectedProject) {
+    const selected = { ...selectedProject, keySteps: selectedProject.keySteps ? JSON.parse(selectedProject.keySteps as string) : [] };
+    const st = STATUS_STYLES[selected.status as ProjectStatus];
     return (
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
           <button onClick={handleBack} style={{ background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.2)", color: "#3b82f6", borderRadius: 7, padding: "6px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>← Back</button>
-          <div style={{ fontSize: 18, fontWeight: 800, color: "#e8eaf0" }}>{selected.name}</div>
+          <div style={{ fontSize: 18, fontWeight: 800, color: "#e8eaf0", flex: 1 }}>{selected.name}</div>
+          {selected.driveUrl && (
+            <a href={selected.driveUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#4ade80", textDecoration: "none", fontWeight: 700, padding: "6px 14px", background: "rgba(74,222,128,0.1)", border: "1px solid rgba(74,222,128,0.2)", borderRadius: 7 }}>📂 Open in Drive ↗</a>
+          )}
           <span style={{ fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "3px 10px", background: st.bg, color: st.color }}>{st.label}</span>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
@@ -734,11 +740,12 @@ function ProjectsPage() {
   }
 
   // LIST VIEW
+  if (isLoading) return <div style={{ color: "#4b5368", padding: 20 }}>Loading...</div>;
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
-          <div style={{ fontSize: 11, color: "#4b5368", marginTop: 2 }}>{projects.filter(p => p.status === "active").length} active · {projects.filter(p => p.status === "paused").length} paused · {projects.filter(p => p.status === "done").length} done</div>
+          <div style={{ fontSize: 11, color: "#4b5368", marginTop: 2 }}>{projectsData.filter(p => p.status === "active").length} active · {projectsData.filter(p => p.status === "paused").length} paused · {projectsData.filter(p => p.status === "done").length} done</div>
         </div>
         <button onClick={() => setAddingProject(true)} style={{ fontSize: 12, fontWeight: 700, padding: "8px 16px", borderRadius: 8, border: "1px solid rgba(59,130,246,0.3)", background: "rgba(59,130,246,0.1)", color: "#3b82f6", cursor: "pointer" }}>+ Add Project</button>
       </div>
@@ -747,7 +754,8 @@ function ProjectsPage() {
           <div style={{ fontSize: 13, fontWeight: 700, color: "#e8eaf0", marginBottom: 12 }}>Add Project</div>
           <input placeholder="Project name *" value={newName} onChange={e => setNewName(e.target.value)} style={{ width: "100%", background: "#0b0d12", border: "1px solid #2a2f45", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "9px 12px", marginBottom: 8, outline: "none", boxSizing: "border-box" }} />
           <input placeholder="Objective (optional)" value={newObjective} onChange={e => setNewObjective(e.target.value)} style={{ width: "100%", background: "#0b0d12", border: "1px solid #2a2f45", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "9px 12px", marginBottom: 8, outline: "none", boxSizing: "border-box" }} />
-          <input placeholder="First next step (optional)" value={newNextStep} onChange={e => setNewNextStep(e.target.value)} style={{ width: "100%", background: "#0b0d12", border: "1px solid #2a2f45", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "9px 12px", marginBottom: 12, outline: "none", boxSizing: "border-box" }} />
+          <input placeholder="First next step (optional)" value={newNextStep} onChange={e => setNewNextStep(e.target.value)} style={{ width: "100%", background: "#0b0d12", border: "1px solid #2a2f45", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "9px 12px", marginBottom: 8, outline: "none", boxSizing: "border-box" }} />
+          <input placeholder="Google Drive folder/doc URL (optional)" value={newDriveUrl} onChange={e => setNewDriveUrl(e.target.value)} style={{ width: "100%", background: "#0b0d12", border: "1px solid #2a2f45", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "9px 12px", marginBottom: 12, outline: "none", boxSizing: "border-box" }} />
           <div style={{ display: "flex", gap: 8 }}>
             <button onClick={handleAddProject} style={{ fontSize: 12, fontWeight: 700, padding: "7px 16px", borderRadius: 7, border: "none", background: "#3b82f6", color: "#fff", cursor: "pointer" }}>Add Project</button>
             <button onClick={() => setAddingProject(false)} style={{ fontSize: 12, fontWeight: 600, padding: "7px 16px", borderRadius: 7, border: "1px solid #1e2130", background: "transparent", color: "#4b5368", cursor: "pointer" }}>Cancel</button>
@@ -755,16 +763,19 @@ function ProjectsPage() {
         </div>
       )}
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        {projects.map(p => {
-          const st = STATUS_STYLES[p.status];
+        {projectsData.map(p => {
+          const st = STATUS_STYLES[p.status as ProjectStatus] ?? STATUS_STYLES.active;
           return (
-            <div key={p.id} onClick={() => handleSelect(p)} style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 10, padding: "16px 20px", cursor: "pointer", transition: "border-color 0.15s" }}
+            <div key={p.id} onClick={() => handleSelect(p.id)} style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 10, padding: "16px 20px", cursor: "pointer", transition: "border-color 0.15s" }}
               onMouseEnter={e => (e.currentTarget.style.borderColor = "#2a3050")}
               onMouseLeave={e => (e.currentTarget.style.borderColor = "#1e2130")}>
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 15, fontWeight: 700, color: "#e8eaf0" }}>{p.name}</div>
                 </div>
+                {p.driveUrl && (
+                  <a href={p.driveUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ fontSize: 11, color: "#4ade80", textDecoration: "none", fontWeight: 700, padding: "3px 9px", background: "rgba(74,222,128,0.1)", border: "1px solid rgba(74,222,128,0.2)", borderRadius: 6, flexShrink: 0 }}>Drive ↗</a>
+                )}
                 <span style={{ fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "3px 10px", background: st.bg, color: st.color, flexShrink: 0 }}>{st.label}</span>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
