@@ -138,3 +138,77 @@ export const intakeLeads = mysqlTable("intake_leads", {
 
 export type IntakeLead = typeof intakeLeads.$inferSelect;
 export type InsertIntakeLead = typeof intakeLeads.$inferInsert;
+
+/**
+ * CEO Home priorities — daily focus list, manual entry by owner
+ * Resets are handled by the UI (marking done), not by the DB
+ */
+export const priorities = mysqlTable("priorities", {
+  id: int("id").autoincrement().primaryKey(),
+  text: varchar("text", { length: 500 }).notNull(),
+  urgent: int("urgent").default(0).notNull(), // 1 = urgent, 0 = normal
+  done: int("done").default(0).notNull(),     // 1 = done, 0 = pending
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Priority = typeof priorities.$inferSelect;
+export type InsertPriority = typeof priorities.$inferInsert;
+
+/**
+ * Projects — long-term initiatives with multiple steps
+ * Manual entry by owner only
+ */
+export const projects = mysqlTable("projects", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  status: mysqlEnum("status", ["active", "paused", "done"]).default("active").notNull(),
+  progress: int("progress").default(0).notNull(), // 0-100
+  nextStep: varchar("nextStep", { length: 500 }),
+  objective: text("objective"),
+  keySteps: longtext("keySteps"), // JSON array stored as string
+  notes: longtext("notes"),
+  /** Google Drive folder or doc URL — source of truth for project files */
+  driveUrl: varchar("driveUrl", { length: 1000 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Project = typeof projects.$inferSelect;
+export type InsertProject = typeof projects.$inferInsert;
+
+/**
+ * Tasks — execution list, simple and flat
+ * Buckets: today / week / someday
+ */
+export const tasks = mysqlTable("tasks", {
+  id: int("id").autoincrement().primaryKey(),
+  text: varchar("text", { length: 500 }).notNull(),
+  bucket: mysqlEnum("bucket", ["today", "week", "someday"]).default("today").notNull(),
+  done: int("done").default(0).notNull(), // 1 = done, 0 = pending
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Task = typeof tasks.$inferSelect;
+export type InsertTask = typeof tasks.$inferInsert;
+
+/**
+ * Dashboard leads — lightweight display layer only
+ * HubSpot is the source of truth; this table stores name/status/link for quick display
+ * Future: replace with live HubSpot API pull
+ */
+export const dashboardLeads = mysqlTable("dashboard_leads", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  status: mysqlEnum("status", ["new", "reviewing", "follow_up", "converted", "closed"]).default("new").notNull(),
+  /** Short note about this lead */
+  note: varchar("note", { length: 500 }),
+  /** Direct link to HubSpot contact/deal record */
+  hubspotUrl: varchar("hubspotUrl", { length: 1000 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type DashboardLead = typeof dashboardLeads.$inferSelect;
+export type InsertDashboardLead = typeof dashboardLeads.$inferInsert;
