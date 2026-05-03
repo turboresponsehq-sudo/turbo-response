@@ -6,7 +6,7 @@
  */
 
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { trpc } from "@/lib/trpc";
@@ -365,6 +365,252 @@ function ProgBar({ label, val, pct, color }: { label: string; val: string | numb
 }
 
 // ── Main Component ────────────────────────────────────────────────────────────
+
+// ── PROJECTS PAGE COMPONENT ──────────────────────────────────────────────────
+type ProjectStatus = "active" | "paused" | "done";
+interface Project {
+  id: number;
+  name: string;
+  status: ProjectStatus;
+  progress: number;
+  nextStep: string;
+  objective: string;
+  keySteps: string[];
+  notes: string;
+}
+
+const DEFAULT_PROJECTS: Project[] = [
+  {
+    id: 1,
+    name: "Fix Personal Credit",
+    status: "active",
+    progress: 40,
+    nextStep: "Send dispute letter to Experian",
+    objective: "Raise credit score to 720+ by removing inaccurate items",
+    keySteps: ["Pull all 3 credit reports", "Identify errors", "Send dispute letters", "Follow up in 30 days", "Verify removals"],
+    notes: "Focus on Experian first — most errors there.",
+  },
+  {
+    id: 2,
+    name: "Build Email Marketing System",
+    status: "active",
+    progress: 20,
+    nextStep: "Set up Mailchimp account and import leads",
+    objective: "Create automated email sequences for lead nurturing and client retention",
+    keySteps: ["Choose platform (Mailchimp)", "Import existing leads", "Write welcome sequence", "Set up automation", "Test and launch"],
+    notes: "Start with 3-email welcome sequence.",
+  },
+  {
+    id: 3,
+    name: "Grow Social Media Presence",
+    status: "active",
+    progress: 30,
+    nextStep: "Post 3x this week — debt collector content",
+    objective: "Reach 5,000 followers and generate 10+ leads/month from social",
+    keySteps: ["Define content pillars", "Create content calendar", "Post consistently 3x/week", "Engage with comments", "Track growth monthly"],
+    notes: "Instagram + Facebook primary. TikTok secondary.",
+  },
+  {
+    id: 4,
+    name: "Set Up Intake Automation",
+    status: "paused",
+    progress: 60,
+    nextStep: "Connect intake form to HubSpot CRM",
+    objective: "Fully automate client intake from form submission to case creation",
+    keySteps: ["Build intake form", "Connect to database", "Sync to HubSpot", "Add ManyChat follow-up", "Test end-to-end"],
+    notes: "HubSpot sync is partially working. Need to test ManyChat.",
+  },
+  {
+    id: 5,
+    name: "Launch Media Service",
+    status: "paused",
+    progress: 10,
+    nextStep: "Define service packages and pricing",
+    objective: "Offer content creation and social media management as a paid service",
+    keySteps: ["Define packages", "Set pricing", "Create sales page", "Onboard first client", "Deliver and refine"],
+    notes: "On hold until intake automation is complete.",
+  },
+];
+
+const STATUS_STYLES: Record<ProjectStatus, { label: string; color: string; bg: string }> = {
+  active: { label: "Active", color: "#22c55e", bg: "rgba(34,197,94,0.12)" },
+  paused: { label: "Paused", color: "#f59e0b", bg: "rgba(245,158,11,0.12)" },
+  done: { label: "Done", color: "#4b5368", bg: "rgba(75,83,104,0.15)" },
+};
+
+function ProjectsPage() {
+  const [projects, setProjects] = React.useState<Project[]>(DEFAULT_PROJECTS);
+  const [selected, setSelected] = React.useState<Project | null>(null);
+  const [editNotes, setEditNotes] = React.useState("");
+  const [editingNotes, setEditingNotes] = React.useState(false);
+  const [addingProject, setAddingProject] = React.useState(false);
+  const [newName, setNewName] = React.useState("");
+  const [newObjective, setNewObjective] = React.useState("");
+  const [newNextStep, setNewNextStep] = React.useState("");
+
+  const handleSelect = (p: Project) => {
+    setSelected(p);
+    setEditNotes(p.notes);
+    setEditingNotes(false);
+  };
+
+  const handleBack = () => setSelected(null);
+
+  const handleSaveNotes = () => {
+    if (!selected) return;
+    const updated = projects.map(p => p.id === selected.id ? { ...p, notes: editNotes } : p);
+    setProjects(updated);
+    setSelected({ ...selected, notes: editNotes });
+    setEditingNotes(false);
+  };
+
+  const handleProgressChange = (id: number, val: number) => {
+    setProjects(prev => prev.map(p => p.id === id ? { ...p, progress: val } : p));
+    if (selected?.id === id) setSelected(prev => prev ? { ...prev, progress: val } : prev);
+  };
+
+  const handleStatusChange = (id: number, status: ProjectStatus) => {
+    setProjects(prev => prev.map(p => p.id === id ? { ...p, status } : p));
+    if (selected?.id === id) setSelected(prev => prev ? { ...prev, status } : prev);
+  };
+
+  const handleAddProject = () => {
+    if (!newName.trim()) return;
+    const newProject: Project = {
+      id: Date.now(),
+      name: newName.trim(),
+      status: "active",
+      progress: 0,
+      nextStep: newNextStep.trim() || "Define first step",
+      objective: newObjective.trim() || "",
+      keySteps: [],
+      notes: "",
+    };
+    setProjects(prev => [...prev, newProject]);
+    setNewName("");
+    setNewObjective("");
+    setNewNextStep("");
+    setAddingProject(false);
+  };
+
+  // DETAIL VIEW
+  if (selected) {
+    const st = STATUS_STYLES[selected.status];
+    return (
+      <div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
+          <button onClick={handleBack} style={{ background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.2)", color: "#3b82f6", borderRadius: 7, padding: "6px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>← Back</button>
+          <div style={{ fontSize: 18, fontWeight: 800, color: "#e8eaf0" }}>{selected.name}</div>
+          <span style={{ fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "3px 10px", background: st.bg, color: st.color }}>{st.label}</span>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+          <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 10, padding: "18px 20px" }}>
+            <div style={{ fontSize: 11, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 10 }}>Objective</div>
+            <div style={{ fontSize: 14, color: "#e8eaf0", lineHeight: 1.6 }}>{selected.objective || <span style={{ color: "#4b5368", fontStyle: "italic" }}>No objective set</span>}</div>
+          </div>
+          <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 10, padding: "18px 20px" }}>
+            <div style={{ fontSize: 11, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 10 }}>Progress</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+              <div style={{ flex: 1, height: 8, background: "#1e2130", borderRadius: 4, overflow: "hidden" }}>
+                <div style={{ height: "100%", width: `${selected.progress}%`, background: "linear-gradient(90deg,#3b82f6,#6366f1)", borderRadius: 4, transition: "width 0.3s" }} />
+              </div>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "#3b82f6", minWidth: 36 }}>{selected.progress}%</span>
+            </div>
+            <input type="range" min={0} max={100} value={selected.progress} onChange={e => handleProgressChange(selected.id, Number(e.target.value))} style={{ width: "100%", accentColor: "#3b82f6" }} />
+            <div style={{ marginTop: 10, display: "flex", gap: 6 }}>
+              {(["active", "paused", "done"] as ProjectStatus[]).map(s => (
+                <button key={s} onClick={() => handleStatusChange(selected.id, s)} style={{ fontSize: 11, fontWeight: 600, padding: "4px 10px", borderRadius: 6, border: `1px solid ${selected.status === s ? STATUS_STYLES[s].color : "#1e2130"}`, background: selected.status === s ? STATUS_STYLES[s].bg : "transparent", color: selected.status === s ? STATUS_STYLES[s].color : "#4b5368", cursor: "pointer" }}>{STATUS_STYLES[s].label}</button>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 10, padding: "18px 20px" }}>
+            <div style={{ fontSize: 11, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 12 }}>Key Steps</div>
+            {selected.keySteps.length === 0 && <div style={{ fontSize: 13, color: "#4b5368", fontStyle: "italic" }}>No steps defined yet</div>}
+            {selected.keySteps.map((step, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "8px 0", borderBottom: i < selected.keySteps.length - 1 ? "1px solid #1a1d28" : "none" }}>
+                <div style={{ width: 20, height: 20, borderRadius: "50%", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 800, color: "#3b82f6", flexShrink: 0, marginTop: 1 }}>{i + 1}</div>
+                <div style={{ fontSize: 13, color: "#e8eaf0", lineHeight: 1.5 }}>{step}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 10, padding: "18px 20px" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1.2px" }}>Notes</div>
+              {!editingNotes && <button onClick={() => setEditingNotes(true)} style={{ fontSize: 11, color: "#3b82f6", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>Edit</button>}
+            </div>
+            {editingNotes ? (
+              <div>
+                <textarea value={editNotes} onChange={e => setEditNotes(e.target.value)} style={{ width: "100%", minHeight: 120, background: "#0b0d12", border: "1px solid #2a2f45", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "10px 12px", resize: "vertical", outline: "none", boxSizing: "border-box" }} />
+                <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+                  <button onClick={handleSaveNotes} style={{ fontSize: 12, fontWeight: 700, padding: "6px 14px", borderRadius: 7, border: "none", background: "#3b82f6", color: "#fff", cursor: "pointer" }}>Save</button>
+                  <button onClick={() => { setEditingNotes(false); setEditNotes(selected.notes); }} style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 7, border: "1px solid #1e2130", background: "transparent", color: "#4b5368", cursor: "pointer" }}>Cancel</button>
+                </div>
+              </div>
+            ) : (
+              <div style={{ fontSize: 13, color: selected.notes ? "#e8eaf0" : "#4b5368", lineHeight: 1.6, fontStyle: selected.notes ? "normal" : "italic" }}>{selected.notes || "No notes yet. Click Edit to add."}</div>
+            )}
+          </div>
+        </div>
+        <div style={{ marginTop: 16, background: "#111318", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 10, padding: "14px 20px" }}>
+          <div style={{ fontSize: 11, fontWeight: 800, color: "#f59e0b", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 6 }}>Next Step</div>
+          <div style={{ fontSize: 14, color: "#e8eaf0" }}>{selected.nextStep}</div>
+        </div>
+      </div>
+    );
+  }
+
+  // LIST VIEW
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+        <div>
+          <div style={{ fontSize: 11, color: "#4b5368", marginTop: 2 }}>{projects.filter(p => p.status === "active").length} active · {projects.filter(p => p.status === "paused").length} paused · {projects.filter(p => p.status === "done").length} done</div>
+        </div>
+        <button onClick={() => setAddingProject(true)} style={{ fontSize: 12, fontWeight: 700, padding: "8px 16px", borderRadius: 8, border: "1px solid rgba(59,130,246,0.3)", background: "rgba(59,130,246,0.1)", color: "#3b82f6", cursor: "pointer" }}>+ New Project</button>
+      </div>
+      {addingProject && (
+        <div style={{ background: "#111318", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 10, padding: "18px 20px", marginBottom: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#e8eaf0", marginBottom: 12 }}>New Project</div>
+          <input placeholder="Project name *" value={newName} onChange={e => setNewName(e.target.value)} style={{ width: "100%", background: "#0b0d12", border: "1px solid #2a2f45", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "9px 12px", marginBottom: 8, outline: "none", boxSizing: "border-box" }} />
+          <input placeholder="Objective (optional)" value={newObjective} onChange={e => setNewObjective(e.target.value)} style={{ width: "100%", background: "#0b0d12", border: "1px solid #2a2f45", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "9px 12px", marginBottom: 8, outline: "none", boxSizing: "border-box" }} />
+          <input placeholder="First next step (optional)" value={newNextStep} onChange={e => setNewNextStep(e.target.value)} style={{ width: "100%", background: "#0b0d12", border: "1px solid #2a2f45", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "9px 12px", marginBottom: 12, outline: "none", boxSizing: "border-box" }} />
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={handleAddProject} style={{ fontSize: 12, fontWeight: 700, padding: "7px 16px", borderRadius: 7, border: "none", background: "#3b82f6", color: "#fff", cursor: "pointer" }}>Add Project</button>
+            <button onClick={() => setAddingProject(false)} style={{ fontSize: 12, fontWeight: 600, padding: "7px 16px", borderRadius: 7, border: "1px solid #1e2130", background: "transparent", color: "#4b5368", cursor: "pointer" }}>Cancel</button>
+          </div>
+        </div>
+      )}
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {projects.map(p => {
+          const st = STATUS_STYLES[p.status];
+          return (
+            <div key={p.id} onClick={() => handleSelect(p)} style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 10, padding: "16px 20px", cursor: "pointer", transition: "border-color 0.15s" }}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = "#2a3050")}
+              onMouseLeave={e => (e.currentTarget.style.borderColor = "#1e2130")}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: "#e8eaf0" }}>{p.name}</div>
+                </div>
+                <span style={{ fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "3px 10px", background: st.bg, color: st.color, flexShrink: 0 }}>{st.label}</span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                <div style={{ flex: 1, height: 5, background: "#1e2130", borderRadius: 3, overflow: "hidden" }}>
+                  <div style={{ height: "100%", width: `${p.progress}%`, background: "linear-gradient(90deg,#3b82f6,#6366f1)", borderRadius: 3 }} />
+                </div>
+                <span style={{ fontSize: 12, fontWeight: 700, color: "#3b82f6", minWidth: 32 }}>{p.progress}%</span>
+              </div>
+              <div style={{ fontSize: 12, color: "#f59e0b" }}>→ {p.nextStep}</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ── END PROJECTS PAGE ─────────────────────────────────────────────────────────
 
 export default function AdminCommandCenter() {
   const [, setLocation] = useLocation();
@@ -1188,55 +1434,9 @@ export default function AdminCommandCenter() {
             {/* ── GROWTH ── */}
             {s("growth") && (
               <div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 22 }}>
-                  <StatCard label="Total Leads" value="43" delta="↑ 7 this week" accent="#22c55e" />
-                  <StatCard label="Active Outreach" value="12" sub="In progress" accent="#3b82f6" />
-                  <StatCard label="Contractors" value="3" sub="Active on Fiverr" accent="#8b5cf6" />
-                  <StatCard label="Pipeline Value" value="$4.2k" sub="Est. monthly" accent="#14b8a6" />
-                </div>
-
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-                  <SectionCard title="Lead Tracker" action="+ Add Lead">
-                    {LEADS.map(l => (
-                      <ItemRow key={l.name} icon="👤" iconBg={`${l.color}1a`} title={l.name} sub={`${l.source} · ${l.type}`} right={<Badge label={l.status} />} />
-                    ))}
-                  </SectionCard>
-
-                  <SectionCard title="Client Pipeline">
-                    <ProgBar label="New Leads" val={43} pct={100} color="#4b5368" />
-                    <ProgBar label="Qualified" val={28} pct={65} color="#3b82f6" />
-                    <ProgBar label="Intake Submitted" val={16} pct={37} color="#8b5cf6" />
-                    <ProgBar label="Active Clients" val={24} pct={56} color="#22c55e" />
-                    <ProgBar label="Resolved" val={91} pct={100} color="#14b8a6" />
-                    <div style={{ height: 1, background: "#1e2130", margin: "12px 0" }} />
-                    <div style={{ fontSize: 12, color: "#4b5368" }}>Lead-to-client conversion: <strong style={{ color: "#22c55e" }}>56%</strong></div>
-                  </SectionCard>
-                </div>
-
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                  <SectionCard title="Outreach Tracker" action="+ Log Outreach">
-                    {OUTREACH.map(o => (
-                      <ItemRow key={o.title} icon={o.icon} iconBg={`${o.color}1a`} title={o.title} sub={o.sub} right={<Badge label={o.status} />} />
-                    ))}
-                  </SectionCard>
-
-                  <SectionCard title="Fiverr / Contractors" action="+ Add">
-                    {CONTRACTORS.map(c => (
-                      <ItemRow key={c.name} icon={c.icon} iconBg={`${c.color}1a`} title={`${c.name} — ${c.role}`} sub={c.sub} right={<Badge label={c.status} />} />
-                    ))}
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0" }}>
-                      <div style={{ width: 34, height: 34, borderRadius: 9, background: "rgba(90,98,120,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>➕</div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: 13, fontWeight: 500, color: "#4b5368" }}>Open Contractor Slot</div>
-                        <div style={{ fontSize: 11, color: "#4b5368", marginTop: 2 }}>Fiverr, Upwork, or direct</div>
-                      </div>
-                      <Badge label="Open" />
-                    </div>
-                  </SectionCard>
-                </div>
+                <ProjectsPage />
               </div>
             )}
-
             {/* ── ECOSYSTEM ── */}
             {s("ecosystem") && (
               <div>
