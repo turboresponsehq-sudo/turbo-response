@@ -442,7 +442,27 @@ export default function AdminCommandCenter() {
 
   if (!isAuthenticated) return null;
 
-  const navItems: { id: Section; icon: string; label: string; badge?: string; badgeColor?: string }[] = [
+  const navItems: { id: Section; icon: string; label: string; badge?: string; badgeColor?: string; group?: string }[] = [
+    // ⚡ COMMAND CENTER
+    { id: "daily_ops", icon: "⚡", label: "Daily Ops", group: "⚡ Command Center" },
+    
+    // 📥 LEADS
+    { id: "operator_input", icon: "🧠", label: "Operator Input", group: "📥 Leads" },
+    { id: "growth_inbox", icon: "📥", label: "Growth Inbox", group: "📥 Leads" },
+    { id: "new_leads", icon: "🎯", label: "New Leads", group: "📥 Leads" },
+    
+    // 🚀 PROJECTS
+    { id: "growth", icon: "📈", label: "Projects", group: "🚀 Projects" },
+    
+    // ⚙️ EXECUTION
+    { id: "social_media", icon: "📱", label: "Social Media", group: "⚙️ Execution" },
+    { id: "marketing", icon: "📣", label: "Marketing", group: "⚙️ Execution" },
+    { id: "operations", icon: "⚙️", label: "Operations", group: "⚙️ Execution" },
+    
+    // 🧰 SYSTEMS
+    { id: "core_tools", icon: "🔗", label: "Core Tools", group: "🧰 Systems" },
+    { id: "ecosystem", icon: "🌐", label: "Ecosystem", group: "🧰 Systems" },
+  ];
     { id: "daily_ops", icon: "⚡", label: "Daily Ops", badge: "NEW", badgeColor: "#ef4444" },
     { id: "operator_input", icon: "🧠", label: "Operator Input", badge: "NEW", badgeColor: "#8b5cf6" },
     { id: "social_media", icon: "📱", label: "Social Media", badge: "NEW", badgeColor: "#06b6d4" },
@@ -493,15 +513,23 @@ export default function AdminCommandCenter() {
 
           <nav style={{ flex: 1, padding: "12px 0 8px" }}>
             <div style={{ fontSize: 9, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1.4px", padding: "10px 18px 5px" }}>Sections</div>
-            {navItems.map(n => (
-              <div key={n.id} onClick={() => setSection(n.id)} style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 18px", fontSize: 13, fontWeight: 500, color: s(n.id) ? "#e8eaf0" : "#4b5368", cursor: "pointer", borderLeft: s(n.id) ? "2px solid #3b82f6" : "2px solid transparent", background: s(n.id) ? "rgba(59,130,246,0.07)" : "transparent" }}>
-                <span style={{ fontSize: 14, width: 20, textAlign: "center", flexShrink: 0 }}>{n.icon}</span>
-                <span style={{ flex: 1 }}>{n.label}</span>
-                {n.badge && <span style={{ fontSize: 10, fontWeight: 700, borderRadius: 10, padding: "1px 7px", background: `${n.badgeColor}22`, color: n.badgeColor }}>{n.badge}</span>}
+            {/* Group items by category */}
+            {Array.from(new Set(navItems.map(n => n.group))).map(group => (
+              <div key={group}>
+                {group && (
+                  <div style={{ fontSize: 9, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1.4px", padding: "12px 18px 8px" }}>
+                    {group}
+                  </div>
+                )}
+                {navItems.filter(n => n.group === group).map(n => (
+                  <div key={n.id} onClick={() => setSection(n.id)} style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 18px", fontSize: 13, fontWeight: 500, color: s(n.id) ? "#e8eaf0" : "#4b5368", cursor: "pointer", borderLeft: s(n.id) ? "2px solid #3b82f6" : "2px solid transparent", background: s(n.id) ? "rgba(59,130,246,0.07)" : "transparent" }}>
+                    <span style={{ fontSize: 14, width: 20, textAlign: "center", flexShrink: 0 }}>{n.icon}</span>
+                    <span style={{ flex: 1 }}>{n.label}</span>
+                  </div>
+                ))}
               </div>
             ))}
-
-            <div style={{ height: 1, background: "#1e2130", margin: "8px 0" }} />
+            <div style={{ height: 1, background: "#1e2130", margin: "12px 0" }} />
             <div style={{ fontSize: 9, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1.4px", padding: "10px 18px 5px" }}>Quick Access</div>
             {[
               { icon: "📋", label: "Cases", path: "/admin/cases" },
@@ -516,11 +544,6 @@ export default function AdminCommandCenter() {
                 </div>
               </a>
             ))}
-          </nav>
-
-          <div style={{ padding: "14px 18px", borderTop: "1px solid #1e2130" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg,#3b82f6,#8b5cf6)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: "#fff", flexShrink: 0 }}>Z</div>
               <div>
                 <div style={{ fontSize: 12, fontWeight: 600, color: "#e8eaf0" }}>Zakhy</div>
                 <div style={{ fontSize: 10, color: "#4b5368", marginTop: 1 }}>Owner · Admin</div>
