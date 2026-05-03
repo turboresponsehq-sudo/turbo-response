@@ -206,8 +206,8 @@ function Badge({ label }: { label: string }) {
 function NewLeadsSection() {
   const utils = trpc.useUtils();
   // Intake leads from the existing intake form (source of truth = intake DB)
-  const { data: intakeLeads = [], isLoading, refetch } = trpc.leads.list.useQuery();
-  const updateStatus = trpc.leads.updateStatus.useMutation({ onSuccess: () => utils.leads.list.invalidate() });
+  const { data: intakeLeads = [], isLoading, refetch } = trpc.admin.getIntakeLeads.useQuery();
+  const updateStatus = trpc.admin.updateIntakeLeadStatus.useMutation({ onSuccess: () => utils.admin.getIntakeLeads.invalidate() });
 
   // Dashboard leads (manually added with HubSpot links)
   const { data: dashLeads = [] } = trpc.dashboard.leads.list.useQuery();
