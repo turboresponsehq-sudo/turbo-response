@@ -786,139 +786,76 @@ export default function AdminCommandCenter() {
 
             {/* ── SOCIAL MEDIA COMMAND ── */}
             {s("social_media") && (
-              <div>
-                {/* Approval Flow Banner */}
-                <div style={{ marginBottom: 22, padding: "16px 22px", background: "linear-gradient(135deg, rgba(6,182,212,0.1), rgba(59,130,246,0.06))", border: "1px solid rgba(6,182,212,0.25)", borderRadius: 12 }}>
-                  <div style={{ fontSize: 11, color: "#9ca3af", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Approval-Gated Workflow</div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 0 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                {/* TODAY / NEEDS ATTENTION - PRIMARY FOCUS */}
+                <div style={{ background: "#0f1117", border: "2px solid #06b6d4", borderRadius: 16, padding: "24px 28px", boxShadow: "0 0 20px rgba(6,182,212,0.08)" }}>
+                  <div style={{ fontSize: 14, fontWeight: 900, color: "#06b6d4", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 20 }}>🎯 Today — Needs Attention</div>
+                  
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginBottom: 16 }}>
                     {[
-                      { step: "Create", icon: "✏️", color: "#8b5cf6" },
-                      { step: "Review", icon: "👁️", color: "#f59e0b" },
-                      { step: "Approve", icon: "✅", color: "#22c55e" },
-                      { step: "Publish", icon: "🚀", color: "#3b82f6" },
-                    ].map((s, i) => (
-                      <div key={s.step} style={{ display: "flex", alignItems: "center" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 16px", background: `${s.color}15`, border: `1px solid ${s.color}30`, borderRadius: 8 }}>
-                          <span style={{ fontSize: 16 }}>{s.icon}</span>
-                          <span style={{ fontSize: 13, fontWeight: 700, color: s.color }}>{s.step}</span>
-                        </div>
-                        {i < 3 && <div style={{ width: 28, height: 2, background: "#1e2130", position: "relative" }}><div style={{ position: "absolute", right: -4, top: -4, color: "#4b5368", fontSize: 10 }}>›</div></div>}
-                      </div>
-                    ))}
-                    <div style={{ marginLeft: "auto", fontSize: 12, color: "#4b5368", fontStyle: "italic" }}>No auto-posting without your approval</div>
-                  </div>
-                </div>
-
-                {/* Platform Status Grid */}
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 22 }}>
-                  {[
-                    { icon: "📸", name: "Instagram", sub: "Reels + Stories + Posts", status: "Ready", color: "#e1306c" },
-                    { icon: "📘", name: "Facebook", sub: "Groups + Page Posts", status: "Ready", color: "#1877f2" },
-                    { icon: "💼", name: "LinkedIn", sub: "Articles + Thought Leadership", status: "Ready", color: "#0a66c2" },
-                    { icon: "📧", name: "Email", sub: "Newsletter + Campaigns", status: "Ready", color: "#f59e0b" },
-                  ].map(p => (
-                    <div key={p.name} style={{ background: "#111318", border: `1px solid ${p.color}25`, borderRadius: 12, padding: "16px 18px", position: "relative", overflow: "hidden" }}>
-                      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: p.color }} />
-                      <div style={{ fontSize: 22, marginBottom: 8 }}>{p.icon}</div>
-                      <div style={{ fontSize: 14, fontWeight: 700, color: "#e8eaf0" }}>{p.name}</div>
-                      <div style={{ fontSize: 11, color: "#4b5368", marginTop: 3, marginBottom: 10 }}>{p.sub}</div>
-                      <span style={{ fontSize: 10, fontWeight: 700, borderRadius: 6, padding: "2px 8px", background: "rgba(34,197,94,0.12)", color: "#4ade80" }}>{p.status}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Content Queue + Audit */}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-                  <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px" }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-                      <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px" }}>Content Queue</div>
-                      <span style={{ fontSize: 10, fontWeight: 700, borderRadius: 6, padding: "2px 8px", background: "rgba(245,158,11,0.12)", color: "#fbbf24" }}>Pending Approval</span>
-                    </div>
-                    {[
-                      { title: '"5 Things Debt Collectors Can\'t Do"', platform: "Instagram Reel", status: "Awaiting Approval", statusColor: "#f59e0b" },
-                      { title: "How to Dispute a Credit Error", platform: "Facebook + Email", status: "In Review", statusColor: "#3b82f6" },
-                      { title: "Client Win Story — Eviction Dismissed", platform: "All Platforms", status: "Draft", statusColor: "#6b7280" },
-                      { title: "IRS Notice — What It Means", platform: "LinkedIn Article", status: "Draft", statusColor: "#6b7280" },
+                      { label: "Pending Approvals", count: 3, icon: "⏳", color: "#f59e0b" },
+                      { label: "Items in Review", count: 2, icon: "👀", color: "#3b82f6" },
+                      { label: "Messages/DMs", count: 5, icon: "💬", color: "#10b981" },
+                      { label: "Tasks", count: 1, icon: "✓", color: "#8b5cf6" },
                     ].map(item => (
-                      <div key={item.title} style={{ padding: "10px 0", borderBottom: "1px solid #1a1d28" }}>
-                        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
-                          <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: 12, fontWeight: 600, color: "#e8eaf0" }}>{item.title}</div>
-                            <div style={{ fontSize: 11, color: "#4b5368", marginTop: 2 }}>{item.platform}</div>
-                          </div>
-                          <span style={{ fontSize: 10, fontWeight: 700, borderRadius: 6, padding: "2px 8px", background: `${item.statusColor}18`, color: item.statusColor, whiteSpace: "nowrap", flexShrink: 0 }}>{item.status}</span>
-                        </div>
-                        <div style={{ display: "flex", gap: 6, marginTop: 8 }}>
-                          <button style={{ fontSize: 10, fontWeight: 600, padding: "3px 10px", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 6, color: "#4ade80", cursor: "pointer" }}>✓ Approve</button>
-                          <button style={{ fontSize: 10, fontWeight: 600, padding: "3px 10px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 6, color: "#f87171", cursor: "pointer" }}>✕ Reject</button>
-                          <button style={{ fontSize: 10, fontWeight: 600, padding: "3px 10px", background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 6, color: "#60a5fa", cursor: "pointer" }}>✏ Edit</button>
-                        </div>
+                      <div key={item.label} style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 10, padding: "14px 16px", textAlign: "center", cursor: "pointer", transition: "all 0.2s" }}>
+                        <div style={{ fontSize: 24, marginBottom: 6 }}>{item.icon}</div>
+                        <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 4 }}>{item.label}</div>
+                        <div style={{ fontSize: 20, fontWeight: 800, color: item.color }}>{item.count}</div>
                       </div>
                     ))}
                   </div>
 
-                  <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px" }}>
-                    <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 14 }}>Weekly Content Audit</div>
-                    <div style={{ fontSize: 12, color: "#6b7280", lineHeight: 1.7, marginBottom: 14 }}>Track what you post, how it performs, and what to repeat. Review every Friday or Sunday.</div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
-                      {[
-                        { col: "Post Log", items: ["Date", "Topic", "Type (video/carousel)", "Hook used"] },
-                        { col: "Performance", items: ["Views", "Saves", "Comments", "DMs"] },
-                        { col: "Insight", items: ["What worked", "What didn't", "What to repeat"] },
-                      ].map(section => (
-                        <div key={section.col} style={{ background: "#181b24", borderRadius: 8, padding: "10px 14px" }}>
-                          <div style={{ fontSize: 11, fontWeight: 700, color: "#e8eaf0", marginBottom: 6 }}>{section.col}</div>
-                          <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
-                            {section.items.map(item => (
-                              <span key={item} style={{ fontSize: 10, color: "#6b7280", background: "rgba(75,83,104,0.15)", borderRadius: 4, padding: "2px 7px" }}>{item}</span>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    <a href="https://docs.google.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
-                      <button style={{ width: "100%", padding: "10px 16px", background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.25)", borderRadius: 8, color: "#22d3ee", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
-                        📊 Open Content Audit Doc
-                      </button>
-                    </a>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <button style={{ flex: 1, padding: "12px 16px", background: "rgba(6,182,212,0.15)", border: "1px solid rgba(6,182,212,0.3)", borderRadius: 8, color: "#22d3ee", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                      👁 Review Now
+                    </button>
+                    <button style={{ flex: 1, padding: "12px 16px", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 8, color: "#4ade80", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                      ✓ Approve All
+                    </button>
                   </div>
                 </div>
 
-                {/* Publishing Tools */}
-                <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px" }}>
-                  <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 14 }}>Publishing & Management Tools</div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 10 }}>
-                    {[
-                      { icon: "📸", label: "Instagram", sub: "Meta Business Suite", href: "https://business.facebook.com", color: "#e1306c" },
-                      { icon: "📘", label: "Facebook", sub: "Pages & Groups Manager", href: "https://www.facebook.com", color: "#1877f2" },
-                      { icon: "💼", label: "LinkedIn", sub: "Creator Studio", href: "https://www.linkedin.com", color: "#0a66c2" },
-                      { icon: "📊", label: "Meta Business Suite", sub: "Unified Meta management", href: "https://business.facebook.com", color: "#1877f2" },
-                      { icon: "📅", label: "Buffer", sub: "Schedule & publish", href: "https://buffer.com", color: "#2c4bff" },
-                      { icon: "📝", label: "Canva", sub: "Design graphics & reels", href: "https://canva.com", color: "#00c4cc" },
-                      { icon: "📧", label: "Mailchimp", sub: "Email campaigns", href: "https://mailchimp.com", color: "#ffe01b" },
-                      { icon: "💡", label: "Content Ideas", sub: "Go to Marketing section", href: "#", color: "#8b5cf6" },
-                    ].map(tool => (
-                      <a key={tool.label} href={tool.href} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", background: "#181b24", border: "1px solid #1e2130", borderRadius: 9, cursor: "pointer" }}>
-                          <span style={{ fontSize: 16, flexShrink: 0 }}>{tool.icon}</span>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: 12, fontWeight: 600, color: "#e8eaf0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{tool.label}</div>
-                            <div style={{ fontSize: 10, color: "#4b5368", marginTop: 1 }}>{tool.sub}</div>
-                          </div>
-                          <span style={{ color: tool.color, fontSize: 11, flexShrink: 0 }}>↗</span>
-                        </div>
-                      </a>
-                    ))}
+                {/* CONTENT QUEUE - COLLAPSED BY DEFAULT */}
+                <div style={{ background: "#0f1117", border: "1px solid #1e2130", borderRadius: 12, padding: "16px 20px", cursor: "pointer" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                      <span style={{ fontSize: 18 }}>📋</span>
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: "#e8eaf0" }}>Content Queue</div>
+                        <div style={{ fontSize: 11, color: "#6b7280" }}>12 items ready</div>
+                      </div>
+                    </div>
+                    <span style={{ fontSize: 12, color: "#6b7280" }}>▼ Expand</span>
                   </div>
-                  <div style={{ marginTop: 14, padding: "10px 14px", background: "rgba(6,182,212,0.06)", border: "1px solid rgba(6,182,212,0.15)", borderRadius: 8 }}>
-                    <div style={{ fontSize: 11, color: "#22d3ee", fontWeight: 600 }}>🔒 Approval Rule Active</div>
-                    <div style={{ fontSize: 11, color: "#4b5368", marginTop: 3 }}>All content must be reviewed and approved before publishing. No automated posting without your sign-off.</div>
+                </div>
+
+                {/* WEEKLY AUDIT - BUTTON ONLY */}
+                <div style={{ background: "#0f1117", border: "1px solid #1e2130", borderRadius: 12, padding: "16px 20px" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 12 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                      <span style={{ fontSize: 18 }}>📊</span>
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: "#e8eaf0" }}>Weekly Audit</div>
+                        <div style={{ fontSize: 11, color: "#6b7280" }}>Performance & insights</div>
+                      </div>
+                    </div>
                   </div>
+                  <a href="https://docs.google.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+                    <button style={{ width: "100%", padding: "10px 16px", background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.25)", borderRadius: 8, color: "#22d3ee", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                      📈 View Full Audit
+                    </button>
+                  </a>
+                </div>
+
+                {/* PUBLISHING TOOLS - HIDDEN BEHIND BUTTON */}
+                <div style={{ background: "#0f1117", border: "1px solid #1e2130", borderRadius: 12, padding: "16px 20px" }}>
+                  <button style={{ width: "100%", padding: "12px 16px", background: "rgba(139,92,246,0.1)", border: "1px solid rgba(139,92,246,0.25)", borderRadius: 8, color: "#c4b5fd", fontSize: 12, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                    🛠 Open Publishing Tools
+                  </button>
                 </div>
               </div>
             )}
-
-            {/* ── GROWTH INBOX ── */}
             {s("growth_inbox") && (
               <div>
                 {/* Workflow Banner */}
