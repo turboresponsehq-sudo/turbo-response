@@ -526,8 +526,8 @@ function ProjectsPage() {
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
           <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 10, padding: "18px 20px" }}>
-            <div style={{ fontSize: 11, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 12 }}>Key Steps</div>
-            {selected.keySteps.length === 0 && <div style={{ fontSize: 13, color: "#4b5368", fontStyle: "italic" }}>No steps defined yet</div>}
+            <div style={{ fontSize: 11, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 12 }}>Milestones</div>
+            {selected.keySteps.length === 0 && <div style={{ fontSize: 13, color: "#4b5368", fontStyle: "italic" }}>No milestones defined yet</div>}
             {selected.keySteps.map((step, i) => (
               <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "8px 0", borderBottom: i < selected.keySteps.length - 1 ? "1px solid #1a1d28" : "none" }}>
                 <div style={{ width: 20, height: 20, borderRadius: "50%", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 800, color: "#3b82f6", flexShrink: 0, marginTop: 1 }}>{i + 1}</div>
@@ -568,11 +568,11 @@ function ProjectsPage() {
         <div>
           <div style={{ fontSize: 11, color: "#4b5368", marginTop: 2 }}>{projects.filter(p => p.status === "active").length} active · {projects.filter(p => p.status === "paused").length} paused · {projects.filter(p => p.status === "done").length} done</div>
         </div>
-        <button onClick={() => setAddingProject(true)} style={{ fontSize: 12, fontWeight: 700, padding: "8px 16px", borderRadius: 8, border: "1px solid rgba(59,130,246,0.3)", background: "rgba(59,130,246,0.1)", color: "#3b82f6", cursor: "pointer" }}>+ New Project</button>
+        <button onClick={() => setAddingProject(true)} style={{ fontSize: 12, fontWeight: 700, padding: "8px 16px", borderRadius: 8, border: "1px solid rgba(59,130,246,0.3)", background: "rgba(59,130,246,0.1)", color: "#3b82f6", cursor: "pointer" }}>+ Add Project</button>
       </div>
       {addingProject && (
         <div style={{ background: "#111318", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 10, padding: "18px 20px", marginBottom: 16 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: "#e8eaf0", marginBottom: 12 }}>New Project</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#e8eaf0", marginBottom: 12 }}>Add Project</div>
           <input placeholder="Project name *" value={newName} onChange={e => setNewName(e.target.value)} style={{ width: "100%", background: "#0b0d12", border: "1px solid #2a2f45", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "9px 12px", marginBottom: 8, outline: "none", boxSizing: "border-box" }} />
           <input placeholder="Objective (optional)" value={newObjective} onChange={e => setNewObjective(e.target.value)} style={{ width: "100%", background: "#0b0d12", border: "1px solid #2a2f45", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "9px 12px", marginBottom: 8, outline: "none", boxSizing: "border-box" }} />
           <input placeholder="First next step (optional)" value={newNextStep} onChange={e => setNewNextStep(e.target.value)} style={{ width: "100%", background: "#0b0d12", border: "1px solid #2a2f45", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "9px 12px", marginBottom: 12, outline: "none", boxSizing: "border-box" }} />
@@ -713,7 +713,7 @@ export default function AdminCommandCenter() {
     growth_inbox: { title: "📥 Growth Inbox", crumb: "Social Inbox · Lead Capture · Booking · Follow-Up · Content → DM → Email → Book" },
     new_leads: { title: "🎯 New Leads", crumb: "Intake Submissions · Review · Status Management · Pipeline" },
     operations: { title: "⚙️ Operations", crumb: "Cases · Admin Dashboard · Maintenance · SOPs" },
-    growth: { title: "📈 Growth", crumb: "Leads · Outreach · Pipeline · HubSpot CRM" },
+    growth: { title: "📈 Projects", crumb: "Long-term initiatives · Multiple steps · Track progress" },
     ecosystem: { title: "🌐 Ecosystem", crumb: "People · Organizations · Grants · Events" },
     marketing: { title: "📣 Marketing", crumb: "Content · Schedule · Strategy · Campaigns" },
     core_tools: { title: "🔗 Core Tools", crumb: "Google Docs · Drive · NotebookLM · ChatGPT · Grok · Manus · Tasks · HubSpot" },
