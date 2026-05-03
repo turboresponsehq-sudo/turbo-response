@@ -11,7 +11,7 @@ import { useLocation } from "wouter";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { trpc } from "@/lib/trpc";
 
-type Section = "daily_ops" | "operator_input" | "social_media" | "growth_inbox" | "new_leads" | "operations" | "growth" | "ecosystem" | "marketing" | "core_tools";
+type Section = "ceo_home" | "projects" | "tasks" | "leads" | "daily_ops" | "operator_input" | "social_media" | "growth_inbox" | "new_leads" | "operations" | "growth" | "ecosystem" | "marketing" | "core_tools";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turboresponsehq.ai";
 
@@ -366,6 +366,178 @@ function ProgBar({ label, val, pct, color }: { label: string; val: string | numb
 
 // ── Main Component ────────────────────────────────────────────────────────────
 
+// ── CEO HOME COMPONENT ───────────────────────────────────────────────────────
+function CeoHomeSection() {
+  const [priorities, setPriorities] = React.useState([
+    { id: 1, text: "Review new intake submissions", urgent: true, done: false },
+    { id: 2, text: "Send dispute letter to Experian", urgent: true, done: false },
+    { id: 3, text: "Post 3x on social media this week", urgent: false, done: false },
+    { id: 4, text: "Follow up with intake automation setup", urgent: false, done: false },
+  ]);
+  const [newPriority, setNewPriority] = React.useState("");
+
+  const toggleDone = (id: number) => setPriorities(p => p.map(x => x.id === id ? { ...x, done: !x.done } : x));
+  const addPriority = () => {
+    if (!newPriority.trim()) return;
+    setPriorities(p => [...p, { id: Date.now(), text: newPriority.trim(), urgent: false, done: false }]);
+    setNewPriority("");
+  };
+
+  const urgent = priorities.filter(p => p.urgent && !p.done);
+  const regular = priorities.filter(p => !p.urgent && !p.done);
+  const done = priorities.filter(p => p.done);
+
+  return (
+    <div style={{ maxWidth: 720 }}>
+      {/* Header question */}
+      <div style={{ background: "linear-gradient(135deg,rgba(59,130,246,0.08),rgba(99,102,241,0.06))", border: "1px solid rgba(59,130,246,0.15)", borderRadius: 12, padding: "20px 24px", marginBottom: 24 }}>
+        <div style={{ fontSize: 22, fontWeight: 800, color: "#e8eaf0", marginBottom: 4 }}>What do I do right now?</div>
+        <div style={{ fontSize: 13, color: "#4b5368" }}>Focus on urgent first. Then work down the list.</div>
+      </div>
+
+      {/* Urgent */}
+      {urgent.length > 0 && (
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ fontSize: 11, fontWeight: 800, color: "#ef4444", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 10 }}>🔴 Urgent</div>
+          {urgent.map(p => (
+            <div key={p.id} onClick={() => toggleDone(p.id)} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", background: "rgba(239,68,68,0.05)", border: "1px solid rgba(239,68,68,0.15)", borderRadius: 9, marginBottom: 8, cursor: "pointer" }}>
+              <div style={{ width: 18, height: 18, borderRadius: 4, border: "2px solid rgba(239,68,68,0.4)", flexShrink: 0 }} />
+              <span style={{ fontSize: 14, color: "#e8eaf0", fontWeight: 500 }}>{p.text}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Regular */}
+      {regular.length > 0 && (
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ fontSize: 11, fontWeight: 800, color: "#3b82f6", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 10 }}>📋 Today's Priorities</div>
+          {regular.map(p => (
+            <div key={p.id} onClick={() => toggleDone(p.id)} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", background: "#111318", border: "1px solid #1e2130", borderRadius: 9, marginBottom: 8, cursor: "pointer" }}>
+              <div style={{ width: 18, height: 18, borderRadius: 4, border: "2px solid #2a3050", flexShrink: 0 }} />
+              <span style={{ fontSize: 14, color: "#e8eaf0" }}>{p.text}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Add priority */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
+        <input
+          value={newPriority}
+          onChange={e => setNewPriority(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && addPriority()}
+          placeholder="Add a priority for today..."
+          style={{ flex: 1, background: "#111318", border: "1px solid #1e2130", borderRadius: 8, color: "#e8eaf0", fontSize: 13, padding: "10px 14px", outline: "none" }}
+        />
+        <button onClick={addPriority} style={{ padding: "10px 16px", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 8, color: "#3b82f6", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>Add</button>
+      </div>
+
+      {/* Done */}
+      {done.length > 0 && (
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 800, color: "#22c55e", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 10 }}>✅ Done Today</div>
+          {done.map(p => (
+            <div key={p.id} onClick={() => toggleDone(p.id)} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 16px", background: "rgba(34,197,94,0.04)", border: "1px solid rgba(34,197,94,0.1)", borderRadius: 9, marginBottom: 6, cursor: "pointer", opacity: 0.6 }}>
+              <div style={{ width: 18, height: 18, borderRadius: 4, background: "rgba(34,197,94,0.3)", border: "2px solid rgba(34,197,94,0.4)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#22c55e", flexShrink: 0 }}>✓</div>
+              <span style={{ fontSize: 13, color: "#4b5368", textDecoration: "line-through" }}>{p.text}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+// ── END CEO HOME ──────────────────────────────────────────────────────────────
+
+// ── TASKS COMPONENT ───────────────────────────────────────────────────────────
+type TaskBucket = "today" | "week" | "someday";
+interface Task {
+  id: number;
+  text: string;
+  bucket: TaskBucket;
+  done: boolean;
+}
+const BUCKET_META: Record<TaskBucket, { label: string; color: string; bg: string }> = {
+  today: { label: "Today", color: "#ef4444", bg: "rgba(239,68,68,0.08)" },
+  week: { label: "This Week", color: "#3b82f6", bg: "rgba(59,130,246,0.08)" },
+  someday: { label: "Someday", color: "#4b5368", bg: "rgba(75,83,104,0.1)" },
+};
+
+function TasksSection() {
+  const [tasks, setTasks] = React.useState<Task[]>([
+    { id: 1, text: "Send dispute letter to Experian", bucket: "today", done: false },
+    { id: 2, text: "Review 3 new intake submissions", bucket: "today", done: false },
+    { id: 3, text: "Post on Instagram (debt collector content)", bucket: "today", done: false },
+    { id: 4, text: "Set up Mailchimp account", bucket: "week", done: false },
+    { id: 5, text: "Connect intake form to HubSpot", bucket: "week", done: false },
+    { id: 6, text: "Define media service packages", bucket: "someday", done: false },
+    { id: 7, text: "Write email welcome sequence", bucket: "week", done: false },
+  ]);
+  const [newText, setNewText] = React.useState("");
+  const [newBucket, setNewBucket] = React.useState<TaskBucket>("today");
+
+  const toggle = (id: number) => setTasks(t => t.map(x => x.id === id ? { ...x, done: !x.done } : x));
+  const remove = (id: number) => setTasks(t => t.filter(x => x.id !== id));
+  const add = () => {
+    if (!newText.trim()) return;
+    setTasks(t => [...t, { id: Date.now(), text: newText.trim(), bucket: newBucket, done: false }]);
+    setNewText("");
+  };
+
+  return (
+    <div style={{ maxWidth: 680 }}>
+      {/* Add task */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 28 }}>
+        <input
+          value={newText}
+          onChange={e => setNewText(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && add()}
+          placeholder="Add a task..."
+          style={{ flex: 1, background: "#111318", border: "1px solid #1e2130", borderRadius: 8, color: "#e8eaf0", fontSize: 13, padding: "10px 14px", outline: "none" }}
+        />
+        <select value={newBucket} onChange={e => setNewBucket(e.target.value as TaskBucket)} style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 8, color: "#e8eaf0", fontSize: 12, padding: "10px 10px", outline: "none", cursor: "pointer" }}>
+          <option value="today">Today</option>
+          <option value="week">This Week</option>
+          <option value="someday">Someday</option>
+        </select>
+        <button onClick={add} style={{ padding: "10px 16px", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 8, color: "#3b82f6", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>Add</button>
+      </div>
+
+      {(["today", "week", "someday"] as TaskBucket[]).map(bucket => {
+        const bucketTasks = tasks.filter(t => t.bucket === bucket && !t.done);
+        const doneTasks = tasks.filter(t => t.bucket === bucket && t.done);
+        const meta = BUCKET_META[bucket];
+        return (
+          <div key={bucket} style={{ marginBottom: 28 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: meta.color, textTransform: "uppercase", letterSpacing: "1.2px" }}>{meta.label}</div>
+              <span style={{ fontSize: 11, color: "#4b5368" }}>{bucketTasks.length} remaining</span>
+            </div>
+            {bucketTasks.length === 0 && doneTasks.length === 0 && (
+              <div style={{ fontSize: 13, color: "#4b5368", fontStyle: "italic", padding: "8px 0" }}>No tasks here</div>
+            )}
+            {bucketTasks.map(t => (
+              <div key={t.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "#111318", border: "1px solid #1e2130", borderRadius: 8, marginBottom: 6 }}>
+                <div onClick={() => toggle(t.id)} style={{ width: 18, height: 18, borderRadius: 4, border: `2px solid ${meta.color}66`, flexShrink: 0, cursor: "pointer" }} />
+                <span style={{ flex: 1, fontSize: 13, color: "#e8eaf0" }}>{t.text}</span>
+                <button onClick={() => remove(t.id)} style={{ background: "none", border: "none", color: "#4b5368", cursor: "pointer", fontSize: 14, padding: "0 4px" }}>×</button>
+              </div>
+            ))}
+            {doneTasks.map(t => (
+              <div key={t.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 14px", opacity: 0.45, marginBottom: 4 }}>
+                <div onClick={() => toggle(t.id)} style={{ width: 18, height: 18, borderRadius: 4, background: `${meta.color}33`, border: `2px solid ${meta.color}55`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: meta.color, flexShrink: 0, cursor: "pointer" }}>✓</div>
+                <span style={{ flex: 1, fontSize: 12, color: "#4b5368", textDecoration: "line-through" }}>{t.text}</span>
+              </div>
+            ))}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+// ── END TASKS ─────────────────────────────────────────────────────────────────
+
 // ── PROJECTS PAGE COMPONENT ──────────────────────────────────────────────────
 type ProjectStatus = "active" | "paused" | "done";
 interface Project {
@@ -615,7 +787,7 @@ function ProjectsPage() {
 export default function AdminCommandCenter() {
   const [, setLocation] = useLocation();
   const { token, isAuthenticated, isLoading: authLoading, clearTokenAndRedirect } = useAdminAuth();
-  const [section, setSection] = useState<Section>("daily_ops");
+  const [section, setSection] = useState<Section>("ceo_home");
   const [tasks, setTasks] = useState<{ id: number; text: string; bucket: "high" | "active" | "idea"; done: boolean }[]>([
     { id: 1, text: "Finalize Command Center V1", bucket: "high", done: false },
     { id: 2, text: "Post content this week", bucket: "high", done: false },
@@ -690,33 +862,44 @@ export default function AdminCommandCenter() {
   if (!isAuthenticated) return null;
 
   // Main visible nav items
+  // ── LAYER 1: Core Operations ────────────────────────────────────────────────
   const mainNavItems: { id: Section; icon: string; label: string }[] = [
-    { id: "daily_ops", icon: "⚡", label: "Daily Ops" },
-    { id: "growth", icon: "📈", label: "Projects" },
-    { id: "social_media", icon: "📱", label: "Social Media" },
-    { id: "new_leads", icon: "🎯", label: "Tasks / Leads" },
+    { id: "ceo_home", icon: "⚡", label: "CEO Home" },
+    { id: "projects", icon: "🚀", label: "Projects" },
+    { id: "tasks", icon: "✅", label: "Tasks" },
+    { id: "leads", icon: "📥", label: "Leads / Cases" },
   ];
-  // Archived / secondary items — hidden by default
+  // ── LAYER 2: Archive (hidden by default) ─────────────────────────────────
   const archiveNavItems: { id: Section; icon: string; label: string }[] = [
-    { id: "growth_inbox", icon: "📥", label: "Growth Inbox" },
-    { id: "operator_input", icon: "🧠", label: "Operator Input" },
-    { id: "ecosystem", icon: "🌐", label: "Ecosystem" },
-    { id: "core_tools", icon: "🔗", label: "Core Tools" },
+    { id: "social_media", icon: "📱", label: "Social Media" },
     { id: "marketing", icon: "📣", label: "Marketing" },
+    { id: "growth", icon: "📈", label: "Growth" },
+    { id: "core_tools", icon: "🔗", label: "Tools" },
+    { id: "ecosystem", icon: "🌐", label: "Ecosystem" },
     { id: "operations", icon: "⚙️", label: "Operations" },
+    { id: "daily_ops", icon: "🗂️", label: "Daily Ops (old)" },
+    { id: "new_leads", icon: "🎯", label: "New Leads (old)" },
+    { id: "growth_inbox", icon: "📬", label: "Growth Inbox (old)" },
+    { id: "operator_input", icon: "🧠", label: "Operator Input (old)" },
   ];
 
   const topbarMeta: Record<Section, { title: string; crumb: string }> = {
-    daily_ops: { title: "⚡ Daily Ops", crumb: "Brain Dump · Tasks · Priorities · Quick Actions" },
+    // ── LAYER 1 ──
+    ceo_home: { title: "⚡ CEO Home", crumb: "Today's priorities · Urgent tasks · Active projects" },
+    projects: { title: "🚀 Projects", crumb: "Long-term initiatives · Multiple steps · Track progress" },
+    tasks: { title: "✅ Tasks", crumb: "Today · This week · Execution list" },
+    leads: { title: "📥 Leads / Cases", crumb: "Intake submissions · People · Status" },
+    // ── LAYER 2 (Archive) ──
+    daily_ops: { title: "🗂️ Daily Ops", crumb: "Brain Dump · Tasks · Priorities · Quick Actions" },
     operator_input: { title: "🧠 Operator Input", crumb: "Brain Dump → Process with AI → Execute · Content Audit" },
-    social_media: { title: "📱 Social Media Command", crumb: "Create → Review → Approve → Publish · Instagram · Facebook · Content Audit" },
-    growth_inbox: { title: "📥 Growth Inbox", crumb: "Social Inbox · Lead Capture · Booking · Follow-Up · Content → DM → Email → Book" },
-    new_leads: { title: "🎯 New Leads", crumb: "Intake Submissions · Review · Status Management · Pipeline" },
+    social_media: { title: "📱 Social Media", crumb: "Create → Review → Approve → Publish · Instagram · Facebook" },
+    growth_inbox: { title: "📬 Growth Inbox", crumb: "Social Inbox · Lead Capture · Booking · Follow-Up" },
+    new_leads: { title: "🎯 New Leads", crumb: "Intake Submissions · Review · Status Management" },
     operations: { title: "⚙️ Operations", crumb: "Cases · Admin Dashboard · Maintenance · SOPs" },
-    growth: { title: "📈 Projects", crumb: "Long-term initiatives · Multiple steps · Track progress" },
+    growth: { title: "📈 Growth", crumb: "Leads · Outreach · Pipeline" },
     ecosystem: { title: "🌐 Ecosystem", crumb: "People · Organizations · Grants · Events" },
     marketing: { title: "📣 Marketing", crumb: "Content · Schedule · Strategy · Campaigns" },
-    core_tools: { title: "🔗 Core Tools", crumb: "Google Docs · Drive · NotebookLM · ChatGPT · Grok · Manus · Tasks · HubSpot" },
+    core_tools: { title: "🔗 Core Tools", crumb: "Google Docs · Drive · NotebookLM · ChatGPT · Grok · Manus" },
   };
 
   const s = (id: Section) => section === id;
@@ -816,6 +999,31 @@ export default function AdminCommandCenter() {
           {/* PAGE CONTENT */}
           <div style={{ padding: "24px 26px", overflowY: "auto", flex: 1 }}>
             {/* ── DAILY OPS ── */}
+            {/* ── CEO HOME ── */}
+            {s("ceo_home") && (
+              <div>
+                <CeoHomeSection />
+              </div>
+            )}
+            {/* ── PROJECTS (Layer 1) ── */}
+            {s("projects") && (
+              <div>
+                <ProjectsPage />
+              </div>
+            )}
+            {/* ── TASKS ── */}
+            {s("tasks") && (
+              <div>
+                <TasksSection />
+              </div>
+            )}
+            {/* ── LEADS / CASES ── */}
+            {s("leads") && (
+              <div>
+                <NewLeadsSection />
+              </div>
+            )}
+            {/* ── LAYER 2 ARCHIVE BELOW ── */}
             {s("daily_ops") && (
               <div>
                 {/* Today's Date Banner */}
