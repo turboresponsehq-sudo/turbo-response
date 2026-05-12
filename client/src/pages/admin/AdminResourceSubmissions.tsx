@@ -396,7 +396,7 @@ export default function AdminResourceSubmissions() {
           <button onClick={() => setLocation('/admin')} style={btnStyle('#374151')}>
             ← Dashboard
           </button>
-          <button onClick={() => { fetchSubmissions(); fetchStats(); }} style={btnStyle('#06b6d4')}>
+          <button onClick={() => { fetchSubmissions(); fetchStats(); }} style={btnStyle('#1A3FC7')}>
             ↻ Refresh
           </button>
         </div>
@@ -405,8 +405,8 @@ export default function AdminResourceSubmissions() {
       {/* Stats Bar */}
       {stats && (
         <div style={statsBarStyle}>
-          <div style={statCardStyle('#3b82f6')}>
-            <div style={{ fontSize: '24px', fontWeight: '700', color: '#3b82f6' }}>{stats.total_active}</div>
+          <div style={statCardStyle('#3B6BF5')}>
+            <div style={{ fontSize: '24px', fontWeight: '700', color: '#3B6BF5' }}>{stats.total_active}</div>
             <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '4px' }}>Active</div>
           </div>
           <div style={statCardStyle('#10b981')}>
@@ -417,8 +417,8 @@ export default function AdminResourceSubmissions() {
             <div style={{ fontSize: '24px', fontWeight: '700', color: '#f59e0b' }}>{stats.reviewed_count}</div>
             <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '4px' }}>Reviewed</div>
           </div>
-          <div style={statCardStyle('#8b5cf6')}>
-            <div style={{ fontSize: '24px', fontWeight: '700', color: '#8b5cf6' }}>{stats.matched_count}</div>
+          <div style={statCardStyle('#3B6BF5')}>
+            <div style={{ fontSize: '24px', fontWeight: '700', color: '#3B6BF5' }}>{stats.matched_count}</div>
             <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '4px' }}>Matched</div>
           </div>
           <div style={statCardStyle('#ef4444')}>
@@ -637,7 +637,7 @@ export default function AdminResourceSubmissions() {
 
             {/* Contact Info */}
             <div style={{ marginBottom: '20px' }}>
-              <h3 style={{ fontSize: '14px', color: '#06b6d4', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Contact Information</h3>
+              <h3 style={{ fontSize: '14px', color: '#1A3FC7', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Contact Information</h3>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
                   <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '2px' }}>Name</div>
@@ -660,7 +660,7 @@ export default function AdminResourceSubmissions() {
 
             {/* Resources Requested */}
             <div style={{ marginBottom: '20px' }}>
-              <h3 style={{ fontSize: '14px', color: '#06b6d4', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Resources Requested</h3>
+              <h3 style={{ fontSize: '14px', color: '#1A3FC7', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Resources Requested</h3>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                 {parseResources(selectedSubmission.resources).map((r, i) => (
                   <span key={i} style={{
@@ -679,7 +679,7 @@ export default function AdminResourceSubmissions() {
 
             {/* Household Info */}
             <div style={{ marginBottom: '20px' }}>
-              <h3 style={{ fontSize: '14px', color: '#06b6d4', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Household Information</h3>
+              <h3 style={{ fontSize: '14px', color: '#1A3FC7', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Household Information</h3>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
                   <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '2px' }}>Income Level</div>
@@ -712,7 +712,7 @@ export default function AdminResourceSubmissions() {
 
             {/* Description */}
             <div style={{ marginBottom: '20px' }}>
-              <h3 style={{ fontSize: '14px', color: '#06b6d4', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Situation Description</h3>
+              <h3 style={{ fontSize: '14px', color: '#1A3FC7', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Situation Description</h3>
               <div style={{
                 padding: '16px',
                 backgroundColor: '#111827',

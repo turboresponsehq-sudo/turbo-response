@@ -1,10 +1,10 @@
 :root {
-  --primary-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-  --accent-cyan: #06b6d4;
+  --primary-gradient: linear-gradient(135deg, #0A1A3F 0%, #0F2347 50%, #1A3058 100%);
+  --accent-cyan: #1A3FC7;
   --text-primary: #f8fafc;
   --text-secondary: #cbd5e1;
   --card-bg: rgba(15, 23, 42, 0.8);
-  --border-glow: rgba(6, 182, 212, 0.2);
+  --border-glow: rgba(26, 63, 199, 0.2);
 }
 
 .terms-page {

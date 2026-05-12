@@ -108,9 +108,9 @@ export default function AdminDashboard() {
   const getFunnelStageColor = (stage: string) => {
     switch (stage) {
       case 'lead':
-        return '#3b82f6';
+        return '#3B6BF5';
       case 'prospect':
-        return '#8b5cf6';
+        return '#3B6BF5';
       case 'qualified':
         return '#ec4899';
       case 'proposal':
@@ -118,7 +118,7 @@ export default function AdminDashboard() {
       case 'negotiation':
         return '#10b981';
       case 'closed_won':
-        return '#06b6d4';
+        return '#1A3FC7';
       case 'closed_lost':
         return '#6b7280';
       default:
@@ -169,7 +169,7 @@ export default function AdminDashboard() {
             onClick={() => setLocation('/admin/brain')}
             style={{
               padding: '8px 16px',
-              backgroundColor: '#8b5cf6',
+              backgroundColor: '#3B6BF5',
               color: 'white',
               border: 'none',
               borderRadius: '6px',
@@ -184,7 +184,7 @@ export default function AdminDashboard() {
             onClick={() => setLocation('/admin/resources')}
             style={{
               padding: '8px 16px',
-              backgroundColor: '#06b6d4',
+              backgroundColor: '#1A3FC7',
               color: 'white',
               border: 'none',
               borderRadius: '6px',
@@ -199,7 +199,7 @@ export default function AdminDashboard() {
             onClick={() => setLocation('/admin/screenshots')}
             style={{
               padding: '8px 16px',
-              backgroundColor: '#3b82f6',
+              backgroundColor: '#3B6BF5',
               color: 'white',
               border: 'none',
               borderRadius: '6px',

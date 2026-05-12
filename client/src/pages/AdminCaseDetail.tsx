@@ -447,7 +447,7 @@ export default function AdminCaseDetail() {
               style={{
                 padding: "0.75rem 1.5rem",
                 minHeight: "48px",
-                backgroundColor: analyzingAI ? "#6c757d" : "#06b6d4",
+                backgroundColor: analyzingAI ? "#6c757d" : "#1A3FC7",
                 color: "white",
                 border: "none",
                 borderRadius: "4px",
@@ -474,7 +474,7 @@ export default function AdminCaseDetail() {
               backgroundColor: "white",
               padding: "1rem",
               borderRadius: "6px",
-              border: "2px solid #06b6d4",
+              border: "2px solid #1A3FC7",
               marginBottom: "1rem"
             }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>

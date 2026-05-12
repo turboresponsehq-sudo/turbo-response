@@ -40,7 +40,7 @@ router.get('/create-admin-cases-table', async (req, res) => {
           body { font-family: Arial; padding: 40px; background: #0f172a; color: white; text-align: center; }
           .container { max-width: 600px; margin: 0 auto; background: #1e293b; padding: 40px; border-radius: 10px; }
           h1 { color: #10b981; }
-          a { display: inline-block; padding: 15px 30px; background: #06b6d4; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+          a { display: inline-block; padding: 15px 30px; background: #1A3FC7; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; }
         </style>
       </head>
       <body>

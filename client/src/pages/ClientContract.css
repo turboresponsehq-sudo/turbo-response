@@ -1,10 +1,10 @@
 :root {
-  --primary-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-  --accent-cyan: #06b6d4;
+  --primary-gradient: linear-gradient(135deg, #0A1A3F 0%, #0F2347 50%, #1A3058 100%);
+  --accent-cyan: #1A3FC7;
   --text-primary: #f8fafc;
   --text-secondary: #cbd5e1;
   --card-bg: rgba(15, 23, 42, 0.8);
-  --border-glow: rgba(6, 182, 212, 0.2);
+  --border-glow: rgba(26, 63, 199, 0.2);
 }
 
 .contract-page {
@@ -66,7 +66,7 @@
 }
 
 .highlight {
-  background: rgba(6, 182, 212, 0.1);
+  background: rgba(26, 63, 199, 0.1);
   border-left: 3px solid var(--accent-cyan);
   padding: 20px;
   margin: 25px 0;
@@ -89,7 +89,7 @@
 }
 
 .signature-section {
-  background: rgba(6, 182, 212, 0.05);
+  background: rgba(26, 63, 199, 0.05);
   border: 2px solid var(--accent-cyan);
   border-radius: 15px;
   padding: 30px;
