@@ -53,7 +53,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(15, 23, 42, 0.6);
+  background: #F0F2F5;
   border: 1px solid rgba(26, 63, 199, 0.2);
   border-radius: 8px;
   padding: 1rem 1.5rem;
@@ -67,7 +67,7 @@
 }
 
 .current-value {
-  color: #e2e8f0;
+  color: #334155;
   font-size: 1.2rem;
   font-weight: 700;
 }
@@ -92,11 +92,11 @@
 
 .cap-input {
   flex: 1;
-  background: rgba(15, 23, 42, 0.6);
+  background: #F0F2F5;
   border: 1px solid rgba(26, 63, 199, 0.3);
   border-radius: 8px;
   padding: 0.75rem 1rem;
-  color: #e2e8f0;
+  color: #334155;
   font-size: 1rem;
   transition: all 0.3s ease;
 }
@@ -104,7 +104,7 @@
 .cap-input:focus {
   outline: none;
   border-color: #1A3FC7;
-  background: rgba(15, 23, 42, 0.8);
+  background: #FFFFFF;
 }
 
 .cap-input:disabled {
@@ -231,7 +231,7 @@
 }
 
 .settings-info li strong {
-  color: #e2e8f0;
+  color: #334155;
 }
 
 @media (max-width: 768px) {

@@ -1,9 +1,9 @@
 :root {
-  --primary-gradient: linear-gradient(135deg, #0A1A3F 0%, #0F2347 50%, #1A3058 100%);
+  --primary-gradient: linear-gradient(135deg, #FFFFFF 0%, #F0F2F5 50%, #FFFFFF 100%);
   --accent-cyan: #1A3FC7;
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --card-bg: rgba(15, 23, 42, 0.8);
+  --text-primary: #0A1A3F;
+  --text-secondary: #334155;
+  --card-bg: #FFFFFF;
   --border-glow: rgba(26, 63, 199, 0.2);
 }
 

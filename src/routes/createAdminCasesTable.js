@@ -37,10 +37,10 @@ router.get('/create-admin-cases-table', async (req, res) => {
       <head>
         <title>Table Created</title>
         <style>
-          body { font-family: Arial; padding: 40px; background: #0f172a; color: white; text-align: center; }
-          .container { max-width: 600px; margin: 0 auto; background: #1e293b; padding: 40px; border-radius: 10px; }
+          body { font-family: Arial; padding: 40px; background: #FFFFFF; color: #0A1A3F; text-align: center; }
+          .container { max-width: 600px; margin: 0 auto; background: #F0F2F5; padding: 40px; border-radius: 10px; }
           h1 { color: #10b981; }
-          a { display: inline-block; padding: 15px 30px; background: #1A3FC7; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+          a { display: inline-block; padding: 15px 30px; background: #1A3FC7; color: #0A1A3F; text-decoration: none; border-radius: 5px; margin-top: 20px; }
         </style>
       </head>
       <body>
@@ -62,8 +62,8 @@ router.get('/create-admin-cases-table', async (req, res) => {
       <head>
         <title>Error</title>
         <style>
-          body { font-family: Arial; padding: 40px; background: #0f172a; color: white; }
-          .container { max-width: 600px; margin: 0 auto; background: #1e293b; padding: 40px; border-radius: 10px; }
+          body { font-family: Arial; padding: 40px; background: #FFFFFF; color: #0A1A3F; }
+          .container { max-width: 600px; margin: 0 auto; background: #F0F2F5; padding: 40px; border-radius: 10px; }
           h1 { color: #ef4444; }
           pre { background: #334155; padding: 15px; border-radius: 5px; overflow-x: auto; }
         </style>

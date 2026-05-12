@@ -92,11 +92,11 @@ export default function ClientPortal() {
     return (
       <div style={{
         minHeight: "100vh",
-        background: "linear-gradient(135deg, #0A1A3F 0%, #0A1A3F 50%, #1A3058 100%)",
+        background: "#FFFFFF",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        color: "white",
+        color: "#0A1A3F",
         fontFamily: "system-ui, -apple-system, sans-serif"
       }}>
         <div style={{ textAlign: "center" }}>
@@ -111,7 +111,7 @@ export default function ClientPortal() {
     return (
       <div style={{
         minHeight: "100vh",
-        background: "linear-gradient(135deg, #0A1A3F 0%, #0A1A3F 50%, #1A3058 100%)",
+        background: "#FFFFFF",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -161,7 +161,7 @@ export default function ClientPortal() {
     return (
       <div style={{
         minHeight: "100vh",
-        background: "linear-gradient(135deg, #0A1A3F 0%, #0A1A3F 50%, #1A3058 100%)",
+        background: "#FFFFFF",
         padding: "2rem 1rem",
         fontFamily: "system-ui, -apple-system, sans-serif",
         display: "flex",
@@ -294,10 +294,10 @@ export default function ClientPortal() {
                 {caseData?.pricing_tier_name && (
                   <div style={{
                     padding: "1.5rem",
-                    background: "linear-gradient(135deg, #0A1A3F 0%, #0A1A3F 100%)",
+                    background: "#FFFFFF",
                     borderRadius: "12px",
                     marginBottom: "1.5rem",
-                    color: "white"
+                    color: "#0A1A3F"
                   }}>
                     <div style={{ fontSize: "0.875rem", color: "#1A3FC7", marginBottom: "0.5rem", fontWeight: 600 }}>
                       Your Package
@@ -353,7 +353,7 @@ export default function ClientPortal() {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "linear-gradient(135deg, #0A1A3F 0%, #0A1A3F 50%, #1A3058 100%)",
+      background: "#FFFFFF",
       padding: "2rem 1rem",
       fontFamily: "system-ui, -apple-system, sans-serif"
     }}>
@@ -772,11 +772,11 @@ export default function ClientPortal() {
 
         {/* Help Section */}
         <div style={{
-          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          backgroundColor: "#F0F2F5",
           borderRadius: "12px",
           padding: "1.5rem",
           textAlign: "center",
-          color: "white"
+          color: "#0A1A3F"
         }}>
           <p style={{ marginBottom: "0.5rem" }}>
             Need help or have questions?

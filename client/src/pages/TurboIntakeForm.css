@@ -2,8 +2,8 @@
 
 .turbo-intake-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0A1A3F 0%, #0F2347 50%, #1A3058 100%);
-  color: #f8fafc;
+  background: #FFFFFF;
+  color: #0A1A3F;
 }
 
 /* Animated Background */
@@ -41,9 +41,9 @@
 /* Header */
 .header {
   padding: 20px 0;
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(26, 63, 199, 0.2);
+  border: 1px solid rgba(26, 63, 199, 0.1);
 }
 
 .nav-container {
@@ -91,7 +91,7 @@
   background: rgba(30, 41, 59, 0.6);
   backdrop-filter: blur(10px);
   border-radius: 16px;
-  border: 1px solid rgba(26, 63, 199, 0.2);
+  border: 1px solid rgba(26, 63, 199, 0.1);
   padding: 40px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
@@ -113,7 +113,7 @@
 
 .form-subtitle {
   font-size: 18px;
-  color: #cbd5e1;
+  color: #334155;
   line-height: 1.6;
 }
 
@@ -165,10 +165,10 @@
 .form-group textarea {
   width: 100%;
   padding: 14px 16px;
-  background: rgba(15, 23, 42, 0.8);
+  background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(26, 63, 199, 0.3);
   border-radius: 8px;
-  color: #f8fafc;
+  color: #0A1A3F;
   font-size: 16px;
   transition: all 0.3s;
 }
@@ -302,7 +302,7 @@
 
 .success-card p {
   font-size: 18px;
-  color: #cbd5e1;
+  color: #334155;
   line-height: 1.6;
   margin-bottom: 12px;
 }

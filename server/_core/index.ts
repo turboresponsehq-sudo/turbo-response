@@ -110,12 +110,12 @@ async function startServer() {
         <head>
           <title>Admin Setup Complete</title>
           <style>
-            body { font-family: Arial; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%); color: white; }
-            .container { text-align: center; padding: 40px; background: rgba(10, 26, 63, 0.8); border-radius: 20px; border: 1px solid #1A3FC7; }
+            body { font-family: Arial; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #FFFFFF; color: #0A1A3F; }
+            .container { text-align: center; padding: 40px; background: #FFFFFF; border-radius: 20px; border: 1px solid #1A3FC7; }
             h1 { color: #1A3FC7; }
             .credentials { background: rgba(30, 41, 59, 0.6); padding: 20px; border-radius: 10px; margin: 20px 0; }
             .value { color: #1A3FC7; font-weight: bold; font-size: 18px; }
-            a { display: inline-block; margin-top: 20px; padding: 15px 30px; background: #1A3FC7; color: white; text-decoration: none; border-radius: 10px; font-weight: bold; }
+            a { display: inline-block; margin-top: 20px; padding: 15px 30px; background: #1A3FC7; color: #0A1A3F; text-decoration: none; border-radius: 10px; font-weight: bold; }
           </style>
         </head>
         <body>

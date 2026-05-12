@@ -44,7 +44,7 @@ router.get('/', (req, res) => {
         
         body {
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-          background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+          background: #FFFFFF;
           min-height: 100vh;
           padding: 40px 20px;
         }
@@ -164,7 +164,7 @@ router.get('/', (req, res) => {
         .submit-btn {
           width: 100%;
           background: linear-gradient(135deg, #1A3FC7 0%, #3b82f6 100%);
-          color: white;
+          color: #0A1A3F;
           padding: 15px;
           border: none;
           border-radius: 8px;
@@ -526,7 +526,7 @@ View in admin dashboard: ${process.env.FRONTEND_URL || 'https://turboresponsehq.
         
         <p style="margin-top: 30px;">
           <a href="${process.env.FRONTEND_URL || 'https://turboresponsehq.ai'}/admin" 
-             style="background: linear-gradient(135deg, #1A3FC7 0%, #3b82f6 100%); color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
+             style="background: linear-gradient(135deg, #1A3FC7 0%, #3b82f6 100%); color: #0A1A3F; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
             View in Admin Dashboard
           </a>
         </p>
@@ -547,7 +547,7 @@ View in admin dashboard: ${process.env.FRONTEND_URL || 'https://turboresponsehq.
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            background: #FFFFFF;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -580,7 +580,7 @@ View in admin dashboard: ${process.env.FRONTEND_URL || 'https://turboresponsehq.
           .home-btn {
             display: inline-block;
             background: linear-gradient(135deg, #1A3FC7 0%, #3b82f6 100%);
-            color: white;
+            color: #0A1A3F;
             padding: 15px 30px;
             border-radius: 8px;
             text-decoration: none;
@@ -622,7 +622,7 @@ View in admin dashboard: ${process.env.FRONTEND_URL || 'https://turboresponsehq.
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            background: #FFFFFF;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -641,7 +641,7 @@ View in admin dashboard: ${process.env.FRONTEND_URL || 'https://turboresponsehq.
           a {
             display: inline-block;
             background: linear-gradient(135deg, #1A3FC7 0%, #3b82f6 100%);
-            color: white;
+            color: #0A1A3F;
             padding: 12px 24px;
             border-radius: 8px;
             text-decoration: none;

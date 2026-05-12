@@ -86,7 +86,7 @@ async function verifyPayment(req, res) {
         to: caseData.email,
         subject: `🎉 Your Turbo Response Portal is Now Active - Case ${caseData.case_number}`,
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 40px; border-radius: 12px;">
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #FFFFFF; padding: 40px; border-radius: 12px;">
             <div style="text-align: center; margin-bottom: 30px;">
               <div style="font-size: 48px; margin-bottom: 10px;">⚡</div>
               <h1 style="color: #1A3FC7; margin: 0; font-size: 28px;">Portal Activated!</h1>
@@ -104,7 +104,7 @@ async function verifyPayment(req, res) {
               </div>
               
               <div style="text-align: center; margin: 30px 0;">
-                <a href="${loginUrl}" style="display: inline-block; background: linear-gradient(135deg, #1A3FC7 0%, #3B6BF5 100%); color: white; text-decoration: none; padding: 15px 40px; border-radius: 8px; font-weight: 700; font-size: 16px;">Access Your Portal →</a>
+                <a href="${loginUrl}" style="display: inline-block; background: linear-gradient(135deg, #1A3FC7 0%, #3B6BF5 100%); color: #0A1A3F; text-decoration: none; padding: 15px 40px; border-radius: 8px; font-weight: 700; font-size: 16px;">Access Your Portal →</a>
               </div>
               
               <div style="background: #fef3c7; border-left: 4px solid #fbbf24; padding: 15px; margin-top: 20px;">
