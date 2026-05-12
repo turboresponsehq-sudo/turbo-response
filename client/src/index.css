@@ -124,6 +124,31 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* ===== GLOBAL LIGHT-MODE FORM ELEMENT OVERRIDE =====
+     Forces all inputs/selects/textareas to have white backgrounds.
+     This catches any component-level dark styles that weren't updated. */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="submit"]):not([type="button"]):not([type="reset"]),
+  textarea,
+  select {
+    background-color: #FFFFFF !important;
+    color: #0A1A3F !important;
+    border: 1px solid #D1D5DB !important;
+  }
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="submit"]):not([type="button"]):not([type="reset"]):focus,
+  textarea:focus,
+  select:focus {
+    border-color: #4285F4 !important;
+    box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.15) !important;
+    outline: none !important;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: #9CA3AF !important;
+    opacity: 1;
+  }
+  /* ===== END FORM OVERRIDE ===== */
+
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
   [type="button"]:not(:disabled),
