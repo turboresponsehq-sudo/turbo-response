@@ -338,7 +338,7 @@ export default function IntakeForm() {
           {/* Benefits Eligibility Profile (Optional) */}
           <div className="form-section" style={{
             backgroundColor: '#f0f9ff',
-            border: '2px solid #3b82f6',
+            border: '2px solid #3B6BF5',
             borderRadius: '12px',
             padding: '1.5rem'
           }}>
@@ -488,7 +488,7 @@ export default function IntakeForm() {
                         width: '18px',
                         height: '18px',
                         cursor: 'pointer',
-                        accentColor: '#3b82f6'
+                        accentColor: '#3B6BF5'
                       }}
                     />
                     <span>{circumstance.label}</span>
@@ -502,7 +502,7 @@ export default function IntakeForm() {
               padding: '1rem',
               backgroundColor: '#fff',
               borderRadius: '8px',
-              border: '2px solid #3b82f6'
+              border: '2px solid #3B6BF5'
             }}>
               <label style={{
                 display: 'flex',
@@ -521,7 +521,7 @@ export default function IntakeForm() {
                     width: '18px',
                     height: '18px',
                     cursor: 'pointer',
-                    accentColor: '#3b82f6'
+                    accentColor: '#3B6BF5'
                   }}
                 />
                 <span style={{ color: '#1e40af', fontWeight: '500' }}>

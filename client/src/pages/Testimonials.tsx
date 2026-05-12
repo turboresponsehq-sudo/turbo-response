@@ -121,7 +121,7 @@ export default function Testimonials() {
           {testimonials.map((testimonial, index) => (
             <div key={index} style={{
               background: "rgba(15, 23, 42, 0.8)",
-              border: "1px solid rgba(6, 182, 212, 0.2)",
+              border: "1px solid rgba(26, 63, 199, 0.2)",
               borderRadius: "16px",
               padding: "30px",
               backdropFilter: "blur(10px)",
@@ -149,7 +149,7 @@ export default function Testimonials() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  background: "rgba(6, 182, 212, 0.1)",
+                  background: "rgba(26, 63, 199, 0.1)",
                   borderRadius: "50%"
                 }}>
                   {testimonial.avatar}
@@ -172,8 +172,8 @@ export default function Testimonials() {
               {/* Category Badge */}
               <div style={{
                 display: "inline-block",
-                background: "rgba(6, 182, 212, 0.2)",
-                color: "#06b6d4",
+                background: "rgba(26, 63, 199, 0.2)",
+                color: "#1A3FC7",
                 padding: "6px 12px",
                 borderRadius: "12px",
                 fontSize: "12px",
@@ -196,12 +196,12 @@ export default function Testimonials() {
 
               {/* Result Box */}
               <div style={{
-                background: "linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(59, 130, 246, 0.2))",
+                background: "linear-gradient(135deg, rgba(26, 63, 199, 0.2), rgba(59, 130, 246, 0.2))",
                 borderRadius: "12px",
                 padding: "15px",
                 marginTop: "20px"
               }}>
-                <strong style={{ color: "#06b6d4", display: "block", marginBottom: "5px", fontSize: "14px" }}>
+                <strong style={{ color: "#1A3FC7", display: "block", marginBottom: "5px", fontSize: "14px" }}>
                   ✅ Result:
                 </strong>
                 <p style={{ color: "#f8fafc", fontSize: "15px", fontWeight: "600" }}>
@@ -227,15 +227,15 @@ export default function Testimonials() {
             marginBottom: "40px"
           }}>
             <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "48px", fontWeight: "700", color: "#06b6d4" }}>500+</div>
+              <div style={{ fontSize: "48px", fontWeight: "700", color: "#1A3FC7" }}>500+</div>
               <div style={{ color: "#cbd5e1", fontSize: "16px" }}>Cases Resolved</div>
             </div>
             <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "48px", fontWeight: "700", color: "#06b6d4" }}>$500K+</div>
+              <div style={{ fontSize: "48px", fontWeight: "700", color: "#1A3FC7" }}>$500K+</div>
               <div style={{ color: "#cbd5e1", fontSize: "16px" }}>Saved for Clients</div>
             </div>
             <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "48px", fontWeight: "700", color: "#06b6d4" }}>4.9/5</div>
+              <div style={{ fontSize: "48px", fontWeight: "700", color: "#1A3FC7" }}>4.9/5</div>
               <div style={{ color: "#cbd5e1", fontSize: "16px" }}>Average Rating</div>
             </div>
           </div>
@@ -260,7 +260,7 @@ export default function Testimonials() {
       {/* Footer */}
       <footer style={{
         background: "rgba(15, 23, 42, 0.9)",
-        borderTop: "1px solid rgba(6, 182, 212, 0.2)",
+        borderTop: "1px solid rgba(26, 63, 199, 0.2)",
         padding: "40px 20px",
         textAlign: "center",
         color: "#cbd5e1"
@@ -268,9 +268,9 @@ export default function Testimonials() {
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <p>© 2025 Turbo Response HQ. All rights reserved.</p>
           <div style={{ marginTop: "20px", display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/terms-of-service" style={{ color: "#06b6d4", textDecoration: "none" }}>Terms of Service</Link>
-            <Link href="/disclaimer" style={{ color: "#06b6d4", textDecoration: "none" }}>Disclaimer</Link>
-            <Link href="/service-agreement" style={{ color: "#06b6d4", textDecoration: "none" }}>Service Agreement</Link>
+            <Link href="/terms-of-service" style={{ color: "#1A3FC7", textDecoration: "none" }}>Terms of Service</Link>
+            <Link href="/disclaimer" style={{ color: "#1A3FC7", textDecoration: "none" }}>Disclaimer</Link>
+            <Link href="/service-agreement" style={{ color: "#1A3FC7", textDecoration: "none" }}>Service Agreement</Link>
           </div>
         </div>
       </footer>

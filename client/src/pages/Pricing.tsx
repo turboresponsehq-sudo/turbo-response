@@ -49,7 +49,7 @@ export default function Pricing() {
   return (
     <div style={{ 
       minHeight: "100vh", 
-      background: "linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)",
+      background: "linear-gradient(135deg, #0A1A3F 0%, #0A1A3F 50%, #1A3058 100%)",
       position: "relative",
       overflow: "hidden"
     }}>
@@ -60,7 +60,7 @@ export default function Pricing() {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundImage: "linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px)",
+        backgroundImage: "linear-gradient(rgba(26, 63, 199, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(26, 63, 199, 0.1) 1px, transparent 1px)",
         backgroundSize: "50px 50px",
         opacity: 0.3,
         zIndex: 0
@@ -90,7 +90,7 @@ export default function Pricing() {
         </Link>
         <div style={{ display: "flex", gap: "2rem" }}>
           <Link href="/" style={{ color: "white", textDecoration: "none" }}>Home</Link>
-          <Link href="/pricing" style={{ color: "#06b6d4", textDecoration: "none", fontWeight: 600 }}>Pricing</Link>
+          <Link href="/pricing" style={{ color: "#1A3FC7", textDecoration: "none", fontWeight: 600 }}>Pricing</Link>
           <Link href="/intake" style={{ color: "white", textDecoration: "none" }}>Get Started</Link>
         </div>
       </nav>
@@ -108,7 +108,7 @@ export default function Pricing() {
           fontWeight: 700, 
           margin: 0, 
           marginBottom: "1rem",
-          background: "linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)",
+          background: "linear-gradient(135deg, #1A3FC7 0%, #3B6BF5 100%)",
           WebkitBackgroundClip: "text",
           WebkitTextFillColor: "transparent",
           backgroundClip: "text"
@@ -135,12 +135,12 @@ export default function Pricing() {
           <div
             key={index}
             style={{
-              background: tier.popular ? "linear-gradient(135deg, #1e293b 0%, #334155 100%)" : "#0f1e35",
+              background: tier.popular ? "linear-gradient(135deg, #0A1A3F 0%, #1A3058 100%)" : "#0D1F45",
               borderRadius: "16px",
               padding: "2rem",
-              boxShadow: tier.popular ? "0 20px 60px rgba(6, 182, 212, 0.3)" : "0 10px 30px rgba(0,0,0,0.3)",
+              boxShadow: tier.popular ? "0 20px 60px rgba(26, 63, 199, 0.3)" : "0 10px 30px rgba(0,0,0,0.3)",
               transform: tier.popular ? "scale(1.05)" : "scale(1)",
-              border: tier.popular ? "2px solid #06b6d4" : "1px solid rgba(6, 182, 212, 0.2)",
+              border: tier.popular ? "2px solid #1A3FC7" : "1px solid rgba(26, 63, 199, 0.2)",
               position: "relative"
             }}
           >
@@ -150,8 +150,8 @@ export default function Pricing() {
                 top: "-12px",
                 left: "50%",
                 transform: "translateX(-50%)",
-                background: "#06b6d4",
-                color: "#0f172a",
+                background: "#1A3FC7",
+                color: "#0A1A3F",
                 padding: "0.5rem 1.5rem",
                 borderRadius: "20px",
                 fontWeight: 700,
@@ -172,7 +172,7 @@ export default function Pricing() {
             <div style={{ 
               fontSize: "3rem", 
               fontWeight: 700, 
-              color: "#06b6d4", 
+              color: "#1A3FC7", 
               margin: "1rem 0" 
             }}>
               {tier.price}
@@ -187,7 +187,7 @@ export default function Pricing() {
                   display: "flex", 
                   alignItems: "flex-start" 
                 }}>
-                  <span style={{ color: "#06b6d4", marginRight: "0.5rem", fontSize: "1.25rem" }}>✓</span>
+                  <span style={{ color: "#1A3FC7", marginRight: "0.5rem", fontSize: "1.25rem" }}>✓</span>
                   {feature}
                 </li>
               ))}
@@ -198,10 +198,10 @@ export default function Pricing() {
                 width: "100%",
                 padding: "1rem",
                 background: tier.popular 
-                  ? "linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)" 
-                  : "rgba(6, 182, 212, 0.1)",
+                  ? "linear-gradient(135deg, #1A3FC7 0%, #3B6BF5 100%)" 
+                  : "rgba(26, 63, 199, 0.1)",
                 color: "white",
-                border: tier.popular ? "none" : "2px solid #06b6d4",
+                border: tier.popular ? "none" : "2px solid #1A3FC7",
                 borderRadius: "8px",
                 fontSize: "1rem",
                 fontWeight: 700,
@@ -223,13 +223,13 @@ export default function Pricing() {
         background: "rgba(15, 30, 53, 0.8)",
         backdropFilter: "blur(10px)",
         borderRadius: "16px",
-        border: "2px solid rgba(6, 182, 212, 0.3)",
+        border: "2px solid rgba(26, 63, 199, 0.3)",
         color: "white",
         textAlign: "center",
         position: "relative",
         zIndex: 1
       }}>
-        <h3 style={{ fontSize: "1.75rem", fontWeight: 700, marginBottom: "1rem", color: "#06b6d4" }}>
+        <h3 style={{ fontSize: "1.75rem", fontWeight: 700, marginBottom: "1rem", color: "#1A3FC7" }}>
           Corporate Monthly Retainer
         </h3>
         <div style={{ fontSize: "2.5rem", fontWeight: 700, marginBottom: "0.5rem" }}>
@@ -247,7 +247,7 @@ export default function Pricing() {
             "Ongoing case tracking"
           ].map((feature, i) => (
             <li key={i} style={{ padding: "0.5rem 0", display: "flex", alignItems: "flex-start" }}>
-              <span style={{ color: "#06b6d4", marginRight: "0.5rem", fontSize: "1.25rem" }}>✓</span>
+              <span style={{ color: "#1A3FC7", marginRight: "0.5rem", fontSize: "1.25rem" }}>✓</span>
               {feature}
             </li>
           ))}
@@ -255,8 +255,8 @@ export default function Pricing() {
         <div style={{
           display: "inline-block",
           padding: "0.75rem 2rem",
-          background: "rgba(6, 182, 212, 0.1)",
-          border: "2px solid #06b6d4",
+          background: "rgba(26, 63, 199, 0.1)",
+          border: "2px solid #1A3FC7",
           borderRadius: "8px",
           fontWeight: 700,
           fontSize: "1rem"
@@ -279,14 +279,14 @@ export default function Pricing() {
         <Link href="/intake">
           <button style={{
             padding: "1rem 3rem",
-            background: "linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)",
+            background: "linear-gradient(135deg, #1A3FC7 0%, #3B6BF5 100%)",
             color: "white",
             border: "none",
             borderRadius: "8px",
             fontSize: "1.125rem",
             fontWeight: 700,
             cursor: "pointer",
-            boxShadow: "0 10px 30px rgba(6, 182, 212, 0.3)"
+            boxShadow: "0 10px 30px rgba(26, 63, 199, 0.3)"
           }}>
             Start Your Case Now →
           </button>

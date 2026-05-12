@@ -1,12 +1,12 @@
 .admin-case-detail-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0a1628 0%, #0f1e35 100%);
+  background: linear-gradient(135deg, #0A1A3F 0%, #0D1F45 100%);
   padding: 2rem;
 }
 
 .btn-back {
   background: transparent;
-  border: 2px solid #334155;
+  border: 2px solid #1A3058;
   color: #94a3b8;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
@@ -17,8 +17,8 @@
 }
 
 .btn-back:hover {
-  border-color: #06b6d4;
-  color: #06b6d4;
+  border-color: #1A3FC7;
+  color: #1A3FC7;
 }
 
 .case-info {
@@ -36,8 +36,8 @@
 }
 
 .case-category {
-  background: rgba(6, 182, 212, 0.1);
-  color: #06b6d4;
+  background: rgba(26, 63, 199, 0.1);
+  color: #1A3FC7;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   font-size: 1rem;
@@ -45,8 +45,8 @@
 }
 
 .case-description-box {
-  background: #1e293b;
-  border: 2px solid #334155;
+  background: #0F2347;
+  border: 2px solid #1A3058;
   border-radius: 1rem;
   padding: 1.5rem;
   margin-bottom: 2rem;
@@ -59,8 +59,8 @@
 }
 
 .client-info {
-  background: #1e293b;
-  border: 2px solid #334155;
+  background: #0F2347;
+  border: 2px solid #1A3058;
   border-radius: 1rem;
   padding: 1.5rem;
   margin-bottom: 2rem;
@@ -82,8 +82,8 @@
 }
 
 .upload-section {
-  background: #1e293b;
-  border: 2px solid #334155;
+  background: #0F2347;
+  border: 2px solid #1A3058;
   border-radius: 1rem;
   padding: 2rem;
   margin-bottom: 2rem;
@@ -96,19 +96,19 @@
 }
 
 .upload-dropzone {
-  border: 3px dashed #334155;
+  border: 3px dashed #1A3058;
   border-radius: 1rem;
   padding: 3rem 2rem;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  background: #0f172a;
+  background: #0A1A3F;
 }
 
 .upload-dropzone:hover,
 .upload-dropzone.drag-active {
-  border-color: #06b6d4;
-  background: rgba(6, 182, 212, 0.05);
+  border-color: #1A3FC7;
+  background: rgba(26, 63, 199, 0.05);
 }
 
 .upload-icon {
@@ -145,8 +145,8 @@
 
 .note-input {
   width: 100%;
-  background: #0f172a;
-  border: 2px solid #334155;
+  background: #0A1A3F;
+  border: 2px solid #1A3058;
   border-radius: 0.5rem;
   padding: 0.75rem;
   color: #ffffff;
@@ -158,8 +158,8 @@
 
 .note-input:focus {
   outline: none;
-  border-color: #06b6d4;
-  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+  border-color: #1A3FC7;
+  box-shadow: 0 0 0 3px rgba(26, 63, 199, 0.1);
 }
 
 .upload-progress {
@@ -168,16 +168,16 @@
   gap: 1rem;
   margin-top: 1.5rem;
   padding: 1rem;
-  background: rgba(6, 182, 212, 0.1);
+  background: rgba(26, 63, 199, 0.1);
   border-radius: 0.5rem;
-  color: #06b6d4;
+  color: #1A3FC7;
 }
 
 .progress-spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid rgba(6, 182, 212, 0.2);
-  border-top-color: #06b6d4;
+  border: 3px solid rgba(26, 63, 199, 0.2);
+  border-top-color: #1A3FC7;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -189,8 +189,8 @@
 }
 
 .documents-section {
-  background: #1e293b;
-  border: 2px solid #334155;
+  background: #0F2347;
+  border: 2px solid #1A3058;
   border-radius: 1rem;
   padding: 2rem;
 }
@@ -208,15 +208,15 @@
 }
 
 .document-card {
-  background: #0f172a;
-  border: 2px solid #334155;
+  background: #0A1A3F;
+  border: 2px solid #1A3058;
   border-radius: 0.75rem;
   padding: 1.25rem;
   transition: all 0.3s ease;
 }
 
 .document-card:hover {
-  border-color: #06b6d4;
+  border-color: #1A3FC7;
   transform: translateY(-2px);
 }
 
@@ -251,8 +251,8 @@
 }
 
 .document-note {
-  background: rgba(6, 182, 212, 0.05);
-  border-left: 3px solid #06b6d4;
+  background: rgba(26, 63, 199, 0.05);
+  border-left: 3px solid #1A3FC7;
   padding: 0.75rem;
   margin-bottom: 1rem;
   border-radius: 0.25rem;
@@ -261,7 +261,7 @@
 }
 
 .document-note strong {
-  color: #06b6d4;
+  color: #1A3FC7;
 }
 
 .document-meta {
@@ -294,13 +294,13 @@
 }
 
 .btn-download {
-  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  background: linear-gradient(135deg, #1A3FC7 0%, #1A3FC7 100%);
   color: white;
 }
 
 .btn-download:hover {
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(6, 182, 212, 0.3);
+  box-shadow: 0 5px 15px rgba(26, 63, 199, 0.3);
 }
 
 .btn-delete {

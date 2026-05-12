@@ -110,7 +110,7 @@ router.get('/', (req, res) => {
         select:focus,
         textarea:focus {
           outline: none;
-          border-color: #06b6d4;
+          border-color: #1A3FC7;
         }
         
         textarea {
@@ -163,7 +163,7 @@ router.get('/', (req, res) => {
         
         .submit-btn {
           width: 100%;
-          background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+          background: linear-gradient(135deg, #1A3FC7 0%, #3b82f6 100%);
           color: white;
           padding: 15px;
           border: none;
@@ -177,7 +177,7 @@ router.get('/', (req, res) => {
         
         .submit-btn:hover {
           transform: translateY(-2px);
-          box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3);
+          box-shadow: 0 10px 25px rgba(26, 63, 199, 0.3);
         }
         
         .submit-btn:disabled {
@@ -188,7 +188,7 @@ router.get('/', (req, res) => {
         
         .examples {
           background: #f7fafc;
-          border-left: 4px solid #06b6d4;
+          border-left: 4px solid #1A3FC7;
           padding: 1rem;
           margin-top: 0.5rem;
           border-radius: 4px;
@@ -520,13 +520,13 @@ View in admin dashboard: ${process.env.FRONTEND_URL || 'https://turboresponsehq.
         <p>${demographicsList.replace(/\n/g, '<br>')}</p>
         
         <h3>What They're Looking For</h3>
-        <p style="background: #f7fafc; padding: 15px; border-left: 4px solid #06b6d4; font-style: italic;">
+        <p style="background: #f7fafc; padding: 15px; border-left: 4px solid #1A3FC7; font-style: italic;">
           "${description}"
         </p>
         
         <p style="margin-top: 30px;">
           <a href="${process.env.FRONTEND_URL || 'https://turboresponsehq.ai'}/admin" 
-             style="background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%); color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
+             style="background: linear-gradient(135deg, #1A3FC7 0%, #3b82f6 100%); color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
             View in Admin Dashboard
           </a>
         </p>
@@ -579,7 +579,7 @@ View in admin dashboard: ${process.env.FRONTEND_URL || 'https://turboresponsehq.
           }
           .home-btn {
             display: inline-block;
-            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, #1A3FC7 0%, #3b82f6 100%);
             color: white;
             padding: 15px 30px;
             border-radius: 8px;
@@ -640,7 +640,7 @@ View in admin dashboard: ${process.env.FRONTEND_URL || 'https://turboresponsehq.
           p { color: #4a5568; line-height: 1.6; margin-bottom: 2rem; }
           a {
             display: inline-block;
-            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, #1A3FC7 0%, #3b82f6 100%);
             color: white;
             padding: 12px 24px;
             border-radius: 8px;

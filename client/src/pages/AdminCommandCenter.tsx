@@ -46,9 +46,9 @@ const TOOLS = [
 const CASES = [
   { id: "TR-00482910", type: "Credit Dispute", name: "Maria T.", days: "2 days ago", status: "Pending Review", color: "#f59e0b" },
   { id: "TR-00481203", type: "Debt Collection", name: "James W.", days: "3 days ago", status: "Active", color: "#22c55e" },
-  { id: "TR-00479887", type: "Eviction Defense", name: "Sandra K.", days: "5 days ago", status: "In Review", color: "#3b82f6" },
+  { id: "TR-00479887", type: "Eviction Defense", name: "Sandra K.", days: "5 days ago", status: "In Review", color: "#3B6BF5" },
   { id: "TR-00478001", type: "FCRA Violation", name: "David R.", days: "1 week ago", status: "Active", color: "#22c55e" },
-  { id: "TR-00476543", type: "IRS Dispute", name: "Angela M.", days: "1 week ago", status: "Long-Term", color: "#8b5cf6" },
+  { id: "TR-00476543", type: "IRS Dispute", name: "Angela M.", days: "1 week ago", status: "Long-Term", color: "#3B6BF5" },
 ];
 
 const CHECKS = [
@@ -70,7 +70,7 @@ const SOPS = [
 
 const LEADS = [
   { name: "Marcus B.", source: "Facebook Group", type: "Credit dispute", status: "Contacted", color: "#f59e0b" },
-  { name: "Tanya R.", source: "Instagram", type: "Eviction notice", status: "Qualified", color: "#3b82f6" },
+  { name: "Tanya R.", source: "Instagram", type: "Eviction notice", status: "Qualified", color: "#3B6BF5" },
   { name: "Kevin D.", source: "LinkedIn", type: "Debt collection", status: "Converted", color: "#22c55e" },
   { name: "Priya S.", source: "Referral", type: "FCRA violation", status: "New", color: "#9ca3af" },
   { name: "Jerome W.", source: "Facebook Group", type: "IRS issue", status: "Contacted", color: "#f59e0b" },
@@ -78,22 +78,22 @@ const LEADS = [
 
 const OUTREACH = [
   { icon: "📘", title: "Facebook Group Post", sub: "Consumer rights tips · 3 replies", status: "Active", color: "#22c55e" },
-  { icon: "💼", title: "LinkedIn Article", sub: "FCRA guide · 142 views", status: "Published", color: "#3b82f6" },
+  { icon: "💼", title: "LinkedIn Article", sub: "FCRA guide · 142 views", status: "Published", color: "#3B6BF5" },
   { icon: "📸", title: "Instagram Reel", sub: "Debt collector rights · Scheduled", status: "Scheduled", color: "#f59e0b" },
   { icon: "📧", title: "Email Campaign", sub: "Credit repair tips · 38% open rate", status: "Sent", color: "#22c55e" },
 ];
 
 const CONTRACTORS = [
   { icon: "🎨", name: "Alex M.", role: "Graphic Design", sub: "Social media graphics", status: "Active", color: "#22c55e" },
-  { icon: "✍️", name: "Priya K.", role: "Copywriting", sub: "Email campaigns", status: "On Call", color: "#3b82f6" },
+  { icon: "✍️", name: "Priya K.", role: "Copywriting", sub: "Email campaigns", status: "On Call", color: "#3B6BF5" },
   { icon: "🎬", name: "Jordan T.", role: "Video Editing", sub: "Reels & shorts", status: "Active", color: "#22c55e" },
 ];
 
 const PEOPLE = [
-  { initials: "Z", name: "Demarcus (Zakhy)", role: "Founder · Turbo Response", tag: "Owner", bg: "linear-gradient(135deg,#3b82f6,#6366f1)" },
+  { initials: "Z", name: "Demarcus (Zakhy)", role: "Founder · Turbo Response", tag: "Owner", bg: "linear-gradient(135deg,#3B6BF5,#6366f1)" },
   { initials: "AJ", name: "Attorney J.", role: "Legal advisor · FCRA", tag: "Advisor", bg: "linear-gradient(135deg,#14b8a6,#22c55e)" },
   { initials: "MR", name: "Marcus R.", role: "Partner · Community outreach", tag: "Partner", bg: "linear-gradient(135deg,#f59e0b,#ef4444)" },
-  { initials: "SL", name: "Sarah L.", role: "Mentor · Small business", tag: "Mentor", bg: "linear-gradient(135deg,#8b5cf6,#6366f1)" },
+  { initials: "SL", name: "Sarah L.", role: "Mentor · Small business", tag: "Mentor", bg: "linear-gradient(135deg,#3B6BF5,#6366f1)" },
 ];
 
 const ORGS = [
@@ -106,14 +106,14 @@ const ORGS = [
 const GRANTS = [
   { name: "SBA Microloan Program", sub: "Up to $50,000 · Deadline: Jun 30", status: "In Progress", color: "#f59e0b" },
   { name: "Georgia SSBCI Grant", sub: "State small business fund", status: "Applied", color: "#22c55e" },
-  { name: "MBDA Business Center", sub: "Minority business development", status: "Researching", color: "#3b82f6" },
+  { name: "MBDA Business Center", sub: "Minority business development", status: "Researching", color: "#3B6BF5" },
   { name: "HUD Housing Counseling", sub: "Consumer housing defense", status: "Identified", color: "#9ca3af" },
 ];
 
 const EVENTS = [
-  { name: "Atlanta Small Business Expo", sub: "May 15, 2026 · Networking", status: "Upcoming", color: "#3b82f6" },
+  { name: "Atlanta Small Business Expo", sub: "May 15, 2026 · Networking", status: "Upcoming", color: "#3B6BF5" },
   { name: "CFPB Webinar — FDCPA Update", sub: "May 22, 2026 · Online", status: "Registered", color: "#22c55e" },
-  { name: "SCORE Mentorship Session", sub: "Jun 5, 2026 · Virtual", status: "Scheduled", color: "#8b5cf6" },
+  { name: "SCORE Mentorship Session", sub: "Jun 5, 2026 · Virtual", status: "Scheduled", color: "#3B6BF5" },
   { name: "GA Consumer Rights Summit", sub: "Jul 2026 · TBD", status: "Tentative", color: "#9ca3af" },
 ];
 
@@ -125,9 +125,9 @@ const CONTENT_IDEAS = [
 ];
 
 const SOCIAL_STRATEGY = [
-  { icon: "💼", name: "LinkedIn", sub: "B2B credibility · Articles + thought leadership", freq: "3×/week", color: "#3b82f6" },
-  { icon: "📘", name: "Facebook Group", sub: "Community leads · Tips + case stories", freq: "Daily", color: "#3b82f6" },
-  { icon: "📸", name: "Instagram (AI/Tech)", sub: "Tech expertise · Reels + carousels", freq: "4×/week", color: "#8b5cf6" },
+  { icon: "💼", name: "LinkedIn", sub: "B2B credibility · Articles + thought leadership", freq: "3×/week", color: "#3B6BF5" },
+  { icon: "📘", name: "Facebook Group", sub: "Community leads · Tips + case stories", freq: "Daily", color: "#3B6BF5" },
+  { icon: "📸", name: "Instagram (AI/Tech)", sub: "Tech expertise · Reels + carousels", freq: "4×/week", color: "#3B6BF5" },
   { icon: "📸", name: "Instagram (Urban/Brand)", sub: "Lifestyle brand · Stories + reels", freq: "2×/week", color: "#ef4444" },
   { icon: "📧", name: "Email Newsletter", sub: "Consumer rights intel · Weekly digest", freq: "Weekly", color: "#f59e0b" },
 ];
@@ -179,11 +179,11 @@ const STATUS_COLORS: Record<string, [string, string]> = {
   "Upcoming": ["rgba(59,130,246,0.12)", "#60a5fa"],
   "Post": ["rgba(59,130,246,0.12)", "#60a5fa"],
   "Article": ["rgba(59,130,246,0.12)", "#60a5fa"],
-  "Long-Term": ["rgba(139,92,246,0.12)", "#a78bfa"],
-  "Engaged": ["rgba(139,92,246,0.12)", "#a78bfa"],
-  "Partner": ["rgba(139,92,246,0.12)", "#a78bfa"],
-  "Advisor": ["rgba(139,92,246,0.12)", "#a78bfa"],
-  "Reel": ["rgba(139,92,246,0.12)", "#a78bfa"],
+  "Long-Term": ["rgba(59, 107, 245,0.12)", "#3B6BF5"],
+  "Engaged": ["rgba(59, 107, 245,0.12)", "#3B6BF5"],
+  "Partner": ["rgba(59, 107, 245,0.12)", "#3B6BF5"],
+  "Advisor": ["rgba(59, 107, 245,0.12)", "#3B6BF5"],
+  "Reel": ["rgba(59, 107, 245,0.12)", "#3B6BF5"],
   "Mentor": ["rgba(20,184,166,0.12)", "#2dd4bf"],
   "Story": ["rgba(20,184,166,0.12)", "#2dd4bf"],
   "Owner": ["rgba(59,130,246,0.12)", "#60a5fa"],
@@ -223,8 +223,8 @@ function NewLeadsSection() {
   const HUBSPOT_URL = "https://app.hubspot.com/contacts/";
 
   const statusColors: Record<string, string> = {
-    new_lead: "#3b82f6", reviewing: "#f59e0b", follow_up: "#a78bfa", converted: "#22c55e",
-    new: "#3b82f6", follow_up_dash: "#a78bfa", closed: "#4b5368",
+    new_lead: "#3B6BF5", reviewing: "#f59e0b", follow_up: "#3B6BF5", converted: "#22c55e",
+    new: "#3B6BF5", follow_up_dash: "#3B6BF5", closed: "#4b5368",
   };
   const statusLabels: Record<string, string> = {
     new_lead: "New Lead", reviewing: "Reviewing", follow_up: "Follow-Up", converted: "Converted",
@@ -254,7 +254,7 @@ function NewLeadsSection() {
       <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px", marginBottom: 20 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
           <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px" }}>📥 Intake Form Submissions</div>
-          <button onClick={() => refetch()} style={{ fontSize: 11, color: "#3b82f6", background: "none", border: "none", cursor: "pointer" }}>Refresh ↻</button>
+          <button onClick={() => refetch()} style={{ fontSize: 11, color: "#3B6BF5", background: "none", border: "none", cursor: "pointer" }}>Refresh ↻</button>
         </div>
         {isLoading && <div style={{ color: "#4b5368", fontSize: 13, padding: "12px 0" }}>Loading...</div>}
         {!isLoading && intakeLeads.length === 0 && (
@@ -279,7 +279,7 @@ function NewLeadsSection() {
                     <td style={{ padding: "10px 12px", color: "#94a3b8", maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{lead.situationPreview || "—"}</td>
                     <td style={{ padding: "10px 12px", color: "#4b5368", whiteSpace: "nowrap", fontSize: 11 }}>{new Date(lead.submittedAt).toLocaleDateString()}</td>
                     <td style={{ padding: "10px 12px", whiteSpace: "nowrap" }}>
-                      <select value={lead.status} onChange={e => updateStatus.mutate({ id: lead.id, status: e.target.value as any })} style={{ background: "#0d1017", border: `1px solid ${statusColors[lead.status] ?? "#3b82f6"}`, borderRadius: 6, color: statusColors[lead.status] ?? "#3b82f6", fontSize: 11, fontWeight: 700, padding: "3px 8px", cursor: "pointer" }}>
+                      <select value={lead.status} onChange={e => updateStatus.mutate({ id: lead.id, status: e.target.value as any })} style={{ background: "#0d1017", border: `1px solid ${statusColors[lead.status] ?? "#3B6BF5"}`, borderRadius: 6, color: statusColors[lead.status] ?? "#3B6BF5", fontSize: 11, fontWeight: 700, padding: "3px 8px", cursor: "pointer" }}>
                         <option value="new_lead">New Lead</option>
                         <option value="reviewing">Reviewing</option>
                         <option value="follow_up">Follow-Up</option>
@@ -298,7 +298,7 @@ function NewLeadsSection() {
       <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
           <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px" }}>🔗 HubSpot Linked Cases</div>
-          <button onClick={() => setShowAddForm(v => !v)} style={{ fontSize: 12, color: "#3b82f6", background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 7, padding: "5px 12px", cursor: "pointer", fontWeight: 700 }}>+ Add Case</button>
+          <button onClick={() => setShowAddForm(v => !v)} style={{ fontSize: 12, color: "#3B6BF5", background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 7, padding: "5px 12px", cursor: "pointer", fontWeight: 700 }}>+ Add Case</button>
         </div>
 
         {showAddForm && (
@@ -308,7 +308,7 @@ function NewLeadsSection() {
               <input value={newNote} onChange={e => setNewNote(e.target.value)} placeholder="Short note (optional)" style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "9px 12px", outline: "none" }} />
               <input value={newHubspotUrl} onChange={e => setNewHubspotUrl(e.target.value)} placeholder="HubSpot contact/deal URL (optional)" style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "9px 12px", outline: "none" }} />
               <div style={{ display: "flex", gap: 8 }}>
-                <button onClick={addLead} disabled={addDashLead.isPending} style={{ padding: "8px 16px", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 7, color: "#3b82f6", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>{addDashLead.isPending ? "Saving..." : "Save"}</button>
+                <button onClick={addLead} disabled={addDashLead.isPending} style={{ padding: "8px 16px", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 7, color: "#3B6BF5", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>{addDashLead.isPending ? "Saving..." : "Save"}</button>
                 <button onClick={() => setShowAddForm(false)} style={{ padding: "8px 12px", background: "none", border: "1px solid #1e2130", borderRadius: 7, color: "#4b5368", fontSize: 13, cursor: "pointer" }}>Cancel</button>
               </div>
             </div>
@@ -325,7 +325,7 @@ function NewLeadsSection() {
               <div style={{ fontSize: 14, fontWeight: 600, color: "#e8eaf0", marginBottom: 2 }}>{lead.name}</div>
               {lead.note && <div style={{ fontSize: 12, color: "#4b5368" }}>{lead.note}</div>}
             </div>
-            <select value={lead.status} onChange={e => updateDashStatus.mutate({ id: lead.id, status: e.target.value as any })} style={{ background: "#111318", border: `1px solid ${statusColors[lead.status] ?? "#3b82f6"}`, borderRadius: 6, color: statusColors[lead.status] ?? "#3b82f6", fontSize: 11, fontWeight: 700, padding: "3px 8px", cursor: "pointer" }}>
+            <select value={lead.status} onChange={e => updateDashStatus.mutate({ id: lead.id, status: e.target.value as any })} style={{ background: "#111318", border: `1px solid ${statusColors[lead.status] ?? "#3B6BF5"}`, borderRadius: 6, color: statusColors[lead.status] ?? "#3B6BF5", fontSize: 11, fontWeight: 700, padding: "3px 8px", cursor: "pointer" }}>
               <option value="new">New</option>
               <option value="reviewing">Reviewing</option>
               <option value="follow_up">Follow-Up</option>
@@ -359,7 +359,7 @@ function SectionCard({ title, action, children }: { title: string; action?: stri
     <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
         <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px" }}>{title}</div>
-        {action && <div style={{ fontSize: 11, fontWeight: 500, color: "#3b82f6", cursor: "pointer" }}>{action}</div>}
+        {action && <div style={{ fontSize: 11, fontWeight: 500, color: "#3B6BF5", cursor: "pointer" }}>{action}</div>}
       </div>
       {children}
     </div>
@@ -457,7 +457,7 @@ function CeoHomeSection() {
 
       {regular.length > 0 && (
         <div style={{ marginBottom: 20 }}>
-          <div style={{ fontSize: 11, fontWeight: 800, color: "#3b82f6", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 10 }}>📋 Today's Priorities</div>
+          <div style={{ fontSize: 11, fontWeight: 800, color: "#3B6BF5", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 10 }}>📋 Today's Priorities</div>
           {regular.map(p => (
             <div key={p.id} onClick={() => toggleMutation.mutate({ id: p.id, done: true })} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", background: "#111318", border: "1px solid #1e2130", borderRadius: 9, marginBottom: 8, cursor: "pointer" }}>
               <div style={{ width: 18, height: 18, borderRadius: 4, border: "2px solid #2a3050", flexShrink: 0 }} />
@@ -476,7 +476,7 @@ function CeoHomeSection() {
           style={{ flex: 1, background: "#111318", border: "1px solid #1e2130", borderRadius: 8, color: "#e8eaf0", fontSize: 13, padding: "10px 14px", outline: "none" }}
         />
         <button onClick={() => setIsUrgent(u => !u)} style={{ padding: "10px 12px", background: isUrgent ? "rgba(239,68,68,0.15)" : "transparent", border: `1px solid ${isUrgent ? "rgba(239,68,68,0.4)" : "#1e2130"}`, borderRadius: 8, color: isUrgent ? "#ef4444" : "#4b5368", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>🔴 Urgent</button>
-        <button onClick={addPriority} disabled={addMutation.isPending} style={{ padding: "10px 16px", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 8, color: "#3b82f6", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>{addMutation.isPending ? "..." : "Add"}</button>
+        <button onClick={addPriority} disabled={addMutation.isPending} style={{ padding: "10px 16px", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 8, color: "#3B6BF5", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>{addMutation.isPending ? "..." : "Add"}</button>
       </div>
 
       {done.length > 0 && (
@@ -518,7 +518,7 @@ function TasksSection() {
           <div style={{ fontSize: 15, fontWeight: 700, color: "#e8eaf0", marginBottom: 2 }}>Open Google Tasks</div>
           <div style={{ fontSize: 12, color: "#4b5368" }}>tasks.google.com — your task list, reminders, and due dates</div>
         </div>
-        <div style={{ fontSize: 18, color: "#3b82f6" }}>→</div>
+        <div style={{ fontSize: 18, color: "#3B6BF5" }}>→</div>
       </a>
 
       {/* Info note */}
@@ -674,7 +674,7 @@ function ProjectsPage() {
     return (
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
-          <button onClick={handleBack} style={{ background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.2)", color: "#3b82f6", borderRadius: 7, padding: "6px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>← Back</button>
+          <button onClick={handleBack} style={{ background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.2)", color: "#3B6BF5", borderRadius: 7, padding: "6px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>← Back</button>
           <div style={{ fontSize: 18, fontWeight: 800, color: "#e8eaf0", flex: 1 }}>{selected.name}</div>
           {selected.driveUrl && (
             <a href={selected.driveUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#4ade80", textDecoration: "none", fontWeight: 700, padding: "6px 14px", background: "rgba(74,222,128,0.1)", border: "1px solid rgba(74,222,128,0.2)", borderRadius: 7 }}>📂 Open in Drive ↗</a>
@@ -690,11 +690,11 @@ function ProjectsPage() {
             <div style={{ fontSize: 11, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 10 }}>Progress</div>
             <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
               <div style={{ flex: 1, height: 8, background: "#1e2130", borderRadius: 4, overflow: "hidden" }}>
-                <div style={{ height: "100%", width: `${selected.progress}%`, background: "linear-gradient(90deg,#3b82f6,#6366f1)", borderRadius: 4, transition: "width 0.3s" }} />
+                <div style={{ height: "100%", width: `${selected.progress}%`, background: "linear-gradient(90deg,#3B6BF5,#6366f1)", borderRadius: 4, transition: "width 0.3s" }} />
               </div>
-              <span style={{ fontSize: 13, fontWeight: 700, color: "#3b82f6", minWidth: 36 }}>{selected.progress}%</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "#3B6BF5", minWidth: 36 }}>{selected.progress}%</span>
             </div>
-            <input type="range" min={0} max={100} value={selected.progress} onChange={e => handleProgressChange(selected.id, Number(e.target.value))} style={{ width: "100%", accentColor: "#3b82f6" }} />
+            <input type="range" min={0} max={100} value={selected.progress} onChange={e => handleProgressChange(selected.id, Number(e.target.value))} style={{ width: "100%", accentColor: "#3B6BF5" }} />
             <div style={{ marginTop: 10, display: "flex", gap: 6 }}>
               {(["active", "paused", "done"] as ProjectStatus[]).map(s => (
                 <button key={s} onClick={() => handleStatusChange(selected.id, s)} style={{ fontSize: 11, fontWeight: 600, padding: "4px 10px", borderRadius: 6, border: `1px solid ${selected.status === s ? STATUS_STYLES[s].color : "#1e2130"}`, background: selected.status === s ? STATUS_STYLES[s].bg : "transparent", color: selected.status === s ? STATUS_STYLES[s].color : "#4b5368", cursor: "pointer" }}>{STATUS_STYLES[s].label}</button>
@@ -708,7 +708,7 @@ function ProjectsPage() {
             {selected.keySteps.length === 0 && <div style={{ fontSize: 13, color: "#4b5368", fontStyle: "italic" }}>No milestones defined yet</div>}
             {selected.keySteps.map((step, i) => (
               <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "8px 0", borderBottom: i < selected.keySteps.length - 1 ? "1px solid #1a1d28" : "none" }}>
-                <div style={{ width: 20, height: 20, borderRadius: "50%", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 800, color: "#3b82f6", flexShrink: 0, marginTop: 1 }}>{i + 1}</div>
+                <div style={{ width: 20, height: 20, borderRadius: "50%", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 800, color: "#3B6BF5", flexShrink: 0, marginTop: 1 }}>{i + 1}</div>
                 <div style={{ fontSize: 13, color: "#e8eaf0", lineHeight: 1.5 }}>{step}</div>
               </div>
             ))}
@@ -716,13 +716,13 @@ function ProjectsPage() {
           <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 10, padding: "18px 20px" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
               <div style={{ fontSize: 11, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1.2px" }}>Notes</div>
-              {!editingNotes && <button onClick={() => setEditingNotes(true)} style={{ fontSize: 11, color: "#3b82f6", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>Edit</button>}
+              {!editingNotes && <button onClick={() => setEditingNotes(true)} style={{ fontSize: 11, color: "#3B6BF5", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>Edit</button>}
             </div>
             {editingNotes ? (
               <div>
                 <textarea value={editNotes} onChange={e => setEditNotes(e.target.value)} style={{ width: "100%", minHeight: 120, background: "#0b0d12", border: "1px solid #2a2f45", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "10px 12px", resize: "vertical", outline: "none", boxSizing: "border-box" }} />
                 <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-                  <button onClick={handleSaveNotes} style={{ fontSize: 12, fontWeight: 700, padding: "6px 14px", borderRadius: 7, border: "none", background: "#3b82f6", color: "#fff", cursor: "pointer" }}>Save</button>
+                  <button onClick={handleSaveNotes} style={{ fontSize: 12, fontWeight: 700, padding: "6px 14px", borderRadius: 7, border: "none", background: "#3B6BF5", color: "#fff", cursor: "pointer" }}>Save</button>
                   <button onClick={() => { setEditingNotes(false); setEditNotes(selected.notes); }} style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 7, border: "1px solid #1e2130", background: "transparent", color: "#4b5368", cursor: "pointer" }}>Cancel</button>
                 </div>
               </div>
@@ -747,7 +747,7 @@ function ProjectsPage() {
         <div>
           <div style={{ fontSize: 11, color: "#4b5368", marginTop: 2 }}>{projectsData.filter(p => p.status === "active").length} active · {projectsData.filter(p => p.status === "paused").length} paused · {projectsData.filter(p => p.status === "done").length} done</div>
         </div>
-        <button onClick={() => setAddingProject(true)} style={{ fontSize: 12, fontWeight: 700, padding: "8px 16px", borderRadius: 8, border: "1px solid rgba(59,130,246,0.3)", background: "rgba(59,130,246,0.1)", color: "#3b82f6", cursor: "pointer" }}>+ Add Project</button>
+        <button onClick={() => setAddingProject(true)} style={{ fontSize: 12, fontWeight: 700, padding: "8px 16px", borderRadius: 8, border: "1px solid rgba(59,130,246,0.3)", background: "rgba(59,130,246,0.1)", color: "#3B6BF5", cursor: "pointer" }}>+ Add Project</button>
       </div>
       {addingProject && (
         <div style={{ background: "#111318", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 10, padding: "18px 20px", marginBottom: 16 }}>
@@ -757,7 +757,7 @@ function ProjectsPage() {
           <input placeholder="First next step (optional)" value={newNextStep} onChange={e => setNewNextStep(e.target.value)} style={{ width: "100%", background: "#0b0d12", border: "1px solid #2a2f45", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "9px 12px", marginBottom: 8, outline: "none", boxSizing: "border-box" }} />
           <input placeholder="Google Drive folder/doc URL (optional)" value={newDriveUrl} onChange={e => setNewDriveUrl(e.target.value)} style={{ width: "100%", background: "#0b0d12", border: "1px solid #2a2f45", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "9px 12px", marginBottom: 12, outline: "none", boxSizing: "border-box" }} />
           <div style={{ display: "flex", gap: 8 }}>
-            <button onClick={handleAddProject} style={{ fontSize: 12, fontWeight: 700, padding: "7px 16px", borderRadius: 7, border: "none", background: "#3b82f6", color: "#fff", cursor: "pointer" }}>Add Project</button>
+            <button onClick={handleAddProject} style={{ fontSize: 12, fontWeight: 700, padding: "7px 16px", borderRadius: 7, border: "none", background: "#3B6BF5", color: "#fff", cursor: "pointer" }}>Add Project</button>
             <button onClick={() => setAddingProject(false)} style={{ fontSize: 12, fontWeight: 600, padding: "7px 16px", borderRadius: 7, border: "1px solid #1e2130", background: "transparent", color: "#4b5368", cursor: "pointer" }}>Cancel</button>
           </div>
         </div>
@@ -780,9 +780,9 @@ function ProjectsPage() {
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
                 <div style={{ flex: 1, height: 5, background: "#1e2130", borderRadius: 3, overflow: "hidden" }}>
-                  <div style={{ height: "100%", width: `${p.progress}%`, background: "linear-gradient(90deg,#3b82f6,#6366f1)", borderRadius: 3 }} />
+                  <div style={{ height: "100%", width: `${p.progress}%`, background: "linear-gradient(90deg,#3B6BF5,#6366f1)", borderRadius: 3 }} />
                 </div>
-                <span style={{ fontSize: 12, fontWeight: 700, color: "#3b82f6", minWidth: 32 }}>{p.progress}%</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: "#3B6BF5", minWidth: 32 }}>{p.progress}%</span>
               </div>
               <div style={{ fontSize: 12, color: "#f59e0b" }}>→ {p.nextStep}</div>
             </div>
@@ -918,7 +918,7 @@ export default function AdminCommandCenter() {
   return (
     <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif", background: "#0b0d12", color: "#e8eaf0", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       {/* BANNER */}
-      <div style={{ background: "linear-gradient(90deg,#7c3aed,#2563eb)", color: "#fff", textAlign: "center", fontSize: 11, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", padding: "7px 20px", position: "sticky", top: 0, zIndex: 999 }}>
+      <div style={{ background: "linear-gradient(90deg,#3B6BF5,#2563eb)", color: "#fff", textAlign: "center", fontSize: 11, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", padding: "7px 20px", position: "sticky", top: 0, zIndex: 999 }}>
         ⚡ Turbo Response — Command Center V1 &nbsp;·&nbsp;
         <span style={{ opacity: 0.65, fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>Central Operating System · Admin Only · Internal</span>
       </div>
@@ -928,7 +928,7 @@ export default function AdminCommandCenter() {
         <aside style={{ width: 230, background: "#111318", borderRight: "1px solid #1e2130", display: "flex", flexDirection: "column", position: "sticky", top: 33, height: "calc(100vh - 33px)", overflowY: "auto", flexShrink: 0 }}>
           <div style={{ padding: "20px 18px 16px", borderBottom: "1px solid #1e2130" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ width: 34, height: 34, background: "linear-gradient(135deg,#3b82f6,#6366f1)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>⚡</div>
+              <div style={{ width: 34, height: 34, background: "linear-gradient(135deg,#3B6BF5,#6366f1)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>⚡</div>
               <div>
                 <div style={{ fontSize: 14, fontWeight: 800, color: "#e8eaf0", letterSpacing: "-0.4px" }}>Turbo Response</div>
                 <div style={{ fontSize: 9, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1.2px", marginTop: 1 }}>Command Center</div>
@@ -939,7 +939,7 @@ export default function AdminCommandCenter() {
           <nav style={{ flex: 1, padding: "12px 0 8px", overflowY: "auto" }}>
             {/* MAIN 4 ITEMS */}
             {mainNavItems.map(n => (
-              <div key={n.id} onClick={() => setSection(n.id)} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 18px", fontSize: 13, fontWeight: 500, color: s(n.id) ? "#e8eaf0" : "#6b7280", cursor: "pointer", borderLeft: s(n.id) ? "2px solid #3b82f6" : "2px solid transparent", background: s(n.id) ? "rgba(59,130,246,0.07)" : "transparent" }}>
+              <div key={n.id} onClick={() => setSection(n.id)} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 18px", fontSize: 13, fontWeight: 500, color: s(n.id) ? "#e8eaf0" : "#6b7280", cursor: "pointer", borderLeft: s(n.id) ? "2px solid #3B6BF5" : "2px solid transparent", background: s(n.id) ? "rgba(59,130,246,0.07)" : "transparent" }}>
                 <span style={{ fontSize: 15, width: 20, textAlign: "center", flexShrink: 0 }}>{n.icon}</span>
                 <span style={{ flex: 1 }}>{n.label}</span>
               </div>
@@ -951,7 +951,7 @@ export default function AdminCommandCenter() {
               <span>More / Archive</span>
             </div>
             {archiveOpen && archiveNavItems.map(n => (
-              <div key={n.id} onClick={() => setSection(n.id)} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 18px 8px 28px", fontSize: 12, fontWeight: 400, color: s(n.id) ? "#e8eaf0" : "#4b5368", cursor: "pointer", borderLeft: s(n.id) ? "2px solid #3b82f6" : "2px solid transparent", background: s(n.id) ? "rgba(59,130,246,0.07)" : "transparent" }}>
+              <div key={n.id} onClick={() => setSection(n.id)} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 18px 8px 28px", fontSize: 12, fontWeight: 400, color: s(n.id) ? "#e8eaf0" : "#4b5368", cursor: "pointer", borderLeft: s(n.id) ? "2px solid #3B6BF5" : "2px solid transparent", background: s(n.id) ? "rgba(59,130,246,0.07)" : "transparent" }}>
                 <span style={{ fontSize: 13, width: 18, textAlign: "center", flexShrink: 0 }}>{n.icon}</span>
                 <span style={{ flex: 1 }}>{n.label}</span>
               </div>
@@ -973,7 +973,7 @@ export default function AdminCommandCenter() {
           </nav>
           <div style={{ padding: "14px 18px", borderTop: "1px solid #1e2130" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg,#3b82f6,#8b5cf6)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: "#fff", flexShrink: 0 }}>Z</div>
+              <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg,#3B6BF5,#3B6BF5)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: "#fff", flexShrink: 0 }}>Z</div>
               <div>
                 <div style={{ fontSize: 12, fontWeight: 600, color: "#e8eaf0" }}>Zakhy</div>
                 <div style={{ fontSize: 10, color: "#4b5368", marginTop: 1 }}>Owner · Admin</div>
@@ -995,12 +995,12 @@ export default function AdminCommandCenter() {
                 <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e" }} /> All Systems Go
               </div>
               <a href="https://calendar.app.google/FCwJTynqN7GMFfpb9" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
-                <button style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 7, border: "1px solid rgba(139,92,246,0.4)", background: "rgba(139,92,246,0.12)", color: "#a78bfa", cursor: "pointer" }}>
+                <button style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 7, border: "1px solid rgba(59, 107, 245,0.4)", background: "rgba(59, 107, 245,0.12)", color: "#3B6BF5", cursor: "pointer" }}>
                   📅 Book Consultation
                 </button>
               </a>
               <a href="/admin" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
-                <button style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 7, border: "none", background: "#3b82f6", color: "#fff", cursor: "pointer" }}>
+                <button style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 7, border: "none", background: "#3B6BF5", color: "#fff", cursor: "pointer" }}>
                   Admin Dashboard →
                 </button>
               </a>
@@ -1051,7 +1051,7 @@ export default function AdminCommandCenter() {
                       <div style={{ padding: "8px 14px", background: "rgba(245,158,11,0.15)", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 7, fontSize: 12, fontWeight: 600, color: "#f59e0b", cursor: "pointer" }}>📋 Google Tasks</div>
                     </a>
                     <a href="https://calendar.google.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
-                      <div style={{ padding: "8px 14px", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 7, fontSize: 12, fontWeight: 600, color: "#3b82f6", cursor: "pointer" }}>📅 Calendar</div>
+                      <div style={{ padding: "8px 14px", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 7, fontSize: 12, fontWeight: 600, color: "#3B6BF5", cursor: "pointer" }}>📅 Calendar</div>
                     </a>
                   </div>
                 </div>
@@ -1156,7 +1156,7 @@ export default function AdminCommandCenter() {
             {s("operator_input") && (
               <div>
                 {/* Flow Banner */}
-                <div style={{ marginBottom: 22, padding: "18px 22px", background: "linear-gradient(135deg, rgba(139,92,246,0.12), rgba(59,130,246,0.08))", border: "1px solid rgba(139,92,246,0.25)", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div style={{ marginBottom: 22, padding: "18px 22px", background: "linear-gradient(135deg, rgba(59, 107, 245,0.12), rgba(59,130,246,0.08))", border: "1px solid rgba(59, 107, 245,0.25)", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   <div>
                     <div style={{ fontSize: 11, color: "#9ca3af", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Operator Workflow</div>
                     <div style={{ fontSize: 22, fontWeight: 800, color: "#e8eaf0", letterSpacing: "-0.5px" }}>Dump → Process → Execute</div>
@@ -1198,12 +1198,12 @@ export default function AdminCommandCenter() {
                   {/* Step 3 */}
                   <div style={{ background: "#111318", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 12, padding: "22px 20px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-                      <div style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800, color: "#3b82f6", flexShrink: 0 }}>3</div>
+                      <div style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800, color: "#3B6BF5", flexShrink: 0 }}>3</div>
                       <div style={{ fontSize: 14, fontWeight: 700, color: "#e8eaf0" }}>Execute</div>
                     </div>
                     <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 18, lineHeight: 1.6 }}>Take the organized output and execute. Update tasks, assign to projects, or send instructions to Manus to build.</div>
                     <a href="https://manus.im" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
-                      <button style={{ width: "100%", padding: "11px 16px", background: "rgba(59,130,246,0.12)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 8, color: "#3b82f6", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+                      <button style={{ width: "100%", padding: "11px 16px", background: "rgba(59,130,246,0.12)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 8, color: "#3B6BF5", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
                         ⚡ Open Manus
                       </button>
                     </a>
@@ -1215,7 +1215,7 @@ export default function AdminCommandCenter() {
                   <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px" }}>
                     <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 14 }}>Quick Processing Tools</div>
                     {[
-                      { icon: "🧠", label: "NotebookLM", sub: "AI knowledge & research", href: "https://notebooklm.google.com", color: "#8b5cf6" },
+                      { icon: "🧠", label: "NotebookLM", sub: "AI knowledge & research", href: "https://notebooklm.google.com", color: "#3B6BF5" },
                       { icon: "⚡", label: "Grok", sub: "xAI — fast processing", href: "https://grok.com", color: "#e5e7eb" },
                       { icon: "📊", label: "Google Sheets", sub: "Structured data & tracking", href: "https://sheets.google.com", color: "#34a853" },
                       { icon: "📅", label: "Google Calendar", sub: "Schedule & time blocks", href: "https://calendar.google.com", color: "#4285f4" },
@@ -1266,15 +1266,15 @@ export default function AdminCommandCenter() {
             {s("social_media") && (
               <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                 {/* TODAY / NEEDS ATTENTION - PRIMARY FOCUS */}
-                <div style={{ background: "#0f1117", border: "2px solid #06b6d4", borderRadius: 16, padding: "24px 28px", boxShadow: "0 0 20px rgba(6,182,212,0.08)" }}>
-                  <div style={{ fontSize: 14, fontWeight: 900, color: "#06b6d4", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 20 }}>🎯 Today — Needs Attention</div>
+                <div style={{ background: "#0f1117", border: "2px solid #1A3FC7", borderRadius: 16, padding: "24px 28px", boxShadow: "0 0 20px rgba(26, 63, 199,0.08)" }}>
+                  <div style={{ fontSize: 14, fontWeight: 900, color: "#1A3FC7", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 20 }}>🎯 Today — Needs Attention</div>
                   
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginBottom: 16 }}>
                     {[
                       { label: "Pending Approvals", count: 3, icon: "⏳", color: "#f59e0b" },
-                      { label: "Items in Review", count: 2, icon: "👀", color: "#3b82f6" },
+                      { label: "Items in Review", count: 2, icon: "👀", color: "#3B6BF5" },
                       { label: "Messages/DMs", count: 5, icon: "💬", color: "#10b981" },
-                      { label: "Tasks", count: 1, icon: "✓", color: "#8b5cf6" },
+                      { label: "Tasks", count: 1, icon: "✓", color: "#3B6BF5" },
                     ].map(item => (
                       <div key={item.label} style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 10, padding: "14px 16px", textAlign: "center", cursor: "pointer", transition: "all 0.2s" }}>
                         <div style={{ fontSize: 24, marginBottom: 6 }}>{item.icon}</div>
@@ -1285,7 +1285,7 @@ export default function AdminCommandCenter() {
                   </div>
 
                   <div style={{ display: "flex", gap: 8 }}>
-                    <button style={{ flex: 1, padding: "12px 16px", background: "rgba(6,182,212,0.15)", border: "1px solid rgba(6,182,212,0.3)", borderRadius: 8, color: "#22d3ee", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                    <button style={{ flex: 1, padding: "12px 16px", background: "rgba(26, 63, 199,0.15)", border: "1px solid rgba(26, 63, 199,0.3)", borderRadius: 8, color: "#22d3ee", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
                       👁 Review Now
                     </button>
                     <button style={{ flex: 1, padding: "12px 16px", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 8, color: "#4ade80", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
@@ -1320,7 +1320,7 @@ export default function AdminCommandCenter() {
                     </div>
                   </div>
                   <a href="https://docs.google.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
-                    <button style={{ width: "100%", padding: "10px 16px", background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.25)", borderRadius: 8, color: "#22d3ee", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                    <button style={{ width: "100%", padding: "10px 16px", background: "rgba(26, 63, 199,0.1)", border: "1px solid rgba(26, 63, 199,0.25)", borderRadius: 8, color: "#22d3ee", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
                       📈 View Full Audit
                     </button>
                   </a>
@@ -1328,7 +1328,7 @@ export default function AdminCommandCenter() {
 
                 {/* PUBLISHING TOOLS - HIDDEN BEHIND BUTTON */}
                 <div style={{ background: "#0f1117", border: "1px solid #1e2130", borderRadius: 12, padding: "16px 20px" }}>
-                  <button style={{ width: "100%", padding: "12px 16px", background: "rgba(139,92,246,0.1)", border: "1px solid rgba(139,92,246,0.25)", borderRadius: 8, color: "#c4b5fd", fontSize: 12, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                  <button style={{ width: "100%", padding: "12px 16px", background: "rgba(59, 107, 245,0.1)", border: "1px solid rgba(59, 107, 245,0.25)", borderRadius: 8, color: "#c4b5fd", fontSize: 12, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
                     🛠 Open Publishing Tools
                   </button>
                 </div>
@@ -1341,11 +1341,11 @@ export default function AdminCommandCenter() {
                   <div style={{ fontSize: 11, color: "#9ca3af", textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>Lead Capture Workflow</div>
                   <div style={{ display: "flex", alignItems: "center", gap: 0, flexWrap: "wrap" }}>
                     {[
-                      { step: "Content", icon: "✏️", color: "#8b5cf6" },
-                      { step: "DM / Comment", icon: "💬", color: "#3b82f6" },
+                      { step: "Content", icon: "✏️", color: "#3B6BF5" },
+                      { step: "DM / Comment", icon: "💬", color: "#3B6BF5" },
                       { step: "Capture Email", icon: "📧", color: "#f59e0b" },
                       { step: "Book Consult", icon: "📅", color: "#22c55e" },
-                      { step: "Follow Up", icon: "🔄", color: "#06b6d4" },
+                      { step: "Follow Up", icon: "🔄", color: "#1A3FC7" },
                     ].map((s, i) => (
                       <div key={s.step} style={{ display: "flex", alignItems: "center" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 7, padding: "7px 14px", background: `${s.color}15`, border: `1px solid ${s.color}30`, borderRadius: 8 }}>
@@ -1430,7 +1430,7 @@ export default function AdminCommandCenter() {
                         label: "Book Consultation",
                         sub: "Google Calendar booking link",
                         href: "https://calendar.app.google/FCwJTynqN7GMFfpb9",
-                        color: "#8b5cf6",
+                        color: "#3B6BF5",
                         badge: "Live",
                       },
                       {
@@ -1480,8 +1480,8 @@ export default function AdminCommandCenter() {
                   <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 16 }}>Lead Pipeline Status</div>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 12 }}>
                     {[
-                      { stage: "Attention", icon: "👀", sub: "Saw content", color: "#8b5cf6", count: "—" },
-                      { stage: "Engaged", icon: "💬", sub: "DM or comment", color: "#3b82f6", count: "—" },
+                      { stage: "Attention", icon: "👀", sub: "Saw content", color: "#3B6BF5", count: "—" },
+                      { stage: "Engaged", icon: "💬", sub: "DM or comment", color: "#3B6BF5", count: "—" },
                       { stage: "Email Captured", icon: "📧", sub: "On list", color: "#f59e0b", count: "—" },
                       { stage: "Booked", icon: "📅", sub: "Consult scheduled", color: "#22c55e", count: "—" },
                       { stage: "Converted", icon: "✅", sub: "Paid client", color: "#10a37f", count: "—" },
@@ -1504,8 +1504,8 @@ export default function AdminCommandCenter() {
                   <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px" }}>
                     <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 14 }}>Follow-Up Sequence</div>
                     {[
-                      { step: "Day 0", action: "Reply to DM / comment manually", icon: "💬", color: "#3b82f6" },
-                      { step: "Day 1", action: "Send booking link if interested", icon: "📅", color: "#8b5cf6" },
+                      { step: "Day 0", action: "Reply to DM / comment manually", icon: "💬", color: "#3B6BF5" },
+                      { step: "Day 1", action: "Send booking link if interested", icon: "📅", color: "#3B6BF5" },
                       { step: "Day 3", action: "Follow-up email if no booking", icon: "📧", color: "#f59e0b" },
                       { step: "Day 7", action: "Final follow-up or close loop", icon: "🔄", color: "#22c55e" },
                     ].map(row => (
@@ -1557,10 +1557,10 @@ export default function AdminCommandCenter() {
             {s("operations") && (
               <div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 22 }}>
-                  <StatCard label="Total Cases" value={caseCount !== null ? String(caseCount) : "—"} delta={caseCount !== null ? "Live · Real database" : "Loading..."} accent="#3b82f6" />
+                  <StatCard label="Total Cases" value={caseCount !== null ? String(caseCount) : "—"} delta={caseCount !== null ? "Live · Real database" : "Loading..."} accent="#3B6BF5" />
                   <StatCard label="Pending Review" value={String(pendingCount)} sub={pendingCount > 0 ? "Needs admin action" : "All clear"} accent="#f59e0b" />
                   <StatCard label="Active Cases" value={liveCases ? String(liveCases.filter(c => c.status === "active" || c.status === "in_progress" || c.status === "processing").length) : "—"} sub="In progress" accent="#22c55e" />
-                  <StatCard label="Drive Links" value={liveCases ? String(liveCases.filter(c => c.drive_folder_link).length) : "—"} sub="Cases with Drive folders" accent="#8b5cf6" />
+                  <StatCard label="Drive Links" value={liveCases ? String(liveCases.filter(c => c.drive_folder_link).length) : "—"} sub="Cases with Drive folders" accent="#3B6BF5" />
                 </div>
 
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 16 }}>
@@ -1596,10 +1596,10 @@ export default function AdminCommandCenter() {
                                 value={driveInputVal}
                                 onChange={e => setDriveInputVal(e.target.value)}
                                 placeholder="Paste Google Drive folder URL..."
-                                style={{ flex: 1, background: "#181b24", border: "1px solid #3b82f6", borderRadius: 6, padding: "5px 10px", fontSize: 11, color: "#e8eaf0", outline: "none" }}
+                                style={{ flex: 1, background: "#181b24", border: "1px solid #3B6BF5", borderRadius: 6, padding: "5px 10px", fontSize: 11, color: "#e8eaf0", outline: "none" }}
                                 onKeyDown={e => { if (e.key === "Enter") saveDriveLink(c.id); if (e.key === "Escape") setDriveEditId(null); }}
                               />
-                              <button onClick={() => saveDriveLink(c.id)} disabled={driveSaving} style={{ fontSize: 11, fontWeight: 600, background: "#3b82f6", color: "#fff", border: "none", borderRadius: 6, padding: "5px 12px", cursor: "pointer" }}>{driveSaving ? "…" : "Save"}</button>
+                              <button onClick={() => saveDriveLink(c.id)} disabled={driveSaving} style={{ fontSize: 11, fontWeight: 600, background: "#3B6BF5", color: "#fff", border: "none", borderRadius: 6, padding: "5px 12px", cursor: "pointer" }}>{driveSaving ? "…" : "Save"}</button>
                               <button onClick={() => setDriveEditId(null)} style={{ fontSize: 11, background: "transparent", color: "#4b5368", border: "1px solid #1e2130", borderRadius: 6, padding: "5px 10px", cursor: "pointer" }}>✕</button>
                             </div>
                           )}
@@ -1660,7 +1660,7 @@ export default function AdminCommandCenter() {
             {s("ecosystem") && (
               <div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 22 }}>
-                  <StatCard label="Key People" value="14" sub="In network" accent="#8b5cf6" />
+                  <StatCard label="Key People" value="14" sub="In network" accent="#3B6BF5" />
                   <StatCard label="Organizations" value="8" sub="Tracked" accent="#14b8a6" />
                   <StatCard label="Active Grants" value="3" sub="Applications open" accent="#22c55e" />
                   <StatCard label="Upcoming Events" value="2" sub="This month" accent="#f59e0b" />
@@ -1711,9 +1711,9 @@ export default function AdminCommandCenter() {
             {s("marketing") && (
               <div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 22 }}>
-                  <StatCard label="Content Ideas" value="18" sub="In backlog" accent="#3b82f6" />
+                  <StatCard label="Content Ideas" value="18" sub="In backlog" accent="#3B6BF5" />
                   <StatCard label="Posts This Month" value="12" delta="↑ 4 vs last month" accent="#22c55e" />
-                  <StatCard label="Active Campaigns" value="2" sub="Running now" accent="#8b5cf6" />
+                  <StatCard label="Active Campaigns" value="2" sub="Running now" accent="#3B6BF5" />
                   <StatCard label="Avg. Engagement" value="6.4%" delta="↑ 1.2% this week" accent="#14b8a6" />
                 </div>
 
@@ -1748,7 +1748,7 @@ export default function AdminCommandCenter() {
                 <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px", marginBottom: 16 }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
                     <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px" }}>Weekly Posting Schedule</div>
-                    <div style={{ fontSize: 11, fontWeight: 500, color: "#3b82f6", cursor: "pointer" }}>Edit Schedule →</div>
+                    <div style={{ fontSize: 11, fontWeight: 500, color: "#3B6BF5", cursor: "pointer" }}>Edit Schedule →</div>
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "90px repeat(7,1fr)", gap: 4 }}>
                     <div />
@@ -1756,7 +1756,7 @@ export default function AdminCommandCenter() {
                     {SCHEDULE.map(row => {
                       const typeColors: Record<string, [string, string, string]> = {
                         Post: ["rgba(59,130,246,0.12)", "#60a5fa", "rgba(59,130,246,0.2)"],
-                        Reel: ["rgba(139,92,246,0.12)", "#a78bfa", "rgba(139,92,246,0.2)"],
+                        Reel: ["rgba(59, 107, 245,0.12)", "#3B6BF5", "rgba(59, 107, 245,0.2)"],
                         Story: ["rgba(20,184,166,0.12)", "#2dd4bf", "rgba(20,184,166,0.2)"],
                         Send: ["rgba(245,158,11,0.12)", "#fbbf24", "rgba(245,158,11,0.2)"],
                       };
@@ -1789,7 +1789,7 @@ export default function AdminCommandCenter() {
                           <Badge label="Active" />
                         </div>
                         <ProgBar label="Reach" val={c.reach.toLocaleString()} pct={c.reachPct} color="#22c55e" />
-                        <ProgBar label="Leads Generated" val={c.leads} pct={c.leadsPct} color="#3b82f6" />
+                        <ProgBar label="Leads Generated" val={c.leads} pct={c.leadsPct} color="#3B6BF5" />
                       </div>
                     ))}
                   </div>
@@ -1806,10 +1806,10 @@ export default function AdminCommandCenter() {
                     {[
                       { icon: "📄", label: "Google Docs", sub: "Documents & writing", href: "https://docs.google.com", color: "#4285f4" },
                       { icon: "📁", label: "Google Drive", sub: "Turbo Response Central", href: "https://drive.google.com", color: "#34a853" },
-                      { icon: "🧠", label: "NotebookLM", sub: "AI knowledge system", href: "https://notebooklm.google.com", color: "#8b5cf6" },
+                      { icon: "🧠", label: "NotebookLM", sub: "AI knowledge system", href: "https://notebooklm.google.com", color: "#3B6BF5" },
                       { icon: "🤖", label: "ChatGPT", sub: "OpenAI assistant", href: "https://chat.openai.com", color: "#10a37f" },
                       { icon: "⚡", label: "Grok", sub: "xAI assistant", href: "https://grok.com", color: "#e5e7eb" },
-                      { icon: "🚀", label: "Manus", sub: "AI agent platform", href: "https://manus.im", color: "#3b82f6" },
+                      { icon: "🚀", label: "Manus", sub: "AI agent platform", href: "https://manus.im", color: "#3B6BF5" },
                       { icon: "✅", label: "Tasks", sub: "Google Tasks", href: "https://tasks.google.com", color: "#f59e0b" },
                       { icon: "🎯", label: "HubSpot", sub: "CRM & pipeline", href: "https://app.hubspot.com", color: "#ff7a59" },
                     ].map(tool => (
@@ -1837,10 +1837,10 @@ export default function AdminCommandCenter() {
                 <SectionCard title="Turbo Response Internal Tools">
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 14 }}>
                     {[
-                      { icon: "🛡️", label: "Admin Dashboard", sub: "Case management", href: "/admin", color: "#3b82f6", external: true },
-                      { icon: "🧠", label: "Turbo Brain", sub: "AI knowledge upload", href: "/admin/brain", color: "#8b5cf6", external: true },
+                      { icon: "🛡️", label: "Admin Dashboard", sub: "Case management", href: "/admin", color: "#3B6BF5", external: true },
+                      { icon: "🧠", label: "Turbo Brain", sub: "AI knowledge upload", href: "/admin/brain", color: "#3B6BF5", external: true },
                       { icon: "📋", label: "Defense Intake", sub: "Consumer case intake", href: "/intake-defense", color: "#22c55e", external: true },
-                      { icon: "👤", label: "Client Portal", sub: "Client login & cases", href: "/client/login", color: "#06b6d4", external: true },
+                      { icon: "👤", label: "Client Portal", sub: "Client login & cases", href: "/client/login", color: "#1A3FC7", external: true },
                       { icon: "📸", label: "Screenshots", sub: "Screenshot capture tool", href: "/admin/screenshots", color: "#f59e0b", external: true },
                       { icon: "📊", label: "Render Dashboard", sub: "Server & deploy status", href: "https://dashboard.render.com", color: "#46e3b7", external: true },
                       { icon: "💻", label: "GitHub Repo", sub: "Source code", href: "https://github.com/turboresponsehq-sudo/turbo-response", color: "#e8eaf0", external: true },
@@ -1871,8 +1871,8 @@ export default function AdminCommandCenter() {
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
                     {[
                       { phase: "Phase 1 — Current", items: ["UI dashboard", "Navigation links", "Basic structure", "Core tool access"], color: "#22c55e", status: "Active" },
-                      { phase: "Phase 2 — Next", items: ["Live data (cases, leads)", "CRM integration (HubSpot)", "Google Drive linking", "Real-time metrics"], color: "#3b82f6", status: "Planned" },
-                      { phase: "Phase 3 — Future", items: ["AI assistant (Gemini/OpenAI)", "Automation workflows", "Timeline/calendar system", "System alerts & reporting"], color: "#8b5cf6", status: "Planned" },
+                      { phase: "Phase 2 — Next", items: ["Live data (cases, leads)", "CRM integration (HubSpot)", "Google Drive linking", "Real-time metrics"], color: "#3B6BF5", status: "Planned" },
+                      { phase: "Phase 3 — Future", items: ["AI assistant (Gemini/OpenAI)", "Automation workflows", "Timeline/calendar system", "System alerts & reporting"], color: "#3B6BF5", status: "Planned" },
                     ].map(p => (
                       <div key={p.phase} style={{ background: "#181b24", border: `1px solid ${p.color}30`, borderRadius: 12, padding: 18 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>

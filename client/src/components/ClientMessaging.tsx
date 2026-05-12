@@ -180,7 +180,7 @@ export default function ClientMessaging({ caseId, clientName }: ClientMessagingP
       <h2 style={{
         fontSize: "1.25rem",
         fontWeight: 600,
-        color: "#1e293b",
+        color: "#0A1A3F",
         marginBottom: "1rem",
         display: "flex",
         alignItems: "center",
@@ -231,8 +231,8 @@ export default function ClientMessaging({ caseId, clientName }: ClientMessagingP
                   maxWidth: "70%",
                   padding: "0.75rem 1rem",
                   borderRadius: "12px",
-                  backgroundColor: msg.sender === "client" ? "#06b6d4" : "white",
-                  color: msg.sender === "client" ? "white" : "#1e293b",
+                  backgroundColor: msg.sender === "client" ? "#1A3FC7" : "white",
+                  color: msg.sender === "client" ? "white" : "#0A1A3F",
                   border: msg.sender === "admin" ? "1px solid #e2e8f0" : "none",
                   boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)"
                 }}>
@@ -263,7 +263,7 @@ export default function ClientMessaging({ caseId, clientName }: ClientMessagingP
                         marginTop: "0.5rem",
                         padding: "0.5rem 0.75rem",
                         backgroundColor: msg.sender === "client" ? "rgba(255,255,255,0.2)" : "#f1f5f9",
-                        color: msg.sender === "client" ? "white" : "#1e293b",
+                        color: msg.sender === "client" ? "white" : "#0A1A3F",
                         borderRadius: "6px",
                         fontSize: "0.75rem",
                         textDecoration: "none",
@@ -294,9 +294,9 @@ export default function ClientMessaging({ caseId, clientName }: ClientMessagingP
           <div style={{
             padding: "0.75rem",
             backgroundColor: "#f0f9ff",
-            border: "1px solid #06b6d4",
+            border: "1px solid #1A3FC7",
             borderRadius: "8px",
-            color: "#0284c7",
+            color: "#1A3FC7",
             fontSize: "0.875rem",
             textAlign: "center"
           }}>
@@ -318,7 +318,7 @@ export default function ClientMessaging({ caseId, clientName }: ClientMessagingP
               fontSize: "0.875rem",
               outline: "none",
               backgroundColor: "white",
-              color: "#1e293b"
+              color: "#0A1A3F"
             }}
           />
           <input
@@ -352,7 +352,7 @@ export default function ClientMessaging({ caseId, clientName }: ClientMessagingP
             disabled={sending || !newMessage.trim() || uploading}
             style={{
               padding: "0.75rem 1.5rem",
-              backgroundColor: sending || !newMessage.trim() || uploading ? "#cbd5e1" : "#06b6d4",
+              backgroundColor: sending || !newMessage.trim() || uploading ? "#cbd5e1" : "#1A3FC7",
               color: "white",
               border: "none",
               borderRadius: "8px",

@@ -89,7 +89,7 @@ async function verifyPayment(req, res) {
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 40px; border-radius: 12px;">
             <div style="text-align: center; margin-bottom: 30px;">
               <div style="font-size: 48px; margin-bottom: 10px;">⚡</div>
-              <h1 style="color: #06b6d4; margin: 0; font-size: 28px;">Portal Activated!</h1>
+              <h1 style="color: #1A3FC7; margin: 0; font-size: 28px;">Portal Activated!</h1>
             </div>
             
             <div style="background: white; padding: 30px; border-radius: 8px; margin-bottom: 20px;">
@@ -98,13 +98,13 @@ async function verifyPayment(req, res) {
                 Great news! Your payment has been verified and your client portal is now active. You can now access your case details, documents, and updates.
               </p>
               
-              <div style="background: #f0f9ff; border: 2px solid #06b6d4; border-radius: 8px; padding: 20px; margin: 20px 0;">
+              <div style="background: #f0f9ff; border: 2px solid #1A3FC7; border-radius: 8px; padding: 20px; margin: 20px 0;">
                 <p style="margin: 0; color: #0284c7; font-weight: 600;">Case Number:</p>
                 <p style="margin: 5px 0 0 0; color: #1e293b; font-size: 18px; font-weight: 700;">${caseData.case_number}</p>
               </div>
               
               <div style="text-align: center; margin: 30px 0;">
-                <a href="${loginUrl}" style="display: inline-block; background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; text-decoration: none; padding: 15px 40px; border-radius: 8px; font-weight: 700; font-size: 16px;">Access Your Portal →</a>
+                <a href="${loginUrl}" style="display: inline-block; background: linear-gradient(135deg, #1A3FC7 0%, #3B6BF5 100%); color: white; text-decoration: none; padding: 15px 40px; border-radius: 8px; font-weight: 700; font-size: 16px;">Access Your Portal →</a>
               </div>
               
               <div style="background: #fef3c7; border-left: 4px solid #fbbf24; padding: 15px; margin-top: 20px;">

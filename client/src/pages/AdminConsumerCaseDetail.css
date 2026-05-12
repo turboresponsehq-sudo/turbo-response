@@ -1,6 +1,6 @@
 .admin-case-detail {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  background: linear-gradient(135deg, #0A1A3F 0%, #0F2347 50%, #1A3058 100%);
   padding: 2rem;
   color: #e2e8f0;
 }
@@ -14,25 +14,25 @@
 
 .detail-header h1 {
   font-size: 2rem;
-  color: #06b6d4;
+  color: #1A3FC7;
   margin: 0 0 0.5rem 0;
 }
 
 .case-type-badge {
   display: inline-block;
   padding: 0.4rem 0.8rem;
-  background: rgba(6, 182, 212, 0.1);
-  border: 1px solid rgba(6, 182, 212, 0.3);
+  background: rgba(26, 63, 199, 0.1);
+  border: 1px solid rgba(26, 63, 199, 0.3);
   border-radius: 6px;
   font-size: 0.9rem;
-  color: #06b6d4;
+  color: #1A3FC7;
   margin: 0;
 }
 
 .btn-back {
-  background: rgba(6, 182, 212, 0.1);
-  border: 1px solid #06b6d4;
-  color: #06b6d4;
+  background: rgba(26, 63, 199, 0.1);
+  border: 1px solid #1A3FC7;
+  color: #1A3FC7;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
   cursor: pointer;
@@ -41,7 +41,7 @@
 }
 
 .btn-back:hover {
-  background: rgba(6, 182, 212, 0.2);
+  background: rgba(26, 63, 199, 0.2);
   transform: translateX(-4px);
 }
 
@@ -51,14 +51,14 @@
   padding: 4rem 2rem;
   background: rgba(30, 41, 59, 0.6);
   border-radius: 12px;
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  border: 1px solid rgba(26, 63, 199, 0.2);
 }
 
 .spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid rgba(6, 182, 212, 0.2);
-  border-top-color: #06b6d4;
+  border: 4px solid rgba(26, 63, 199, 0.2);
+  border-top-color: #1A3FC7;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 1rem;
@@ -81,7 +81,7 @@
 .analysis-card,
 .letter-card {
   background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  border: 1px solid rgba(26, 63, 199, 0.2);
   border-radius: 12px;
   padding: 2rem;
   margin-bottom: 2rem;
@@ -90,7 +90,7 @@
 .info-card h2,
 .analysis-card h2,
 .letter-card h2 {
-  color: #06b6d4;
+  color: #1A3FC7;
   margin: 0 0 1.5rem 0;
   font-size: 1.5rem;
 }
@@ -165,16 +165,16 @@
 .document-link {
   display: inline-block;
   padding: 0.75rem 1.25rem;
-  background: rgba(6, 182, 212, 0.1);
-  border: 1px solid rgba(6, 182, 212, 0.3);
+  background: rgba(26, 63, 199, 0.1);
+  border: 1px solid rgba(26, 63, 199, 0.3);
   border-radius: 8px;
-  color: #06b6d4;
+  color: #1A3FC7;
   text-decoration: none;
   transition: all 0.3s ease;
 }
 
 .document-link:hover {
-  background: rgba(6, 182, 212, 0.2);
+  background: rgba(26, 63, 199, 0.2);
   transform: translateY(-2px);
 }
 
@@ -191,7 +191,7 @@
 
 .btn-analyze,
 .btn-generate-letter {
-  background: linear-gradient(135deg, #06b6d4, #0891b2);
+  background: linear-gradient(135deg, #1A3FC7, #1A3FC7);
   border: none;
   color: white;
   padding: 0.75rem 1.5rem;
@@ -205,7 +205,7 @@
 .btn-analyze:hover,
 .btn-generate-letter:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+  box-shadow: 0 4px 12px rgba(26, 63, 199, 0.3);
 }
 
 .btn-analyze:disabled,
@@ -222,14 +222,14 @@
 }
 
 .analysis-summary {
-  background: rgba(6, 182, 212, 0.05);
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  background: rgba(26, 63, 199, 0.05);
+  border: 1px solid rgba(26, 63, 199, 0.2);
   border-radius: 8px;
   padding: 1.5rem;
 }
 
 .analysis-summary h3 {
-  color: #06b6d4;
+  color: #1A3FC7;
   margin: 0 0 1rem 0;
 }
 
@@ -247,7 +247,7 @@
 
 .metric-card {
   background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  border: 1px solid rgba(26, 63, 199, 0.2);
   border-radius: 8px;
   padding: 1.5rem;
   text-align: center;
@@ -265,7 +265,7 @@
 .metric-value {
   font-size: 2rem;
   font-weight: 700;
-  color: #06b6d4;
+  color: #1A3FC7;
 }
 
 .metric-value.urgency {
@@ -274,7 +274,7 @@
 }
 
 .analysis-section h3 {
-  color: #06b6d4;
+  color: #1A3FC7;
   margin: 0 0 1rem 0;
   font-size: 1.2rem;
 }
@@ -291,7 +291,7 @@
 .laws-list li,
 .actions-list li {
   background: rgba(15, 23, 42, 0.6);
-  border-left: 3px solid #06b6d4;
+  border-left: 3px solid #1A3FC7;
   padding: 1rem;
   margin-bottom: 0.75rem;
   border-radius: 4px;
@@ -304,7 +304,7 @@
   color: #64748b;
   font-size: 0.85rem;
   padding-top: 1rem;
-  border-top: 1px solid rgba(6, 182, 212, 0.1);
+  border-top: 1px solid rgba(26, 63, 199, 0.1);
 }
 
 .no-analysis,
@@ -320,7 +320,7 @@
 }
 
 .letters-list h3 {
-  color: #06b6d4;
+  color: #1A3FC7;
   margin: 0 0 1rem 0;
 }
 
@@ -329,7 +329,7 @@
   justify-content: space-between;
   align-items: center;
   background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  border: 1px solid rgba(26, 63, 199, 0.2);
   border-radius: 8px;
   padding: 1rem 1.5rem;
   margin-bottom: 1rem;
@@ -365,7 +365,7 @@
 }
 
 .btn-view-letter {
-  background: linear-gradient(135deg, #06b6d4, #0891b2);
+  background: linear-gradient(135deg, #1A3FC7, #1A3FC7);
   border: none;
   color: white;
   padding: 0.5rem 1rem;
@@ -378,7 +378,7 @@
 
 .btn-view-letter:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+  box-shadow: 0 4px 12px rgba(26, 63, 199, 0.3);
 }
 
 /* Modal Styles */
@@ -397,8 +397,8 @@
 }
 
 .modal-content {
-  background: #1e293b;
-  border: 1px solid rgba(6, 182, 212, 0.3);
+  background: #0F2347;
+  border: 1px solid rgba(26, 63, 199, 0.3);
   border-radius: 12px;
   max-width: 800px;
   width: 100%;
@@ -412,11 +412,11 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem 2rem;
-  border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+  border-bottom: 1px solid rgba(26, 63, 199, 0.2);
 }
 
 .modal-header h2 {
-  color: #06b6d4;
+  color: #1A3FC7;
   margin: 0;
   font-size: 1.5rem;
 }
@@ -432,7 +432,7 @@
 }
 
 .btn-close-modal:hover {
-  color: #06b6d4;
+  color: #1A3FC7;
 }
 
 .modal-body {
@@ -443,7 +443,7 @@
 
 .letter-content {
   background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  border: 1px solid rgba(26, 63, 199, 0.2);
   border-radius: 8px;
   padding: 1.5rem;
   color: #e2e8f0;
@@ -459,13 +459,13 @@
   display: flex;
   gap: 1rem;
   padding: 1.5rem 2rem;
-  border-top: 1px solid rgba(6, 182, 212, 0.2);
+  border-top: 1px solid rgba(26, 63, 199, 0.2);
 }
 
 .btn-copy,
 .btn-download {
   flex: 1;
-  background: linear-gradient(135deg, #06b6d4, #0891b2);
+  background: linear-gradient(135deg, #1A3FC7, #1A3FC7);
   border: none;
   color: white;
   padding: 0.75rem 1.5rem;
@@ -479,7 +479,7 @@
 .btn-copy:hover,
 .btn-download:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+  box-shadow: 0 4px 12px rgba(26, 63, 199, 0.3);
 }
 
 @media (max-width: 768px) {

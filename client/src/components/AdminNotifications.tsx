@@ -59,9 +59,9 @@ export default function AdminNotifications() {
     const colors: Record<string, string> = {
       'analysis_complete': '#a855f7',
       'letter_generated': '#22c55e',
-      'case_update': '#06b6d4',
+      'case_update': '#1A3FC7',
       'urgent': '#ef4444',
-      'info': '#3b82f6'
+      'info': '#3B6BF5'
     };
     return colors[type] || '#94a3b8';
   };

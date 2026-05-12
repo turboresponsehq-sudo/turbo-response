@@ -28,7 +28,7 @@
 }
 
 .document-card:hover {
-  border-color: #3b82f6;
+  border-color: #3B6BF5;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
   transform: translateY(-2px);
 }
@@ -74,7 +74,7 @@
 }
 
 .file-icon {
-  color: #3b82f6;
+  color: #3B6BF5;
 }
 
 .document-info {
@@ -88,7 +88,7 @@
 .document-filename {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #1e293b;
+  color: #0A1A3F;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -204,7 +204,7 @@
   display: inline-block;
   margin-top: 1rem;
   padding: 0.75rem 1.5rem;
-  background: #3b82f6;
+  background: #3B6BF5;
   color: white;
   text-decoration: none;
   border-radius: 6px;

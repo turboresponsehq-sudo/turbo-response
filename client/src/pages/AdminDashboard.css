@@ -2,7 +2,7 @@
 
 .admin-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  background: linear-gradient(135deg, #0A1A3F 0%, #0F2347 50%, #1A3058 100%);
   color: #f8fafc;
   padding: 20px;
 }
@@ -10,7 +10,7 @@
 .admin-header {
   background: rgba(15, 23, 42, 0.9);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  border: 1px solid rgba(26, 63, 199, 0.2);
   border-radius: 20px;
   padding: 30px;
   margin-bottom: 30px;
@@ -19,7 +19,7 @@
 .admin-title {
   font-size: 2rem;
   font-weight: 800;
-  color: #06b6d4;
+  color: #1A3FC7;
   margin-bottom: 10px;
 }
 
@@ -37,7 +37,7 @@
 
 .stat-card {
   background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  border: 1px solid rgba(26, 63, 199, 0.2);
   border-radius: 15px;
   padding: 20px;
   backdrop-filter: blur(10px);
@@ -46,8 +46,8 @@
 
 .stat-card:hover {
   transform: translateY(-5px);
-  border-color: #06b6d4;
-  box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+  border-color: #1A3FC7;
+  box-shadow: 0 0 20px rgba(26, 63, 199, 0.3);
 }
 
 .stat-label {
@@ -59,12 +59,12 @@
 .stat-value {
   font-size: 2rem;
   font-weight: 700;
-  color: #06b6d4;
+  color: #1A3FC7;
 }
 
 .leads-table-container {
   background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  border: 1px solid rgba(26, 63, 199, 0.2);
   border-radius: 20px;
   padding: 30px;
   backdrop-filter: blur(10px);
@@ -91,7 +91,7 @@
 
 .filter-btn {
   background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(6, 182, 212, 0.3);
+  border: 1px solid rgba(26, 63, 199, 0.3);
   color: #cbd5e1;
   padding: 8px 16px;
   border-radius: 8px;
@@ -100,13 +100,13 @@
 }
 
 .filter-btn:hover {
-  border-color: #06b6d4;
-  background: rgba(6, 182, 212, 0.1);
+  border-color: #1A3FC7;
+  background: rgba(26, 63, 199, 0.1);
 }
 
 .filter-btn.active {
-  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-  border-color: #06b6d4;
+  background: linear-gradient(135deg, #1A3FC7 0%, #3B6BF5 100%);
+  border-color: #1A3FC7;
   color: white;
 }
 
@@ -116,20 +116,20 @@
 }
 
 .leads-table thead {
-  border-bottom: 2px solid rgba(6, 182, 212, 0.3);
+  border-bottom: 2px solid rgba(26, 63, 199, 0.3);
 }
 
 .leads-table th {
   text-align: left;
   padding: 15px;
-  color: #06b6d4;
+  color: #1A3FC7;
   font-weight: 600;
   font-size: 0.95rem;
 }
 
 .leads-table td {
   padding: 15px;
-  border-bottom: 1px solid rgba(6, 182, 212, 0.1);
+  border-bottom: 1px solid rgba(26, 63, 199, 0.1);
   color: #cbd5e1;
 }
 
@@ -139,7 +139,7 @@
 }
 
 .leads-table tbody tr:hover {
-  background: rgba(6, 182, 212, 0.05);
+  background: rgba(26, 63, 199, 0.05);
 }
 
 .status-badge {
@@ -158,14 +158,14 @@
 
 .status-contacted {
   background: rgba(59, 130, 246, 0.2);
-  color: #3b82f6;
+  color: #3B6BF5;
   border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 .status-qualified {
-  background: rgba(6, 182, 212, 0.2);
-  color: #06b6d4;
-  border: 1px solid rgba(6, 182, 212, 0.3);
+  background: rgba(26, 63, 199, 0.2);
+  color: #1A3FC7;
+  border: 1px solid rgba(26, 63, 199, 0.3);
 }
 
 .status-converted {
@@ -187,7 +187,7 @@
 
 .action-btn {
   background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(6, 182, 212, 0.3);
+  border: 1px solid rgba(26, 63, 199, 0.3);
   color: #cbd5e1;
   padding: 6px 12px;
   border-radius: 6px;
@@ -197,9 +197,9 @@
 }
 
 .action-btn:hover {
-  border-color: #06b6d4;
-  background: rgba(6, 182, 212, 0.1);
-  color: #06b6d4;
+  border-color: #1A3FC7;
+  background: rgba(26, 63, 199, 0.1);
+  color: #1A3FC7;
 }
 
 .modal-overlay {
@@ -218,15 +218,15 @@
 }
 
 .modal-content {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  border: 1px solid rgba(6, 182, 212, 0.3);
+  background: linear-gradient(135deg, #0A1A3F 0%, #0F2347 100%);
+  border: 1px solid rgba(26, 63, 199, 0.3);
   border-radius: 20px;
   padding: 30px;
   max-width: 800px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 0 40px rgba(6, 182, 212, 0.3);
+  box-shadow: 0 0 40px rgba(26, 63, 199, 0.3);
 }
 
 .modal-header {
@@ -235,13 +235,13 @@
   align-items: center;
   margin-bottom: 20px;
   padding-bottom: 15px;
-  border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+  border-bottom: 1px solid rgba(26, 63, 199, 0.2);
 }
 
 .modal-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #06b6d4;
+  color: #1A3FC7;
 }
 
 .modal-close {
@@ -281,7 +281,7 @@
   background: rgba(30, 41, 59, 0.4);
   padding: 12px;
   border-radius: 8px;
-  border: 1px solid rgba(6, 182, 212, 0.1);
+  border: 1px solid rgba(26, 63, 199, 0.1);
 }
 
 .detail-label {
@@ -297,7 +297,7 @@
 
 .conversation-messages {
   background: rgba(30, 41, 59, 0.3);
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  border: 1px solid rgba(26, 63, 199, 0.2);
   border-radius: 12px;
   padding: 20px;
   max-height: 400px;
@@ -316,14 +316,14 @@
 }
 
 .conversation-message.assistant {
-  background: rgba(6, 182, 212, 0.1);
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  background: rgba(26, 63, 199, 0.1);
+  border: 1px solid rgba(26, 63, 199, 0.2);
 }
 
 .message-role {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #06b6d4;
+  color: #1A3FC7;
   margin-bottom: 5px;
 }
 
@@ -340,7 +340,7 @@
 
 .evidence-file {
   background: rgba(30, 41, 59, 0.4);
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  border: 1px solid rgba(26, 63, 199, 0.2);
   border-radius: 8px;
   padding: 12px;
   text-align: center;
@@ -348,12 +348,12 @@
 }
 
 .evidence-file:hover {
-  border-color: #06b6d4;
-  background: rgba(6, 182, 212, 0.1);
+  border-color: #1A3FC7;
+  background: rgba(26, 63, 199, 0.1);
 }
 
 .evidence-file a {
-  color: #06b6d4;
+  color: #1A3FC7;
   text-decoration: none;
   font-size: 0.9rem;
 }
@@ -387,13 +387,13 @@
 
 .modal-content::-webkit-scrollbar-thumb,
 .conversation-messages::-webkit-scrollbar-thumb {
-  background: rgba(6, 182, 212, 0.5);
+  background: rgba(26, 63, 199, 0.5);
   border-radius: 10px;
 }
 
 .modal-content::-webkit-scrollbar-thumb:hover,
 .conversation-messages::-webkit-scrollbar-thumb:hover {
-  background: rgba(6, 182, 212, 0.7);
+  background: rgba(26, 63, 199, 0.7);
 }
 
 @media (max-width: 768px) {

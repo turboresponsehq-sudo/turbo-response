@@ -227,7 +227,7 @@ export default function Home() {
           Final pricing depends on complexity, urgency, and scope. Turbo Response is not a law firm and provides documentation and procedural support.
         </p>
         <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-          <Link href="/pricing" className="cta-button" style={{ background: 'transparent', border: '2px solid #06b6d4', color: '#06b6d4' }}>
+          <Link href="/pricing" className="cta-button" style={{ background: 'transparent', border: '2px solid #1A3FC7', color: '#1A3FC7' }}>
             VIEW FULL PRICING DETAILS
           </Link>
         </div>

@@ -47,12 +47,12 @@ router.get('/', (req, res) => {
           width: 80px;
           height: 80px;
           margin: 0 auto 30px;
-          background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+          background: linear-gradient(135deg, #1A3FC7 0%, #3b82f6 100%);
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 0 30px rgba(6, 182, 212, 0.5);
+          box-shadow: 0 0 30px rgba(26, 63, 199, 0.5);
           animation: scaleIn 0.5s ease-out;
         }
         
@@ -105,8 +105,8 @@ router.get('/', (req, res) => {
         }
         
         .next-steps {
-          background: rgba(6, 182, 212, 0.1);
-          border: 1px solid rgba(6, 182, 212, 0.3);
+          background: rgba(26, 63, 199, 0.1);
+          border: 1px solid rgba(26, 63, 199, 0.3);
           border-radius: 12px;
           padding: 25px;
           margin: 30px 0;
@@ -115,7 +115,7 @@ router.get('/', (req, res) => {
         }
         
         .next-steps h2 {
-          color: #06b6d4;
+          color: #1A3FC7;
           font-size: 1.2rem;
           margin-bottom: 15px;
           display: flex;
@@ -141,7 +141,7 @@ router.get('/', (req, res) => {
           content: "✓";
           position: absolute;
           left: 0;
-          color: #06b6d4;
+          color: #1A3FC7;
           font-weight: bold;
           font-size: 1.2rem;
         }
@@ -149,7 +149,7 @@ router.get('/', (req, res) => {
         .home-button {
           display: inline-block;
           /* Official accent cyan from BRAND_STYLE_GUIDE.md */
-          background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+          background: linear-gradient(135deg, #1A3FC7 0%, #3b82f6 100%);
           color: white;
           padding: 16px 40px;
           border-radius: 12px;
@@ -157,13 +157,13 @@ router.get('/', (req, res) => {
           font-weight: 600;
           font-size: 1.1rem;
           transition: all 0.3s ease;
-          box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+          box-shadow: 0 0 20px rgba(26, 63, 199, 0.3);
           animation: fadeInUp 0.6s ease-out 0.6s both;
         }
         
         .home-button:hover {
           transform: translateY(-2px);
-          box-shadow: 0 0 30px rgba(6, 182, 212, 0.5);
+          box-shadow: 0 0 30px rgba(26, 63, 199, 0.5);
         }
         
         @keyframes fadeInUp {

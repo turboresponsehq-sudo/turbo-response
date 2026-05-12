@@ -197,8 +197,8 @@ export default function Payment() {
             <div
               className="payment-method"
               style={{
-                border: "2px solid #06b6d4",
-                background: "rgba(6, 182, 212, 0.05)",
+                border: "2px solid #1A3FC7",
+                background: "rgba(26, 63, 199, 0.05)",
               }}
             >
               <div className="payment-method-info">
