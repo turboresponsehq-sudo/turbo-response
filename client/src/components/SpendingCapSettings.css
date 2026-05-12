@@ -1,6 +1,6 @@
 .spending-cap-settings {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(26, 63, 199, 0.2);
+  background: #F0F2F5;
+  border: 1px solid rgba(66, 133, 244, 0.2);
   border-radius: 12px;
   overflow: hidden;
   margin-bottom: 2rem;
@@ -8,27 +8,27 @@
 
 .settings-header {
   padding: 1.5rem;
-  background: rgba(26, 63, 199, 0.05);
-  border-bottom: 1px solid rgba(26, 63, 199, 0.2);
+  background: rgba(66, 133, 244, 0.05);
+  border-bottom: 1px solid rgba(66, 133, 244, 0.2);
 }
 
 .settings-header h3 {
   margin: 0;
-  color: #1A3FC7;
+  color: #4285F4;
   font-size: 1.2rem;
 }
 
 .settings-loading {
   padding: 2rem;
   text-align: center;
-  color: #94a3b8;
+  color: #6B7280;
 }
 
 .spinner-small {
   width: 30px;
   height: 30px;
-  border: 3px solid rgba(26, 63, 199, 0.2);
-  border-top-color: #1A3FC7;
+  border: 3px solid rgba(66, 133, 244, 0.2);
+  border-top-color: #4285F4;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 0.5rem;
@@ -43,7 +43,7 @@
 }
 
 .settings-description {
-  color: #94a3b8;
+  color: #6B7280;
   line-height: 1.6;
   margin: 0 0 1.5rem 0;
   font-size: 0.95rem;
@@ -54,14 +54,14 @@
   justify-content: space-between;
   align-items: center;
   background: #F0F2F5;
-  border: 1px solid rgba(26, 63, 199, 0.2);
+  border: 1px solid rgba(66, 133, 244, 0.2);
   border-radius: 8px;
   padding: 1rem 1.5rem;
   margin-bottom: 1.5rem;
 }
 
 .current-label {
-  color: #94a3b8;
+  color: #6B7280;
   font-size: 0.9rem;
   font-weight: 600;
 }
@@ -78,7 +78,7 @@
 
 .settings-input-group label {
   display: block;
-  color: #94a3b8;
+  color: #6B7280;
   font-size: 0.9rem;
   font-weight: 600;
   margin-bottom: 0.75rem;
@@ -93,7 +93,7 @@
 .cap-input {
   flex: 1;
   background: #F0F2F5;
-  border: 1px solid rgba(26, 63, 199, 0.3);
+  border: 1px solid rgba(66, 133, 244, 0.3);
   border-radius: 8px;
   padding: 0.75rem 1rem;
   color: #334155;
@@ -103,7 +103,7 @@
 
 .cap-input:focus {
   outline: none;
-  border-color: #1A3FC7;
+  border-color: #4285F4;
   background: #FFFFFF;
 }
 
@@ -117,7 +117,7 @@
 }
 
 .btn-save-cap {
-  background: linear-gradient(135deg, #1A3FC7, #1A3FC7);
+  background: linear-gradient(135deg, #4285F4, #2D7FF9);
   border: none;
   color: white;
   padding: 0.75rem 1.5rem;
@@ -131,7 +131,7 @@
 
 .btn-save-cap:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(26, 63, 199, 0.3);
+  box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
 }
 
 .btn-save-cap:disabled {
@@ -194,15 +194,15 @@
 }
 
 .settings-info {
-  background: rgba(26, 63, 199, 0.05);
-  border: 1px solid rgba(26, 63, 199, 0.2);
+  background: rgba(66, 133, 244, 0.05);
+  border: 1px solid rgba(66, 133, 244, 0.2);
   border-radius: 8px;
   padding: 1.5rem;
   margin-top: 1.5rem;
 }
 
 .settings-info h4 {
-  color: #1A3FC7;
+  color: #4285F4;
   margin: 0 0 1rem 0;
   font-size: 1rem;
 }
@@ -214,7 +214,7 @@
 }
 
 .settings-info li {
-  color: #94a3b8;
+  color: #6B7280;
   font-size: 0.9rem;
   line-height: 1.6;
   padding-left: 1.5rem;
@@ -224,7 +224,7 @@
 
 .settings-info li:before {
   content: '•';
-  color: #1A3FC7;
+  color: #4285F4;
   font-weight: bold;
   position: absolute;
   left: 0;

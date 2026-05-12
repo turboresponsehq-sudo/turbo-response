@@ -134,17 +134,17 @@ export default function Services() {
       {/* Footer */}
       <footer style={{
         background: "rgba(255, 255, 255, 0.95)",
-        borderTop: "1px solid rgba(26, 63, 199, 0.2)",
+        borderTop: "1px solid rgba(66, 133, 244, 0.2)",
         padding: "40px 20px",
         textAlign: "center",
-        color: "#cbd5e1"
+        color: "#374151"
       }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <p>© 2025 Turbo Response HQ. All rights reserved.</p>
           <div style={{ marginTop: "20px", display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/terms-of-service" style={{ color: "#1A3FC7", textDecoration: "none" }}>Terms of Service</Link>
-            <Link href="/disclaimer" style={{ color: "#1A3FC7", textDecoration: "none" }}>Disclaimer</Link>
-            <Link href="/service-agreement" style={{ color: "#1A3FC7", textDecoration: "none" }}>Service Agreement</Link>
+            <Link href="/terms-of-service" style={{ color: "#4285F4", textDecoration: "none" }}>Terms of Service</Link>
+            <Link href="/disclaimer" style={{ color: "#4285F4", textDecoration: "none" }}>Disclaimer</Link>
+            <Link href="/service-agreement" style={{ color: "#4285F4", textDecoration: "none" }}>Service Agreement</Link>
           </div>
         </div>
       </footer>

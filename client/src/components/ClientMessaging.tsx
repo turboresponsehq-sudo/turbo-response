@@ -231,7 +231,7 @@ export default function ClientMessaging({ caseId, clientName }: ClientMessagingP
                   maxWidth: "70%",
                   padding: "0.75rem 1rem",
                   borderRadius: "12px",
-                  backgroundColor: msg.sender === "client" ? "#1A3FC7" : "white",
+                  backgroundColor: msg.sender === "client" ? "#4285F4" : "white",
                   color: msg.sender === "client" ? "white" : "#0A1A3F",
                   border: msg.sender === "admin" ? "1px solid #e2e8f0" : "none",
                   boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)"
@@ -294,9 +294,9 @@ export default function ClientMessaging({ caseId, clientName }: ClientMessagingP
           <div style={{
             padding: "0.75rem",
             backgroundColor: "#f0f9ff",
-            border: "1px solid #1A3FC7",
+            border: "1px solid #4285F4",
             borderRadius: "8px",
-            color: "#1A3FC7",
+            color: "#4285F4",
             fontSize: "0.875rem",
             textAlign: "center"
           }}>
@@ -352,7 +352,7 @@ export default function ClientMessaging({ caseId, clientName }: ClientMessagingP
             disabled={sending || !newMessage.trim() || uploading}
             style={{
               padding: "0.75rem 1.5rem",
-              backgroundColor: sending || !newMessage.trim() || uploading ? "#cbd5e1" : "#1A3FC7",
+              backgroundColor: sending || !newMessage.trim() || uploading ? "#cbd5e1" : "#4285F4",
               color: "white",
               border: "none",
               borderRadius: "8px",

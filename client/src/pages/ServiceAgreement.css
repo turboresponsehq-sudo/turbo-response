@@ -1,10 +1,10 @@
 :root {
   --primary-gradient: linear-gradient(135deg, #FFFFFF 0%, #F0F2F5 50%, #FFFFFF 100%);
-  --accent-cyan: #1A3FC7;
+  --accent-cyan: #4285F4;
   --text-primary: #0A1A3F;
   --text-secondary: #334155;
   --card-bg: #FFFFFF;
-  --border-glow: rgba(26, 63, 199, 0.2);
+  --border-glow: rgba(66, 133, 244, 0.2);
 }
 
 .agreement-page {
@@ -63,7 +63,7 @@
 }
 
 .highlight {
-  background: rgba(26, 63, 199, 0.1);
+  background: rgba(66, 133, 244, 0.1);
   border-left: 3px solid var(--accent-cyan);
   padding: 20px;
   margin: 25px 0;

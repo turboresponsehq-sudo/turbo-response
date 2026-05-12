@@ -17,8 +17,8 @@
 }
 
 .btn-back:hover {
-  border-color: #1A3FC7;
-  color: #1A3FC7;
+  border-color: #4285F4;
+  color: #4285F4;
 }
 
 .case-info {
@@ -37,7 +37,7 @@
 
 .case-category {
   background: rgba(26, 63, 199, 0.1);
-  color: #1A3FC7;
+  color: #4285F4;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   font-size: 1rem;
@@ -107,7 +107,7 @@
 
 .upload-dropzone:hover,
 .upload-dropzone.drag-active {
-  border-color: #1A3FC7;
+  border-color: #4285F4;
   background: rgba(26, 63, 199, 0.05);
 }
 
@@ -158,7 +158,7 @@
 
 .note-input:focus {
   outline: none;
-  border-color: #1A3FC7;
+  border-color: #4285F4;
   box-shadow: 0 0 0 3px rgba(26, 63, 199, 0.1);
 }
 
@@ -170,14 +170,14 @@
   padding: 1rem;
   background: rgba(26, 63, 199, 0.1);
   border-radius: 0.5rem;
-  color: #1A3FC7;
+  color: #4285F4;
 }
 
 .progress-spinner {
   width: 24px;
   height: 24px;
   border: 3px solid rgba(26, 63, 199, 0.2);
-  border-top-color: #1A3FC7;
+  border-top-color: #4285F4;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -216,7 +216,7 @@
 }
 
 .document-card:hover {
-  border-color: #1A3FC7;
+  border-color: #4285F4;
   transform: translateY(-2px);
 }
 
@@ -261,7 +261,7 @@
 }
 
 .document-note strong {
-  color: #1A3FC7;
+  color: #4285F4;
 }
 
 .document-meta {

@@ -245,7 +245,7 @@ async function sendClientCaseConfirmation(caseData) {
     subject: `✅ Case Submitted Successfully - ${caseData.case_number}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: linear-gradient(135deg, #1A3FC7, #0284c7); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+        <div style="background: linear-gradient(135deg, #4285F4, #0284c7); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
           <h1 style="color: #0A1A3F; margin: 0; font-size: 28px;">⚡ Turbo Response HQ</h1>
           <p style="color: #e0f2fe; margin: 10px 0 0 0;">Consumer Defense Platform</p>
         </div>
@@ -256,9 +256,9 @@ async function sendClientCaseConfirmation(caseData) {
             Your case has been successfully submitted and is now under review by our legal team.
           </p>
 
-          <div style="background-color: #0A1A3F; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #1A3FC7;">
+          <div style="background-color: #0A1A3F; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #4285F4;">
             <h3 style="margin-top: 0; color: #0f172a;">📋 Your Case Information</h3>
-            <p style="margin: 8px 0;"><strong>Case Number:</strong> <span style="color: #1A3FC7; font-size: 18px; font-weight: bold;">${caseData.case_number}</span></p>
+            <p style="margin: 8px 0;"><strong>Case Number:</strong> <span style="color: #4285F4; font-size: 18px; font-weight: bold;">${caseData.case_number}</span></p>
             <p style="margin: 8px 0;"><strong>Category:</strong> ${caseData.category.charAt(0).toUpperCase() + caseData.category.slice(1)}</p>
             <p style="margin: 8px 0; color: #64748b; font-size: 14px;">⚠️ Save this case number - you'll need it to access your client portal</p>
           </div>
@@ -267,7 +267,7 @@ async function sendClientCaseConfirmation(caseData) {
             <h3 style="margin-top: 0; color: #0f172a;">🔐 Access Your Client Portal</h3>
             <p style="color: #475569; margin-bottom: 15px;">Track your case status, communicate with our team, and upload documents securely:</p>
             <a href="https://turboresponsehq.ai/client/login" 
-               style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #1A3FC7, #0284c7); color: #0A1A3F; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">
+               style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #4285F4, #0284c7); color: #0A1A3F; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">
               Access Client Portal →
             </a>
             <p style="color: #64748b; font-size: 14px; margin-top: 15px;">You'll need your email address and case number (${caseData.case_number}) to log in.</p>
@@ -290,7 +290,7 @@ async function sendClientCaseConfirmation(caseData) {
           <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 14px;">
             <p style="margin: 5px 0;"><strong>Need Help?</strong></p>
             <p style="margin: 5px 0;">Email: ${process.env.EMAIL_USER}</p>
-            <p style="margin: 5px 0;">Website: <a href="https://turboresponsehq.ai" style="color: #1A3FC7;">turboresponsehq.ai</a></p>
+            <p style="margin: 5px 0;">Website: <a href="https://turboresponsehq.ai" style="color: #4285F4;">turboresponsehq.ai</a></p>
           </div>
 
           <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 12px; text-align: center;">
@@ -341,13 +341,13 @@ async function sendBusinessIntakeNotification(intakeData) {
     subject: `🚀 New Business Audit Request: ${intakeData.business_name || intakeData.full_name}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: linear-gradient(135deg, #1A3FC7, #0284c7); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+        <div style="background: linear-gradient(135deg, #4285F4, #0284c7); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
           <h1 style="color: #0A1A3F; margin: 0; font-size: 28px;">⚡ New Business Audit Request</h1>
           <p style="color: #e0f2fe; margin: 10px 0 0 0;">Turbo Intake Submission</p>
         </div>
 
         <div style="background-color: #ffffff; padding: 30px; border-radius: 0 0 8px 8px;">
-          <div style="background-color: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #1A3FC7;">
+          <div style="background-color: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #4285F4;">
             <h3 style="margin-top: 0; color: #0c4a6e;">Contact Information</h3>
             <p style="margin: 8px 0;"><strong>Name:</strong> ${intakeData.full_name}</p>
             <p style="margin: 8px 0;"><strong>Email:</strong> ${intakeData.email}</p>
@@ -357,17 +357,17 @@ async function sendBusinessIntakeNotification(intakeData) {
           <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
             <h3 style="margin-top: 0; color: #78350f;">Business Information</h3>
             ${intakeData.business_name ? `<p style="margin: 8px 0;"><strong>Business Name:</strong> ${intakeData.business_name}</p>` : ''}
-            ${intakeData.website_url ? `<p style="margin: 8px 0;"><strong>Website:</strong> <a href="${intakeData.website_url}" style="color: #1A3FC7;">${intakeData.website_url}</a></p>` : ''}
+            ${intakeData.website_url ? `<p style="margin: 8px 0;"><strong>Website:</strong> <a href="${intakeData.website_url}" style="color: #4285F4;">${intakeData.website_url}</a></p>` : ''}
           </div>
 
           ${(intakeData.instagram_url || intakeData.tiktok_url || intakeData.facebook_url || intakeData.youtube_url || intakeData.link_in_bio) ? `
             <div style="background-color: #f3e8ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #a855f7;">
               <h3 style="margin-top: 0; color: #581c87;">Social Media</h3>
-              ${intakeData.instagram_url ? `<p style="margin: 8px 0;"><strong>Instagram:</strong> <a href="${intakeData.instagram_url}" style="color: #1A3FC7;">${intakeData.instagram_url}</a></p>` : ''}
-              ${intakeData.tiktok_url ? `<p style="margin: 8px 0;"><strong>TikTok:</strong> <a href="${intakeData.tiktok_url}" style="color: #1A3FC7;">${intakeData.tiktok_url}</a></p>` : ''}
-              ${intakeData.facebook_url ? `<p style="margin: 8px 0;"><strong>Facebook:</strong> <a href="${intakeData.facebook_url}" style="color: #1A3FC7;">${intakeData.facebook_url}</a></p>` : ''}
-              ${intakeData.youtube_url ? `<p style="margin: 8px 0;"><strong>YouTube:</strong> <a href="${intakeData.youtube_url}" style="color: #1A3FC7;">${intakeData.youtube_url}</a></p>` : ''}
-              ${intakeData.link_in_bio ? `<p style="margin: 8px 0;"><strong>Link-in-Bio:</strong> <a href="${intakeData.link_in_bio}" style="color: #1A3FC7;">${intakeData.link_in_bio}</a></p>` : ''}
+              ${intakeData.instagram_url ? `<p style="margin: 8px 0;"><strong>Instagram:</strong> <a href="${intakeData.instagram_url}" style="color: #4285F4;">${intakeData.instagram_url}</a></p>` : ''}
+              ${intakeData.tiktok_url ? `<p style="margin: 8px 0;"><strong>TikTok:</strong> <a href="${intakeData.tiktok_url}" style="color: #4285F4;">${intakeData.tiktok_url}</a></p>` : ''}
+              ${intakeData.facebook_url ? `<p style="margin: 8px 0;"><strong>Facebook:</strong> <a href="${intakeData.facebook_url}" style="color: #4285F4;">${intakeData.facebook_url}</a></p>` : ''}
+              ${intakeData.youtube_url ? `<p style="margin: 8px 0;"><strong>YouTube:</strong> <a href="${intakeData.youtube_url}" style="color: #4285F4;">${intakeData.youtube_url}</a></p>` : ''}
+              ${intakeData.link_in_bio ? `<p style="margin: 8px 0;"><strong>Link-in-Bio:</strong> <a href="${intakeData.link_in_bio}" style="color: #4285F4;">${intakeData.link_in_bio}</a></p>` : ''}
             </div>
           ` : ''}
 
@@ -405,7 +405,7 @@ async function sendBusinessIntakeNotification(intakeData) {
             ` : ''}
           </div>
 
-          <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #1A3FC7, #0284c7); border-radius: 8px; text-align: center;">
+          <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #4285F4, #0284c7); border-radius: 8px; text-align: center;">
             <p style="margin: 0 0 15px 0; color: #0A1A3F; font-weight: 600;">⚡ Action Required</p>
             <a href="https://turboresponsehq.ai/admin" 
                style="display: inline-block; padding: 14px 32px; background-color: #0A1A3F; color: #0284c7; text-decoration: none; border-radius: 6px; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
@@ -458,7 +458,7 @@ async function sendBusinessIntakeConfirmation(intakeData) {
     subject: `✅ Business Audit Request Received - Turbo Response HQ`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: linear-gradient(135deg, #1A3FC7, #0284c7); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+        <div style="background: linear-gradient(135deg, #4285F4, #0284c7); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
           <h1 style="color: #0A1A3F; margin: 0; font-size: 28px;">⚡ Turbo Response HQ</h1>
           <p style="color: #e0f2fe; margin: 10px 0 0 0;">Business Growth Platform</p>
         </div>
@@ -469,12 +469,12 @@ async function sendBusinessIntakeConfirmation(intakeData) {
             Your business audit request has been successfully submitted and is now under review by our growth team.
           </p>
 
-          <div style="background-color: #0A1A3F; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #1A3FC7;">
+          <div style="background-color: #0A1A3F; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #4285F4;">
             <h3 style="margin-top: 0; color: #0f172a;">🚀 Your Business Information</h3>
             <p style="margin: 8px 0;"><strong>Business Name:</strong> ${intakeData.business_name || 'Not provided'}</p>
             <p style="margin: 8px 0;"><strong>Contact Email:</strong> ${intakeData.email}</p>
             ${intakeData.phone ? `<p style="margin: 8px 0;"><strong>Phone:</strong> ${intakeData.phone}</p>` : ''}
-            ${intakeData.website_url ? `<p style="margin: 8px 0;"><strong>Website:</strong> <a href="${intakeData.website_url}" style="color: #1A3FC7;">${intakeData.website_url}</a></p>` : ''}
+            ${intakeData.website_url ? `<p style="margin: 8px 0;"><strong>Website:</strong> <a href="${intakeData.website_url}" style="color: #4285F4;">${intakeData.website_url}</a></p>` : ''}
           </div>
 
           <div style="background-color: #dbeafe; padding: 20px; border-radius: 8px; margin: 20px 0;">
@@ -494,7 +494,7 @@ async function sendBusinessIntakeConfirmation(intakeData) {
           <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 14px;">
             <p style="margin: 5px 0;"><strong>Need Help?</strong></p>
             <p style="margin: 5px 0;">Email: ${process.env.EMAIL_USER}</p>
-            <p style="margin: 5px 0;">Website: <a href="https://turboresponsehq.ai" style="color: #1A3FC7;">turboresponsehq.ai</a></p>
+            <p style="margin: 5px 0;">Website: <a href="https://turboresponsehq.ai" style="color: #4285F4;">turboresponsehq.ai</a></p>
           </div>
 
           <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 12px; text-align: center;">
@@ -542,7 +542,7 @@ async function sendClientMessageReplyNotification(messageData) {
     subject: `💬 New Message from Turbo Response - Case ${messageData.case_number}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: linear-gradient(135deg, #1A3FC7, #0284c7); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+        <div style="background: linear-gradient(135deg, #4285F4, #0284c7); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
           <h1 style="color: #0A1A3F; margin: 0; font-size: 28px;">⚡ Turbo Response HQ</h1>
           <p style="color: #e0f2fe; margin: 10px 0 0 0;">New Message from Your Case Manager</p>
         </div>
@@ -553,7 +553,7 @@ async function sendClientMessageReplyNotification(messageData) {
             Your case manager has sent you a new message regarding your case.
           </p>
 
-          <div style="background-color: #0A1A3F; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #1A3FC7;">
+          <div style="background-color: #0A1A3F; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #4285F4;">
             <h3 style="margin-top: 0; color: #0f172a;">📋 Case: ${messageData.case_number}</h3>
             <p style="margin: 8px 0;"><strong>Message Preview:</strong></p>
             <p style="background-color: #f1f5f9; padding: 15px; border-radius: 6px; color: #334155; font-style: italic;">
@@ -564,7 +564,7 @@ async function sendClientMessageReplyNotification(messageData) {
           <div style="background-color: #dbeafe; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
             <p style="color: #475569; margin-bottom: 15px;">Login to your client portal to read the full message and reply:</p>
             <a href="https://turboresponsehq.ai/client/login" 
-               style="display: inline-block; padding: 15px 30px; background-color: #1A3FC7; color: #0A1A3F; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+               style="display: inline-block; padding: 15px 30px; background-color: #4285F4; color: #0A1A3F; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
               View Message in Portal
             </a>
           </div>
@@ -640,7 +640,7 @@ async function sendClientStatusUpdateNotification(statusData) {
     subject: `${emoji} Case Status Update - ${statusData.case_number}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: linear-gradient(135deg, #1A3FC7, #0284c7); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+        <div style="background: linear-gradient(135deg, #4285F4, #0284c7); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
           <h1 style="color: #0A1A3F; margin: 0; font-size: 28px;">⚡ Turbo Response HQ</h1>
           <p style="color: #e0f2fe; margin: 10px 0 0 0;">Case Status Update</p>
         </div>
@@ -651,10 +651,10 @@ async function sendClientStatusUpdateNotification(statusData) {
             Your case status has been updated.
           </p>
 
-          <div style="background-color: #0A1A3F; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #1A3FC7;">
+          <div style="background-color: #0A1A3F; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #4285F4;">
             <h3 style="margin-top: 0; color: #0f172a;">📋 Case: ${statusData.case_number}</h3>
             <p style="margin: 8px 0;"><strong>Previous Status:</strong> <span style="color: #64748b;">${statusData.old_status || 'N/A'}</span></p>
-            <p style="margin: 8px 0;"><strong>New Status:</strong> <span style="color: #1A3FC7; font-size: 18px; font-weight: bold;">${emoji} ${statusData.new_status}</span></p>
+            <p style="margin: 8px 0;"><strong>New Status:</strong> <span style="color: #4285F4; font-size: 18px; font-weight: bold;">${emoji} ${statusData.new_status}</span></p>
           </div>
 
           ${statusData.notes ? `
@@ -667,7 +667,7 @@ async function sendClientStatusUpdateNotification(statusData) {
           <div style="background-color: #dbeafe; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
             <p style="color: #475569; margin-bottom: 15px;">View full case details and communicate with your case manager:</p>
             <a href="https://turboresponsehq.ai/client/login" 
-               style="display: inline-block; padding: 15px 30px; background-color: #1A3FC7; color: #0A1A3F; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+               style="display: inline-block; padding: 15px 30px; background-color: #4285F4; color: #0A1A3F; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
               Access Client Portal
             </a>
           </div>

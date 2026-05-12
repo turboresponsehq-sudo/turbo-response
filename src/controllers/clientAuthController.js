@@ -95,9 +95,9 @@ async function requestLogin(req, res) {
       subject: `Turbo Response - Verification Code for Case ${caseData.case_number}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #1A3FC7;">Turbo Response - Client Portal Access</h2>
+          <h2 style="color: #4285F4;">Turbo Response - Client Portal Access</h2>
           <p>Your verification code is:</p>
-          <div style="background: #F0F2F5; color: #1A3FC7; font-size: 32px; font-weight: bold; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
+          <div style="background: #F0F2F5; color: #4285F4; font-size: 32px; font-weight: bold; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
             ${code}
           </div>
           <p>This code will expire in 10 minutes.</p>
