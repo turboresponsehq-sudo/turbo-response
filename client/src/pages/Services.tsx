@@ -1,153 +1,183 @@
+import { useEffect } from "react";
 import { Link } from "wouter";
-import "./Home.css"; // Reuse homepage styling
+import "./InfoPage.css";
+
+const services = [
+  {
+    icon: "📂",
+    title: "Document Organization",
+    body: "Transform scattered files, PDFs, emails, and records into structured, searchable, submission-ready operational systems. Stop losing time hunting for documents.",
+    tags: ["File Structuring", "Categorization", "Searchable Systems"],
+  },
+  {
+    icon: "📅",
+    title: "Timeline Building",
+    body: "Create organized, accurate visual timelines for cases, operations, and workflows. Automatically sequence events, dates, and actions from your documents.",
+    tags: ["Event Sequencing", "Visual Timelines", "Case Chronology"],
+  },
+  {
+    icon: "🔍",
+    title: "Information Extraction",
+    body: "Identify important dates, entities, parties, issues, and operational details quickly — without hours of manual review. Pull what matters, fast.",
+    tags: ["Key Data Extraction", "Entity Detection", "Date Identification"],
+  },
+  {
+    icon: "⚙️",
+    title: "Workflow Preparation",
+    body: "Build repeatable operational processes and intelligent workflows that scale. Move from ad hoc case handling to structured, consistent systems.",
+    tags: ["Process Design", "Repeatable Systems", "Operational Scaling"],
+  },
+  {
+    icon: "📋",
+    title: "Evidence Structuring",
+    body: "Organize records, communications, and supporting documentation logically and persuasively. Ensure nothing is missing before submission or review.",
+    tags: ["Evidence Organization", "Gap Identification", "Submission Prep"],
+  },
+  {
+    icon: "🧠",
+    title: "Operational Intelligence",
+    body: "Turn operational chaos into structured, decision-ready information. Surface the right context at the right time so your team can act with confidence.",
+    tags: ["Information Architecture", "Decision Support", "Operational Clarity"],
+  },
+  {
+    icon: "⏱️",
+    title: "Process Support",
+    body: "Help businesses reduce manual review time, improve accuracy, and handle more cases with less effort. More capacity. Less overhead. Better outcomes.",
+    tags: ["Efficiency Gains", "Manual Review Reduction", "Capacity Building"],
+  },
+];
 
 export default function Services() {
-  const services = [
-    {
-      icon: "🏠",
-      title: "Eviction Defense",
-      description: "Stop unlawful evictions with AI-generated legal responses citing tenant rights, habitability laws, and procedural violations."
-    },
-    {
-      icon: "🚗",
-      title: "Repossession Defense",
-      description: "Challenge illegal repo attempts with detailed responses citing UCC violations, breach of peace, and consumer protection laws."
-    },
-    {
-      icon: "🏛️",
-      title: "IRS & Tax Issues",
-      description: "Respond to IRS notices with professional game plans covering payment plans, penalty abatement, and taxpayer rights."
-    },
-    {
-      icon: "📞",
-      title: "Debt Collector Harassment",
-      description: "Stop illegal collection tactics with FDCPA-based responses documenting violations and demanding cease communication."
-    },
-    {
-      icon: "💳",
-      title: "Credit Report Disputes",
-      description: "Challenge inaccurate credit reporting with FCRA-compliant dispute letters demanding investigation and correction."
-    },
-    {
-      icon: "💰",
-      title: "Billing Disputes",
-      description: "Contest unfair charges with detailed responses citing billing errors, unauthorized charges, and consumer protection laws."
-    },
-    {
-      icon: "🔒",
-      title: "Fraud & Identity Theft",
-      description: "Combat fraud with comprehensive response packages including police reports, creditor notifications, and dispute letters."
-    },
-    {
-      icon: "⚖️",
-      title: "CFPB Complaints",
-      description: "File professional CFPB complaints with detailed narratives, supporting evidence, and regulatory citations."
-    },
-    {
-      icon: "📄",
-      title: "Contract Disputes",
-      description: "Challenge unfair contract terms with legal analysis citing unconscionability, misrepresentation, and breach of contract."
-    },
-    {
-      icon: "🛡️",
-      title: "General Consumer Defense",
-      description: "Defend against any consumer rights violation with custom AI-generated legal strategies tailored to your situation."
-    }
-  ];
+  useEffect(() => {
+    document.title = "Services — Turbo Response";
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
-    <>
-      {/* Animated Background */}
-      <div className="bg-animation">
-        <div className="bg-grid"></div>
-        <div className="floating-elements">
-          <div className="floating-element"></div>
-          <div className="floating-element"></div>
-          <div className="floating-element"></div>
-          <div className="floating-element"></div>
-          <div className="floating-element"></div>
-        </div>
-      </div>
+    <div className="ip-root">
 
-      {/* Header */}
-      <header className="header">
-        <div className="nav-container">
-          <Link href="/" className="logo">
-            <div className="logo-icon">⚡</div>
-            TURBO RESPONSE
+      {/* HEADER */}
+      <header className="ip-header">
+        <div className="ip-nav-inner">
+          <Link href="/" className="ip-logo">
+            <span>⚡</span>
+            <span>TURBO RESPONSE</span>
           </Link>
-          <nav className="nav-menu">
-            <Link href="/" className="nav-link">Home</Link>
-            <Link href="/services" className="nav-link">Services</Link>
-            <Link href="/pricing" className="nav-link">Pricing</Link>
-            <Link href="/results" className="nav-link">Results</Link>
-            <Link href="/testimonials" className="nav-link">Testimonials</Link>
-            <Link href="/intake" className="nav-link nav-link-cta">Start Your Case</Link>
+          <nav className="ip-nav">
+            <Link href="/services" className="ip-nav-link ip-nav-active">Services</Link>
+            <Link href="/industries" className="ip-nav-link">Industries</Link>
+            <Link href="/turbo-systems" className="ip-nav-link ip-nav-systems">⚡ Turbo Systems</Link>
+            <Link href="/turbo-intake" className="ip-nav-cta">Get Started</Link>
           </nav>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="hero">
-        <div className="hero-content">
-          <div className="hero-badge">
-            🤖 AI-Powered Legal Defense Services
+      {/* HERO */}
+      <section className="ip-hero">
+        <div className="ip-section-label">What We Do</div>
+        <h1 className="ip-hero-h1">Intelligent Systems for<br />Document-Heavy Operations</h1>
+        <p className="ip-hero-sub">
+          Turbo Response helps businesses organize information, structure workflows, process documents, and improve operational clarity using AI-assisted systems.
+        </p>
+      </section>
+
+      {/* SERVICES GRID */}
+      <section className="ip-section">
+        <div className="ip-section-inner">
+          <div className="ip-services-grid">
+            {services.map(s => (
+              <div className="ip-service-card" key={s.title}>
+                <div className="ip-service-icon">{s.icon}</div>
+                <div className="ip-service-title">{s.title}</div>
+                <div className="ip-service-body">{s.body}</div>
+                <div className="ip-service-tags">
+                  {s.tags.map(t => (
+                    <span className="ip-service-tag" key={t}>{t}</span>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
-          <h1 className="hero-title">
-            OUR SERVICES
-          </h1>
-          <p className="hero-description">
-            We provide AI-powered legal game plans for every consumer rights situation. From evictions to debt collectors, our advanced technology delivers professional responses in minutes.
-          </p>
         </div>
       </section>
 
-      {/* Services Grid */}
-      <section className="features">
-        <h2 className="features-title">Complete Consumer Protection Coverage</h2>
-        <div className="features-grid">
-          {services.map((service, index) => (
-            <div key={index} className="feature-card">
-              <div className="feature-icon">{service.icon}</div>
-              <h3>{service.title}</h3>
-              <p>{service.description}</p>
-            </div>
-          ))}
+      {/* HOW IT WORKS STRIP */}
+      <section className="ip-section ip-bg-blue-tint">
+        <div className="ip-section-inner">
+          <div className="ip-section-label">The Process</div>
+          <h2 className="ip-section-h2">From Intake to Organized, Submission-Ready Documentation</h2>
+          <div className="ip-steps">
+            {[
+              { n: "01", title: "Intake", body: "Submit your situation through offense or defense intake. AI begins processing immediately." },
+              { n: "02", title: "Organize", body: "Documents, facts, and timelines are structured into a clear, reviewable case file." },
+              { n: "03", title: "Process", body: "AI-assisted systems draft responses, identify gaps, and prepare submission-ready materials." },
+              { n: "04", title: "Deliver", body: "Receive organized documentation, response packages, and operational guidance." },
+            ].map(s => (
+              <div className="ip-step" key={s.n}>
+                <div className="ip-step-num">{s.n}</div>
+                <div className="ip-step-title">{s.title}</div>
+                <div className="ip-step-body">{s.body}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="hero" style={{ paddingTop: "60px", paddingBottom: "100px" }}>
-        <div className="hero-content">
-          <h2 className="features-title" style={{ marginBottom: "30px" }}>
-            Ready to Defend Your Rights?
+      {/* POSITIONING STATEMENT */}
+      <section className="ip-section ip-bg-dark">
+        <div className="ip-section-inner ip-statement-inner">
+          <div className="ip-statement-left">
+            <div className="ip-section-label-dark">The Goal</div>
+            <h2 className="ip-section-h2 ip-white">The Goal Isn't Just AI.<br />The Goal Is <span className="ip-blue">Operational Leverage.</span></h2>
+            <p className="ip-statement-body">
+              Turbo Response combines AI + systems to turn document chaos into clarity, speed, and results. Better systems lead to better decisions and better outcomes.
+            </p>
+          </div>
+          <div className="ip-statement-right">
+            {[
+              "Smarter Workflow.",
+              "Stronger Cases.",
+              "Better Outcomes.",
+              "More Accuracy.",
+              "More Efficiency.",
+              "More Capacity.",
+            ].map(item => (
+              <div className="ip-statement-item" key={item}>
+                <span className="ip-statement-arrow">⚡</span>
+                <span>{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="ip-cta">
+        <div className="ip-cta-inner">
+          <h2 className="ip-cta-h2">
+            Ready to Build Smarter Systems?<br />
+            <span className="ip-blue">Let's Talk.</span>
           </h2>
-          <p className="hero-description" style={{ marginBottom: "40px" }}>
-            Start your case now and get your AI-powered legal game plan in minutes.
-          </p>
-          <Link href="/intake" className="cta-button">
-            🚀 START YOUR CASE
-          </Link>
+          <div className="ip-cta-btns">
+            <Link href="/turbo-intake" className="ip-btn ip-btn-primary">Offense Intake →</Link>
+            <Link href="/intake" className="ip-btn ip-btn-outline">Defense Intake →</Link>
+          </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer style={{
-        background: "rgba(255, 255, 255, 0.95)",
-        borderTop: "1px solid rgba(66, 133, 244, 0.2)",
-        padding: "40px 20px",
-        textAlign: "center",
-        color: "#374151"
-      }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          <p>© 2025 Turbo Response HQ. All rights reserved.</p>
-          <div style={{ marginTop: "20px", display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/terms-of-service" style={{ color: "#4285F4", textDecoration: "none" }}>Terms of Service</Link>
-            <Link href="/disclaimer" style={{ color: "#4285F4", textDecoration: "none" }}>Disclaimer</Link>
-            <Link href="/service-agreement" style={{ color: "#4285F4", textDecoration: "none" }}>Service Agreement</Link>
+      {/* FOOTER */}
+      <footer className="ip-footer">
+        <div className="ip-footer-inner">
+          <div className="ip-footer-brand">⚡ Turbo Response — Intelligent Operational Systems</div>
+          <div className="ip-footer-links">
+            <Link href="/" className="ip-footer-link">Home</Link>
+            <Link href="/industries" className="ip-footer-link">Industries</Link>
+            <Link href="/disclaimer" className="ip-footer-link">Disclaimer</Link>
           </div>
+          <div className="ip-footer-copy">© 2026 Turbo Response HQ · www.turboresponsehq.ai</div>
         </div>
       </footer>
-    </>
+
+    </div>
   );
 }
