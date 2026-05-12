@@ -46,9 +46,9 @@ const TOOLS = [
 const CASES = [
   { id: "TR-00482910", type: "Credit Dispute", name: "Maria T.", days: "2 days ago", status: "Pending Review", color: "#f59e0b" },
   { id: "TR-00481203", type: "Debt Collection", name: "James W.", days: "3 days ago", status: "Active", color: "#22c55e" },
-  { id: "TR-00479887", type: "Eviction Defense", name: "Sandra K.", days: "5 days ago", status: "In Review", color: "#3B6BF5" },
+  { id: "TR-00479887", type: "Eviction Defense", name: "Sandra K.", days: "5 days ago", status: "In Review", color: "#4285F4" },
   { id: "TR-00478001", type: "FCRA Violation", name: "David R.", days: "1 week ago", status: "Active", color: "#22c55e" },
-  { id: "TR-00476543", type: "IRS Dispute", name: "Angela M.", days: "1 week ago", status: "Long-Term", color: "#3B6BF5" },
+  { id: "TR-00476543", type: "IRS Dispute", name: "Angela M.", days: "1 week ago", status: "Long-Term", color: "#4285F4" },
 ];
 
 const CHECKS = [
@@ -70,7 +70,7 @@ const SOPS = [
 
 const LEADS = [
   { name: "Marcus B.", source: "Facebook Group", type: "Credit dispute", status: "Contacted", color: "#f59e0b" },
-  { name: "Tanya R.", source: "Instagram", type: "Eviction notice", status: "Qualified", color: "#3B6BF5" },
+  { name: "Tanya R.", source: "Instagram", type: "Eviction notice", status: "Qualified", color: "#4285F4" },
   { name: "Kevin D.", source: "LinkedIn", type: "Debt collection", status: "Converted", color: "#22c55e" },
   { name: "Priya S.", source: "Referral", type: "FCRA violation", status: "New", color: "#9ca3af" },
   { name: "Jerome W.", source: "Facebook Group", type: "IRS issue", status: "Contacted", color: "#f59e0b" },
@@ -78,14 +78,14 @@ const LEADS = [
 
 const OUTREACH = [
   { icon: "📘", title: "Facebook Group Post", sub: "Consumer rights tips · 3 replies", status: "Active", color: "#22c55e" },
-  { icon: "💼", title: "LinkedIn Article", sub: "FCRA guide · 142 views", status: "Published", color: "#3B6BF5" },
+  { icon: "💼", title: "LinkedIn Article", sub: "FCRA guide · 142 views", status: "Published", color: "#4285F4" },
   { icon: "📸", title: "Instagram Reel", sub: "Debt collector rights · Scheduled", status: "Scheduled", color: "#f59e0b" },
   { icon: "📧", title: "Email Campaign", sub: "Credit repair tips · 38% open rate", status: "Sent", color: "#22c55e" },
 ];
 
 const CONTRACTORS = [
   { icon: "🎨", name: "Alex M.", role: "Graphic Design", sub: "Social media graphics", status: "Active", color: "#22c55e" },
-  { icon: "✍️", name: "Priya K.", role: "Copywriting", sub: "Email campaigns", status: "On Call", color: "#3B6BF5" },
+  { icon: "✍️", name: "Priya K.", role: "Copywriting", sub: "Email campaigns", status: "On Call", color: "#4285F4" },
   { icon: "🎬", name: "Jordan T.", role: "Video Editing", sub: "Reels & shorts", status: "Active", color: "#22c55e" },
 ];
 
@@ -106,14 +106,14 @@ const ORGS = [
 const GRANTS = [
   { name: "SBA Microloan Program", sub: "Up to $50,000 · Deadline: Jun 30", status: "In Progress", color: "#f59e0b" },
   { name: "Georgia SSBCI Grant", sub: "State small business fund", status: "Applied", color: "#22c55e" },
-  { name: "MBDA Business Center", sub: "Minority business development", status: "Researching", color: "#3B6BF5" },
+  { name: "MBDA Business Center", sub: "Minority business development", status: "Researching", color: "#4285F4" },
   { name: "HUD Housing Counseling", sub: "Consumer housing defense", status: "Identified", color: "#9ca3af" },
 ];
 
 const EVENTS = [
-  { name: "Atlanta Small Business Expo", sub: "May 15, 2026 · Networking", status: "Upcoming", color: "#3B6BF5" },
+  { name: "Atlanta Small Business Expo", sub: "May 15, 2026 · Networking", status: "Upcoming", color: "#4285F4" },
   { name: "CFPB Webinar — FDCPA Update", sub: "May 22, 2026 · Online", status: "Registered", color: "#22c55e" },
-  { name: "SCORE Mentorship Session", sub: "Jun 5, 2026 · Virtual", status: "Scheduled", color: "#3B6BF5" },
+  { name: "SCORE Mentorship Session", sub: "Jun 5, 2026 · Virtual", status: "Scheduled", color: "#4285F4" },
   { name: "GA Consumer Rights Summit", sub: "Jul 2026 · TBD", status: "Tentative", color: "#9ca3af" },
 ];
 
@@ -125,9 +125,9 @@ const CONTENT_IDEAS = [
 ];
 
 const SOCIAL_STRATEGY = [
-  { icon: "💼", name: "LinkedIn", sub: "B2B credibility · Articles + thought leadership", freq: "3×/week", color: "#3B6BF5" },
-  { icon: "📘", name: "Facebook Group", sub: "Community leads · Tips + case stories", freq: "Daily", color: "#3B6BF5" },
-  { icon: "📸", name: "Instagram (AI/Tech)", sub: "Tech expertise · Reels + carousels", freq: "4×/week", color: "#3B6BF5" },
+  { icon: "💼", name: "LinkedIn", sub: "B2B credibility · Articles + thought leadership", freq: "3×/week", color: "#4285F4" },
+  { icon: "📘", name: "Facebook Group", sub: "Community leads · Tips + case stories", freq: "Daily", color: "#4285F4" },
+  { icon: "📸", name: "Instagram (AI/Tech)", sub: "Tech expertise · Reels + carousels", freq: "4×/week", color: "#4285F4" },
   { icon: "📸", name: "Instagram (Urban/Brand)", sub: "Lifestyle brand · Stories + reels", freq: "2×/week", color: "#ef4444" },
   { icon: "📧", name: "Email Newsletter", sub: "Consumer rights intel · Weekly digest", freq: "Weekly", color: "#f59e0b" },
 ];
@@ -254,7 +254,7 @@ function NewLeadsSection() {
       <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px", marginBottom: 20 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
           <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px" }}>📥 Intake Form Submissions</div>
-          <button onClick={() => refetch()} style={{ fontSize: 11, color: "#3B6BF5", background: "none", border: "none", cursor: "pointer" }}>Refresh ↻</button>
+          <button onClick={() => refetch()} style={{ fontSize: 11, color: "#4285F4", background: "none", border: "none", cursor: "pointer" }}>Refresh ↻</button>
         </div>
         {isLoading && <div style={{ color: "#4b5368", fontSize: 13, padding: "12px 0" }}>Loading...</div>}
         {!isLoading && intakeLeads.length === 0 && (
@@ -298,7 +298,7 @@ function NewLeadsSection() {
       <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
           <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px" }}>🔗 HubSpot Linked Cases</div>
-          <button onClick={() => setShowAddForm(v => !v)} style={{ fontSize: 12, color: "#3B6BF5", background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 7, padding: "5px 12px", cursor: "pointer", fontWeight: 700 }}>+ Add Case</button>
+          <button onClick={() => setShowAddForm(v => !v)} style={{ fontSize: 12, color: "#4285F4", background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 7, padding: "5px 12px", cursor: "pointer", fontWeight: 700 }}>+ Add Case</button>
         </div>
 
         {showAddForm && (
@@ -308,7 +308,7 @@ function NewLeadsSection() {
               <input value={newNote} onChange={e => setNewNote(e.target.value)} placeholder="Short note (optional)" style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "9px 12px", outline: "none" }} />
               <input value={newHubspotUrl} onChange={e => setNewHubspotUrl(e.target.value)} placeholder="HubSpot contact/deal URL (optional)" style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "9px 12px", outline: "none" }} />
               <div style={{ display: "flex", gap: 8 }}>
-                <button onClick={addLead} disabled={addDashLead.isPending} style={{ padding: "8px 16px", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 7, color: "#3B6BF5", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>{addDashLead.isPending ? "Saving..." : "Save"}</button>
+                <button onClick={addLead} disabled={addDashLead.isPending} style={{ padding: "8px 16px", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 7, color: "#4285F4", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>{addDashLead.isPending ? "Saving..." : "Save"}</button>
                 <button onClick={() => setShowAddForm(false)} style={{ padding: "8px 12px", background: "none", border: "1px solid #1e2130", borderRadius: 7, color: "#4b5368", fontSize: 13, cursor: "pointer" }}>Cancel</button>
               </div>
             </div>
@@ -359,7 +359,7 @@ function SectionCard({ title, action, children }: { title: string; action?: stri
     <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
         <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px" }}>{title}</div>
-        {action && <div style={{ fontSize: 11, fontWeight: 500, color: "#3B6BF5", cursor: "pointer" }}>{action}</div>}
+        {action && <div style={{ fontSize: 11, fontWeight: 500, color: "#4285F4", cursor: "pointer" }}>{action}</div>}
       </div>
       {children}
     </div>
@@ -457,7 +457,7 @@ function CeoHomeSection() {
 
       {regular.length > 0 && (
         <div style={{ marginBottom: 20 }}>
-          <div style={{ fontSize: 11, fontWeight: 800, color: "#3B6BF5", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 10 }}>📋 Today's Priorities</div>
+          <div style={{ fontSize: 11, fontWeight: 800, color: "#4285F4", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 10 }}>📋 Today's Priorities</div>
           {regular.map(p => (
             <div key={p.id} onClick={() => toggleMutation.mutate({ id: p.id, done: true })} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", background: "#111318", border: "1px solid #1e2130", borderRadius: 9, marginBottom: 8, cursor: "pointer" }}>
               <div style={{ width: 18, height: 18, borderRadius: 4, border: "2px solid #2a3050", flexShrink: 0 }} />
@@ -476,7 +476,7 @@ function CeoHomeSection() {
           style={{ flex: 1, background: "#111318", border: "1px solid #1e2130", borderRadius: 8, color: "#e8eaf0", fontSize: 13, padding: "10px 14px", outline: "none" }}
         />
         <button onClick={() => setIsUrgent(u => !u)} style={{ padding: "10px 12px", background: isUrgent ? "rgba(239,68,68,0.15)" : "transparent", border: `1px solid ${isUrgent ? "rgba(239,68,68,0.4)" : "#1e2130"}`, borderRadius: 8, color: isUrgent ? "#ef4444" : "#4b5368", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>🔴 Urgent</button>
-        <button onClick={addPriority} disabled={addMutation.isPending} style={{ padding: "10px 16px", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 8, color: "#3B6BF5", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>{addMutation.isPending ? "..." : "Add"}</button>
+        <button onClick={addPriority} disabled={addMutation.isPending} style={{ padding: "10px 16px", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 8, color: "#4285F4", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>{addMutation.isPending ? "..." : "Add"}</button>
       </div>
 
       {done.length > 0 && (
@@ -518,7 +518,7 @@ function TasksSection() {
           <div style={{ fontSize: 15, fontWeight: 700, color: "#e8eaf0", marginBottom: 2 }}>Open Google Tasks</div>
           <div style={{ fontSize: 12, color: "#4b5368" }}>tasks.google.com — your task list, reminders, and due dates</div>
         </div>
-        <div style={{ fontSize: 18, color: "#3B6BF5" }}>→</div>
+        <div style={{ fontSize: 18, color: "#4285F4" }}>→</div>
       </a>
 
       {/* Info note */}
@@ -674,7 +674,7 @@ function ProjectsPage() {
     return (
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
-          <button onClick={handleBack} style={{ background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.2)", color: "#3B6BF5", borderRadius: 7, padding: "6px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>← Back</button>
+          <button onClick={handleBack} style={{ background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.2)", color: "#4285F4", borderRadius: 7, padding: "6px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>← Back</button>
           <div style={{ fontSize: 18, fontWeight: 800, color: "#e8eaf0", flex: 1 }}>{selected.name}</div>
           {selected.driveUrl && (
             <a href={selected.driveUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#4ade80", textDecoration: "none", fontWeight: 700, padding: "6px 14px", background: "rgba(74,222,128,0.1)", border: "1px solid rgba(74,222,128,0.2)", borderRadius: 7 }}>📂 Open in Drive ↗</a>
@@ -692,7 +692,7 @@ function ProjectsPage() {
               <div style={{ flex: 1, height: 8, background: "#1e2130", borderRadius: 4, overflow: "hidden" }}>
                 <div style={{ height: "100%", width: `${selected.progress}%`, background: "linear-gradient(90deg,#3B6BF5,#6366f1)", borderRadius: 4, transition: "width 0.3s" }} />
               </div>
-              <span style={{ fontSize: 13, fontWeight: 700, color: "#3B6BF5", minWidth: 36 }}>{selected.progress}%</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "#4285F4", minWidth: 36 }}>{selected.progress}%</span>
             </div>
             <input type="range" min={0} max={100} value={selected.progress} onChange={e => handleProgressChange(selected.id, Number(e.target.value))} style={{ width: "100%", accentColor: "#3B6BF5" }} />
             <div style={{ marginTop: 10, display: "flex", gap: 6 }}>
@@ -708,7 +708,7 @@ function ProjectsPage() {
             {selected.keySteps.length === 0 && <div style={{ fontSize: 13, color: "#4b5368", fontStyle: "italic" }}>No milestones defined yet</div>}
             {selected.keySteps.map((step, i) => (
               <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "8px 0", borderBottom: i < selected.keySteps.length - 1 ? "1px solid #1a1d28" : "none" }}>
-                <div style={{ width: 20, height: 20, borderRadius: "50%", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 800, color: "#3B6BF5", flexShrink: 0, marginTop: 1 }}>{i + 1}</div>
+                <div style={{ width: 20, height: 20, borderRadius: "50%", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 800, color: "#4285F4", flexShrink: 0, marginTop: 1 }}>{i + 1}</div>
                 <div style={{ fontSize: 13, color: "#e8eaf0", lineHeight: 1.5 }}>{step}</div>
               </div>
             ))}
@@ -716,7 +716,7 @@ function ProjectsPage() {
           <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 10, padding: "18px 20px" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
               <div style={{ fontSize: 11, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1.2px" }}>Notes</div>
-              {!editingNotes && <button onClick={() => setEditingNotes(true)} style={{ fontSize: 11, color: "#3B6BF5", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>Edit</button>}
+              {!editingNotes && <button onClick={() => setEditingNotes(true)} style={{ fontSize: 11, color: "#4285F4", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>Edit</button>}
             </div>
             {editingNotes ? (
               <div>
@@ -747,7 +747,7 @@ function ProjectsPage() {
         <div>
           <div style={{ fontSize: 11, color: "#4b5368", marginTop: 2 }}>{projectsData.filter(p => p.status === "active").length} active · {projectsData.filter(p => p.status === "paused").length} paused · {projectsData.filter(p => p.status === "done").length} done</div>
         </div>
-        <button onClick={() => setAddingProject(true)} style={{ fontSize: 12, fontWeight: 700, padding: "8px 16px", borderRadius: 8, border: "1px solid rgba(59,130,246,0.3)", background: "rgba(59,130,246,0.1)", color: "#3B6BF5", cursor: "pointer" }}>+ Add Project</button>
+        <button onClick={() => setAddingProject(true)} style={{ fontSize: 12, fontWeight: 700, padding: "8px 16px", borderRadius: 8, border: "1px solid rgba(59,130,246,0.3)", background: "rgba(59,130,246,0.1)", color: "#4285F4", cursor: "pointer" }}>+ Add Project</button>
       </div>
       {addingProject && (
         <div style={{ background: "#111318", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 10, padding: "18px 20px", marginBottom: 16 }}>
@@ -782,7 +782,7 @@ function ProjectsPage() {
                 <div style={{ flex: 1, height: 5, background: "#1e2130", borderRadius: 3, overflow: "hidden" }}>
                   <div style={{ height: "100%", width: `${p.progress}%`, background: "linear-gradient(90deg,#3B6BF5,#6366f1)", borderRadius: 3 }} />
                 </div>
-                <span style={{ fontSize: 12, fontWeight: 700, color: "#3B6BF5", minWidth: 32 }}>{p.progress}%</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: "#4285F4", minWidth: 32 }}>{p.progress}%</span>
               </div>
               <div style={{ fontSize: 12, color: "#f59e0b" }}>→ {p.nextStep}</div>
             </div>
@@ -995,7 +995,7 @@ export default function AdminCommandCenter() {
                 <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e" }} /> All Systems Go
               </div>
               <a href="https://calendar.app.google/FCwJTynqN7GMFfpb9" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
-                <button style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 7, border: "1px solid rgba(59, 107, 245,0.4)", background: "rgba(59, 107, 245,0.12)", color: "#3B6BF5", cursor: "pointer" }}>
+                <button style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 7, border: "1px solid rgba(59, 107, 245,0.4)", background: "rgba(59, 107, 245,0.12)", color: "#4285F4", cursor: "pointer" }}>
                   📅 Book Consultation
                 </button>
               </a>
@@ -1051,7 +1051,7 @@ export default function AdminCommandCenter() {
                       <div style={{ padding: "8px 14px", background: "rgba(245,158,11,0.15)", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 7, fontSize: 12, fontWeight: 600, color: "#f59e0b", cursor: "pointer" }}>📋 Google Tasks</div>
                     </a>
                     <a href="https://calendar.google.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
-                      <div style={{ padding: "8px 14px", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 7, fontSize: 12, fontWeight: 600, color: "#3B6BF5", cursor: "pointer" }}>📅 Calendar</div>
+                      <div style={{ padding: "8px 14px", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 7, fontSize: 12, fontWeight: 600, color: "#4285F4", cursor: "pointer" }}>📅 Calendar</div>
                     </a>
                   </div>
                 </div>
@@ -1198,12 +1198,12 @@ export default function AdminCommandCenter() {
                   {/* Step 3 */}
                   <div style={{ background: "#111318", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 12, padding: "22px 20px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-                      <div style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800, color: "#3B6BF5", flexShrink: 0 }}>3</div>
+                      <div style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800, color: "#4285F4", flexShrink: 0 }}>3</div>
                       <div style={{ fontSize: 14, fontWeight: 700, color: "#e8eaf0" }}>Execute</div>
                     </div>
                     <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 18, lineHeight: 1.6 }}>Take the organized output and execute. Update tasks, assign to projects, or send instructions to Manus to build.</div>
                     <a href="https://manus.im" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
-                      <button style={{ width: "100%", padding: "11px 16px", background: "rgba(59,130,246,0.12)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 8, color: "#3B6BF5", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+                      <button style={{ width: "100%", padding: "11px 16px", background: "rgba(59,130,246,0.12)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 8, color: "#4285F4", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
                         ⚡ Open Manus
                       </button>
                     </a>
@@ -1215,7 +1215,7 @@ export default function AdminCommandCenter() {
                   <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px" }}>
                     <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 14 }}>Quick Processing Tools</div>
                     {[
-                      { icon: "🧠", label: "NotebookLM", sub: "AI knowledge & research", href: "https://notebooklm.google.com", color: "#3B6BF5" },
+                      { icon: "🧠", label: "NotebookLM", sub: "AI knowledge & research", href: "https://notebooklm.google.com", color: "#4285F4" },
                       { icon: "⚡", label: "Grok", sub: "xAI — fast processing", href: "https://grok.com", color: "#e5e7eb" },
                       { icon: "📊", label: "Google Sheets", sub: "Structured data & tracking", href: "https://sheets.google.com", color: "#34a853" },
                       { icon: "📅", label: "Google Calendar", sub: "Schedule & time blocks", href: "https://calendar.google.com", color: "#4285f4" },
@@ -1267,14 +1267,14 @@ export default function AdminCommandCenter() {
               <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                 {/* TODAY / NEEDS ATTENTION - PRIMARY FOCUS */}
                 <div style={{ background: "#0f1117", border: "2px solid #1A3FC7", borderRadius: 16, padding: "24px 28px", boxShadow: "0 0 20px rgba(26, 63, 199,0.08)" }}>
-                  <div style={{ fontSize: 14, fontWeight: 900, color: "#1A3FC7", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 20 }}>🎯 Today — Needs Attention</div>
+                  <div style={{ fontSize: 14, fontWeight: 900, color: "#4285F4", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 20 }}>🎯 Today — Needs Attention</div>
                   
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginBottom: 16 }}>
                     {[
                       { label: "Pending Approvals", count: 3, icon: "⏳", color: "#f59e0b" },
-                      { label: "Items in Review", count: 2, icon: "👀", color: "#3B6BF5" },
+                      { label: "Items in Review", count: 2, icon: "👀", color: "#4285F4" },
                       { label: "Messages/DMs", count: 5, icon: "💬", color: "#10b981" },
-                      { label: "Tasks", count: 1, icon: "✓", color: "#3B6BF5" },
+                      { label: "Tasks", count: 1, icon: "✓", color: "#4285F4" },
                     ].map(item => (
                       <div key={item.label} style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 10, padding: "14px 16px", textAlign: "center", cursor: "pointer", transition: "all 0.2s" }}>
                         <div style={{ fontSize: 24, marginBottom: 6 }}>{item.icon}</div>
@@ -1341,11 +1341,11 @@ export default function AdminCommandCenter() {
                   <div style={{ fontSize: 11, color: "#9ca3af", textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>Lead Capture Workflow</div>
                   <div style={{ display: "flex", alignItems: "center", gap: 0, flexWrap: "wrap" }}>
                     {[
-                      { step: "Content", icon: "✏️", color: "#3B6BF5" },
-                      { step: "DM / Comment", icon: "💬", color: "#3B6BF5" },
+                      { step: "Content", icon: "✏️", color: "#4285F4" },
+                      { step: "DM / Comment", icon: "💬", color: "#4285F4" },
                       { step: "Capture Email", icon: "📧", color: "#f59e0b" },
                       { step: "Book Consult", icon: "📅", color: "#22c55e" },
-                      { step: "Follow Up", icon: "🔄", color: "#1A3FC7" },
+                      { step: "Follow Up", icon: "🔄", color: "#4285F4" },
                     ].map((s, i) => (
                       <div key={s.step} style={{ display: "flex", alignItems: "center" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 7, padding: "7px 14px", background: `${s.color}15`, border: `1px solid ${s.color}30`, borderRadius: 8 }}>
@@ -1430,7 +1430,7 @@ export default function AdminCommandCenter() {
                         label: "Book Consultation",
                         sub: "Google Calendar booking link",
                         href: "https://calendar.app.google/FCwJTynqN7GMFfpb9",
-                        color: "#3B6BF5",
+                        color: "#4285F4",
                         badge: "Live",
                       },
                       {
@@ -1480,8 +1480,8 @@ export default function AdminCommandCenter() {
                   <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 16 }}>Lead Pipeline Status</div>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 12 }}>
                     {[
-                      { stage: "Attention", icon: "👀", sub: "Saw content", color: "#3B6BF5", count: "—" },
-                      { stage: "Engaged", icon: "💬", sub: "DM or comment", color: "#3B6BF5", count: "—" },
+                      { stage: "Attention", icon: "👀", sub: "Saw content", color: "#4285F4", count: "—" },
+                      { stage: "Engaged", icon: "💬", sub: "DM or comment", color: "#4285F4", count: "—" },
                       { stage: "Email Captured", icon: "📧", sub: "On list", color: "#f59e0b", count: "—" },
                       { stage: "Booked", icon: "📅", sub: "Consult scheduled", color: "#22c55e", count: "—" },
                       { stage: "Converted", icon: "✅", sub: "Paid client", color: "#10a37f", count: "—" },
@@ -1504,8 +1504,8 @@ export default function AdminCommandCenter() {
                   <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px" }}>
                     <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 14 }}>Follow-Up Sequence</div>
                     {[
-                      { step: "Day 0", action: "Reply to DM / comment manually", icon: "💬", color: "#3B6BF5" },
-                      { step: "Day 1", action: "Send booking link if interested", icon: "📅", color: "#3B6BF5" },
+                      { step: "Day 0", action: "Reply to DM / comment manually", icon: "💬", color: "#4285F4" },
+                      { step: "Day 1", action: "Send booking link if interested", icon: "📅", color: "#4285F4" },
                       { step: "Day 3", action: "Follow-up email if no booking", icon: "📧", color: "#f59e0b" },
                       { step: "Day 7", action: "Final follow-up or close loop", icon: "🔄", color: "#22c55e" },
                     ].map(row => (
@@ -1748,7 +1748,7 @@ export default function AdminCommandCenter() {
                 <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 12, padding: "18px 20px", marginBottom: 16 }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
                     <div style={{ fontSize: 10, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1px" }}>Weekly Posting Schedule</div>
-                    <div style={{ fontSize: 11, fontWeight: 500, color: "#3B6BF5", cursor: "pointer" }}>Edit Schedule →</div>
+                    <div style={{ fontSize: 11, fontWeight: 500, color: "#4285F4", cursor: "pointer" }}>Edit Schedule →</div>
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "90px repeat(7,1fr)", gap: 4 }}>
                     <div />
@@ -1806,10 +1806,10 @@ export default function AdminCommandCenter() {
                     {[
                       { icon: "📄", label: "Google Docs", sub: "Documents & writing", href: "https://docs.google.com", color: "#4285f4" },
                       { icon: "📁", label: "Google Drive", sub: "Turbo Response Central", href: "https://drive.google.com", color: "#34a853" },
-                      { icon: "🧠", label: "NotebookLM", sub: "AI knowledge system", href: "https://notebooklm.google.com", color: "#3B6BF5" },
+                      { icon: "🧠", label: "NotebookLM", sub: "AI knowledge system", href: "https://notebooklm.google.com", color: "#4285F4" },
                       { icon: "🤖", label: "ChatGPT", sub: "OpenAI assistant", href: "https://chat.openai.com", color: "#10a37f" },
                       { icon: "⚡", label: "Grok", sub: "xAI assistant", href: "https://grok.com", color: "#e5e7eb" },
-                      { icon: "🚀", label: "Manus", sub: "AI agent platform", href: "https://manus.im", color: "#3B6BF5" },
+                      { icon: "🚀", label: "Manus", sub: "AI agent platform", href: "https://manus.im", color: "#4285F4" },
                       { icon: "✅", label: "Tasks", sub: "Google Tasks", href: "https://tasks.google.com", color: "#f59e0b" },
                       { icon: "🎯", label: "HubSpot", sub: "CRM & pipeline", href: "https://app.hubspot.com", color: "#ff7a59" },
                     ].map(tool => (
@@ -1837,10 +1837,10 @@ export default function AdminCommandCenter() {
                 <SectionCard title="Turbo Response Internal Tools">
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 14 }}>
                     {[
-                      { icon: "🛡️", label: "Admin Dashboard", sub: "Case management", href: "/admin", color: "#3B6BF5", external: true },
-                      { icon: "🧠", label: "Turbo Brain", sub: "AI knowledge upload", href: "/admin/brain", color: "#3B6BF5", external: true },
+                      { icon: "🛡️", label: "Admin Dashboard", sub: "Case management", href: "/admin", color: "#4285F4", external: true },
+                      { icon: "🧠", label: "Turbo Brain", sub: "AI knowledge upload", href: "/admin/brain", color: "#4285F4", external: true },
                       { icon: "📋", label: "Defense Intake", sub: "Consumer case intake", href: "/intake-defense", color: "#22c55e", external: true },
-                      { icon: "👤", label: "Client Portal", sub: "Client login & cases", href: "/client/login", color: "#1A3FC7", external: true },
+                      { icon: "👤", label: "Client Portal", sub: "Client login & cases", href: "/client/login", color: "#4285F4", external: true },
                       { icon: "📸", label: "Screenshots", sub: "Screenshot capture tool", href: "/admin/screenshots", color: "#f59e0b", external: true },
                       { icon: "📊", label: "Render Dashboard", sub: "Server & deploy status", href: "https://dashboard.render.com", color: "#46e3b7", external: true },
                       { icon: "💻", label: "GitHub Repo", sub: "Source code", href: "https://github.com/turboresponsehq-sudo/turbo-response", color: "#e8eaf0", external: true },
@@ -1871,8 +1871,8 @@ export default function AdminCommandCenter() {
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
                     {[
                       { phase: "Phase 1 — Current", items: ["UI dashboard", "Navigation links", "Basic structure", "Core tool access"], color: "#22c55e", status: "Active" },
-                      { phase: "Phase 2 — Next", items: ["Live data (cases, leads)", "CRM integration (HubSpot)", "Google Drive linking", "Real-time metrics"], color: "#3B6BF5", status: "Planned" },
-                      { phase: "Phase 3 — Future", items: ["AI assistant (Gemini/OpenAI)", "Automation workflows", "Timeline/calendar system", "System alerts & reporting"], color: "#3B6BF5", status: "Planned" },
+                      { phase: "Phase 2 — Next", items: ["Live data (cases, leads)", "CRM integration (HubSpot)", "Google Drive linking", "Real-time metrics"], color: "#4285F4", status: "Planned" },
+                      { phase: "Phase 3 — Future", items: ["AI assistant (Gemini/OpenAI)", "Automation workflows", "Timeline/calendar system", "System alerts & reporting"], color: "#4285F4", status: "Planned" },
                     ].map(p => (
                       <div key={p.phase} style={{ background: "#181b24", border: `1px solid ${p.color}30`, borderRadius: 12, padding: 18 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>

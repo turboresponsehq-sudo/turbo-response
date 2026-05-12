@@ -227,7 +227,7 @@ export default function MultiFileUploader({
         onDragOver={handleDragOver}
         onDrop={handleDrop}
         style={{
-          border: isDragging ? '2px solid #1A3FC7' : '2px dashed #cbd5e1',
+          border: isDragging ? '2px solid #4285F4' : '2px dashed #cbd5e1',
           borderRadius: '8px',
           padding: '2rem',
           textAlign: 'center',
@@ -309,7 +309,7 @@ export default function MultiFileUploader({
               style={{
                 marginTop: '1rem',
                 padding: '0.75rem 1.5rem',
-                backgroundColor: isUploading ? '#cbd5e1' : '#1A3FC7',
+                backgroundColor: isUploading ? '#cbd5e1' : '#4285F4',
                 color: 'white',
                 border: 'none',
                 borderRadius: '6px',
@@ -378,7 +378,7 @@ function FileQueueItem({
       case 'error':
         return '#dc2626';
       case 'uploading':
-        return '#1A3FC7';
+        return '#4285F4';
       default:
         return '#64748b';
     }

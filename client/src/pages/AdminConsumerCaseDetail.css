@@ -14,7 +14,7 @@
 
 .detail-header h1 {
   font-size: 2rem;
-  color: #1A3FC7;
+  color: #4285F4;
   margin: 0 0 0.5rem 0;
 }
 
@@ -25,14 +25,14 @@
   border: 1px solid rgba(26, 63, 199, 0.3);
   border-radius: 6px;
   font-size: 0.9rem;
-  color: #1A3FC7;
+  color: #4285F4;
   margin: 0;
 }
 
 .btn-back {
   background: rgba(26, 63, 199, 0.1);
   border: 1px solid #1A3FC7;
-  color: #1A3FC7;
+  color: #4285F4;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
   cursor: pointer;
@@ -58,7 +58,7 @@
   width: 50px;
   height: 50px;
   border: 4px solid rgba(26, 63, 199, 0.2);
-  border-top-color: #1A3FC7;
+  border-top-color: #4285F4;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 1rem;
@@ -90,7 +90,7 @@
 .info-card h2,
 .analysis-card h2,
 .letter-card h2 {
-  color: #1A3FC7;
+  color: #4285F4;
   margin: 0 0 1.5rem 0;
   font-size: 1.5rem;
 }
@@ -168,7 +168,7 @@
   background: rgba(26, 63, 199, 0.1);
   border: 1px solid rgba(26, 63, 199, 0.3);
   border-radius: 8px;
-  color: #1A3FC7;
+  color: #4285F4;
   text-decoration: none;
   transition: all 0.3s ease;
 }
@@ -229,7 +229,7 @@
 }
 
 .analysis-summary h3 {
-  color: #1A3FC7;
+  color: #4285F4;
   margin: 0 0 1rem 0;
 }
 
@@ -265,7 +265,7 @@
 .metric-value {
   font-size: 2rem;
   font-weight: 700;
-  color: #1A3FC7;
+  color: #4285F4;
 }
 
 .metric-value.urgency {
@@ -274,7 +274,7 @@
 }
 
 .analysis-section h3 {
-  color: #1A3FC7;
+  color: #4285F4;
   margin: 0 0 1rem 0;
   font-size: 1.2rem;
 }
@@ -320,7 +320,7 @@
 }
 
 .letters-list h3 {
-  color: #1A3FC7;
+  color: #4285F4;
   margin: 0 0 1rem 0;
 }
 
@@ -416,7 +416,7 @@
 }
 
 .modal-header h2 {
-  color: #1A3FC7;
+  color: #4285F4;
   margin: 0;
   font-size: 1.5rem;
 }
@@ -432,7 +432,7 @@
 }
 
 .btn-close-modal:hover {
-  color: #1A3FC7;
+  color: #4285F4;
 }
 
 .modal-body {

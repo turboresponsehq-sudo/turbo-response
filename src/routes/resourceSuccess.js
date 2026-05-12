@@ -47,7 +47,7 @@ router.get('/', (req, res) => {
           width: 80px;
           height: 80px;
           margin: 0 auto 30px;
-          background: linear-gradient(135deg, #1A3FC7 0%, #3b82f6 100%);
+          background: linear-gradient(135deg, #4285F4 0%, #3b82f6 100%);
           border-radius: 50%;
           display: flex;
           align-items: center;
@@ -115,7 +115,7 @@ router.get('/', (req, res) => {
         }
         
         .next-steps h2 {
-          color: #1A3FC7;
+          color: #4285F4;
           font-size: 1.2rem;
           margin-bottom: 15px;
           display: flex;
@@ -141,7 +141,7 @@ router.get('/', (req, res) => {
           content: "✓";
           position: absolute;
           left: 0;
-          color: #1A3FC7;
+          color: #4285F4;
           font-weight: bold;
           font-size: 1.2rem;
         }
@@ -149,7 +149,7 @@ router.get('/', (req, res) => {
         .home-button {
           display: inline-block;
           /* Official accent cyan from BRAND_STYLE_GUIDE.md */
-          background: linear-gradient(135deg, #1A3FC7 0%, #3b82f6 100%);
+          background: linear-gradient(135deg, #4285F4 0%, #3b82f6 100%);
           color: #0A1A3F;
           padding: 16px 40px;
           border-radius: 12px;

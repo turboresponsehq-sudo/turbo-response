@@ -139,7 +139,7 @@ export default function Results() {
           {caseResults.map((caseItem, index) => (
             <div key={index} style={{
               background: "rgba(255, 255, 255, 0.95)",
-              border: "1px solid rgba(26, 63, 199, 0.2)",
+              border: "1px solid rgba(66, 133, 244, 0.2)",
               borderRadius: "16px",
               padding: "30px",
               backdropFilter: "blur(10px)",
@@ -147,7 +147,7 @@ export default function Results() {
             }}>
               <div style={{ fontSize: "48px", marginBottom: "15px" }}>{caseItem.icon}</div>
               <h3 style={{ 
-                color: "#1A3FC7", 
+                color: "#4285F4", 
                 fontSize: "20px", 
                 fontWeight: "700",
                 marginBottom: "20px"
@@ -156,34 +156,34 @@ export default function Results() {
               </h3>
               
               <div style={{ marginBottom: "15px" }}>
-                <strong style={{ color: "#f8fafc", display: "block", marginBottom: "8px" }}>❌ Problem:</strong>
-                <p style={{ color: "#cbd5e1", fontSize: "14px", lineHeight: "1.6" }}>
+                <strong style={{ color: "#1F2937", display: "block", marginBottom: "8px" }}>❌ Problem:</strong>
+                <p style={{ color: "#374151", fontSize: "14px", lineHeight: "1.6" }}>
                   {caseItem.problem}
                 </p>
               </div>
 
               <div style={{ marginBottom: "15px" }}>
-                <strong style={{ color: "#f8fafc", display: "block", marginBottom: "8px" }}>⚡ Turbo Action:</strong>
-                <p style={{ color: "#cbd5e1", fontSize: "14px", lineHeight: "1.6" }}>
+                <strong style={{ color: "#1F2937", display: "block", marginBottom: "8px" }}>⚡ Turbo Action:</strong>
+                <p style={{ color: "#374151", fontSize: "14px", lineHeight: "1.6" }}>
                   {caseItem.action}
                 </p>
               </div>
 
               <div style={{ marginBottom: "15px" }}>
-                <strong style={{ color: "#f8fafc", display: "block", marginBottom: "8px" }}>✅ Result:</strong>
-                <p style={{ color: "#cbd5e1", fontSize: "14px", lineHeight: "1.6" }}>
+                <strong style={{ color: "#1F2937", display: "block", marginBottom: "8px" }}>✅ Result:</strong>
+                <p style={{ color: "#374151", fontSize: "14px", lineHeight: "1.6" }}>
                   {caseItem.result}
                 </p>
               </div>
 
               <div style={{
-                background: "linear-gradient(135deg, rgba(26, 63, 199, 0.2), rgba(59, 130, 246, 0.2))",
+                background: "linear-gradient(135deg, rgba(66, 133, 244, 0.2), rgba(59, 130, 246, 0.2))",
                 borderRadius: "12px",
                 padding: "15px",
                 marginTop: "20px"
               }}>
-                <strong style={{ color: "#1A3FC7", display: "block", marginBottom: "5px" }}>💰 Savings:</strong>
-                <p style={{ color: "#f8fafc", fontSize: "16px", fontWeight: "600" }}>
+                <strong style={{ color: "#4285F4", display: "block", marginBottom: "5px" }}>💰 Savings:</strong>
+                <p style={{ color: "#1F2937", fontSize: "16px", fontWeight: "600" }}>
                   {caseItem.savings}
                 </p>
               </div>
@@ -210,17 +210,17 @@ export default function Results() {
       {/* Footer */}
       <footer style={{
         background: "rgba(255, 255, 255, 0.95)",
-        borderTop: "1px solid rgba(26, 63, 199, 0.2)",
+        borderTop: "1px solid rgba(66, 133, 244, 0.2)",
         padding: "40px 20px",
         textAlign: "center",
-        color: "#cbd5e1"
+        color: "#374151"
       }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <p>© 2025 Turbo Response HQ. All rights reserved.</p>
           <div style={{ marginTop: "20px", display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/terms-of-service" style={{ color: "#1A3FC7", textDecoration: "none" }}>Terms of Service</Link>
-            <Link href="/disclaimer" style={{ color: "#1A3FC7", textDecoration: "none" }}>Disclaimer</Link>
-            <Link href="/service-agreement" style={{ color: "#1A3FC7", textDecoration: "none" }}>Service Agreement</Link>
+            <Link href="/terms-of-service" style={{ color: "#4285F4", textDecoration: "none" }}>Terms of Service</Link>
+            <Link href="/disclaimer" style={{ color: "#4285F4", textDecoration: "none" }}>Disclaimer</Link>
+            <Link href="/service-agreement" style={{ color: "#4285F4", textDecoration: "none" }}>Service Agreement</Link>
           </div>
         </div>
       </footer>

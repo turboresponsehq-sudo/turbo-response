@@ -1,6 +1,6 @@
 .usage-tracker {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(26, 63, 199, 0.2);
+  background: #F0F2F5;
+  border: 1px solid rgba(66, 133, 244, 0.2);
   border-radius: 12px;
   overflow: hidden;
   margin-bottom: 2rem;
@@ -11,20 +11,20 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  background: rgba(26, 63, 199, 0.05);
-  border-bottom: 1px solid rgba(26, 63, 199, 0.2);
+  background: rgba(66, 133, 244, 0.05);
+  border-bottom: 1px solid rgba(66, 133, 244, 0.2);
 }
 
 .usage-header h3 {
   margin: 0;
-  color: #1A3FC7;
+  color: #4285F4;
   font-size: 1.2rem;
 }
 
 .btn-refresh-small {
   background: transparent;
-  border: 1px solid rgba(26, 63, 199, 0.3);
-  color: #1A3FC7;
+  border: 1px solid rgba(66, 133, 244, 0.3);
+  color: #4285F4;
   padding: 0.4rem 0.8rem;
   border-radius: 6px;
   cursor: pointer;
@@ -33,7 +33,7 @@
 }
 
 .btn-refresh-small:hover {
-  background: rgba(26, 63, 199, 0.1);
+  background: rgba(66, 133, 244, 0.1);
   transform: rotate(180deg);
 }
 
@@ -41,14 +41,14 @@
 .usage-error {
   padding: 2rem;
   text-align: center;
-  color: #94a3b8;
+  color: #6B7280;
 }
 
 .spinner-small {
   width: 30px;
   height: 30px;
-  border: 3px solid rgba(26, 63, 199, 0.2);
-  border-top-color: #1A3FC7;
+  border: 3px solid rgba(66, 133, 244, 0.2);
+  border-top-color: #4285F4;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 0.5rem;
@@ -80,7 +80,7 @@
   align-items: center;
   gap: 1rem;
   background: #F0F2F5;
-  border: 1px solid rgba(26, 63, 199, 0.2);
+  border: 1px solid rgba(66, 133, 244, 0.2);
   border-radius: 8px;
   padding: 1rem;
 }
@@ -97,7 +97,7 @@
 }
 
 .stat-label {
-  color: #94a3b8;
+  color: #6B7280;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -111,7 +111,7 @@
 
 .usage-cap-section {
   padding: 0 1.5rem 1.5rem 1.5rem;
-  border-top: 1px solid rgba(26, 63, 199, 0.1);
+  border-top: 1px solid rgba(66, 133, 244, 0.1);
   margin-top: 0.5rem;
   padding-top: 1.5rem;
 }
@@ -124,7 +124,7 @@
 }
 
 .cap-label {
-  color: #94a3b8;
+  color: #6B7280;
   font-size: 0.9rem;
   font-weight: 600;
 }
@@ -155,7 +155,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #94a3b8;
+  color: #6B7280;
   font-size: 0.8rem;
   margin-bottom: 0.5rem;
 }
@@ -174,7 +174,7 @@
 .usage-unlimited {
   padding: 1.5rem;
   text-align: center;
-  border-top: 1px solid rgba(26, 63, 199, 0.1);
+  border-top: 1px solid rgba(66, 133, 244, 0.1);
   margin-top: 0.5rem;
 }
 
@@ -185,8 +185,8 @@
 
 .usage-footer {
   padding: 1rem 1.5rem;
-  background: rgba(26, 63, 199, 0.05);
-  border-top: 1px solid rgba(26, 63, 199, 0.1);
+  background: rgba(66, 133, 244, 0.05);
+  border-top: 1px solid rgba(66, 133, 244, 0.1);
   text-align: center;
 }
 

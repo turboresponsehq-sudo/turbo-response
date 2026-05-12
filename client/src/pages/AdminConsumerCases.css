@@ -14,14 +14,14 @@
 
 .admin-header h1 {
   font-size: 2rem;
-  color: #1A3FC7;
+  color: #4285F4;
   margin: 0;
 }
 
 .btn-back {
   background: rgba(26, 63, 199, 0.1);
   border: 1px solid #1A3FC7;
-  color: #1A3FC7;
+  color: #4285F4;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
   cursor: pointer;
@@ -53,13 +53,13 @@
 }
 
 .filter-bar button:hover {
-  border-color: #1A3FC7;
-  color: #1A3FC7;
+  border-color: #4285F4;
+  color: #4285F4;
 }
 
 .filter-bar button.active {
   background: linear-gradient(135deg, #1A3FC7, #1A3FC7);
-  border-color: #1A3FC7;
+  border-color: #4285F4;
   color: white;
   font-weight: 600;
 }
@@ -78,7 +78,7 @@
   width: 50px;
   height: 50px;
   border: 4px solid rgba(26, 63, 199, 0.2);
-  border-top-color: #1A3FC7;
+  border-top-color: #4285F4;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 1rem;
@@ -118,7 +118,7 @@
   padding: 1rem;
   text-align: left;
   font-weight: 600;
-  color: #1A3FC7;
+  color: #4285F4;
   border-bottom: 2px solid rgba(26, 63, 199, 0.3);
 }
 
@@ -153,7 +153,7 @@
   border: 1px solid rgba(26, 63, 199, 0.3);
   border-radius: 6px;
   font-size: 0.85rem;
-  color: #1A3FC7;
+  color: #4285F4;
 }
 
 .status-badge {
@@ -226,7 +226,7 @@
 }
 
 .cases-summary strong {
-  color: #1A3FC7;
+  color: #4285F4;
   font-size: 1.2rem;
 }
 

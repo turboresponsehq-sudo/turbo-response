@@ -90,8 +90,8 @@ export default function ClientLogin() {
         right: 0,
         bottom: 0,
         backgroundImage: `
-          linear-gradient(rgba(26, 63, 199, 0.1) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(26, 63, 199, 0.1) 1px, transparent 1px)
+          linear-gradient(rgba(66, 133, 244, 0.1) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(66, 133, 244, 0.1) 1px, transparent 1px)
         `,
         backgroundSize: "50px 50px",
         opacity: 0.3,
@@ -117,7 +117,7 @@ export default function ClientLogin() {
           <h1 style={{
             fontSize: "1.75rem",
             fontWeight: 700,
-            background: "linear-gradient(135deg, #1A3FC7, #1A3FC7)",
+            background: "linear-gradient(135deg, #4285F4, #4285F4)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             margin: "0 0 0.5rem 0"
@@ -186,7 +186,7 @@ export default function ClientLogin() {
                   boxSizing: "border-box",
                   transition: "border-color 0.2s"
                 }}
-                onFocus={(e) => e.target.style.borderColor = "#1A3FC7"}
+                onFocus={(e) => e.target.style.borderColor = "#4285F4"}
                 onBlur={(e) => e.target.style.borderColor = "#e2e8f0"}
               />
             </div>
@@ -218,7 +218,7 @@ export default function ClientLogin() {
                   boxSizing: "border-box",
                   transition: "border-color 0.2s"
                 }}
-                onFocus={(e) => e.target.style.borderColor = "#1A3FC7"}
+                onFocus={(e) => e.target.style.borderColor = "#4285F4"}
                 onBlur={(e) => e.target.style.borderColor = "#e2e8f0"}
               />
               <p style={{
@@ -240,22 +240,22 @@ export default function ClientLogin() {
                 fontSize: "1rem",
                 fontWeight: 600,
                 color: "white",
-                background: requesting ? "#94a3b8" : "linear-gradient(135deg, #1A3FC7, #1A3FC7)",
+                background: requesting ? "#94a3b8" : "linear-gradient(135deg, #4285F4, #4285F4)",
                 border: "none",
                 borderRadius: "8px",
                 cursor: requesting ? "not-allowed" : "pointer",
                 transition: "transform 0.2s, box-shadow 0.2s",
-                boxShadow: "0 4px 12px rgba(26, 63, 199, 0.3)"
+                boxShadow: "0 4px 12px rgba(66, 133, 244, 0.3)"
               }}
               onMouseEnter={(e) => {
                 if (!requesting) {
                   e.currentTarget.style.transform = "translateY(-2px)";
-                  e.currentTarget.style.boxShadow = "0 6px 20px rgba(26, 63, 199, 0.4)";
+                  e.currentTarget.style.boxShadow = "0 6px 20px rgba(66, 133, 244, 0.4)";
                 }
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 4px 12px rgba(26, 63, 199, 0.3)";
+                e.currentTarget.style.boxShadow = "0 4px 12px rgba(66, 133, 244, 0.3)";
               }}
             >
               {requesting ? "Sending Code..." : "Send Verification Code"}
@@ -355,7 +355,7 @@ export default function ClientLogin() {
                   fontFamily: "monospace",
                   transition: "border-color 0.2s"
                 }}
-                onFocus={(e) => e.target.style.borderColor = "#1A3FC7"}
+                onFocus={(e) => e.target.style.borderColor = "#4285F4"}
                 onBlur={(e) => e.target.style.borderColor = "#e2e8f0"}
                 autoFocus
               />
@@ -378,22 +378,22 @@ export default function ClientLogin() {
                 fontSize: "1rem",
                 fontWeight: 600,
                 color: "white",
-                background: (verifying || code.length !== 6) ? "#94a3b8" : "linear-gradient(135deg, #1A3FC7, #1A3FC7)",
+                background: (verifying || code.length !== 6) ? "#94a3b8" : "linear-gradient(135deg, #4285F4, #4285F4)",
                 border: "none",
                 borderRadius: "8px",
                 cursor: (verifying || code.length !== 6) ? "not-allowed" : "pointer",
                 transition: "transform 0.2s, box-shadow 0.2s",
-                boxShadow: "0 4px 12px rgba(26, 63, 199, 0.3)"
+                boxShadow: "0 4px 12px rgba(66, 133, 244, 0.3)"
               }}
               onMouseEnter={(e) => {
                 if (!verifying && code.length === 6) {
                   e.currentTarget.style.transform = "translateY(-2px)";
-                  e.currentTarget.style.boxShadow = "0 6px 20px rgba(26, 63, 199, 0.4)";
+                  e.currentTarget.style.boxShadow = "0 6px 20px rgba(66, 133, 244, 0.4)";
                 }
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 4px 12px rgba(26, 63, 199, 0.3)";
+                e.currentTarget.style.boxShadow = "0 4px 12px rgba(66, 133, 244, 0.3)";
               }}
             >
               {verifying ? "Verifying..." : "Access Portal"}
@@ -434,11 +434,11 @@ export default function ClientLogin() {
         }}>
           <p style={{
             fontSize: "0.75rem",
-            color: "#94a3b8",
+            color: "#6B7280",
             margin: 0
           }}>
             Need help? Contact us at{" "}
-            <a href="mailto:support@turboresponsehq.ai" style={{ color: "#1A3FC7", textDecoration: "none" }}>
+            <a href="mailto:support@turboresponsehq.ai" style={{ color: "#4285F4", textDecoration: "none" }}>
               support@turboresponsehq.ai
             </a>
           </p>

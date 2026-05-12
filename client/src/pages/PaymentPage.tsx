@@ -208,7 +208,7 @@ export default function PaymentPage() {
       }}>
         {/* Header */}
         <div style={{
-          background: "linear-gradient(135deg, #1A3FC7 0%, #3B6BF5 100%)",
+          background: "linear-gradient(135deg, #4285F4 0%, #2D7FF9 100%)",
           padding: "2rem",
           color: "white",
           textAlign: "center"
@@ -234,15 +234,15 @@ export default function PaymentPage() {
           {caseData?.pricing_tier_name && (
             <div style={{ 
               padding: "1rem", 
-              background: "linear-gradient(135deg, rgba(26, 63, 199, 0.1), rgba(59, 130, 246, 0.1))",
+              background: "linear-gradient(135deg, rgba(66, 133, 244, 0.1), rgba(59, 130, 246, 0.1))",
               borderRadius: "8px",
-              border: "2px solid rgba(26, 63, 199, 0.3)"
+              border: "2px solid rgba(66, 133, 244, 0.3)"
             }}>
-              <p style={{ margin: 0, fontSize: "0.875rem", color: "#1A3FC7", fontWeight: 600 }}>Selected Package</p>
+              <p style={{ margin: 0, fontSize: "0.875rem", color: "#4285F4", fontWeight: 600 }}>Selected Package</p>
               <p style={{ margin: "0.5rem 0 0 0", fontSize: "1.25rem", fontWeight: 700, color: "#212529" }}>
                 {caseData.pricing_tier_name}
               </p>
-              <p style={{ margin: "0.25rem 0 0 0", fontSize: "1.5rem", fontWeight: 700, color: "#1A3FC7" }}>
+              <p style={{ margin: "0.25rem 0 0 0", fontSize: "1.5rem", fontWeight: 700, color: "#4285F4" }}>
                 {displayAmount}
               </p>
             </div>
@@ -259,7 +259,7 @@ export default function PaymentPage() {
                 key={method.id}
                 onClick={() => setSelectedMethod(method.id)}
                 style={{
-                  border: selectedMethod === method.id ? "3px solid #1A3FC7" : "2px solid #dee2e6",
+                  border: selectedMethod === method.id ? "3px solid #4285F4" : "2px solid #dee2e6",
                   borderRadius: "12px",
                   padding: "1.5rem",
                   cursor: "pointer",
@@ -271,7 +271,7 @@ export default function PaymentPage() {
                   <span style={{ fontSize: "2rem" }}>{method.icon}</span>
                   <div>
                     <h4 style={{ margin: 0, color: "#212529" }}>{method.name}</h4>
-                    <p style={{ margin: "0.25rem 0 0 0", fontSize: "1.25rem", fontWeight: 700, color: "#1A3FC7" }}>
+                    <p style={{ margin: "0.25rem 0 0 0", fontSize: "1.25rem", fontWeight: 700, color: "#4285F4" }}>
                       {method.amount}
                     </p>
                   </div>
@@ -304,12 +304,12 @@ export default function PaymentPage() {
               fontSize: "1.125rem",
               fontWeight: 700,
               color: "white",
-              background: selectedMethod && !submitting ? "linear-gradient(135deg, #1A3FC7 0%, #3B6BF5 100%)" : "#6c757d",
+              background: selectedMethod && !submitting ? "linear-gradient(135deg, #4285F4 0%, #4285F4 100%)" : "#6c757d",
               border: "none",
               borderRadius: "12px",
               cursor: selectedMethod && !submitting ? "pointer" : "not-allowed",
               transition: "all 0.2s",
-              boxShadow: selectedMethod && !submitting ? "0 4px 15px rgba(26, 63, 199, 0.4)" : "none"
+              boxShadow: selectedMethod && !submitting ? "0 4px 15px rgba(66, 133, 244, 0.4)" : "none"
             }}
           >
             {submitting ? "Submitting..." : "✓ I Paid"}

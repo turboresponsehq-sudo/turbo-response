@@ -28,7 +28,7 @@
 }
 
 .document-card:hover {
-  border-color: #3B6BF5;
+  border-color: #4285F4;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
   transform: translateY(-2px);
 }
@@ -74,7 +74,7 @@
 }
 
 .file-icon {
-  color: #3B6BF5;
+  color: #4285F4;
 }
 
 .document-info {
@@ -131,7 +131,7 @@
 
 .btn-icon:hover {
   background: #f1f5f9;
-  border-color: #cbd5e1;
+  border-color: #374151;
 }
 
 /* Lightbox */
@@ -204,7 +204,7 @@
   display: inline-block;
   margin-top: 1rem;
   padding: 0.75rem 1.5rem;
-  background: #3B6BF5;
+  background: #4285F4;
   color: white;
   text-decoration: none;
   border-radius: 6px;

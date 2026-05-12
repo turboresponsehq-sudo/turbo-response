@@ -1,5 +1,5 @@
 .admin-notifications {
-  background: rgba(30, 41, 59, 0.6);
+  background: #F0F2F5;
   border: 1px solid rgba(26, 63, 199, 0.2);
   border-radius: 12px;
   overflow: hidden;
@@ -16,7 +16,7 @@
 
 .notifications-header h3 {
   margin: 0;
-  color: #1A3FC7;
+  color: #4285F4;
   font-size: 1.2rem;
 }
 
@@ -46,7 +46,7 @@
   width: 30px;
   height: 30px;
   border: 3px solid rgba(26, 63, 199, 0.2);
-  border-top-color: #1A3FC7;
+  border-top-color: #4285F4;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 0.5rem;
@@ -125,7 +125,7 @@
 }
 
 .notification-link {
-  color: #1A3FC7;
+  color: #4285F4;
   font-size: 0.85rem;
   text-decoration: none;
   font-weight: 600;
@@ -133,7 +133,7 @@
 }
 
 .notification-link:hover {
-  color: #1A3FC7;
+  color: #4285F4;
 }
 
 .notifications-footer {
@@ -147,7 +147,7 @@
 .btn-retry {
   background: rgba(26, 63, 199, 0.1);
   border: 1px solid rgba(26, 63, 199, 0.3);
-  color: #1A3FC7;
+  color: #4285F4;
   padding: 0.5rem 1rem;
   border-radius: 6px;
   cursor: pointer;

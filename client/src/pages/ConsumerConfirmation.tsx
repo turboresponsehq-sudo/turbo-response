@@ -74,7 +74,7 @@ export default function ConsumerConfirmation() {
             </button>
             <button
               onClick={() => setLocation("/intake")}
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-700 to-blue-500 hover:from-blue-800 hover:to-blue-600 text-slate-800 font-semibold rounded-lg shadow-lg transition-all duration-200"
+              className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-400 hover:from-blue-600 hover:to-blue-500 text-white font-semibold rounded-lg shadow-lg transition-all duration-200"
             >
               Start New Case
             </button>
@@ -197,7 +197,7 @@ export default function ConsumerConfirmation() {
           </button>
           <button
             onClick={() => setLocation("/intake")}
-            className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-700 to-blue-500 hover:from-blue-800 hover:to-blue-600 text-slate-800 font-semibold rounded-lg shadow-lg transition-all duration-200"
+            className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-400 hover:from-blue-600 hover:to-blue-500 text-white font-semibold rounded-lg shadow-lg transition-all duration-200"
           >
             Submit Another Case
           </button>

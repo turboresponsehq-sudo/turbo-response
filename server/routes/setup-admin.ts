@@ -79,10 +79,10 @@ router.get('/setup-admin', async (req, res) => {
             padding: 40px;
             background: #FFFFFF;
             border-radius: 20px;
-            border: 1px solid #1A3FC7;
+            border: 1px solid #4285F4;
             box-shadow: 0 10px 40px rgba(26, 63, 199, 0.3);
           }
-          h1 { color: #1A3FC7; margin-bottom: 20px; }
+          h1 { color: #4285F4; margin-bottom: 20px; }
           .credentials {
             background: rgba(30, 41, 59, 0.6);
             padding: 20px;
@@ -95,12 +95,12 @@ router.get('/setup-admin', async (req, res) => {
             font-size: 18px;
           }
           .label { color: #94a3b8; }
-          .value { color: #1A3FC7; font-weight: bold; }
+          .value { color: #4285F4; font-weight: bold; }
           a {
             display: inline-block;
             margin-top: 20px;
             padding: 15px 30px;
-            background: #1A3FC7;
+            background: #4285F4;
             color: #0A1A3F;
             text-decoration: none;
             border-radius: 10px;
@@ -108,7 +108,7 @@ router.get('/setup-admin', async (req, res) => {
             transition: all 0.3s;
           }
           a:hover {
-            background: #3B6BF5;
+            background: #4285F4;
             transform: translateY(-2px);
             box-shadow: 0 5px 20px rgba(26, 63, 199, 0.4);
           }
