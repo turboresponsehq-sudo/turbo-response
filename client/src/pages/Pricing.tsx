@@ -49,7 +49,7 @@ export default function Pricing() {
   return (
     <div style={{ 
       minHeight: "100vh", 
-      background: "linear-gradient(135deg, #0A1A3F 0%, #0A1A3F 50%, #1A3058 100%)",
+      background: "#FFFFFF",
       position: "relative",
       overflow: "hidden"
     }}>
@@ -72,13 +72,13 @@ export default function Pricing() {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        background: "rgba(15, 23, 42, 0.8)",
+        background: "rgba(255, 255, 255, 0.95)",
         backdropFilter: "blur(10px)",
         position: "relative",
         zIndex: 10
       }}>
         <Link href="/" style={{ 
-          color: "white", 
+          color: "#0A1A3F", 
           fontSize: "1.5rem", 
           fontWeight: 700, 
           textDecoration: "none",
@@ -89,9 +89,9 @@ export default function Pricing() {
           ⚡ TURBO RESPONSE
         </Link>
         <div style={{ display: "flex", gap: "2rem" }}>
-          <Link href="/" style={{ color: "white", textDecoration: "none" }}>Home</Link>
+          <Link href="/" style={{ color: "#0A1A3F", textDecoration: "none" }}>Home</Link>
           <Link href="/pricing" style={{ color: "#1A3FC7", textDecoration: "none", fontWeight: 600 }}>Pricing</Link>
-          <Link href="/intake" style={{ color: "white", textDecoration: "none" }}>Get Started</Link>
+          <Link href="/intake" style={{ color: "#0A1A3F", textDecoration: "none" }}>Get Started</Link>
         </div>
       </nav>
 
@@ -99,7 +99,7 @@ export default function Pricing() {
       <div style={{ 
         textAlign: "center", 
         padding: "4rem 2rem 2rem 2rem", 
-        color: "white",
+        color: "#0A1A3F",
         position: "relative",
         zIndex: 1
       }}>
@@ -115,7 +115,7 @@ export default function Pricing() {
         }}>
           Simple, Transparent Pricing
         </h1>
-        <p style={{ fontSize: "1.25rem", opacity: 0.9, maxWidth: "600px", margin: "0 auto", color: "#e0e6ed" }}>
+        <p style={{ fontSize: "1.25rem", opacity: 0.9, maxWidth: "600px", margin: "0 auto", color: "#334155" }}>
           Choose the package that fits your case complexity. Final pricing depends on case details.
         </p>
       </div>
@@ -135,10 +135,10 @@ export default function Pricing() {
           <div
             key={index}
             style={{
-              background: tier.popular ? "linear-gradient(135deg, #0A1A3F 0%, #1A3058 100%)" : "#0D1F45",
+              background: tier.popular ? "#FFFFFF" : "#FFFFFF",
               borderRadius: "16px",
               padding: "2rem",
-              boxShadow: tier.popular ? "0 20px 60px rgba(26, 63, 199, 0.3)" : "0 10px 30px rgba(0,0,0,0.3)",
+              boxShadow: tier.popular ? "0 10px 30px rgba(26, 63, 199, 0.15)" : "0 4px 15px rgba(10, 26, 63, 0.06)",
               transform: tier.popular ? "scale(1.05)" : "scale(1)",
               border: tier.popular ? "2px solid #1A3FC7" : "1px solid rgba(26, 63, 199, 0.2)",
               position: "relative"
@@ -164,7 +164,7 @@ export default function Pricing() {
             <h3 style={{ 
               fontSize: "1.5rem", 
               fontWeight: 700, 
-              color: "white", 
+              color: "#0A1A3F", 
               marginTop: tier.popular ? "1rem" : 0 
             }}>
               {tier.name}
@@ -183,7 +183,7 @@ export default function Pricing() {
               {tier.features.map((feature, i) => (
                 <li key={i} style={{ 
                   padding: "0.5rem 0", 
-                  color: "#e0e6ed", 
+                  color: "#334155", 
                   display: "flex", 
                   alignItems: "flex-start" 
                 }}>
@@ -200,7 +200,7 @@ export default function Pricing() {
                 background: tier.popular 
                   ? "linear-gradient(135deg, #1A3FC7 0%, #3B6BF5 100%)" 
                   : "rgba(26, 63, 199, 0.1)",
-                color: "white",
+                color: tier.popular ? "white" : "#1A3FC7",
                 border: tier.popular ? "none" : "2px solid #1A3FC7",
                 borderRadius: "8px",
                 fontSize: "1rem",
@@ -220,11 +220,11 @@ export default function Pricing() {
         maxWidth: "800px",
         margin: "3rem auto",
         padding: "2rem",
-        background: "rgba(15, 30, 53, 0.8)",
+        background: "#F0F2F5",
         backdropFilter: "blur(10px)",
         borderRadius: "16px",
         border: "2px solid rgba(26, 63, 199, 0.3)",
-        color: "white",
+        color: "#0A1A3F",
         textAlign: "center",
         position: "relative",
         zIndex: 1
@@ -269,11 +269,11 @@ export default function Pricing() {
       <div style={{ 
         textAlign: "center", 
         padding: "3rem 2rem", 
-        color: "white",
+        color: "#0A1A3F",
         position: "relative",
         zIndex: 1
       }}>
-        <p style={{ fontSize: "1.125rem", opacity: 0.9, marginBottom: "1.5rem", color: "#e0e6ed" }}>
+        <p style={{ fontSize: "1.125rem", opacity: 0.9, marginBottom: "1.5rem", color: "#334155" }}>
           Ready to defend your rights?
         </p>
         <Link href="/intake">

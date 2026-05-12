@@ -138,7 +138,7 @@ export default function Results() {
         }}>
           {caseResults.map((caseItem, index) => (
             <div key={index} style={{
-              background: "rgba(15, 23, 42, 0.8)",
+              background: "rgba(255, 255, 255, 0.95)",
               border: "1px solid rgba(26, 63, 199, 0.2)",
               borderRadius: "16px",
               padding: "30px",
@@ -209,7 +209,7 @@ export default function Results() {
 
       {/* Footer */}
       <footer style={{
-        background: "rgba(15, 23, 42, 0.9)",
+        background: "rgba(255, 255, 255, 0.95)",
         borderTop: "1px solid rgba(26, 63, 199, 0.2)",
         padding: "40px 20px",
         textAlign: "center",

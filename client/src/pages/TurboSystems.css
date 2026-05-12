@@ -5,16 +5,16 @@
    ============================================================ */
 
 :root {
-  --ts-bg: #0A1A3F;
-  --ts-surface: #0A1A3F;
-  --ts-surface-2: #0D1F45;
+  --ts-bg: #FFFFFF;
+  --ts-surface: #F0F2F5;
+  --ts-surface-2: #FFFFFF;
   --ts-border: rgba(26, 63, 199, 0.15);
   --ts-border-bright: rgba(26, 63, 199, 0.4);
   --ts-cyan: #1A3FC7;
   --ts-violet: #3B6BF5;
   --ts-violet-light: #3B6BF5;
-  --ts-white: #f0f9ff;
-  --ts-muted: #94a3b8;
+  --ts-white: #0A1A3F;
+  --ts-muted: #64748b;
   --ts-glow-cyan: 0 0 40px rgba(26, 63, 199, 0.25);
   --ts-glow-violet: 0 0 40px rgba(59, 107, 245, 0.25);
 }
@@ -88,7 +88,7 @@
   top: 0;
   width: 100%;
   padding: 18px 0;
-  background: rgba(2, 8, 23, 0.85);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--ts-border);
   z-index: 100;
@@ -145,7 +145,7 @@
   padding: 8px 20px;
   background: linear-gradient(135deg, var(--ts-cyan), var(--ts-violet));
   border-radius: 8px;
-  color: #fff;
+  color: #FFFFFF;
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 600;
@@ -536,7 +536,7 @@
   padding: 14px 32px;
   background: linear-gradient(135deg, var(--ts-cyan), var(--ts-violet));
   border-radius: 10px;
-  color: #fff;
+  color: #FFFFFF;
   font-weight: 700;
   font-size: 0.95rem;
   text-decoration: none;
@@ -658,7 +658,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(2, 8, 23, 0.98);
+    background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(16px);
     flex-direction: column;
     align-items: center;
@@ -870,7 +870,7 @@
   justify-content: center;
   font-size: 1.5rem;
   font-weight: 800;
-  color: #fff;
+  color: #FFFFFF;
   letter-spacing: 0.05em;
 }
 

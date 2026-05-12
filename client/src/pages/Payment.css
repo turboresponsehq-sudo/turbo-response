@@ -2,8 +2,8 @@
 
 .payment-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0A1A3F 0%, #0F2347 50%, #1A3058 100%);
-  color: #f8fafc;
+  background: #FFFFFF;
+  color: #0A1A3F;
   padding: 40px 20px;
 }
 
@@ -25,13 +25,13 @@
 }
 
 .payment-page .header-subtitle {
-  color: #cbd5e1;
+  color: #334155;
   font-size: 1.1rem;
 }
 
 .payment-page .card {
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(26, 63, 199, 0.2);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(26, 63, 199, 0.1);
   border-radius: 20px;
   padding: 40px;
   backdrop-filter: blur(10px);
@@ -56,12 +56,12 @@
 }
 
 .payment-page .info-label {
-  color: #cbd5e1;
+  color: #334155;
   font-weight: 600;
 }
 
 .payment-page .info-value {
-  color: #f8fafc;
+  color: #0A1A3F;
   text-align: right;
 }
 
@@ -80,13 +80,13 @@
 }
 
 .payment-page .contract-summary p {
-  color: #cbd5e1;
+  color: #334155;
   font-size: 0.95rem;
   margin: 5px 0;
 }
 
 .payment-page .contract-terms {
-  color: #cbd5e1;
+  color: #334155;
   font-size: 0.9rem;
   margin-top: 15px;
   line-height: 1.8;
@@ -102,7 +102,7 @@
 }
 
 .payment-page .price-label {
-  color: #cbd5e1;
+  color: #334155;
   font-size: 1.1rem;
   margin-bottom: 10px;
 }
@@ -125,7 +125,7 @@
 
 .payment-page .payment-method {
   background: rgba(30, 41, 59, 0.5);
-  border: 1px solid rgba(26, 63, 199, 0.2);
+  border: 1px solid rgba(26, 63, 199, 0.1);
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 15px;
@@ -146,7 +146,7 @@
 
 .payment-page .payment-name {
   font-weight: 700;
-  color: #f8fafc;
+  color: #0A1A3F;
   font-size: 1.1rem;
   margin-bottom: 5px;
 }
@@ -187,7 +187,7 @@
   border-radius: 10px;
   padding: 20px;
   margin: 20px 0;
-  color: #cbd5e1;
+  color: #334155;
   line-height: 1.6;
 }
 
@@ -202,7 +202,7 @@
   padding: 20px;
   margin: 20px 0;
   display: none;
-  color: #cbd5e1;
+  color: #334155;
   line-height: 1.6;
 }
 

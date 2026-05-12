@@ -2,8 +2,8 @@
 
 .intake-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0A1A3F 0%, #0F2347 50%, #1A3058 100%);
-  color: #f8fafc;
+  background: #FFFFFF;
+  color: #0A1A3F;
 }
 
 /* Animated Background */
@@ -41,9 +41,9 @@
 /* Header */
 .header {
   padding: 20px 0;
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(26, 63, 199, 0.2);
+  border: 1px solid rgba(26, 63, 199, 0.1);
 }
 
 .nav-container {
@@ -60,7 +60,7 @@
   align-items: center;
   font-size: 1.5rem;
   font-weight: 800;
-  color: #f8fafc;
+  color: #0A1A3F;
   text-decoration: none;
 }
 
@@ -100,7 +100,7 @@
 
 .intake-subtitle {
   font-size: 1.2rem;
-  color: #cbd5e1;
+  color: #334155;
   margin-bottom: 20px;
 }
 
@@ -123,8 +123,8 @@
 
 /* Form Styles */
 .intake-form {
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(26, 63, 199, 0.2);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(26, 63, 199, 0.1);
   border-radius: 20px;
   padding: 40px;
   backdrop-filter: blur(10px);
@@ -185,7 +185,7 @@
   background: rgba(30, 41, 59, 0.5);
   border: 1px solid rgba(26, 63, 199, 0.3);
   border-radius: 12px;
-  color: #f8fafc;
+  color: #0A1A3F;
   font-size: 1rem;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
@@ -242,7 +242,7 @@
 }
 
 .file-upload-text {
-  color: #cbd5e1;
+  color: #334155;
   font-weight: 500;
 }
 
@@ -262,7 +262,7 @@
 }
 
 .file-name {
-  color: #f8fafc;
+  color: #0A1A3F;
   font-weight: 500;
 }
 
@@ -322,7 +322,7 @@
 
 .category-name {
   font-weight: 600;
-  color: #f8fafc;
+  color: #0A1A3F;
   font-size: 0.95rem;
 }
 

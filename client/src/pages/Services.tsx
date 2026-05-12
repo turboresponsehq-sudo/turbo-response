@@ -133,7 +133,7 @@ export default function Services() {
 
       {/* Footer */}
       <footer style={{
-        background: "rgba(15, 23, 42, 0.9)",
+        background: "rgba(255, 255, 255, 0.95)",
         borderTop: "1px solid rgba(26, 63, 199, 0.2)",
         padding: "40px 20px",
         textAlign: "center",

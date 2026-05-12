@@ -42,10 +42,10 @@
   right: 20px;
   width: 350px;
   height: 500px;
-  background: linear-gradient(135deg, #0A1A3F 0%, #0F2347 100%);
+  background: #FFFFFF;
   border: 1px solid rgba(26, 63, 199, 0.3);
   border-radius: 15px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 40px rgba(10, 26, 63, 0.15);
   display: flex;
   flex-direction: column;
   z-index: 1001;
@@ -112,7 +112,7 @@
   flex: 1;
   padding: 20px;
   overflow-y: auto;
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(255, 255, 255, 0.95);
 }
 
 .chat-message {
@@ -150,25 +150,25 @@
 
 .user-message .message-bubble {
   background: rgba(100, 116, 139, 0.3);
-  color: #f8fafc;
+  color: #0A1A3F;
   border-radius: 15px 15px 5px 15px;
 }
 
 .floating-chat-input-area {
   padding: 15px;
-  background: rgba(30, 41, 59, 0.8);
+  background: #F0F2F5;
   display: flex;
   gap: 10px;
-  border-top: 1px solid rgba(26, 63, 199, 0.2);
+  border: 1px solid rgba(26, 63, 199, 0.1);
 }
 
 .chat-input-field {
   flex: 1;
-  background: rgba(15, 23, 42, 0.8);
+  background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(26, 63, 199, 0.3);
   border-radius: 25px;
   padding: 10px 15px;
-  color: #f8fafc;
+  color: #0A1A3F;
   outline: none;
   font-size: 14px;
 }
@@ -207,7 +207,7 @@
 }
 
 .floating-chat-messages::-webkit-scrollbar-track {
-  background: rgba(30, 41, 59, 0.3);
+  background: #F0F2F5;
   border-radius: 10px;
 }
 

@@ -75,7 +75,7 @@ export default function ClientLogin() {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "linear-gradient(135deg, #0A1A3F 0%, #0A1A3F 50%, #1A3058 100%)",
+      background: "#FFFFFF",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
@@ -101,7 +101,7 @@ export default function ClientLogin() {
       <div style={{
         backgroundColor: "white",
         borderRadius: "12px",
-        boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
+        boxShadow: "0 10px 40px rgba(10, 26, 63, 0.08)",
         maxWidth: "450px",
         width: "100%",
         padding: "2rem",

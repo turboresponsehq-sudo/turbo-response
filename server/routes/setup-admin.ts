@@ -72,12 +72,12 @@ router.get('/setup-admin', async (req, res) => {
             min-height: 100vh;
             margin: 0;
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-            color: white;
+            color: #0A1A3F;
           }
           .container {
             text-align: center;
             padding: 40px;
-            background: rgba(10, 26, 63, 0.8);
+            background: #FFFFFF;
             border-radius: 20px;
             border: 1px solid #1A3FC7;
             box-shadow: 0 10px 40px rgba(26, 63, 199, 0.3);
@@ -101,7 +101,7 @@ router.get('/setup-admin', async (req, res) => {
             margin-top: 20px;
             padding: 15px 30px;
             background: #1A3FC7;
-            color: white;
+            color: #0A1A3F;
             text-decoration: none;
             border-radius: 10px;
             font-weight: bold;

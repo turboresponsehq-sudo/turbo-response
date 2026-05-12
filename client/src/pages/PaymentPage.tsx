@@ -81,7 +81,7 @@ export default function PaymentPage() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(135deg, #0A1A3F 0%, #0A1A3F 50%, #1A3058 100%)",
+        background: "#FFFFFF",
         fontFamily: "system-ui, -apple-system, sans-serif"
       }}>
         <div style={{
@@ -103,7 +103,7 @@ export default function PaymentPage() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(135deg, #0A1A3F 0%, #0A1A3F 50%, #1A3058 100%)",
+        background: "#FFFFFF",
         fontFamily: "system-ui, -apple-system, sans-serif"
       }}>
         <div style={{
@@ -128,7 +128,7 @@ export default function PaymentPage() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(135deg, #0A1A3F 0%, #0A1A3F 50%, #1A3058 100%)",
+        background: "#FFFFFF",
         fontFamily: "system-ui, -apple-system, sans-serif"
       }}>
         <div style={{
@@ -194,7 +194,7 @@ export default function PaymentPage() {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "linear-gradient(135deg, #0A1A3F 0%, #0A1A3F 50%, #1A3058 100%)",
+      background: "#FFFFFF",
       padding: "2rem 1rem",
       fontFamily: "system-ui, -apple-system, sans-serif"
     }}>

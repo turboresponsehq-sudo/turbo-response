@@ -23,7 +23,7 @@ router.get('/', (req, res) => {
         body {
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
           /* Official brand gradient from BRAND_STYLE_GUIDE.md */
-          background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+          background: #FFFFFF;
           min-height: 100vh;
           display: flex;
           align-items: center;
@@ -150,7 +150,7 @@ router.get('/', (req, res) => {
           display: inline-block;
           /* Official accent cyan from BRAND_STYLE_GUIDE.md */
           background: linear-gradient(135deg, #1A3FC7 0%, #3b82f6 100%);
-          color: white;
+          color: #0A1A3F;
           padding: 16px 40px;
           border-radius: 12px;
           text-decoration: none;

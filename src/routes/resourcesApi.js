@@ -309,7 +309,7 @@ This is an automated notification from Turbo Response Grant & Resource Matching 
   <style>
     body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: linear-gradient(135deg, #1A3FC7 0%, #3b82f6 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+    .header { background: linear-gradient(135deg, #1A3FC7 0%, #3b82f6 100%); color: #0A1A3F; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
     .section { background: #f8f9fa; padding: 20px; margin: 20px 0; border-left: 4px solid #1A3FC7; }
     .section-title { font-size: 14px; font-weight: bold; color: #1A3FC7; text-transform: uppercase; margin-bottom: 10px; }
     .field { margin: 10px 0; }
@@ -318,7 +318,7 @@ This is an automated notification from Turbo Response Grant & Resource Matching 
     .list-item { padding: 5px 0; padding-left: 20px; }
     .description { background: white; padding: 15px; border-radius: 5px; margin-top: 10px; white-space: pre-wrap; }
     .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
-    .record-id { background: #1A3FC7; color: white; padding: 4px 12px; border-radius: 20px; font-size: 13px; display: inline-block; margin-top: 8px; }
+    .record-id { background: #1A3FC7; color: #0A1A3F; padding: 4px 12px; border-radius: 20px; font-size: 13px; display: inline-block; margin-top: 8px; }
   </style>
 </head>
 <body>
