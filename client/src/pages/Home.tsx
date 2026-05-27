@@ -35,11 +35,33 @@ export default function Home() {
         </div>
       </header>
 
-      {/* ── SECTION 1: HERO ────────────────────────────────────────────────── */}
+      {/* ── HERO ───────────────────────────────────────────────────────────── */}
       <section className="hp-hero">
-        <div className="hp-hero-glow-blue" aria-hidden="true" />
-        <div className="hp-hero-glow-purple" aria-hidden="true" />
+        {/* Deep atmosphere layers */}
+        <div className="hp-hero-bg-gradient" aria-hidden="true" />
         <div className="hp-hero-grid" aria-hidden="true" />
+        <div className="hp-hero-scanline" aria-hidden="true" />
+
+        {/* Visual anchor: abstract command-center orb */}
+        <div className="hp-orb-wrap" aria-hidden="true">
+          <div className="hp-orb" />
+          <div className="hp-orb-ring hp-orb-ring-1" />
+          <div className="hp-orb-ring hp-orb-ring-2" />
+          <div className="hp-orb-ring hp-orb-ring-3" />
+          <div className="hp-orb-beam hp-orb-beam-1" />
+          <div className="hp-orb-beam hp-orb-beam-2" />
+          <div className="hp-orb-beam hp-orb-beam-3" />
+          <div className="hp-orb-particles" aria-hidden="true">
+            {[...Array(12)].map((_, i) => (
+              <div key={i} className={`hp-particle hp-particle-${i + 1}`} />
+            ))}
+          </div>
+        </div>
+
+        {/* Light beam streaks */}
+        <div className="hp-light-trail hp-trail-1" aria-hidden="true" />
+        <div className="hp-light-trail hp-trail-2" aria-hidden="true" />
+        <div className="hp-light-trail hp-trail-3" aria-hidden="true" />
 
         <div className="hp-hero-inner">
           {/* Left: content */}
@@ -77,41 +99,44 @@ export default function Home() {
 
           {/* Right: status panel */}
           <div className="hp-status-panel">
-            <div className="hp-status-row">
-              <span className="hp-status-label">Ecosystem Status</span>
-              <span className="hp-status-value hp-status-green">● OPERATIONAL</span>
+            <div className="hp-status-header">
+              <span className="hp-status-title">Ecosystem Status</span>
+              <span className="hp-status-live">● LIVE</span>
             </div>
             <div className="hp-status-divider" />
-            <div className="hp-status-row">
+            <div className="hp-status-metric">
               <span className="hp-status-label">Systems Deployed</span>
               <span className="hp-status-number">47+</span>
             </div>
-            <div className="hp-status-divider" />
-            <div className="hp-status-row">
+            <div className="hp-status-metric">
               <span className="hp-status-label">Workflows Active</span>
               <span className="hp-status-number">128+</span>
             </div>
-            <div className="hp-status-divider" />
-            <div className="hp-status-row">
+            <div className="hp-status-metric">
               <span className="hp-status-label">Intelligence Pipes</span>
               <span className="hp-status-number">23+</span>
             </div>
             <div className="hp-status-divider" />
-            <div className="hp-status-row">
+            <div className="hp-status-footer">
               <span className="hp-status-label">Infrastructure</span>
-              <span className="hp-status-value hp-status-blue">ONLINE</span>
+              <span className="hp-status-online">ONLINE</span>
             </div>
           </div>
         </div>
+
+        {/* Bottom horizon fade */}
+        <div className="hp-hero-horizon" aria-hidden="true" />
       </section>
 
-      {/* ── SECTION 2: TWO MODES ───────────────────────────────────────────── */}
-      <section className="hp-modes">
-        <div className="hp-modes-glow" aria-hidden="true" />
-        <div className="hp-section-inner">
+      {/* ── SECTION DIVIDER ────────────────────────────────────────────────── */}
+      <div className="hp-divider hp-divider-blue" aria-hidden="true" />
 
+      {/* ── TWO MODES ──────────────────────────────────────────────────────── */}
+      <section className="hp-modes">
+        <div className="hp-modes-bg" aria-hidden="true" />
+        <div className="hp-section-inner">
           <div className="hp-eyebrow hp-eyebrow-center">Application Layer</div>
-          <h2 className="hp-section-h2 hp-section-h2-center">
+          <h2 className="hp-section-h2 hp-h2-center">
             Two Modes. One Infrastructure.
           </h2>
           <p className="hp-modes-sub">
@@ -119,8 +144,8 @@ export default function Home() {
           </p>
 
           <div className="hp-modes-grid">
-            {/* Build Mode */}
             <div className="hp-mode-card hp-mode-build">
+              <div className="hp-mode-glow hp-mode-glow-blue" aria-hidden="true" />
               <div className="hp-mode-header">
                 <div className="hp-mode-icon hp-mode-icon-blue">⚡</div>
                 <div>
@@ -139,8 +164,8 @@ export default function Home() {
               <Link href="/turbo-intake" className="hp-mode-cta">Start a Build →</Link>
             </div>
 
-            {/* Response Mode */}
             <div className="hp-mode-card hp-mode-response">
+              <div className="hp-mode-glow hp-mode-glow-purple" aria-hidden="true" />
               <div className="hp-mode-header">
                 <div className="hp-mode-icon hp-mode-icon-purple">🛡</div>
                 <div>
@@ -162,7 +187,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── SECTION 3: CAPABILITY STRIP ────────────────────────────────────── */}
+      {/* ── SECTION DIVIDER ────────────────────────────────────────────────── */}
+      <div className="hp-divider hp-divider-purple" aria-hidden="true" />
+
+      {/* ── CAPABILITY STRIP ───────────────────────────────────────────────── */}
       <section className="hp-strip">
         <div className="hp-strip-inner">
           <div className="hp-strip-item">
@@ -170,33 +198,39 @@ export default function Home() {
             <div className="hp-strip-title">AI-Powered Operations</div>
             <div className="hp-strip-body">Smarter systems. Automated workflows. Operational excellence.</div>
           </div>
+          <div className="hp-strip-sep" />
           <div className="hp-strip-item">
             <div className="hp-strip-icon">🏗️</div>
             <div className="hp-strip-title">Infrastructure That Scales</div>
             <div className="hp-strip-body">From documents to deployments, we build what businesses need to run and grow.</div>
           </div>
+          <div className="hp-strip-sep" />
           <div className="hp-strip-item">
             <div className="hp-strip-icon">🌐</div>
             <div className="hp-strip-title">Creator &amp; Founder Ecosystem</div>
             <div className="hp-strip-body">Resources, visibility, collaborations, and opportunities for the next generation.</div>
           </div>
+          <div className="hp-strip-sep" />
           <div className="hp-strip-item">
             <div className="hp-strip-icon">🚀</div>
             <div className="hp-strip-title">Movement Over Everything</div>
             <div className="hp-strip-body">We're not just building companies, we're building a future.</div>
           </div>
+          <div className="hp-strip-sep" />
           <div className="hp-strip-statement">
-            <p className="hp-strip-statement-line">This isn't just software.</p>
-            <p className="hp-strip-statement-accent">This is Sovereignty.</p>
+            <p className="hp-strip-line">This isn't just software.</p>
+            <p className="hp-strip-accent">This is Sovereignty.</p>
           </div>
         </div>
       </section>
 
-      {/* ── SECTION 4: GATEWAY CTA ─────────────────────────────────────────── */}
+      {/* ── GATEWAY ────────────────────────────────────────────────────────── */}
       <section className="hp-gateway">
-        <div className="hp-gateway-horizon" aria-hidden="true" />
-        <div className="hp-gateway-glow-blue" aria-hidden="true" />
-        <div className="hp-gateway-glow-purple" aria-hidden="true" />
+        <div className="hp-gateway-bg" aria-hidden="true" />
+        <div className="hp-gateway-grid" aria-hidden="true" />
+        <div className="hp-gateway-orb-blue" aria-hidden="true" />
+        <div className="hp-gateway-orb-purple" aria-hidden="true" />
+        <div className="hp-gateway-horizon-top" aria-hidden="true" />
         <div className="hp-gateway-inner">
           <div className="hp-eyebrow hp-eyebrow-center">The Gateway</div>
           <h2 className="hp-gateway-h2">
@@ -209,7 +243,9 @@ export default function Home() {
           <Link href="/turbo-intake" className="hp-btn hp-btn-primary hp-btn-xl">
             Enter the Future →
           </Link>
+          <p className="hp-gateway-url">turboresponsehq.ai</p>
         </div>
+        <div className="hp-gateway-horizon-bottom" aria-hidden="true" />
       </section>
 
       {/* ── FOOTER ─────────────────────────────────────────────────────────── */}
