@@ -6,7 +6,7 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    document.title = "Turbo Response — Intelligent Operational Systems for Document-Heavy Environments";
+    document.title = "Turbo Response — Operational Intelligence Infrastructure for Ambitious Builders";
   }, []);
 
   return (
@@ -27,10 +27,10 @@ export default function Home() {
             <span /><span /><span />
           </button>
           <nav className={`hp-nav${menuOpen ? " open" : ""}`}>
-            <Link href="/services" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Services</Link>
+            <Link href="/services" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Infrastructure</Link>
             <Link href="/industries" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Industries</Link>
             <Link href="/turbo-systems" className="hp-nav-link hp-nav-systems" onClick={() => setMenuOpen(false)}>⚡ Turbo Systems</Link>
-            <Link href="/turbo-intake" className="hp-nav-cta" onClick={() => setMenuOpen(false)}>Get Started</Link>
+            <Link href="/turbo-intake" className="hp-nav-cta" onClick={() => setMenuOpen(false)}>Build With Us</Link>
           </nav>
         </div>
       </header>
@@ -40,43 +40,35 @@ export default function Home() {
         <div className="hp-hero-content">
           <div className="hp-hero-badge">
             <span className="hp-badge-dot" />
-            Intelligent Operational Systems
+            Operational Intelligence Infrastructure
           </div>
           <h1 className="hp-hero-h1">
-            If Your Business Revenue<br />
-            <span className="hp-hero-blue">Depends on Documents…</span>
+            The Infrastructure Layer<br />
+            <span className="hp-hero-accent">for Ambitious Builders.</span>
           </h1>
-          <p className="hp-hero-tagline">We Should Talk. ⚡</p>
           <p className="hp-hero-sub">
-            Turbo Response helps businesses organize large document sets, build timelines, extract critical information, identify missing items, structure evidence, and prepare operational workflows — using intelligent AI systems.
+            Turbo Response designs, deploys, and scales AI-powered operational systems — intelligent workflows, automation pipelines, and infrastructure that runs without manual intervention. Built for founders, operators, and organizations serious about scale.
           </p>
           <div className="hp-hero-btns">
-            <div className="hp-btn-group">
-              <Link href="/turbo-intake" className="hp-btn hp-btn-primary hp-btn-lg">
-                Offense Intake
-              </Link>
-              <p className="hp-btn-hint">Initiate an application, dispute, or claim</p>
-            </div>
-            <div className="hp-btn-group">
-              <Link href="/intake" className="hp-btn hp-btn-secondary hp-btn-lg">
-                Defense Intake
-              </Link>
-              <p className="hp-btn-hint">Respond to a notice, denial, or enforcement action</p>
-            </div>
+            <Link href="/turbo-systems" className="hp-btn hp-btn-primary hp-btn-lg">
+              Enter the Ecosystem ⚡
+            </Link>
+            <Link href="/turbo-intake" className="hp-btn hp-btn-ghost hp-btn-lg">
+              Start a Build →
+            </Link>
           </div>
         </div>
-        <div className="hp-hero-industries-panel">
-          <div className="hp-hip-label">Built for Document-Heavy Industries</div>
+        <div className="hp-hero-panel">
+          <div className="hp-hip-label">Operational Capabilities</div>
           {[
-            { icon: "🎯", name: "Credit Repair" },
-            { icon: "🧮", name: "Tax Professionals" },
-            { icon: "🛡️", name: "Insurance Claims" },
-            { icon: "⚖️", name: "Legal Services" },
-            { icon: "💬", name: "Consumer Disputes" },
-            { icon: "📁", name: "Case Management" },
-            { icon: "✅", name: "Compliance Work" },
-            { icon: "🏥", name: "Medical Records" },
-            { icon: "🏠", name: "Housing / Real Estate" },
+            { icon: "⚡", name: "AI Workflow Automation" },
+            { icon: "🧠", name: "Operational Intelligence" },
+            { icon: "⚙️", name: "Multi-Agent Systems" },
+            { icon: "📡", name: "Intelligence Pipelines" },
+            { icon: "🏗️", name: "Infrastructure Builds" },
+            { icon: "🔁", name: "Automated Intake Systems" },
+            { icon: "📊", name: "Document Intelligence" },
+            { icon: "🛰️", name: "Ecosystem Architecture" },
           ].map(i => (
             <div className="hp-hip-item" key={i.name}>
               <span className="hp-hip-icon">{i.icon}</span>
@@ -86,88 +78,100 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── SECTION 2: DROWNING IN ─────────────────────────────────────────── */}
+      {/* ── SECTION 2: ECOSYSTEM IDENTITY ─────────────────────────────────── */}
       <section className="hp-section hp-bg-dark">
-        <div className="hp-section-inner hp-drowning-inner">
-          <div>
-            <div className="hp-section-label-dark">The Reality</div>
-            <h2 className="hp-section-h2 hp-white">
-              Most Businesses Are<br />
-              <span className="hp-blue">Drowning In:</span>
-            </h2>
-            <div className="hp-drowning-list">
-              {["PDFs", "Screenshots", "Emails", "Case Files", "Disputes", "Timelines", "Evidence", "Forms", "Compliance Paperwork"].map(item => (
-                <div className="hp-drowning-item" key={item}>
-                  <span className="hp-drowning-check">⚡</span>
-                  <span>{item}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="hp-drowning-solution">
-            <div className="hp-ds-box">
-              <div className="hp-ds-headline">Turbo Response helps organize, structure, analyze, and process document-heavy workflows using <span className="hp-blue">AI systems.</span></div>
-              <div className="hp-ds-divider" />
-              <div className="hp-ds-outcomes">
-                <div className="hp-ds-outcome"><span className="hp-ds-arrow">→</span> Structure</div>
-                <div className="hp-ds-outcome"><span className="hp-ds-arrow">→</span> Organization</div>
-                <div className="hp-ds-outcome"><span className="hp-ds-arrow">→</span> Workflows</div>
-                <div className="hp-ds-outcome"><span className="hp-ds-arrow">→</span> Intelligent Processing</div>
-                <div className="hp-ds-outcome"><span className="hp-ds-arrow">→</span> Operational Leverage</div>
-                <div className="hp-ds-outcome"><span className="hp-ds-arrow">→</span> Clarity</div>
+        <div className="hp-section-inner hp-ecosystem-inner">
+          <div className="hp-section-label-dark">The Ecosystem</div>
+          <h2 className="hp-section-h2 hp-white">
+            Two Layers.<br />
+            <span className="hp-accent">One Ecosystem.</span>
+          </h2>
+          <div className="hp-ecosystem-grid">
+            <div className="hp-eco-card hp-eco-turbo">
+              <div className="hp-eco-tag">⚡ Turbo Response</div>
+              <h3 className="hp-eco-title">The Operational Engine</h3>
+              <p className="hp-eco-body">
+                AI systems, automation infrastructure, intelligent workflows, and production-grade operational architecture. The engine that powers ambitious organizations.
+              </p>
+              <div className="hp-eco-pillars">
+                <span>AI Systems</span>
+                <span>Automation</span>
+                <span>Infrastructure</span>
+                <span>Intelligence</span>
               </div>
-              <div className="hp-ds-tagline">Built for High-Volume Information Environments.</div>
+            </div>
+            <div className="hp-eco-card hp-eco-bf">
+              <div className="hp-eco-tag hp-eco-tag-purple">◈ Black Future</div>
+              <h3 className="hp-eco-title">The Cultural Layer</h3>
+              <p className="hp-eco-body">
+                The founder movement, the community, and the cultural identity. Black Future is where builders, creators, and operators come together to build what comes next.
+              </p>
+              <div className="hp-eco-pillars hp-eco-pillars-purple">
+                <span>Founder Culture</span>
+                <span>Community</span>
+                <span>Vision</span>
+                <span>Movement</span>
+              </div>
             </div>
           </div>
+          <p className="hp-ecosystem-tagline">
+            Together: <span className="hp-accent">Operational Sovereignty.</span>
+          </p>
         </div>
       </section>
 
-      {/* ── SECTION 3: WHAT WE CAN HELP WITH ──────────────────────────────── */}
+      {/* ── SECTION 3: OPERATIONAL INTELLIGENCE ───────────────────────────── */}
       <section className="hp-section">
         <div className="hp-section-inner">
-          <div className="hp-section-label">Turbo Response Can Help</div>
-          <h2 className="hp-section-h2">Smarter Workflow. Stronger Cases. Better Outcomes.</h2>
+          <div className="hp-section-label">Operational Intelligence</div>
+          <h2 className="hp-section-h2">
+            Real Infrastructure.<br />
+            <span className="hp-accent-text">Not Just Tools.</span>
+          </h2>
+          <p className="hp-oi-intro">
+            We don't implement software. We design and deploy production-grade systems — AI pipelines, multi-agent workflows, and automated infrastructure that operates without manual intervention.
+          </p>
           <div className="hp-services-grid">
             {[
               {
-                icon: "📂",
-                title: "Organize Large Document Sets",
-                body: "Structure chaos into clean, searchable, submission-ready systems.",
-              },
-              {
-                icon: "📅",
-                title: "Build Timelines",
-                body: "Automatically create accurate, visual timelines from your documents and records.",
-              },
-              {
-                icon: "🔍",
-                title: "Extract Important Information",
-                body: "Pull key data, dates, parties, and critical details fast — without manual review.",
-              },
-              {
-                icon: "⚠️",
-                title: "Identify Missing Items",
-                body: "Spot gaps and missing documentation before they become problems.",
-              },
-              {
-                icon: "📋",
-                title: "Structure Evidence",
-                body: "Organize evidence logically and persuasively for any submission or review.",
-              },
-              {
-                icon: "⚙️",
-                title: "Prepare Operational Workflows",
-                body: "Build repeatable systems and processes that scale without adding headcount.",
-              },
-              {
-                icon: "⏱️",
-                title: "Reduce Manual Review Time",
-                body: "Save hours. Increase accuracy. Handle more cases with less effort.",
+                icon: "⚡",
+                title: "AI Workflow Automation",
+                body: "Multi-step AI pipelines that classify, prioritize, and execute tasks automatically — zero manual intervention.",
               },
               {
                 icon: "🧠",
-                title: "Improve Operational Clarity",
-                body: "Surface the right information at the right time so decisions are made with full context.",
+                title: "Document Intelligence",
+                body: "Intelligent systems that ingest, structure, extract, and act on document-heavy data at scale.",
+              },
+              {
+                icon: "⚙️",
+                title: "Multi-Agent Systems",
+                body: "Autonomous agents that execute complex workflows — intake processing, document generation, routing, and communication.",
+              },
+              {
+                icon: "📡",
+                title: "Intelligence Pipelines",
+                body: "Daily scanning, classification, and delivery of actionable intelligence from regulatory, market, and custom data sources.",
+              },
+              {
+                icon: "🏗️",
+                title: "Full-Stack Infrastructure",
+                body: "Production-grade systems with authentication, database architecture, API layers, client portals, and CI/CD pipelines.",
+              },
+              {
+                icon: "🔁",
+                title: "Operational Automation",
+                body: "Connect your existing tools into unified automated workflows — no manual handoffs, no operational drag.",
+              },
+              {
+                icon: "📊",
+                title: "Stability Protocols",
+                body: "Drift guards, version beacons, smoke tests, and structured incident response — built for systems that cannot fail.",
+              },
+              {
+                icon: "🛰️",
+                title: "Ecosystem Architecture",
+                body: "Design the operational infrastructure layer that your entire organization builds on top of.",
               },
             ].map(s => (
               <div className="hp-service-card" key={s.title}>
@@ -180,27 +184,27 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── SECTION 4: THE GOAL IS OPERATIONAL LEVERAGE ────────────────────── */}
-      <section className="hp-section hp-bg-blue-tint">
+      {/* ── SECTION 4: FOUNDER INFRASTRUCTURE ─────────────────────────────── */}
+      <section className="hp-section hp-bg-founder">
         <div className="hp-section-inner">
-          <div className="hp-section-label">The Bigger Picture</div>
+          <div className="hp-section-label">Founder Infrastructure</div>
           <h2 className="hp-section-h2">
-            The Goal Isn't Just AI.<br />
-            The Goal Is <span className="hp-blue-text">Operational Leverage.</span>
+            Built for Builders.<br />
+            <span className="hp-accent-text">Designed for Scale.</span>
           </h2>
           <p className="hp-leverage-intro">
-            Turbo Response combines AI + systems to turn document chaos into clarity, speed, and results.
+            Operational sovereignty is not a product. It is the state of having systems so well-built that your organization operates with precision, speed, and leverage — regardless of headcount.
           </p>
           <div className="hp-leverage-grid">
             {[
-              { icon: "🗂️", title: "Organized", body: "Centralize all your documents in one intelligent system." },
-              { icon: "⚙️", title: "Workflows", body: "Build repeatable processes that scale." },
-              { icon: "📅", title: "Timelines", body: "Create accurate, visual timelines in seconds." },
-              { icon: "⚡", title: "Efficiency", body: "Save hours of manual review time." },
-              { icon: "🔍", title: "Extraction", body: "Pull critical data and insights automatically." },
-              { icon: "🎯", title: "Focus", body: "Focus on strategy. We handle the heavy lifting." },
-              { icon: "✅", title: "Accuracy", body: "Reduce errors and ensure nothing is overlooked." },
-              { icon: "📈", title: "Results", body: "More cases resolved. More revenue retained." },
+              { icon: "⚡", title: "Velocity", body: "Systems that execute faster than manual operations can compete with." },
+              { icon: "🎯", title: "Precision", body: "Structured intelligence that surfaces the right information at the right time." },
+              { icon: "📈", title: "Scale", body: "Infrastructure that grows with your ambition, not against it." },
+              { icon: "🔒", title: "Stability", body: "Production-grade systems built to run without intervention or failure." },
+              { icon: "🧠", title: "Intelligence", body: "AI that learns your operational patterns and compounds over time." },
+              { icon: "🏗️", title: "Architecture", body: "Systems designed from the ground up, not duct-taped together." },
+              { icon: "🔁", title: "Automation", body: "Workflows that execute while you focus on strategy and vision." },
+              { icon: "🛰️", title: "Sovereignty", body: "Full operational control. No dependencies. No bottlenecks." },
             ].map(l => (
               <div className="hp-leverage-card" key={l.title}>
                 <div className="hp-leverage-icon">{l.icon}</div>
@@ -210,26 +214,31 @@ export default function Home() {
             ))}
           </div>
           <div className="hp-leverage-tagline">
-            <span>Better Systems.</span>
+            <span>Operational Clarity.</span>
             <span className="hp-lev-sep">·</span>
-            <span>Better Decisions.</span>
+            <span>Founder Leverage.</span>
             <span className="hp-lev-sep">·</span>
-            <span>Better Outcomes.</span>
+            <span>Infrastructure That Scales.</span>
           </div>
         </div>
       </section>
 
-      {/* ── SECTION 5: OFFENSE / DEFENSE ──────────────────────────────────── */}
+      {/* ── SECTION 5: APPLICATION LAYER ───────────────────────────────────── */}
       <section className="hp-section">
         <div className="hp-section-inner">
-          <div className="hp-section-label">Operational Pathways</div>
-          <h2 className="hp-section-h2">Two Modes. One System. Built for Every Scenario.</h2>
+          <div className="hp-section-label">Application Layer</div>
+          <h2 className="hp-section-h2">Infrastructure Applied.<br />
+            <span className="hp-accent-text">Across Every Scenario.</span>
+          </h2>
+          <p className="hp-oi-intro">
+            The same operational intelligence infrastructure powers two distinct modes of action — whether you are initiating a strategic move or responding to an external challenge.
+          </p>
           <div className="hp-od-grid">
             <div className="hp-od-card hp-od-offense">
-              <div className="hp-od-tag">🚀 Offense</div>
+              <div className="hp-od-tag">⚡ Offense Mode</div>
               <h3 className="hp-od-title">Proactive Operational Action</h3>
               <p className="hp-od-body">
-                Use when you are initiating action — applying for funding, filing a dispute, submitting a claim, or pursuing a recovery. We structure your documentation to maximize approval and outcome probability.
+                Deploy when initiating action — applying for capital, filing a dispute, submitting a claim, or pursuing a recovery. We structure your documentation and workflows to maximize approval and outcome probability.
               </p>
               <ul className="hp-od-list">
                 <li>Grant &amp; funding applications</li>
@@ -243,10 +252,10 @@ export default function Home() {
               </Link>
             </div>
             <div className="hp-od-card hp-od-defense">
-              <div className="hp-od-tag">🛡️ Defense</div>
+              <div className="hp-od-tag hp-od-tag-dim">🛡️ Defense Mode</div>
               <h3 className="hp-od-title">Response &amp; Protection Workflows</h3>
               <p className="hp-od-body">
-                Use when you have received a notice, demand, denial, or enforcement action. We build your response documentation to contain the situation and protect your position.
+                Deploy when responding to a notice, demand, denial, or enforcement action. We build your response documentation and workflows to contain the situation and protect your position.
               </p>
               <ul className="hp-od-list">
                 <li>Eviction &amp; housing defense</li>
@@ -255,7 +264,7 @@ export default function Home() {
                 <li>Wage garnishments &amp; levies</li>
                 <li>Benefit denials &amp; appeals</li>
               </ul>
-              <Link href="/intake" className="hp-btn hp-btn-secondary hp-od-btn">
+              <Link href="/intake" className="hp-btn hp-btn-ghost hp-od-btn">
                 Defense Intake →
               </Link>
             </div>
@@ -263,60 +272,26 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── SECTION 6: OUTCOMES ────────────────────────────────────────────── */}
-      <section className="hp-section hp-bg-dark">
-        <div className="hp-section-inner">
-          <div className="hp-section-label-dark">What You Get</div>
-          <h2 className="hp-section-h2 hp-white">
-            If Your Business Runs on Paperwork, Records,<br />
-            Evidence, or Documentation…<br />
-            <span className="hp-blue">Turbo Response May Be Able to Help.</span>
-          </h2>
-          <div className="hp-outcomes-grid">
-            {[
-              { icon: "🎯", title: "More Accuracy", body: "Reduce errors and deliver higher quality results." },
-              { icon: "⚡", title: "More Efficiency", body: "Save time and scale without adding headcount." },
-              { icon: "📈", title: "More Capacity", body: "Handle more cases, clients, and workload." },
-              { icon: "✅", title: "More Compliance", body: "Stronger documentation. Lower risk." },
-              { icon: "💰", title: "More Profitability", body: "Better systems lead to a better bottom line." },
-            ].map(o => (
-              <div className="hp-outcome-card" key={o.title}>
-                <div className="hp-outcome-icon">{o.icon}</div>
-                <div className="hp-outcome-title">{o.title}</div>
-                <div className="hp-outcome-body">{o.body}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── SECTION 7: CTA ─────────────────────────────────────────────────── */}
+      {/* ── SECTION 6: GATEWAY CTA ─────────────────────────────────────────── */}
       <section className="hp-cta">
         <div className="hp-cta-inner">
           <div className="hp-cta-bolt">⚡</div>
           <h2 className="hp-cta-h2">
-            Let's Build Smarter Systems.<br />
-            Let's Win More.<br />
-            <span className="hp-blue">Let's Talk.</span>
+            The Infrastructure Is Ready.<br />
+            <span className="hp-accent">Are You?</span>
           </h2>
           <p className="hp-cta-sub">
-            Choose the pathway that matches your situation:
+            Turbo Response builds the operational systems that ambitious founders, creators, and organizations run on. If you are serious about scale, let's build.
           </p>
           <div className="hp-cta-btns">
-            <div className="hp-btn-group">
-              <Link href="/turbo-intake" className="hp-btn hp-btn-primary hp-btn-lg">
-                Offense Intake
-              </Link>
-              <p className="hp-btn-hint light">Apply, file, or take action</p>
-            </div>
-            <div className="hp-btn-group">
-              <Link href="/intake" className="hp-btn hp-btn-outline hp-btn-lg">
-                Defense Intake
-              </Link>
-              <p className="hp-btn-hint light">Respond to a notice or issue</p>
-            </div>
+            <Link href="/turbo-systems" className="hp-btn hp-btn-primary hp-btn-lg">
+              ⚡ Explore Turbo Systems
+            </Link>
+            <Link href="/turbo-intake" className="hp-btn hp-btn-ghost hp-btn-lg">
+              Start a Build →
+            </Link>
           </div>
-          <div className="hp-cta-url">www.turboresponsehq.ai</div>
+          <div className="hp-cta-url">turboresponsehq.ai</div>
         </div>
       </section>
 
@@ -325,16 +300,16 @@ export default function Home() {
         <div className="hp-footer-inner">
           <div className="hp-footer-brand">
             <span className="hp-logo-bolt">⚡</span>
-            <span>Turbo Response — Intelligent Operational Systems for Document-Heavy Environments</span>
+            <span>Turbo Response — Operational Intelligence Infrastructure</span>
           </div>
           <div className="hp-footer-links">
             <Link href="/turbo-systems" className="hp-footer-link-systems">⚡ Turbo Systems</Link>
-            <Link href="/services" className="hp-footer-link">Services</Link>
+            <Link href="/services" className="hp-footer-link">Infrastructure</Link>
             <Link href="/industries" className="hp-footer-link">Industries</Link>
             <Link href="/disclaimer" className="hp-footer-link">Disclaimer</Link>
           </div>
           <div className="hp-footer-copy">
-            © 2026 Turbo Response HQ · www.turboresponsehq.ai · Documentation and procedural support. Not a law firm.
+            © 2026 Turbo Response HQ · turboresponsehq.ai · Operational intelligence and AI infrastructure systems.
           </div>
         </div>
       </footer>
