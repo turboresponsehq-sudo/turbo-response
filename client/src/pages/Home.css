@@ -222,32 +222,33 @@
 /* ── FOUNDER IMAGE — CINEMATIC ENVIRONMENTAL ANCHOR ─────────────────────── */
 .hp-founder-wrap {
   position: absolute;
-  right: -60px;
+  right: 0;
   top: 0;
   bottom: 0;
-  width: 68%;
+  width: 72%;
   pointer-events: none;
   z-index: 1;
-  overflow: visible;
+  overflow: hidden;
 }
-/* The image itself — desaturated slightly, blended into environment */
+/* The image itself — show full width so logo is visible */
 .hp-founder-img {
   position: absolute;
   right: 0;
   top: 50%;
   transform: translateY(-50%);
   width: 100%;
-  height: 110%;
-  object-fit: cover;
-  object-position: center top;
-  opacity: 0.72;
+  height: auto;
+  min-height: 100%;
+  object-fit: contain;
+  object-position: right center;
+  opacity: 0.78;
   mix-blend-mode: luminosity;
-  filter: saturate(1.15) brightness(0.9) contrast(1.05);
+  filter: saturate(1.15) brightness(0.88) contrast(1.05);
 }
 /* Left edge fade — blends image into the dark background */
 .hp-founder-overlay-left {
-  position: absolute; top: 0; left: 0; bottom: 0; width: 55%;
-  background: linear-gradient(90deg, var(--hp-bg) 0%, rgba(3,5,15,0.7) 40%, transparent 100%);
+  position: absolute; top: 0; left: 0; bottom: 0; width: 45%;
+  background: linear-gradient(90deg, var(--hp-bg) 0%, rgba(3,5,15,0.65) 50%, transparent 100%);
   z-index: 2;
 }
 /* Bottom fade */
