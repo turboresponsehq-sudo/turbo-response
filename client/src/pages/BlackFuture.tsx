@@ -192,7 +192,6 @@ export default function BlackFuture() {
             <h1 className="bf-hero-h1">
               <span className="bf-h1-black">BLACK </span>
               <span className="bf-h1-future">FUTURE</span>
-              <span className="bf-h1-bolt"> ⚡</span>
             </h1>
 
             <p className="bf-hero-tagline">The Innovators Of Our Era.</p>
