@@ -222,10 +222,10 @@
 /* ── FOUNDER IMAGE — CINEMATIC ENVIRONMENTAL ANCHOR ─────────────────────── */
 .hp-founder-wrap {
   position: absolute;
-  right: -20px;
+  right: -60px;
   top: 0;
   bottom: 0;
-  width: 62%;
+  width: 68%;
   pointer-events: none;
   z-index: 1;
   overflow: visible;
@@ -333,10 +333,10 @@
 /* Hero inner layout */
 .hp-hero-inner {
   max-width: 100%; margin: 0; width: 100%; position: relative; z-index: 2;
-  padding: 120px 0 100px 40px;
-  display: flex; align-items: center; gap: 40px;
+  padding: 120px 60px 100px 60px;
+  display: flex; align-items: center;
 }
-.hp-hero-content { flex: 0 0 auto; width: 520px; min-width: 0; }
+.hp-hero-content { flex: 0 0 auto; width: 440px; min-width: 0; }
 
 .hp-hero-eyebrow {
   display: inline-flex; align-items: center; gap: 10px;
