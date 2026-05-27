@@ -30,7 +30,7 @@ export default function Home() {
             <Link href="/services" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Services</Link>
             <Link href="/industries" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Industries</Link>
             <Link href="/turbo-systems" className="hp-nav-link hp-nav-systems" onClick={() => setMenuOpen(false)}>⚡ Turbo Systems</Link>
-            <Link href="/turbo-intake" className="hp-nav-cta" onClick={() => setMenuOpen(false)}>Enter the Future →</Link>
+            <Link href="/turbo-intake" className="hp-nav-cta" onClick={() => setMenuOpen(false)}>Start Your Build →</Link>
           </nav>
         </div>
       </header>
@@ -95,11 +95,11 @@ export default function Home() {
             </p>
 
             <div className="hp-hero-btns">
-              <Link href="/turbo-systems" className="hp-btn hp-btn-primary hp-btn-lg">
-                Explore the Ecosystem →
+              <Link href="/turbo-intake" className="hp-btn hp-btn-primary hp-btn-lg">
+                Start Your Build →
               </Link>
               <Link href="/services" className="hp-btn hp-btn-ghost hp-btn-lg">
-                See Our Systems →
+                View Services →
               </Link>
             </div>
 
@@ -282,7 +282,7 @@ export default function Home() {
             Join the ecosystem. Build differently. Build Black Future.
           </p>
           <Link href="/turbo-intake" className="hp-btn hp-btn-primary hp-btn-xl">
-            Enter the Future →
+            Start Your Build →
           </Link>
           <p className="hp-gateway-url">turboresponsehq.ai</p>
         </div>
