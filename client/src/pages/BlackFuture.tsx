@@ -160,12 +160,23 @@ export default function BlackFuture() {
 
       {/* ── HERO ────────────────────────────────────────────────────────── */}
       <section className="bf-hero">
-        {/* Atmospheric layers */}
-        <div className="bf-hero-bg" aria-hidden="true" />
+        {/* Rooftop founders image — cinematic background */}
+        <div className="bf-hero-img-wrap" aria-hidden="true">
+          <img
+            src="/images/black-future-hero.png"
+            alt=""
+            className="bf-hero-img"
+            loading="eager"
+          />
+          {/* Multi-layer overlay: preserves image while blending into dark UI */}
+          <div className="bf-hero-img-overlay" aria-hidden="true" />
+          <div className="bf-hero-img-vignette" aria-hidden="true" />
+        </div>
+
+        {/* Atmospheric layers on top of image */}
         <div className="bf-hero-grid" aria-hidden="true" />
         <div className="bf-hero-scanline" aria-hidden="true" />
         <div className="bf-hero-orb-blue" aria-hidden="true" />
-        <div className="bf-hero-orb-purple" aria-hidden="true" />
 
         {/* Vertical side text — right edge */}
         <div className="bf-hero-side-text" aria-hidden="true">
@@ -275,6 +286,59 @@ export default function BlackFuture() {
             ))}
           </div>
 
+        </div>
+      </section>
+
+      {/* ── FOLLOW THE MOVEMENT ─────────────────────────────────────────── */}
+      <section className="bf-follow-section">
+        <div className="bf-follow-inner">
+          <div className="bf-follow-label">Follow The Movement</div>
+          <div className="bf-follow-accounts">
+
+            {/* Founder / Creator */}
+            <a
+              href="https://www.instagram.com/zakhybuilds_ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bf-follow-card"
+            >
+              <div className="bf-follow-avatar bf-follow-avatar-blue">
+                <span>ZB</span>
+              </div>
+              <div className="bf-follow-info">
+                <div className="bf-follow-handle">@zakhybuilds_ai</div>
+                <div className="bf-follow-role">Founder / Creator</div>
+              </div>
+              <div className="bf-follow-ig">
+                <span className="bf-ig-icon">◎</span>
+                <span className="bf-ig-label">Instagram</span>
+              </div>
+            </a>
+
+            {/* Divider */}
+            <div className="bf-follow-divider" aria-hidden="true" />
+
+            {/* Turbo Response */}
+            <a
+              href="https://www.instagram.com/turboresponseai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bf-follow-card"
+            >
+              <div className="bf-follow-avatar bf-follow-avatar-purple">
+                <span>⚡</span>
+              </div>
+              <div className="bf-follow-info">
+                <div className="bf-follow-handle">@turboresponseai</div>
+                <div className="bf-follow-role">Powered by Turbo Response</div>
+              </div>
+              <div className="bf-follow-ig">
+                <span className="bf-ig-icon">◎</span>
+                <span className="bf-ig-label">Instagram</span>
+              </div>
+            </a>
+
+          </div>
         </div>
       </section>
 

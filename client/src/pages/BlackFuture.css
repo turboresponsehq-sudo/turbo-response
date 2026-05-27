@@ -145,21 +145,61 @@
   transform: translateY(-1px);
 }
 
+/* ── HERO IMAGE ───────────────────────────────────────────────────────────── */
+/* Full-bleed image container — sits behind all content */
+.bf-hero-img-wrap {
+  position: absolute; inset: 0; z-index: 0;
+  overflow: hidden;
+}
+.bf-hero-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  /* Center on the group/faces — not the sky */
+  object-position: center 40%;
+  opacity: 0.72;
+  /* Subtle desaturate so the neon UI palette dominates */
+  filter: saturate(0.85) brightness(0.78) contrast(1.05);
+  display: block;
+}
+
+/* Primary overlay: dark left-to-right gradient so headline text is readable */
+.bf-hero-img-overlay {
+  position: absolute; inset: 0; z-index: 1;
+  background:
+    linear-gradient(105deg,
+      rgba(5,8,16,0.88) 0%,
+      rgba(5,8,16,0.60) 40%,
+      rgba(5,8,16,0.20) 70%,
+      rgba(5,8,16,0.08) 100%),
+    linear-gradient(0deg,
+      rgba(5,8,16,0.95) 0%,
+      transparent 30%);
+  pointer-events: none;
+}
+
+/* Vignette: subtle edge darkening — keeps image from feeling cropped */
+.bf-hero-img-vignette {
+  position: absolute; inset: 0; z-index: 2;
+  background: radial-gradient(
+    ellipse 110% 100% at 65% 50%,
+    transparent 40%,
+    rgba(5,8,16,0.55) 75%,
+    rgba(5,8,16,0.85) 100%
+  );
+  pointer-events: none;
+}
+
 /* ── HERO ────────────────────────────────────────────────────────────────── */
 .bf-hero {
   position: relative; min-height: 92vh;
   display: flex; align-items: center;
   overflow: hidden;
 }
+/* .bf-hero-bg is now replaced by the image — keeping for fallback only */
 .bf-hero-bg {
   position: absolute; inset: 0;
-  background:
-    radial-gradient(ellipse 80% 60% at 75% 50%, rgba(139,92,246,0.22) 0%, transparent 55%),
-    radial-gradient(ellipse 60% 70% at 15% 40%, rgba(0,191,255,0.14) 0%, transparent 55%),
-    radial-gradient(ellipse 100% 80% at 50% 100%, rgba(0,191,255,0.06) 0%, transparent 50%),
-    linear-gradient(180deg, #03050F 0%, #07091C 50%, #03050F 100%);
+  background: linear-gradient(180deg, #03050F 0%, #07091C 50%, #03050F 100%);
   pointer-events: none; z-index: 0;
-  animation: bf-ambient 22s ease-in-out infinite;
 }
 .bf-hero-grid {
   position: absolute; inset: 0;
@@ -245,6 +285,69 @@
   position: absolute; bottom: 0; left: 0; right: 0; height: 120px;
   background: linear-gradient(0deg, var(--bf-bg) 0%, transparent 100%);
   pointer-events: none; z-index: 2;
+}
+
+/* ── FOLLOW THE MOVEMENT ──────────────────────────────────────────────────── */
+/* Minimal social strip — between media and builders */
+.bf-follow-section {
+  padding: 0;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  background: rgba(5,8,16,0.96);
+}
+.bf-follow-inner {
+  max-width: 900px; margin: 0 auto; padding: 36px 40px;
+  display: flex; align-items: center; gap: 40px; flex-wrap: wrap;
+}
+.bf-follow-label {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(255,255,255,0.2); white-space: nowrap; flex-shrink: 0;
+}
+.bf-follow-accounts {
+  display: flex; align-items: center; gap: 0; flex: 1; flex-wrap: wrap;
+}
+.bf-follow-card {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 24px; border-radius: 12px;
+  text-decoration: none;
+  transition: background 0.2s;
+  flex: 1; min-width: 220px;
+}
+.bf-follow-card:hover { background: rgba(255,255,255,0.03); }
+
+.bf-follow-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 900; flex-shrink: 0;
+}
+.bf-follow-avatar-blue   { background: rgba(0,191,255,0.15); color: #00BFFF; border: 1px solid rgba(0,191,255,0.25); }
+.bf-follow-avatar-purple { background: rgba(139,92,246,0.15); color: #8B5CF6; border: 1px solid rgba(139,92,246,0.25); }
+
+.bf-follow-info { flex: 1; }
+.bf-follow-handle {
+  font-size: 14px; font-weight: 700; color: #F0F4FF; letter-spacing: 0.01em;
+}
+.bf-follow-role {
+  font-size: 11px; color: #8A9BB8; margin-top: 2px;
+}
+.bf-follow-ig {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: rgba(255,255,255,0.2);
+  transition: color 0.2s;
+}
+.bf-follow-card:hover .bf-follow-ig { color: #8B5CF6; }
+.bf-ig-icon { font-size: 16px; }
+.bf-follow-divider {
+  width: 1px; height: 40px; background: rgba(255,255,255,0.07);
+  flex-shrink: 0; margin: 0 8px;
+}
+
+@media (max-width: 600px) {
+  .bf-follow-inner { flex-direction: column; align-items: flex-start; gap: 16px; padding: 28px 24px; }
+  .bf-follow-accounts { flex-direction: column; width: 100%; }
+  .bf-follow-divider { width: 100%; height: 1px; margin: 4px 0; }
+  .bf-follow-card { padding: 10px 0; }
 }
 
 /* ── THE MOVEMENT + WHAT WE COVER ────────────────────────────────────────── */
