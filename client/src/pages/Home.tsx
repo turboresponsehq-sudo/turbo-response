@@ -30,189 +30,185 @@ export default function Home() {
             <Link href="/services" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Infrastructure</Link>
             <Link href="/industries" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Industries</Link>
             <Link href="/turbo-systems" className="hp-nav-link hp-nav-systems" onClick={() => setMenuOpen(false)}>⚡ Turbo Systems</Link>
-            <Link href="/turbo-intake" className="hp-nav-cta" onClick={() => setMenuOpen(false)}>Build With Us</Link>
+            <Link href="/turbo-intake" className="hp-nav-cta" onClick={() => setMenuOpen(false)}>Enter the Future →</Link>
           </nav>
         </div>
       </header>
 
       {/* ── SECTION 1: HERO ────────────────────────────────────────────────── */}
       <section className="hp-hero">
-        {/* Atmosphere layers */}
         <div className="hp-hero-glow-blue" aria-hidden="true" />
         <div className="hp-hero-glow-purple" aria-hidden="true" />
         <div className="hp-hero-grid" aria-hidden="true" />
 
         <div className="hp-hero-inner">
-          <div className="hp-hero-eyebrow">
-            <span className="hp-badge-dot" />
-            Operational Intelligence Infrastructure
+          {/* Left: content */}
+          <div className="hp-hero-content">
+            <div className="hp-hero-eyebrow">
+              <span className="hp-badge-dot" />
+              Culture. Systems. Impact.
+            </div>
+
+            <h1 className="hp-hero-h1">
+              We Build<br />
+              What's<br />
+              <span className="hp-hero-accent">Next.</span>
+            </h1>
+
+            <p className="hp-hero-sub">
+              Black Future is a movement, ecosystem, and intelligence network
+              building the infrastructure for creators, founders, and innovators.
+            </p>
+
+            <div className="hp-hero-powered">
+              <span className="hp-powered-label">Powered by</span>
+              <span className="hp-powered-badge">⚡ TURBO RESPONSE</span>
+            </div>
+
+            <div className="hp-hero-btns">
+              <Link href="/turbo-systems" className="hp-btn hp-btn-primary hp-btn-lg">
+                Explore the Ecosystem →
+              </Link>
+              <Link href="/services" className="hp-btn hp-btn-ghost hp-btn-lg">
+                See Our Systems →
+              </Link>
+            </div>
           </div>
 
-          <h1 className="hp-hero-h1">
-            We Build<br />
-            <span className="hp-hero-accent">What's Next.</span>
-          </h1>
-
-          <p className="hp-hero-sub">
-            AI systems, operational infrastructure, and intelligent workflows
-            for founders, operators, and organizations serious about scale.
-          </p>
-
-          <div className="hp-hero-btns">
-            <Link href="/turbo-systems" className="hp-btn hp-btn-primary hp-btn-lg">
-              Enter the Ecosystem ⚡
-            </Link>
-            <Link href="/turbo-intake" className="hp-btn hp-btn-ghost hp-btn-lg">
-              Start a Build →
-            </Link>
-          </div>
-
-          <div className="hp-hero-meta">
-            <span>Turbo Response</span>
-            <span className="hp-meta-sep">·</span>
-            <span>Black Future</span>
-            <span className="hp-meta-sep">·</span>
-            <span className="hp-meta-accent">Operational Sovereignty</span>
+          {/* Right: status panel */}
+          <div className="hp-status-panel">
+            <div className="hp-status-row">
+              <span className="hp-status-label">Ecosystem Status</span>
+              <span className="hp-status-value hp-status-green">● OPERATIONAL</span>
+            </div>
+            <div className="hp-status-divider" />
+            <div className="hp-status-row">
+              <span className="hp-status-label">Systems Deployed</span>
+              <span className="hp-status-number">47+</span>
+            </div>
+            <div className="hp-status-divider" />
+            <div className="hp-status-row">
+              <span className="hp-status-label">Workflows Active</span>
+              <span className="hp-status-number">128+</span>
+            </div>
+            <div className="hp-status-divider" />
+            <div className="hp-status-row">
+              <span className="hp-status-label">Intelligence Pipes</span>
+              <span className="hp-status-number">23+</span>
+            </div>
+            <div className="hp-status-divider" />
+            <div className="hp-status-row">
+              <span className="hp-status-label">Infrastructure</span>
+              <span className="hp-status-value hp-status-blue">ONLINE</span>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ── SECTION 2: THE ECOSYSTEM ───────────────────────────────────────── */}
-      <section className="hp-ecosystem">
-        <div className="hp-ecosystem-glow" aria-hidden="true" />
-        <div className="hp-section-inner">
-
-          <div className="hp-eyebrow">The Ecosystem</div>
-          <h2 className="hp-section-h2">
-            Two Layers.<br />
-            <span className="hp-accent-text">One Vision.</span>
-          </h2>
-
-          <div className="hp-eco-split">
-            <div className="hp-eco-block hp-eco-block-blue">
-              <div className="hp-eco-block-label">⚡ Turbo Response</div>
-              <h3 className="hp-eco-block-title">The Operational Engine</h3>
-              <p className="hp-eco-block-body">
-                AI systems, automation infrastructure, and production-grade operational architecture.
-                The engine that powers ambitious organizations.
-              </p>
-              <Link href="/turbo-systems" className="hp-eco-link">Explore Systems →</Link>
-            </div>
-            <div className="hp-eco-divider" aria-hidden="true" />
-            <div className="hp-eco-block hp-eco-block-purple">
-              <div className="hp-eco-block-label hp-eco-block-label-purple">◈ Black Future</div>
-              <h3 className="hp-eco-block-title">The Cultural Layer</h3>
-              <p className="hp-eco-block-body">
-                The founder movement, the community, and the cultural identity.
-                Where builders and operators come together to build what comes next.
-              </p>
-              <Link href="/turbo-intake" className="hp-eco-link hp-eco-link-purple">Join the Movement →</Link>
-            </div>
-          </div>
-
-          <p className="hp-eco-tagline">
-            Together: <span className="hp-accent-text">Operational Sovereignty.</span>
-          </p>
-        </div>
-      </section>
-
-      {/* ── SECTION 3: WHAT WE BUILD ───────────────────────────────────────── */}
-      <section className="hp-build">
-        <div className="hp-build-glow" aria-hidden="true" />
-        <div className="hp-section-inner">
-
-          <div className="hp-eyebrow">What We Build</div>
-          <h2 className="hp-section-h2">
-            Real Infrastructure.<br />
-            <span className="hp-accent-text">Not Just Tools.</span>
-          </h2>
-
-          <p className="hp-build-intro">
-            We don't implement software. We design and deploy production-grade systems —
-            AI pipelines, multi-agent workflows, and automated infrastructure
-            that operates without manual intervention.
-          </p>
-
-          <div className="hp-build-grid">
-            <div className="hp-build-card">
-              <div className="hp-build-number">01</div>
-              <h3 className="hp-build-title">AI Systems &amp; Automation</h3>
-              <p className="hp-build-body">Multi-agent workflows, intelligent pipelines, and automated infrastructure that runs without manual intervention.</p>
-            </div>
-            <div className="hp-build-card">
-              <div className="hp-build-number">02</div>
-              <h3 className="hp-build-title">Operational Intelligence</h3>
-              <p className="hp-build-body">Document intelligence, research systems, and opportunity pipelines that surface the right information at the right time.</p>
-            </div>
-            <div className="hp-build-card">
-              <div className="hp-build-number">03</div>
-              <h3 className="hp-build-title">Founder Infrastructure</h3>
-              <p className="hp-build-body">Operating systems for founders — brand architecture, content infrastructure, and ecosystem organization built for scale.</p>
-            </div>
-          </div>
-
-          <div className="hp-build-cta">
-            <Link href="/services" className="hp-btn hp-btn-ghost">View All Infrastructure →</Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── SECTION 4: TWO MODES ───────────────────────────────────────────── */}
+      {/* ── SECTION 2: TWO MODES ───────────────────────────────────────────── */}
       <section className="hp-modes">
+        <div className="hp-modes-glow" aria-hidden="true" />
         <div className="hp-section-inner">
 
-          <div className="hp-eyebrow">How We Deploy</div>
-          <h2 className="hp-section-h2">
-            Two Modes.<br />
-            <span className="hp-accent-text">One Infrastructure.</span>
+          <div className="hp-eyebrow hp-eyebrow-center">Application Layer</div>
+          <h2 className="hp-section-h2 hp-section-h2-center">
+            Two Modes. One Infrastructure.
           </h2>
+          <p className="hp-modes-sub">
+            The operational engine for building, solving, and scaling what matters most.
+          </p>
 
           <div className="hp-modes-grid">
+            {/* Build Mode */}
             <div className="hp-mode-card hp-mode-build">
-              <div className="hp-mode-tag">⚡ Build Mode</div>
-              <h3 className="hp-mode-title">Proactive Infrastructure Creation</h3>
-              <p className="hp-mode-body">
-                Deploy when you are building — AI workflows, operational systems, founder infrastructure,
-                and the foundation your organization runs on.
-              </p>
-              <Link href="/turbo-intake" className="hp-btn hp-btn-primary">Start a Build →</Link>
+              <div className="hp-mode-header">
+                <div className="hp-mode-icon hp-mode-icon-blue">⚡</div>
+                <div>
+                  <div className="hp-mode-tag">Build Mode</div>
+                  <div className="hp-mode-tagline">Proactive infrastructure creation.</div>
+                </div>
+              </div>
+              <ul className="hp-mode-list">
+                <li><span className="hp-dot hp-dot-blue" />AI workflow setup</li>
+                <li><span className="hp-dot hp-dot-blue" />Operational systems</li>
+                <li><span className="hp-dot hp-dot-blue" />Document intelligence</li>
+                <li><span className="hp-dot hp-dot-blue" />Founder operating systems</li>
+                <li><span className="hp-dot hp-dot-blue" />Content &amp; media systems</li>
+                <li><span className="hp-dot hp-dot-blue" />Research &amp; opportunity intelligence</li>
+              </ul>
+              <Link href="/turbo-intake" className="hp-mode-cta">Start a Build →</Link>
             </div>
+
+            {/* Response Mode */}
             <div className="hp-mode-card hp-mode-response">
-              <div className="hp-mode-tag hp-mode-tag-dim">🛡️ Response Mode</div>
-              <h3 className="hp-mode-title">Operational Problem Solving</h3>
-              <p className="hp-mode-body">
-                Deploy when you are reacting — deadline-driven situations, administrative challenges,
-                or operational support under pressure.
-              </p>
-              <Link href="/turbo-intake" className="hp-btn hp-btn-ghost">Get Operational Support →</Link>
+              <div className="hp-mode-header">
+                <div className="hp-mode-icon hp-mode-icon-purple">🛡</div>
+                <div>
+                  <div className="hp-mode-tag hp-mode-tag-purple">Response Mode</div>
+                  <div className="hp-mode-tagline">Operational problem solving.</div>
+                </div>
+              </div>
+              <ul className="hp-mode-list">
+                <li><span className="hp-dot hp-dot-purple" />Document-heavy situations</li>
+                <li><span className="hp-dot hp-dot-purple" />Deadline-driven workflows</li>
+                <li><span className="hp-dot hp-dot-purple" />Compliance responses</li>
+                <li><span className="hp-dot hp-dot-purple" />Funding &amp; application prep</li>
+                <li><span className="hp-dot hp-dot-purple" />Client intake challenges</li>
+                <li><span className="hp-dot hp-dot-purple" />Operational breakdown recovery</li>
+              </ul>
+              <Link href="/turbo-intake" className="hp-mode-cta hp-mode-cta-purple">Get Operational Support →</Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── SECTION 5: GATEWAY CTA ─────────────────────────────────────────── */}
+      {/* ── SECTION 3: CAPABILITY STRIP ────────────────────────────────────── */}
+      <section className="hp-strip">
+        <div className="hp-strip-inner">
+          <div className="hp-strip-item">
+            <div className="hp-strip-icon">⚙️</div>
+            <div className="hp-strip-title">AI-Powered Operations</div>
+            <div className="hp-strip-body">Smarter systems. Automated workflows. Operational excellence.</div>
+          </div>
+          <div className="hp-strip-item">
+            <div className="hp-strip-icon">🏗️</div>
+            <div className="hp-strip-title">Infrastructure That Scales</div>
+            <div className="hp-strip-body">From documents to deployments, we build what businesses need to run and grow.</div>
+          </div>
+          <div className="hp-strip-item">
+            <div className="hp-strip-icon">🌐</div>
+            <div className="hp-strip-title">Creator &amp; Founder Ecosystem</div>
+            <div className="hp-strip-body">Resources, visibility, collaborations, and opportunities for the next generation.</div>
+          </div>
+          <div className="hp-strip-item">
+            <div className="hp-strip-icon">🚀</div>
+            <div className="hp-strip-title">Movement Over Everything</div>
+            <div className="hp-strip-body">We're not just building companies, we're building a future.</div>
+          </div>
+          <div className="hp-strip-statement">
+            <p className="hp-strip-statement-line">This isn't just software.</p>
+            <p className="hp-strip-statement-accent">This is Sovereignty.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SECTION 4: GATEWAY CTA ─────────────────────────────────────────── */}
       <section className="hp-gateway">
+        <div className="hp-gateway-horizon" aria-hidden="true" />
         <div className="hp-gateway-glow-blue" aria-hidden="true" />
         <div className="hp-gateway-glow-purple" aria-hidden="true" />
         <div className="hp-gateway-inner">
-          <div className="hp-eyebrow hp-eyebrow-center">Built For What's Next</div>
+          <div className="hp-eyebrow hp-eyebrow-center">The Gateway</div>
           <h2 className="hp-gateway-h2">
-            The Infrastructure<br />
-            <span className="hp-gateway-accent">Is Ready.</span>
+            Built for This Generation.<br />
+            <span className="hp-gateway-accent">Designed for What's Next.</span>
           </h2>
           <p className="hp-gateway-sub">
-            Turbo Response builds the operational systems that ambitious founders,
-            creators, and organizations run on.
+            Join the ecosystem. Build differently. Build Black Future.
           </p>
-          <div className="hp-gateway-btns">
-            <Link href="/turbo-systems" className="hp-btn hp-btn-primary hp-btn-lg">
-              Enter the Ecosystem ⚡
-            </Link>
-            <Link href="/turbo-intake" className="hp-btn hp-btn-ghost hp-btn-lg">
-              Start a Build →
-            </Link>
-          </div>
-          <p className="hp-gateway-url">turboresponsehq.ai</p>
+          <Link href="/turbo-intake" className="hp-btn hp-btn-primary hp-btn-xl">
+            Enter the Future →
+          </Link>
         </div>
       </section>
 
