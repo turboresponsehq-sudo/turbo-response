@@ -75,11 +75,11 @@ export default function Home() {
         <div className="hp-light-trail hp-trail-3" aria-hidden="true" />
 
         <div className="hp-hero-inner">
-          {/* Left: content */}
+          {/* Left: content column */}
           <div className="hp-hero-content">
             <div className="hp-hero-eyebrow">
               <span className="hp-badge-dot" />
-              Culture. Systems. Impact.
+              AI Systems. Operational Intelligence. Built for Builders.
             </div>
 
             <h1 className="hp-hero-h1">
@@ -89,14 +89,15 @@ export default function Home() {
             </h1>
 
             <p className="hp-hero-sub">
-              Black Future is a movement, ecosystem, and intelligence network
-              building the infrastructure for creators, founders, and innovators.
+              Turbo Response designs AI-powered operational systems, intelligent
+              workflows, and infrastructure for founders, creators, and organizations
+              building the future economy.
             </p>
 
-            <div className="hp-hero-powered">
-              <span className="hp-powered-label">Powered by</span>
-              <span className="hp-powered-badge">⚡ TURBO RESPONSE</span>
-            </div>
+            <p className="hp-hero-sub-2">
+              The next generation of innovators will not just use AI.
+              They will build entirely new systems with it.
+            </p>
 
             <div className="hp-hero-btns">
               <Link href="/turbo-systems" className="hp-btn hp-btn-primary hp-btn-lg">
@@ -106,31 +107,32 @@ export default function Home() {
                 See Our Systems →
               </Link>
             </div>
-          </div>
 
-          {/* Right: status panel */}
-          <div className="hp-status-panel">
-            <div className="hp-status-header">
-              <span className="hp-status-title">Ecosystem Status</span>
-              <span className="hp-status-live">● LIVE</span>
-            </div>
-            <div className="hp-status-divider" />
-            <div className="hp-status-metric">
-              <span className="hp-status-label">Systems Deployed</span>
-              <span className="hp-status-number">47+</span>
-            </div>
-            <div className="hp-status-metric">
-              <span className="hp-status-label">Workflows Active</span>
-              <span className="hp-status-number">128+</span>
-            </div>
-            <div className="hp-status-metric">
-              <span className="hp-status-label">Intelligence Pipes</span>
-              <span className="hp-status-number">23+</span>
-            </div>
-            <div className="hp-status-divider" />
-            <div className="hp-status-footer">
-              <span className="hp-status-label">Infrastructure</span>
-              <span className="hp-status-online">ONLINE</span>
+            {/* Status panel — inline below CTAs, left-aligned, not overlapping image */}
+            <div className="hp-status-panel">
+              <div className="hp-status-header">
+                <span className="hp-status-title">Ecosystem Status</span>
+                <span className="hp-status-live">● LIVE</span>
+              </div>
+              <div className="hp-status-divider" />
+              <div className="hp-status-metrics-row">
+                <div className="hp-status-metric">
+                  <span className="hp-status-label">Systems Deployed</span>
+                  <span className="hp-status-number">47+</span>
+                </div>
+                <div className="hp-status-metric">
+                  <span className="hp-status-label">Workflows Active</span>
+                  <span className="hp-status-number">128+</span>
+                </div>
+                <div className="hp-status-metric">
+                  <span className="hp-status-label">Intelligence Pipes</span>
+                  <span className="hp-status-number">23+</span>
+                </div>
+                <div className="hp-status-metric">
+                  <span className="hp-status-label">Infrastructure</span>
+                  <span className="hp-status-online">ONLINE</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
