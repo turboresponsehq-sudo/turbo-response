@@ -44,24 +44,20 @@ export default function Home() {
 
         {/* Cinematic founder image — blended into the environment */}
         <div className="hp-founder-wrap" aria-hidden="true">
-          {/* Atmospheric rings layered over the image */}
           <div className="hp-founder-ring hp-founder-ring-1" />
           <div className="hp-founder-ring hp-founder-ring-2" />
           <div className="hp-founder-ring hp-founder-ring-3" />
-          {/* The image itself */}
           <img
             src="/images/founder-hero.png"
             alt=""
             className="hp-founder-img"
             aria-hidden="true"
           />
-          {/* Overlay layers that blend the image into the environment */}
           <div className="hp-founder-overlay-left" />
           <div className="hp-founder-overlay-bottom" />
           <div className="hp-founder-overlay-top" />
           <div className="hp-founder-glow-blue" />
           <div className="hp-founder-glow-purple" />
-          {/* Floating particles */}
           <div className="hp-orb-particles" aria-hidden="true">
             {[...Array(8)].map((_, i) => (
               <div key={i} className={`hp-particle hp-particle-${i + 1}`} />
@@ -75,7 +71,6 @@ export default function Home() {
         <div className="hp-light-trail hp-trail-3" aria-hidden="true" />
 
         <div className="hp-hero-inner">
-          {/* Left: content column */}
           <div className="hp-hero-content">
             <div className="hp-hero-eyebrow">
               <span className="hp-badge-dot" />
@@ -108,7 +103,7 @@ export default function Home() {
               </Link>
             </div>
 
-            {/* Status panel — inline below CTAs, left-aligned, not overlapping image */}
+            {/* Status panel — horizontal, left-aligned, below CTAs */}
             <div className="hp-status-panel">
               <div className="hp-status-header">
                 <span className="hp-status-title">Ecosystem Status</span>
@@ -144,58 +139,80 @@ export default function Home() {
       {/* ── SECTION DIVIDER ────────────────────────────────────────────────── */}
       <div className="hp-divider hp-divider-blue" aria-hidden="true" />
 
-      {/* ── TWO MODES ──────────────────────────────────────────────────────── */}
-      <section className="hp-modes">
-        <div className="hp-modes-bg" aria-hidden="true" />
+      {/* ── 3 SERVICE PILLARS ──────────────────────────────────────────────── */}
+      <section className="hp-pillars">
+        <div className="hp-pillars-bg" aria-hidden="true" />
         <div className="hp-section-inner">
-          <div className="hp-eyebrow hp-eyebrow-center">Application Layer</div>
+          <div className="hp-eyebrow hp-eyebrow-center">What We Build</div>
           <h2 className="hp-section-h2 hp-h2-center">
-            Two Modes. One Infrastructure.
+            The Systems Behind Modern Builders.
           </h2>
-          <p className="hp-modes-sub">
-            The operational engine for building, solving, and scaling what matters most.
+          <p className="hp-pillars-sub">
+            Three core infrastructure pillars. One operational ecosystem.
           </p>
 
-          <div className="hp-modes-grid">
-            <div className="hp-mode-card hp-mode-build">
-              <div className="hp-mode-glow hp-mode-glow-blue" aria-hidden="true" />
-              <div className="hp-mode-header">
-                <div className="hp-mode-icon hp-mode-icon-blue">⚡</div>
-                <div>
-                  <div className="hp-mode-tag">Build Mode</div>
-                  <div className="hp-mode-tagline">Proactive infrastructure creation.</div>
-                </div>
-              </div>
-              <ul className="hp-mode-list">
-                <li><span className="hp-dot hp-dot-blue" />AI workflow setup</li>
-                <li><span className="hp-dot hp-dot-blue" />Operational systems</li>
-                <li><span className="hp-dot hp-dot-blue" />Document intelligence</li>
-                <li><span className="hp-dot hp-dot-blue" />Founder operating systems</li>
-                <li><span className="hp-dot hp-dot-blue" />Content &amp; media systems</li>
-                <li><span className="hp-dot hp-dot-blue" />Research &amp; opportunity intelligence</li>
+          <div className="hp-pillars-grid">
+
+            {/* Pillar 1 */}
+            <div className="hp-pillar hp-pillar-blue">
+              <div className="hp-pillar-glow" aria-hidden="true" />
+              <div className="hp-pillar-number">01</div>
+              <div className="hp-pillar-icon">⚡</div>
+              <h3 className="hp-pillar-title">AI Systems &amp; Automation</h3>
+              <p className="hp-pillar-body">
+                Intelligent workflows, automation pipelines, and operational infrastructure
+                built to run without you. From document intelligence to full-stack AI systems.
+              </p>
+              <ul className="hp-pillar-list">
+                <li>Intelligent workflow design</li>
+                <li>Automation pipelines</li>
+                <li>Document intelligence</li>
+                <li>AI-powered operations</li>
+                <li>Infrastructure builds</li>
               </ul>
-              <Link href="/turbo-intake" className="hp-mode-cta">Start a Build →</Link>
+              <Link href="/services" className="hp-pillar-cta">Explore Systems →</Link>
             </div>
 
-            <div className="hp-mode-card hp-mode-response">
-              <div className="hp-mode-glow hp-mode-glow-purple" aria-hidden="true" />
-              <div className="hp-mode-header">
-                <div className="hp-mode-icon hp-mode-icon-purple">🛡</div>
-                <div>
-                  <div className="hp-mode-tag hp-mode-tag-purple">Response Mode</div>
-                  <div className="hp-mode-tagline">Operational problem solving.</div>
-                </div>
-              </div>
-              <ul className="hp-mode-list">
-                <li><span className="hp-dot hp-dot-purple" />Document-heavy situations</li>
-                <li><span className="hp-dot hp-dot-purple" />Deadline-driven workflows</li>
-                <li><span className="hp-dot hp-dot-purple" />Compliance responses</li>
-                <li><span className="hp-dot hp-dot-purple" />Funding &amp; application prep</li>
-                <li><span className="hp-dot hp-dot-purple" />Client intake challenges</li>
-                <li><span className="hp-dot hp-dot-purple" />Operational breakdown recovery</li>
+            {/* Pillar 2 */}
+            <div className="hp-pillar hp-pillar-purple">
+              <div className="hp-pillar-glow hp-pillar-glow-purple" aria-hidden="true" />
+              <div className="hp-pillar-number">02</div>
+              <div className="hp-pillar-icon">◈</div>
+              <h3 className="hp-pillar-title">Research &amp; Opportunity Intelligence</h3>
+              <p className="hp-pillar-body">
+                Strategic research, funding intelligence, and ecosystem visibility
+                for founders and organizations building toward the future economy.
+              </p>
+              <ul className="hp-pillar-list">
+                <li>Funding &amp; grant intelligence</li>
+                <li>Opportunity research</li>
+                <li>Ecosystem intelligence</li>
+                <li>Lead intelligence systems</li>
+                <li>Strategic operational visibility</li>
               </ul>
-              <Link href="/turbo-intake" className="hp-mode-cta hp-mode-cta-purple">Get Operational Support →</Link>
+              <Link href="/services" className="hp-pillar-cta hp-pillar-cta-purple">Explore Intelligence →</Link>
             </div>
+
+            {/* Pillar 3 */}
+            <div className="hp-pillar hp-pillar-green">
+              <div className="hp-pillar-glow hp-pillar-glow-green" aria-hidden="true" />
+              <div className="hp-pillar-number">03</div>
+              <div className="hp-pillar-icon">◉</div>
+              <h3 className="hp-pillar-title">Brand, Content &amp; Ecosystem Building</h3>
+              <p className="hp-pillar-body">
+                Founder brand architecture, content infrastructure, and the cultural layer
+                that turns operational systems into a movement. Powered by Black Future.
+              </p>
+              <ul className="hp-pillar-list">
+                <li>Founder brand architecture</li>
+                <li>Content &amp; media systems</li>
+                <li>Visual identity direction</li>
+                <li>Ecosystem storytelling</li>
+                <li>Black Future cultural layer</li>
+              </ul>
+              <Link href="/services" className="hp-pillar-cta hp-pillar-cta-green">Explore Brand →</Link>
+            </div>
+
           </div>
         </div>
       </section>

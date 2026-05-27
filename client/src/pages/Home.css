@@ -438,82 +438,101 @@
 .hp-divider-blue::after  { background: linear-gradient(90deg, transparent, rgba(0,191,255,0.5), transparent); }
 .hp-divider-purple::after { background: linear-gradient(90deg, transparent, rgba(139,92,246,0.5), transparent); }
 
-/* ── TWO MODES ────────────────────────────────────────────────────────────── */
-.hp-modes {
+/* ── 3 SERVICE PILLARS ────────────────────────────────────────────────────── */
+.hp-pillars {
   position: relative; padding: 120px 0;
   overflow: hidden;
 }
-.hp-modes-bg {
+.hp-pillars-bg {
   position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse 70% 80% at 20% 50%, rgba(0,191,255,0.05) 0%, transparent 60%),
-    radial-gradient(ellipse 70% 80% at 80% 50%, rgba(139,92,246,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 70% at 15% 50%, rgba(0,191,255,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 70% at 85% 50%, rgba(139,92,246,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 50% 100%, rgba(16,185,129,0.03) 0%, transparent 60%),
     linear-gradient(180deg, var(--hp-bg) 0%, var(--hp-bg-mid) 50%, var(--hp-bg) 100%);
   pointer-events: none;
 }
-.hp-modes-sub {
+.hp-pillars-sub {
   font-size: 16px; color: var(--hp-text-mid); text-align: center;
-  margin-bottom: 56px; max-width: 480px; margin-left: auto; margin-right: auto;
+  margin-bottom: 64px; max-width: 480px; margin-left: auto; margin-right: auto;
 }
-.hp-modes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.hp-pillars-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+}
 
-.hp-mode-card {
+/* Individual pillar card */
+.hp-pillar {
   position: relative; overflow: hidden;
-  padding: 44px 38px; border-radius: 18px;
+  padding: 48px 36px 40px; border-radius: 20px;
   border: 1px solid rgba(255,255,255,0.06);
-  background: rgba(6, 10, 24, 0.75);
-  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  background: rgba(6, 10, 24, 0.72);
+  display: flex; flex-direction: column;
+  transition: border-color 0.35s, box-shadow 0.35s, transform 0.35s;
 }
-/* Top accent line */
-.hp-mode-build  { border-top: 2px solid rgba(0,191,255,0.55); }
-.hp-mode-response { border-top: 2px solid rgba(139,92,246,0.55); }
+.hp-pillar-blue   { border-top: 2px solid rgba(0,191,255,0.5); }
+.hp-pillar-purple { border-top: 2px solid rgba(139,92,246,0.5); }
+.hp-pillar-green  { border-top: 2px solid rgba(16,185,129,0.5); }
+
+.hp-pillar-blue:hover   { border-color: rgba(0,191,255,0.22);   box-shadow: 0 0 70px rgba(0,191,255,0.07),   0 28px 72px rgba(0,0,0,0.55); transform: translateY(-5px); }
+.hp-pillar-purple:hover { border-color: rgba(139,92,246,0.22); box-shadow: 0 0 70px rgba(139,92,246,0.07), 0 28px 72px rgba(0,0,0,0.55); transform: translateY(-5px); }
+.hp-pillar-green:hover  { border-color: rgba(16,185,129,0.22);  box-shadow: 0 0 70px rgba(16,185,129,0.07),  0 28px 72px rgba(0,0,0,0.55); transform: translateY(-5px); }
+
 /* Inner glow on hover */
-.hp-mode-glow {
-  position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
-  width: 300px; height: 200px; border-radius: 50%;
-  pointer-events: none; opacity: 0;
-  transition: opacity 0.4s;
+.hp-pillar-glow {
+  position: absolute; top: -80px; left: 50%; transform: translateX(-50%);
+  width: 320px; height: 240px; border-radius: 50%;
+  pointer-events: none; opacity: 0; transition: opacity 0.4s;
+  background: radial-gradient(ellipse, rgba(0,191,255,0.1) 0%, transparent 70%);
 }
-.hp-mode-glow-blue  { background: radial-gradient(ellipse, rgba(0,191,255,0.12) 0%, transparent 70%); }
-.hp-mode-glow-purple { background: radial-gradient(ellipse, rgba(139,92,246,0.12) 0%, transparent 70%); }
-.hp-mode-card:hover .hp-mode-glow { opacity: 1; }
-.hp-mode-build:hover  { border-color: rgba(0,191,255,0.2);   box-shadow: 0 0 60px rgba(0,191,255,0.07),   0 24px 64px rgba(0,0,0,0.5); transform: translateY(-4px); }
-.hp-mode-response:hover { border-color: rgba(139,92,246,0.2); box-shadow: 0 0 60px rgba(139,92,246,0.07), 0 24px 64px rgba(0,0,0,0.5); transform: translateY(-4px); }
+.hp-pillar-glow-purple { background: radial-gradient(ellipse, rgba(139,92,246,0.1) 0%, transparent 70%); }
+.hp-pillar-glow-green  { background: radial-gradient(ellipse, rgba(16,185,129,0.1) 0%, transparent 70%); }
+.hp-pillar:hover .hp-pillar-glow { opacity: 1; }
 
-.hp-mode-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 28px; }
-.hp-mode-icon {
-  width: 46px; height: 46px; border-radius: 12px;
-  display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
+.hp-pillar-number {
+  font-size: 11px; font-weight: 900; letter-spacing: 0.15em; text-transform: uppercase;
+  color: rgba(255,255,255,0.18); margin-bottom: 20px;
 }
-.hp-mode-icon-blue   { background: rgba(0,191,255,0.12); border: 1px solid rgba(0,191,255,0.25); box-shadow: 0 0 20px rgba(0,191,255,0.1); }
-.hp-mode-icon-purple { background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.25); box-shadow: 0 0 20px rgba(139,92,246,0.1); }
-.hp-mode-tag { font-size: 14px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; color: var(--hp-accent); margin-bottom: 4px; }
-.hp-mode-tag-purple { color: var(--hp-purple); }
-.hp-mode-tagline { font-size: 13px; color: var(--hp-text-mid); }
-
-.hp-mode-list { list-style: none; margin-bottom: 32px; display: flex; flex-direction: column; gap: 13px; }
-.hp-mode-list li {
-  display: flex; align-items: center; gap: 12px;
-  font-size: 14px; color: var(--hp-text-mid); font-weight: 500;
-  transition: color 0.2s;
+.hp-pillar-icon {
+  font-size: 28px; margin-bottom: 20px; line-height: 1;
 }
-.hp-mode-card:hover .hp-mode-list li { color: rgba(240,244,255,0.85); }
-.hp-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-.hp-dot-blue   { background: var(--hp-accent); box-shadow: 0 0 10px rgba(0,191,255,0.7); }
-.hp-dot-purple { background: var(--hp-purple); box-shadow: 0 0 10px rgba(139,92,246,0.7); }
+.hp-pillar-title {
+  font-size: 20px; font-weight: 800; letter-spacing: -0.02em;
+  color: var(--hp-text); margin-bottom: 16px; line-height: 1.25;
+}
+.hp-pillar-body {
+  font-size: 14px; color: var(--hp-text-mid); line-height: 1.7;
+  margin-bottom: 28px;
+}
+.hp-pillar-list {
+  list-style: none; margin-bottom: 36px; flex: 1;
+  display: flex; flex-direction: column; gap: 11px;
+}
+.hp-pillar-list li {
+  font-size: 13px; color: var(--hp-text-dim); font-weight: 500;
+  padding-left: 16px; position: relative; transition: color 0.2s;
+}
+.hp-pillar-list li::before {
+  content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 5px; height: 5px; border-radius: 50%;
+}
+.hp-pillar-blue .hp-pillar-list li::before   { background: var(--hp-accent); box-shadow: 0 0 8px rgba(0,191,255,0.6); }
+.hp-pillar-purple .hp-pillar-list li::before { background: var(--hp-purple); box-shadow: 0 0 8px rgba(139,92,246,0.6); }
+.hp-pillar-green .hp-pillar-list li::before  { background: var(--hp-green);  box-shadow: 0 0 8px rgba(16,185,129,0.6); }
+.hp-pillar:hover .hp-pillar-list li { color: rgba(240,244,255,0.8); }
 
-.hp-mode-cta {
-  display: inline-block; text-decoration: none;
-  font-size: 13px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase;
+.hp-pillar-cta {
+  display: inline-block; text-decoration: none; margin-top: auto;
+  font-size: 12px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase;
   color: var(--hp-accent); transition: opacity 0.2s, letter-spacing 0.2s;
 }
-.hp-mode-cta:hover { opacity: 0.65; letter-spacing: 0.12em; }
-.hp-mode-cta-purple { color: var(--hp-purple); }
+.hp-pillar-cta:hover { opacity: 0.65; letter-spacing: 0.14em; }
+.hp-pillar-cta-purple { color: var(--hp-purple); }
+.hp-pillar-cta-green  { color: var(--hp-green); }
 
-@media (max-width: 768px) {
-  .hp-modes-grid { grid-template-columns: 1fr; }
-  .hp-mode-card { padding: 32px 24px; }
-  .hp-modes { padding: 80px 0; }
+@media (max-width: 900px) {
+  .hp-pillars-grid { grid-template-columns: 1fr; gap: 20px; }
+  .hp-pillar { padding: 36px 28px 32px; }
+  .hp-pillars { padding: 80px 0; }
 }
 
 /* ── CAPABILITY STRIP ─────────────────────────────────────────────────────── */
