@@ -132,6 +132,17 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Mobile-only founder image — rendered in flow below the content */}
+        <div className="hp-founder-mobile" aria-hidden="true">
+          <img
+            src="/images/founder-hero.png"
+            alt=""
+            className="hp-founder-mobile-img"
+          />
+          <div className="hp-founder-mobile-fade-top" />
+          <div className="hp-founder-mobile-fade-bottom" />
+        </div>
+
         {/* Bottom horizon fade */}
         <div className="hp-hero-horizon" aria-hidden="true" />
       </section>
