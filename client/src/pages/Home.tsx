@@ -42,17 +42,28 @@ export default function Home() {
         <div className="hp-hero-grid" aria-hidden="true" />
         <div className="hp-hero-scanline" aria-hidden="true" />
 
-        {/* Visual anchor: abstract command-center orb */}
-        <div className="hp-orb-wrap" aria-hidden="true">
-          <div className="hp-orb" />
-          <div className="hp-orb-ring hp-orb-ring-1" />
-          <div className="hp-orb-ring hp-orb-ring-2" />
-          <div className="hp-orb-ring hp-orb-ring-3" />
-          <div className="hp-orb-beam hp-orb-beam-1" />
-          <div className="hp-orb-beam hp-orb-beam-2" />
-          <div className="hp-orb-beam hp-orb-beam-3" />
+        {/* Cinematic founder image — blended into the environment */}
+        <div className="hp-founder-wrap" aria-hidden="true">
+          {/* Atmospheric rings layered over the image */}
+          <div className="hp-founder-ring hp-founder-ring-1" />
+          <div className="hp-founder-ring hp-founder-ring-2" />
+          <div className="hp-founder-ring hp-founder-ring-3" />
+          {/* The image itself */}
+          <img
+            src="/images/founder-hero.png"
+            alt=""
+            className="hp-founder-img"
+            aria-hidden="true"
+          />
+          {/* Overlay layers that blend the image into the environment */}
+          <div className="hp-founder-overlay-left" />
+          <div className="hp-founder-overlay-bottom" />
+          <div className="hp-founder-overlay-top" />
+          <div className="hp-founder-glow-blue" />
+          <div className="hp-founder-glow-purple" />
+          {/* Floating particles */}
           <div className="hp-orb-particles" aria-hidden="true">
-            {[...Array(12)].map((_, i) => (
+            {[...Array(8)].map((_, i) => (
               <div key={i} className={`hp-particle hp-particle-${i + 1}`} />
             ))}
           </div>
