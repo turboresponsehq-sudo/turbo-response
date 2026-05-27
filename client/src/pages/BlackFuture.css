@@ -154,37 +154,39 @@
 .bf-hero-img {
   width: 100%; height: 100%;
   object-fit: cover;
-  /* Center on the group/faces — not the sky */
-  object-position: center 40%;
-  opacity: 0.72;
-  /* Subtle desaturate so the neon UI palette dominates */
-  filter: saturate(0.85) brightness(0.78) contrast(1.05);
+  /* Shift right so the neon sign + founders are centered in the visible area */
+  object-position: 55% 38%;
+  opacity: 0.88;
+  /* Slightly warmer/brighter — image is part of the story, not decoration */
+  filter: saturate(0.92) brightness(0.88) contrast(1.02);
   display: block;
 }
 
-/* Primary overlay: dark left-to-right gradient so headline text is readable */
+/* Primary overlay: narrow dark band on far left for text readability,
+   then quickly opens up so the image scene is fully visible */
 .bf-hero-img-overlay {
   position: absolute; inset: 0; z-index: 1;
   background:
-    linear-gradient(105deg,
-      rgba(5,8,16,0.88) 0%,
-      rgba(5,8,16,0.60) 40%,
-      rgba(5,8,16,0.20) 70%,
-      rgba(5,8,16,0.08) 100%),
+    linear-gradient(100deg,
+      rgba(5,8,16,0.82) 0%,
+      rgba(5,8,16,0.55) 28%,
+      rgba(5,8,16,0.12) 50%,
+      rgba(5,8,16,0.02) 100%),
     linear-gradient(0deg,
-      rgba(5,8,16,0.95) 0%,
-      transparent 30%);
+      rgba(5,8,16,0.92) 0%,
+      rgba(5,8,16,0.40) 18%,
+      transparent 35%);
   pointer-events: none;
 }
 
-/* Vignette: subtle edge darkening — keeps image from feeling cropped */
+/* Vignette: lighter edge darkening — let the center scene breathe */
 .bf-hero-img-vignette {
   position: absolute; inset: 0; z-index: 2;
   background: radial-gradient(
-    ellipse 110% 100% at 65% 50%,
-    transparent 40%,
-    rgba(5,8,16,0.55) 75%,
-    rgba(5,8,16,0.85) 100%
+    ellipse 130% 110% at 60% 50%,
+    transparent 50%,
+    rgba(5,8,16,0.35) 80%,
+    rgba(5,8,16,0.70) 100%
   );
   pointer-events: none;
 }
@@ -252,10 +254,14 @@
 
 .bf-hero-inner {
   position: relative; z-index: 2;
-  max-width: 1280px; margin: 0 auto; padding: 120px 60px 100px;
+  /* Left-aligned: content hugs the left edge, freeing the right 55% for the image */
+  max-width: 1280px; margin: 0; padding: 120px 0 100px 60px;
   width: 100%;
 }
-.bf-hero-content { max-width: 680px; }
+.bf-hero-content {
+  /* Narrow content column — keeps text tight on the left */
+  max-width: 520px;
+}
 
 .bf-hero-h1 {
   font-size: clamp(64px, 10vw, 140px);
