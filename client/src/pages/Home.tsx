@@ -36,6 +36,8 @@ export default function Home() {
       </header>
 
       {/* ── SECTION 1: HERO ────────────────────────────────────────────────── */}
+      <div className="hp-hero-wrapper">
+        <div className="hp-hero-grid" aria-hidden="true" />
       <section className="hp-hero">
         <div className="hp-hero-content">
           <div className="hp-hero-badge">
@@ -77,6 +79,9 @@ export default function Home() {
           ))}
         </div>
       </section>
+      </div>{/* end hp-hero-wrapper */}
+
+      <hr className="hp-divider" />
 
       {/* ── SECTION 2: ECOSYSTEM IDENTITY ─────────────────────────────────── */}
       <section className="hp-section hp-bg-dark">
@@ -119,6 +124,8 @@ export default function Home() {
           </p>
         </div>
       </section>
+
+      <hr className="hp-divider hp-divider-purple" />
 
       {/* ── SECTION 3: OPERATIONAL INTELLIGENCE ───────────────────────────── */}
       <section className="hp-section">
@@ -184,6 +191,8 @@ export default function Home() {
         </div>
       </section>
 
+      <hr className="hp-divider" />
+
       {/* ── SECTION 4: FOUNDER INFRASTRUCTURE ─────────────────────────────── */}
       <section className="hp-section hp-bg-founder">
         <div className="hp-section-inner">
@@ -222,6 +231,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <hr className="hp-divider hp-divider-purple" />
 
       {/* ── SECTION 5: APPLICATION LAYER ───────────────────────────────────── */}
       <section className="hp-section">
