@@ -124,7 +124,7 @@ export default function Industries() {
             <span>TURBO RESPONSE</span>
           </Link>
           <nav className="ind-nav">
-            <Link href="/services" className="ind-nav-link">Infrastructure</Link>
+            <Link href="/services" className="ind-nav-link">Services</Link>
             <Link href="/industries" className="ind-nav-link ind-nav-active">Industries</Link>
             <Link href="/turbo-systems" className="ind-nav-link ind-nav-systems">⚡ Turbo Systems</Link>
             <Link href="/turbo-intake" className="ind-nav-cta">Build With Us</Link>
@@ -222,7 +222,7 @@ export default function Industries() {
           <div className="ind-footer-brand">⚡ Turbo Response — Operational Intelligence Infrastructure</div>
           <div className="ind-footer-links">
             <Link href="/" className="ind-footer-link">Home</Link>
-            <Link href="/services" className="ind-footer-link">Infrastructure</Link>
+            <Link href="/services" className="ind-footer-link">Services</Link>
             <Link href="/turbo-systems" className="ind-footer-link ind-footer-link-systems">⚡ Turbo Systems</Link>
             <Link href="/disclaimer" className="ind-footer-link">Disclaimer</Link>
           </div>

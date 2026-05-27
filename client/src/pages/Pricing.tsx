@@ -100,7 +100,7 @@ export default function Pricing() {
             <span>TURBO RESPONSE</span>
           </Link>
           <nav className="pr-nav">
-            <Link href="/services" className="pr-nav-link">Infrastructure</Link>
+            <Link href="/services" className="pr-nav-link">Services</Link>
             <Link href="/industries" className="pr-nav-link">Industries</Link>
             <Link href="/turbo-systems" className="pr-nav-link pr-nav-systems">⚡ Turbo Systems</Link>
             <Link href="/turbo-intake" className="pr-nav-cta">Build With Us</Link>
@@ -234,7 +234,7 @@ export default function Pricing() {
           <div className="pr-footer-brand">⚡ Turbo Response — Operational Intelligence Infrastructure</div>
           <div className="pr-footer-links">
             <Link href="/" className="pr-footer-link">Home</Link>
-            <Link href="/services" className="pr-footer-link">Infrastructure</Link>
+            <Link href="/services" className="pr-footer-link">Services</Link>
             <Link href="/industries" className="pr-footer-link">Industries</Link>
             <Link href="/turbo-systems" className="pr-footer-link pr-footer-link-systems">⚡ Turbo Systems</Link>
             <Link href="/disclaimer" className="pr-footer-link">Disclaimer</Link>
