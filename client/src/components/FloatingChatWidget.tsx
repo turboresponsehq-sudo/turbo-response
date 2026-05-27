@@ -68,7 +68,7 @@ export default function FloatingChatWidget() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Hey 👋 I'm Turbo AI — your AI-powered consumer defense assistant. Tell me what kind of notice or issue you're facing, and I'll help you fight back against unfair practices.",
+      content: "Hey 👋 I'm Turbo AI — your operational intelligence assistant.\n\nI help founders, creators, and organizations explore AI systems, automation, infrastructure, and ecosystem solutions built by Turbo Response. What are you building?",
       timestamp: new Date(),
     },
   ]);
@@ -163,7 +163,7 @@ export default function FloatingChatWidget() {
       // Fallback response on error
       const errorMessage: Message = {
         role: "assistant",
-        content: "I'm having trouble connecting right now. Please try again in a moment, or click 'Get Started' on the homepage to begin your case.",
+        content: "I'm having trouble connecting right now. Please try again in a moment, or visit the homepage to explore what we build.",
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);

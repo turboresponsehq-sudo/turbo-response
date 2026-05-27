@@ -27,7 +27,7 @@ export default function Home() {
             <span /><span /><span />
           </button>
           <nav className={`hp-nav${menuOpen ? " open" : ""}`}>
-            <Link href="/services" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Infrastructure</Link>
+            <Link href="/services" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Services</Link>
             <Link href="/industries" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Industries</Link>
             <Link href="/turbo-systems" className="hp-nav-link hp-nav-systems" onClick={() => setMenuOpen(false)}>⚡ Turbo Systems</Link>
             <Link href="/turbo-intake" className="hp-nav-cta" onClick={() => setMenuOpen(false)}>Enter the Future →</Link>
@@ -286,7 +286,7 @@ export default function Home() {
             <span>TURBO RESPONSE</span>
           </div>
           <nav className="hp-footer-links">
-            <Link href="/services" className="hp-footer-link">Infrastructure</Link>
+            <Link href="/services" className="hp-footer-link">Services</Link>
             <Link href="/industries" className="hp-footer-link">Industries</Link>
             <Link href="/turbo-systems" className="hp-footer-link-systems">⚡ Turbo Systems</Link>
             <Link href="/pricing" className="hp-footer-link">Pricing</Link>

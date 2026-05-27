@@ -73,7 +73,7 @@ export default function Services() {
             <span>TURBO RESPONSE</span>
           </Link>
           <nav className="sv-nav">
-            <Link href="/services" className="sv-nav-link sv-nav-active">Infrastructure</Link>
+            <Link href="/services" className="sv-nav-link sv-nav-active">Services</Link>
             <Link href="/industries" className="sv-nav-link">Industries</Link>
             <Link href="/turbo-systems" className="sv-nav-link sv-nav-systems">⚡ Turbo Systems</Link>
             <Link href="/turbo-intake" className="sv-nav-cta">Build With Us</Link>
