@@ -415,14 +415,79 @@
 }
 
 @media (max-width: 960px) {
-  .hp-hero-inner { margin: 0 auto; padding: 80px 20px 72px; }
+  /* Switch hero to column flow so mobile image stacks below content */
+  .hp-hero {
+    padding: 0;
+    min-height: unset;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .hp-hero-inner { margin: 0 auto; padding: 80px 20px 40px; width: 100%; }
+  .hp-hero-content { width: 100%; }
   .hp-status-panel { max-width: 100%; }
   .hp-status-metrics-row { gap: 16px; }
+  /* Hide the absolute-positioned desktop version */
   .hp-founder-wrap { display: none; }
-  .hp-hero { padding: 0; min-height: 80vh; }
 }
+
+/* ── MOBILE FOUNDER IMAGE ─────────────────────────────────────────────────── */
+/* Hidden on desktop — only visible below 960px */
+.hp-founder-mobile {
+  display: none;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+@media (max-width: 960px) {
+  .hp-founder-mobile {
+    display: block;
+    height: 360px;
+  }
+}
+
 @media (max-width: 600px) {
-  .hp-hero-inner { padding: 72px 20px 60px; }
+  .hp-founder-mobile {
+    height: 300px;
+  }
+}
+
+.hp-founder-mobile-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Show the face/goggles — adjust vertical position to keep head centered */
+  object-position: center 12%;
+  opacity: 0.82;
+  mix-blend-mode: luminosity;
+  filter: saturate(1.1) brightness(0.9) contrast(1.05);
+  display: block;
+}
+
+/* Top fade — blends into the dark background above */
+.hp-founder-mobile-fade-top {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 35%;
+  background: linear-gradient(180deg, var(--hp-bg) 0%, transparent 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Bottom fade — blends into the section below */
+.hp-founder-mobile-fade-bottom {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 45%;
+  background: linear-gradient(0deg, var(--hp-bg) 0%, transparent 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+@media (max-width: 600px) {
+  .hp-hero-inner { padding: 72px 20px 40px; }
   .hp-hero-h1 { font-size: clamp(52px, 14vw, 90px); }
 }
 
