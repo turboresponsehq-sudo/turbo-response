@@ -227,45 +227,45 @@ export default function Home() {
       <section className="hp-section">
         <div className="hp-section-inner">
           <div className="hp-section-label">Application Layer</div>
-          <h2 className="hp-section-h2">Infrastructure Applied.<br />
-            <span className="hp-accent-text">Across Every Scenario.</span>
+          <h2 className="hp-section-h2">Two Modes.<br />
+            <span className="hp-accent-text">One Infrastructure.</span>
           </h2>
           <p className="hp-oi-intro">
-            The same operational intelligence infrastructure powers two distinct modes of action — whether you are initiating a strategic move or responding to an external challenge.
+            The same operational intelligence infrastructure adapts to where you are — whether you are building something new or solving an active operational challenge.
           </p>
           <div className="hp-od-grid">
             <div className="hp-od-card hp-od-offense">
-              <div className="hp-od-tag">⚡ Offense Mode</div>
-              <h3 className="hp-od-title">Proactive Operational Action</h3>
+              <div className="hp-od-tag">⚡ Build Mode</div>
+              <h3 className="hp-od-title">Proactive Infrastructure Creation</h3>
               <p className="hp-od-body">
-                Deploy when initiating action — applying for capital, filing a dispute, submitting a claim, or pursuing a recovery. We structure your documentation and workflows to maximize approval and outcome probability.
+                Deploy when you are building — setting up AI workflows, launching operational systems, organizing your infrastructure, or establishing the foundation your organization runs on.
               </p>
               <ul className="hp-od-list">
-                <li>Grant &amp; funding applications</li>
-                <li>Credit &amp; capital disputes</li>
-                <li>Formal complaints &amp; claims</li>
-                <li>Settlement &amp; recovery efforts</li>
-                <li>Contract challenges</li>
+                <li>AI workflow setup &amp; automation</li>
+                <li>Founder operating systems</li>
+                <li>Document intelligence pipelines</li>
+                <li>Research &amp; opportunity intelligence</li>
+                <li>Content &amp; media infrastructure</li>
               </ul>
               <Link href="/turbo-intake" className="hp-btn hp-btn-primary hp-od-btn">
-                Offense Intake →
+                Start a Build →
               </Link>
             </div>
             <div className="hp-od-card hp-od-defense">
-              <div className="hp-od-tag hp-od-tag-dim">🛡️ Defense Mode</div>
-              <h3 className="hp-od-title">Response &amp; Protection Workflows</h3>
+              <div className="hp-od-tag hp-od-tag-dim">🛡️ Response Mode</div>
+              <h3 className="hp-od-title">Operational Problem Solving</h3>
               <p className="hp-od-body">
-                Deploy when responding to a notice, demand, denial, or enforcement action. We build your response documentation and workflows to contain the situation and protect your position.
+                Deploy when you are reacting — navigating a deadline-driven situation, responding to an administrative challenge, or needing structured operational support under pressure.
               </p>
               <ul className="hp-od-list">
-                <li>Eviction &amp; housing defense</li>
-                <li>IRS notices &amp; audits</li>
-                <li>Debt collection violations</li>
-                <li>Wage garnishments &amp; levies</li>
-                <li>Benefit denials &amp; appeals</li>
+                <li>Document-heavy situation management</li>
+                <li>Deadline-driven workflow support</li>
+                <li>Compliance &amp; administrative responses</li>
+                <li>Funding &amp; application preparation</li>
+                <li>Operational breakdown recovery</li>
               </ul>
-              <Link href="/intake" className="hp-btn hp-btn-ghost hp-od-btn">
-                Defense Intake →
+              <Link href="/turbo-intake" className="hp-btn hp-btn-ghost hp-od-btn">
+                Get Operational Support →
               </Link>
             </div>
           </div>
