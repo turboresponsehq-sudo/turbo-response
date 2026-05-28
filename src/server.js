@@ -41,6 +41,7 @@ const resourcesRoutes = require('./routes/resources'); // Grant & Resource Match
 const resourcesApiRoutes = require('./routes/resourcesApi'); // Grant & Resource Matching API (email-only)
 const resourceSuccessRoutes = require('./routes/resourceSuccess'); // Grant & Resource Success Page
 const adminResourcesRoutes = require('./routes/adminResources'); // Admin Resource Submissions Panel
+const businessAuditRoutes = require('./routes/businessAudit'); // Business Intelligence Audit MVP
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -247,6 +248,7 @@ app.use('/api', createAdminCasesTableRoutes); // Create admin_cases table
 app.use('/api', createBusinessIntakesTableRoutes); // Create business_intakes table
 app.use('/api/screenshots', screenshotRoutes); // Screenshot upload
 app.use('/api/admin/resources', adminResourcesRoutes); // Admin Resource Submissions Panel
+app.use('/api', businessAuditRoutes); // Business Intelligence Audit MVP
 
 // Serve frontend static files and SPA fallback
 const { serveFrontend } = require('../serve-frontend');
