@@ -42,6 +42,7 @@ import TurboSystems from "./pages/TurboSystems";
 import AdminCommandCenter from "./pages/AdminCommandCenter";
 import Industries from "./pages/Industries";
 import BlackFuture from "./pages/BlackFuture";
+import BusinessAudit from "./pages/BusinessAudit";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -67,6 +68,9 @@ function Router() {
       <Route path="/turbo" component={TurboHQ} />
       <Route path="/turbo-systems" component={TurboSystems} />
       <Route path="/black-future" component={BlackFuture} />
+      {/* Business Intelligence Audit */}
+      <Route path="/business-audit" component={BusinessAudit} />
+      <Route path="/audit" component={BusinessAudit} />
       
       {/* Offense Intake - Business */}
       <Route path="/intake-offense" component={TurboIntakeForm} />
