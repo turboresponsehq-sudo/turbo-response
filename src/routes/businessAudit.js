@@ -282,7 +282,7 @@ router.post('/business-audit', async (req, res) => {
         });
         logger.info(`[BusinessAudit] Email sent: ${emailSent}`, { leadId, email });
 
-        // 5. Update DB record
+        // 5. Update DB record — store full HTML report in long_term_vision (TEXT, no length limit)
         const reportSummary = JSON.stringify({
           executiveSummary: report.executiveSummary,
           recommendedNextStep: report.recommendedNextStep,
@@ -290,8 +290,8 @@ router.post('/business-audit', async (req, res) => {
           generatedAt: new Date().toISOString(),
         });
         await query(
-          `UPDATE business_intakes SET status='follow_up', short_term_goal=$1, updated_at=NOW() WHERE id=$2`,
-          [reportSummary.slice(0, 1000), leadId]
+          `UPDATE business_intakes SET status='follow_up', short_term_goal=$1, long_term_vision=$2, updated_at=NOW() WHERE id=$3`,
+          [reportSummary.slice(0, 1000), htmlReport, leadId]
         );
         logger.info(`[BusinessAudit] DB record updated for lead ${leadId}`);
 
@@ -313,6 +313,95 @@ router.post('/business-audit', async (req, res) => {
   } catch (err) {
     logger.error('[BusinessAudit] Route error', { error: err.message });
     res.status(500).json({ success: false, error: err.message || 'Internal server error' });
+  }
+});
+
+// ─── GET /api/business-audit/list ───────────────────────────────────────────
+// Returns JSON array of all business audit submissions for the owner dashboard.
+// Must be registered BEFORE /:id to avoid 'list' being treated as an ID.
+
+router.get('/business-audit/list', async (req, res) => {
+  try {
+    const result = await query(
+      `SELECT id, full_name, business_name, email, status, created_at
+       FROM business_intakes
+       ORDER BY created_at DESC
+       LIMIT 200`
+    );
+    res.json({
+      success: true,
+      total: result.rows.length,
+      leads: result.rows.map(r => ({
+        id: r.id,
+        fullName: r.full_name,
+        businessName: r.business_name,
+        email: r.email,
+        status: r.status,
+        createdAt: r.created_at,
+      })),
+    });
+  } catch (err) {
+    logger.error('[BusinessAudit] List error', { error: err.message });
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ─── GET /api/business-audit/:id ─────────────────────────────────────────────
+// Serves the branded HTML report for a given business audit ID.
+
+router.get('/business-audit/:id', async (req, res) => {
+  const { id } = req.params;
+  if (!/^\d+$/.test(id)) {
+    return res.status(400).send('<h2>Invalid ID</h2>');
+  }
+  try {
+    const result = await query(
+      `SELECT id, full_name, business_name, email, status, long_term_vision, created_at
+       FROM business_intakes WHERE id=$1`,
+      [id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).send(`<!DOCTYPE html><html><head><title>Not Found</title></head><body style="font-family:sans-serif;max-width:600px;margin:80px auto;text-align:center;"><h2 style="color:#e53e3e;">Report Not Found</h2><p>No business audit with ID <strong>${id}</strong> exists.</p></body></html>`);
+    }
+    const row = result.rows[0];
+    // Report stored in long_term_vision column
+    if (row.long_term_vision && row.long_term_vision.trim().startsWith('<!DOCTYPE')) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      return res.send(row.long_term_vision);
+    }
+    // Report not yet generated
+    const pendingHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="refresh" content="30">
+<title>Report Generating — Turbo Systems</title>
+<style>
+  body{margin:0;padding:0;background:#f0f4f8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;}
+  .card{background:#fff;border-radius:12px;padding:48px 40px;max-width:480px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.10);}
+  .spinner{width:48px;height:48px;border:4px solid #e8ecf0;border-top-color:#4285F4;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 24px;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  h2{margin:0 0 12px;color:#1a1a2e;font-size:22px;}
+  p{color:#718096;font-size:15px;line-height:1.6;margin:0 0 16px;}
+  .badge{display:inline-block;background:#ebf4ff;color:#4285F4;border-radius:20px;padding:6px 18px;font-size:13px;font-weight:600;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="spinner"></div>
+  <h2>Your Report is Being Generated</h2>
+  <p>Our AI is analyzing <strong>${row.business_name || 'your business'}</strong> and building your Business Intelligence Report.</p>
+  <p>This page will refresh automatically. You'll also receive the report by email.</p>
+  <div class="badge">⏱ Check back in a few minutes</div>
+</div>
+</body>
+</html>`;
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    return res.send(pendingHtml);
+  } catch (err) {
+    logger.error('[BusinessAudit] GET /:id error', { error: err.message, id });
+    res.status(500).send('<h2>Server error. Please try again.</h2>');
   }
 });
 
