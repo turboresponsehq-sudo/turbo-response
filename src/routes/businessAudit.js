@@ -61,9 +61,57 @@ async function generateAuditReport(data) {
     ? `Website Title: ${scraped.title}\nMeta Description: ${scraped.metaDesc}\nKey Headings: ${scraped.headings.join(' | ')}\nPage Content Excerpt: ${scraped.bodyText}`
     : `Website URL provided: ${websiteUrl || 'None'}. (Could not scrape — use business info only.)`;
 
-  const systemPrompt = `You are a senior business growth strategist and digital marketing expert. 
-Your job is to produce a concise, executive-style Business Intelligence Report for a small business owner.
-Be specific, actionable, and professional. Avoid generic advice. Reference their actual business details.
+  const systemPrompt = `ROLE
+
+You are Turbo Systems Business Intelligence.
+
+You are an executive business strategist specializing in operations, customer acquisition, automation, process improvement, and business growth.
+
+Your job is NOT to perform a technical audit.
+
+Your job is to identify visible business opportunities, operational bottlenecks, positioning weaknesses, customer acquisition gaps, and automation opportunities based on publicly available business information.
+
+REPORT OBJECTIVE
+
+Create a concise executive-level business intelligence report that:
+
+Creates perceived intelligence
+Builds authority
+Creates curiosity
+Identifies visible opportunities
+Starts a business conversation
+Positions Turbo Systems as a strategic advisor
+
+DO NOT:
+
+Use technical jargon
+Mention APIs
+Mention coding
+Mention SEO scores
+Mention developer metrics
+Claim certainty about internal operations
+
+Instead use phrases such as:
+
+May indicate
+Appears to
+Suggests
+Potential opportunity
+Visible indicator
+
+TONE
+
+Executive
+Strategic
+Consultative
+Professional
+Clear
+Confident
+
+LENGTH
+
+600-1000 words maximum across all sections.
+
 Output ONLY valid JSON with the exact keys specified.`;
 
   const userPrompt = `Analyze this business and produce a Business Intelligence Report.
@@ -78,19 +126,18 @@ BUSINESS DETAILS:
 WEBSITE INTELLIGENCE:
 ${websiteContext}
 
-Return a JSON object with these exact keys:
+REPORT SECTIONS — return a JSON object with these exact keys:
 {
-  "executiveSummary": "2-3 sentence overview of the business and its current position",
-  "strengths": ["strength 1", "strength 2", "strength 3"],
-  "opportunities": ["opportunity 1", "opportunity 2", "opportunity 3"],
-  "quickWins": [
-    {"action": "specific action", "impact": "expected result", "timeline": "e.g. 1-2 weeks"},
-    {"action": "specific action", "impact": "expected result", "timeline": "e.g. 2-4 weeks"},
-    {"action": "specific action", "impact": "expected result", "timeline": "e.g. 1 month"}
-  ],
-  "digitalPresenceScore": "score out of 10 with one sentence explanation",
-  "revenueOpportunities": ["revenue opportunity 1", "revenue opportunity 2"],
-  "recommendedNextStep": "single most important next step they should take this week"
+  "executiveSummary": "Short overview of the business and the most important opportunities observed.",
+  "customerAcquisition": ["observation about lead generation, messaging, trust building, social presence, calls to action, or conversion opportunities"],
+  "operationalEfficiency": ["observation about manual process indicators, follow-up weaknesses, communication bottlenecks, workflow inefficiencies, or scalability constraints"],
+  "automationOpportunities": ["area where automation could improve lead handling, customer communication, intake, scheduling, reporting, or follow-up"],
+  "revenueOpportunities": ["opportunity to increase conversion, improve retention, improve response speed, strengthen visibility, or improve customer journey"],
+  "strategicRecommendations": [
+    {"priority": 1, "action": "highest-impact action", "rationale": "why this matters"},
+    {"priority": 2, "action": "second highest-impact action", "rationale": "why this matters"},
+    {"priority": 3, "action": "third highest-impact action", "rationale": "why this matters"}
+  ]
 }`;
 
   const timeoutPromise = new Promise((_, reject) =>
@@ -115,15 +162,17 @@ Return a JSON object with these exact keys:
 // ─── HTML Report Builder ──────────────────────────────────────────────────────
 
 function buildReportHtml(report, businessName, fullName) {
-  const quickWinsHtml = (report.quickWins || []).map(qw => `
-    <tr>
-      <td style="padding:12px 16px;border-bottom:1px solid #e8ecf0;font-weight:600;color:#1a1a2e;">${qw.action}</td>
-      <td style="padding:12px 16px;border-bottom:1px solid #e8ecf0;color:#4a5568;">${qw.impact}</td>
-      <td style="padding:12px 16px;border-bottom:1px solid #e8ecf0;color:#4285F4;font-weight:600;white-space:nowrap;">${qw.timeline}</td>
-    </tr>`).join('');
-
   const listItems = (arr) => (arr || []).map(item =>
-    `<li style="margin-bottom:8px;padding-left:8px;">${item}</li>`).join('');
+    `<li style="margin-bottom:10px;padding-left:4px;color:#2d3748;font-size:14px;line-height:1.7;">${item}</li>`).join('');
+
+  const strategicRecsHtml = (report.strategicRecommendations || []).map(rec => `
+    <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:16px;">
+      <div style="min-width:32px;height:32px;background:#4285F4;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;flex-shrink:0;line-height:32px;text-align:center;">${rec.priority}</div>
+      <div>
+        <div style="font-weight:700;color:#1a1a2e;font-size:14px;margin-bottom:4px;">${rec.action}</div>
+        <div style="color:#718096;font-size:13px;line-height:1.6;">${rec.rationale}</div>
+      </div>
+    </div>`).join('');
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -154,50 +203,40 @@ function buildReportHtml(report, businessName, fullName) {
       <p style="margin:0;font-size:15px;color:#2d3748;line-height:1.7;">${report.executiveSummary || ''}</p>
     </div>
 
-    <!-- Strengths & Opportunities -->
-    <div style="display:grid;gap:24px;margin-bottom:32px;">
-      <div style="background:#f0fff4;border:1px solid #c6f6d5;border-radius:8px;padding:20px 24px;">
-        <div style="font-size:11px;letter-spacing:2px;color:#38a169;text-transform:uppercase;font-weight:700;margin-bottom:12px;">✓ Strengths Identified</div>
-        <ul style="margin:0;padding-left:20px;color:#2d3748;font-size:14px;line-height:1.8;">${listItems(report.strengths)}</ul>
-      </div>
-      <div style="background:#fffbeb;border:1px solid #fbd38d;border-radius:8px;padding:20px 24px;">
-        <div style="font-size:11px;letter-spacing:2px;color:#d69e2e;text-transform:uppercase;font-weight:700;margin-bottom:12px;">◆ Growth Opportunities</div>
-        <ul style="margin:0;padding-left:20px;color:#2d3748;font-size:14px;line-height:1.8;">${listItems(report.opportunities)}</ul>
-      </div>
+    <!-- Customer Acquisition -->
+    <div style="background:#f0fff4;border:1px solid #c6f6d5;border-radius:8px;padding:20px 24px;margin-bottom:24px;">
+      <div style="font-size:11px;letter-spacing:2px;color:#38a169;text-transform:uppercase;font-weight:700;margin-bottom:12px;">Customer Acquisition Observations</div>
+      <ul style="margin:0;padding-left:20px;">${listItems(report.customerAcquisition)}</ul>
     </div>
 
-    <!-- Digital Presence Score -->
-    <div style="background:#1a1a2e;border-radius:8px;padding:20px 24px;margin-bottom:32px;text-align:center;">
-      <div style="font-size:11px;letter-spacing:2px;color:#4285F4;text-transform:uppercase;font-weight:700;margin-bottom:8px;">Digital Presence Score</div>
-      <div style="font-size:36px;font-weight:900;color:#ffffff;margin-bottom:4px;">${report.digitalPresenceScore ? report.digitalPresenceScore.split(' ')[0] : 'N/A'}</div>
-      <div style="font-size:13px;color:#a0aec0;">${report.digitalPresenceScore || ''}</div>
+    <!-- Operational Efficiency -->
+    <div style="background:#fffbeb;border:1px solid #fbd38d;border-radius:8px;padding:20px 24px;margin-bottom:24px;">
+      <div style="font-size:11px;letter-spacing:2px;color:#d69e2e;text-transform:uppercase;font-weight:700;margin-bottom:12px;">Operational Efficiency Opportunities</div>
+      <ul style="margin:0;padding-left:20px;">${listItems(report.operationalEfficiency)}</ul>
     </div>
 
-    <!-- Quick Wins -->
-    <div style="margin-bottom:32px;">
-      <div style="font-size:11px;letter-spacing:2px;color:#4285F4;text-transform:uppercase;font-weight:700;margin-bottom:16px;">⚡ Quick Wins Action Plan</div>
-      <table style="width:100%;border-collapse:collapse;border:1px solid #e8ecf0;border-radius:8px;overflow:hidden;">
-        <thead>
-          <tr style="background:#f7f9fc;">
-            <th style="padding:12px 16px;text-align:left;font-size:12px;color:#718096;font-weight:600;text-transform:uppercase;letter-spacing:1px;">Action</th>
-            <th style="padding:12px 16px;text-align:left;font-size:12px;color:#718096;font-weight:600;text-transform:uppercase;letter-spacing:1px;">Expected Impact</th>
-            <th style="padding:12px 16px;text-align:left;font-size:12px;color:#718096;font-weight:600;text-transform:uppercase;letter-spacing:1px;">Timeline</th>
-          </tr>
-        </thead>
-        <tbody>${quickWinsHtml}</tbody>
-      </table>
+    <!-- Automation Opportunities -->
+    <div style="background:#ebf8ff;border:1px solid #bee3f8;border-radius:8px;padding:20px 24px;margin-bottom:24px;">
+      <div style="font-size:11px;letter-spacing:2px;color:#2b6cb0;text-transform:uppercase;font-weight:700;margin-bottom:12px;">Automation Opportunities</div>
+      <ul style="margin:0;padding-left:20px;">${listItems(report.automationOpportunities)}</ul>
     </div>
 
     <!-- Revenue Opportunities -->
-    <div style="background:#fff5f5;border:1px solid #fed7d7;border-radius:8px;padding:20px 24px;margin-bottom:32px;">
-      <div style="font-size:11px;letter-spacing:2px;color:#e53e3e;text-transform:uppercase;font-weight:700;margin-bottom:12px;">💰 Revenue Opportunities</div>
-      <ul style="margin:0;padding-left:20px;color:#2d3748;font-size:14px;line-height:1.8;">${listItems(report.revenueOpportunities)}</ul>
+    <div style="background:#fff5f5;border:1px solid #fed7d7;border-radius:8px;padding:20px 24px;margin-bottom:24px;">
+      <div style="font-size:11px;letter-spacing:2px;color:#e53e3e;text-transform:uppercase;font-weight:700;margin-bottom:12px;">Revenue Opportunity Areas</div>
+      <ul style="margin:0;padding-left:20px;">${listItems(report.revenueOpportunities)}</ul>
     </div>
 
-    <!-- Recommended Next Step -->
-    <div style="background:linear-gradient(135deg,#4285F4,#1a73e8);border-radius:8px;padding:24px;text-align:center;margin-bottom:32px;">
-      <div style="font-size:11px;letter-spacing:2px;color:rgba(255,255,255,0.7);text-transform:uppercase;font-weight:700;margin-bottom:8px;">Your #1 Priority This Week</div>
-      <p style="margin:0;font-size:16px;color:#ffffff;font-weight:600;line-height:1.5;">${report.recommendedNextStep || ''}</p>
+    <!-- Strategic Recommendations -->
+    <div style="margin-bottom:32px;">
+      <div style="font-size:11px;letter-spacing:2px;color:#4285F4;text-transform:uppercase;font-weight:700;margin-bottom:16px;">Strategic Recommendations</div>
+      ${strategicRecsHtml}
+    </div>
+
+    <!-- Call to Action -->
+    <div style="background:linear-gradient(135deg,#1a1a2e,#0f3460);border-radius:8px;padding:28px 32px;margin-bottom:8px;">
+      <p style="margin:0 0 16px;font-size:13px;color:#a0aec0;line-height:1.7;">These observations are based on publicly visible business information and are intended to identify potential growth opportunities. A deeper operational review may reveal additional opportunities specific to your business.</p>
+      <p style="margin:0;font-size:14px;color:#ffffff;line-height:1.7;">If you would like a deeper business intelligence review, workflow assessment, or automation strategy session, <strong style="color:#4285F4;">Turbo Systems</strong> can provide a customized implementation roadmap.</p>
     </div>
 
   </div>
