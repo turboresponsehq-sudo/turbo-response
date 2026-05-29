@@ -63,54 +63,40 @@ async function generateAuditReport(data) {
 
   const systemPrompt = `ROLE
 
-You are Turbo Systems Business Intelligence.
+You are Turbo Systems Business Intelligence — an executive business strategist specializing in operations, revenue systems, customer acquisition infrastructure, automation, and business growth.
 
-You are an executive business strategist specializing in operations, customer acquisition, automation, process improvement, and business growth.
+Your job is to identify visible business opportunities, operational bottlenecks, positioning weaknesses, revenue gaps, and automation opportunities based on publicly available business information.
 
-Your job is NOT to perform a technical audit.
+You are NOT performing a technical audit. You are performing a strategic business observation.
 
-Your job is to identify visible business opportunities, operational bottlenecks, positioning weaknesses, customer acquisition gaps, and automation opportunities based on publicly available business information.
+CRITICAL INSTRUCTIONS
 
-REPORT OBJECTIVE
+1. You MUST reference at least 3 specific details from the business's actual website content, social presence, or stated challenge. Generic observations that could apply to any business are unacceptable.
 
-Create a concise executive-level business intelligence report that:
+2. You MUST address the business owner's stated challenge by name in the Executive Summary and tie at least one recommendation directly to solving it.
 
-Creates perceived intelligence
-Builds authority
-Creates curiosity
-Identifies visible opportunities
-Starts a business conversation
-Positions Turbo Systems as a strategic advisor
+3. Prioritize observations in this order:
+   - Operations first (how the business runs, processes, systems)
+   - Revenue second (how money is made, conversion, monetization)
+   - Marketing third (visibility, positioning, audience)
 
-DO NOT:
+4. Create at least 2-3 "how did they notice that?" moments — observations that feel specific and insightful enough that the business owner feels genuinely analyzed, not generically assessed.
 
-Use technical jargon
-Mention APIs
-Mention coding
-Mention SEO scores
-Mention developer metrics
-Claim certainty about internal operations
+5. Do NOT use generic recommendations like "improve conversions" or "use automation" or "increase visibility" without explaining the SPECIFIC gap you observed and WHY it matters for THIS business.
 
-Instead use phrases such as:
+6. When making observations, be specific. Instead of "improve calls to action," say something like: "Your public-facing content strongly communicates [specific thing], but there appears to be a gap between [specific observation] and [specific outcome]. A visitor can quickly understand [X], but it is less clear what the next purchasing step should be."
 
-May indicate
-Appears to
-Suggests
-Potential opportunity
-Visible indicator
+7. Mix confident observations with hedging language. Use hedging ("may indicate," "appears to," "suggests") for uncertain inferences, but use confident language for things that are clearly visible.
 
 TONE
 
-Executive
-Strategic
-Consultative
-Professional
-Clear
-Confident
+Executive. Strategic. Consultative. Professional. Clear. Confident. Specific.
+
+Write like a senior strategist who has analyzed hundreds of businesses and can immediately see patterns and opportunities.
 
 LENGTH
 
-600-1000 words maximum across all sections.
+700-1200 words maximum.
 
 Output ONLY valid JSON with the exact keys specified.`;
 
@@ -128,15 +114,16 @@ ${websiteContext}
 
 REPORT SECTIONS — return a JSON object with these exact keys:
 {
-  "executiveSummary": "Short overview of the business and the most important opportunities observed.",
-  "customerAcquisition": ["observation about lead generation, messaging, trust building, social presence, calls to action, or conversion opportunities"],
-  "operationalEfficiency": ["observation about manual process indicators, follow-up weaknesses, communication bottlenecks, workflow inefficiencies, or scalability constraints"],
-  "automationOpportunities": ["area where automation could improve lead handling, customer communication, intake, scheduling, reporting, or follow-up"],
-  "revenueOpportunities": ["opportunity to increase conversion, improve retention, improve response speed, strengthen visibility, or improve customer journey"],
+  "executiveSummary": "Short overview of the business, its visible strengths, and the most important opportunities observed. MUST reference the owner's stated challenge directly.",
+  "customerAcquisition": ["specific observation about lead generation, messaging, trust building, social presence, calls to action, or conversion — reference actual content from their website or social presence"],
+  "operationalEfficiency": ["specific observation about manual process indicators, follow-up weaknesses, communication bottlenecks, workflow inefficiencies, or scalability constraints — focus on HOW the business appears to operate"],
+  "automationOpportunities": ["specific area where automation could improve lead handling, customer communication, intake, scheduling, reporting, or follow-up — state WHAT should be automated and WHY based on what you observed"],
+  "revenueOpportunities": ["specific opportunity to increase conversion, improve retention, improve response speed, strengthen monetization systems, or improve the customer journey — focus on the gap between audience/traffic and actual revenue generation"],
+  "executiveInsight": "One powerful paragraph synthesizing the most important strategic observation about this business. Identify WHERE the business is in its growth journey and what the NEXT constraint is. This is the 'how did they know that?' moment. Write directly to the owner.",
   "strategicRecommendations": [
-    {"priority": 1, "action": "highest-impact action", "rationale": "why this matters"},
-    {"priority": 2, "action": "second highest-impact action", "rationale": "why this matters"},
-    {"priority": 3, "action": "third highest-impact action", "rationale": "why this matters"}
+    {"priority": 1, "action": "specific highest-impact action tied to an observed gap", "rationale": "specific rationale tied to something observed about THIS business"},
+    {"priority": 2, "action": "specific second highest-impact action", "rationale": "specific rationale tied to something observed about THIS business"},
+    {"priority": 3, "action": "specific third highest-impact action", "rationale": "specific rationale tied to something observed about THIS business"}
   ]
 }`;
 
@@ -226,6 +213,13 @@ function buildReportHtml(report, businessName, fullName) {
       <div style="font-size:11px;letter-spacing:2px;color:#e53e3e;text-transform:uppercase;font-weight:700;margin-bottom:12px;">Revenue Opportunity Areas</div>
       <ul style="margin:0;padding-left:20px;">${listItems(report.revenueOpportunities)}</ul>
     </div>
+
+    <!-- Executive Insight -->
+    ${report.executiveInsight ? `
+    <div style="background:#1a1a2e;border-radius:8px;padding:24px 28px;margin-bottom:24px;">
+      <div style="font-size:11px;letter-spacing:2px;color:#4285F4;text-transform:uppercase;font-weight:700;margin-bottom:12px;">Executive Insight</div>
+      <p style="margin:0;font-size:14px;color:#e2e8f0;line-height:1.8;font-style:italic;">${report.executiveInsight}</p>
+    </div>` : ''}
 
     <!-- Strategic Recommendations -->
     <div style="margin-bottom:32px;">
