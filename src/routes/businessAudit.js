@@ -88,6 +88,26 @@ CRITICAL INSTRUCTIONS
 
 7. Mix confident observations with hedging language. Use hedging ("may indicate," "appears to," "suggests") for uncertain inferences, but use confident language for things that are clearly visible.
 
+Rule 1: Observation Before Recommendation
+
+Every recommendation must be preceded by an observation, an indicator, and a business inference. Never just say "Do X." Instead: "We observed Y, which may indicate Z. Therefore, consider X."
+
+Rule 2: Force One Contrarian Insight
+
+The Executive Insight section MUST contain a contrarian or non-obvious observation. Something the business owner has NOT already thought of. Example pattern: "Businesses at this stage often believe their next challenge is [common assumption]. Based on the public signals reviewed, the larger opportunity may be [unexpected insight] rather than [what they expect]."
+
+Rule 3: Money Language
+
+The report should frequently reference: revenue, conversion, lead flow, customer journey, response speed, follow-up, retention, monetization. Avoid centering observations around: engagement, followers, content consistency — UNLESS those directly connect to a revenue outcome.
+
+Rule 4: Prioritize Opportunities
+
+In the Strategic Recommendations section, frame recommendations as prioritized impact areas. Label them clearly (e.g., "Highest Impact," "Second Priority," "Third Priority"). Business owners respond to clear prioritization. Use these labels as the priority field values in the JSON.
+
+Rule 5: End With a Gap
+
+The closing CTA must create curiosity about what ELSE might be found. Use the exact closing text specified in the CALL TO ACTION section below.
+
 TONE
 
 Executive. Strategic. Consultative. Professional. Clear. Confident. Specific.
@@ -121,11 +141,19 @@ REPORT SECTIONS — return a JSON object with these exact keys:
   "revenueOpportunities": ["specific opportunity to increase conversion, improve retention, improve response speed, strengthen monetization systems, or improve the customer journey — focus on the gap between audience/traffic and actual revenue generation"],
   "executiveInsight": "One powerful paragraph synthesizing the most important strategic observation about this business. Identify WHERE the business is in its growth journey and what the NEXT constraint is. This is the 'how did they know that?' moment. Write directly to the owner.",
   "strategicRecommendations": [
-    {"priority": 1, "action": "specific highest-impact action tied to an observed gap", "rationale": "specific rationale tied to something observed about THIS business"},
-    {"priority": 2, "action": "specific second highest-impact action", "rationale": "specific rationale tied to something observed about THIS business"},
-    {"priority": 3, "action": "specific third highest-impact action", "rationale": "specific rationale tied to something observed about THIS business"}
+    {"priority": "Highest Impact", "action": "specific highest-impact action tied to an observed gap", "rationale": "observation + indicator + business inference for THIS business"},
+    {"priority": "Second Priority", "action": "specific second highest-impact action", "rationale": "observation + indicator + business inference for THIS business"},
+    {"priority": "Third Priority", "action": "specific third highest-impact action", "rationale": "observation + indicator + business inference for THIS business"}
   ]
-}`;
+}
+
+CALL TO ACTION
+
+Close the report with exactly this text (do not include it in the JSON — it will be appended by the system):
+
+"These observations are based entirely on publicly visible business information. Internal workflows, customer acquisition data, sales processes, and operational systems were not reviewed and may reveal additional high-impact opportunities not visible from the outside.
+
+If you would like a deeper business intelligence review, workflow assessment, or automation strategy session, Turbo Systems can provide a customized implementation roadmap."`;
 
   const timeoutPromise = new Promise((_, reject) =>
     setTimeout(() => reject(new Error('OpenAI timeout after 90 seconds')), 90000)
@@ -229,7 +257,7 @@ function buildReportHtml(report, businessName, fullName) {
 
     <!-- Call to Action -->
     <div style="background:linear-gradient(135deg,#1a1a2e,#0f3460);border-radius:8px;padding:28px 32px;margin-bottom:8px;">
-      <p style="margin:0 0 16px;font-size:13px;color:#a0aec0;line-height:1.7;">These observations are based on publicly visible business information and are intended to identify potential growth opportunities. A deeper operational review may reveal additional opportunities specific to your business.</p>
+      <p style="margin:0 0 16px;font-size:13px;color:#a0aec0;line-height:1.7;">These observations are based entirely on publicly visible business information. Internal workflows, customer acquisition data, sales processes, and operational systems were not reviewed and may reveal additional high-impact opportunities not visible from the outside.</p>
       <p style="margin:0;font-size:14px;color:#ffffff;line-height:1.7;">If you would like a deeper business intelligence review, workflow assessment, or automation strategy session, <strong style="color:#4285F4;">Turbo Systems</strong> can provide a customized implementation roadmap.</p>
     </div>
 
