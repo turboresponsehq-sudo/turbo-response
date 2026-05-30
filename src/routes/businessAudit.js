@@ -93,19 +93,53 @@ FORCED SPECIFICITY RULES:
 - Each section MUST contain 2-3 specific observations minimum, each following the Observation → Implication → Opportunity structure.
 - Include at least one quantified observation (e.g., "With X followers and a $Y product, even a Z% conversion rate represents significant untapped revenue").
 
+EVIDENCE-BASED OBSERVATION RULES:
+- Only make observations that are: directly observed, clearly implied, or reasonably inferred from the website content provided.
+- Do NOT invent missing systems, missing teams, missing pricing, missing automation, or missing processes unless evidence supports the statement.
+- Do NOT say "there is no visible X" or "the website lacks X" — this sounds like an AI generating a generic audit.
+- Instead of searching for problems, identify business CONSTRAINTS based on what IS visible.
+- The business owner should read the report and say "That's interesting" — NOT "That's not accurate."
+
+CONSTRAINT-BASED FRAMEWORK:
+Instead of pointing out what's missing, frame observations as constraints:
+- BAD: "No automation," "Weak CTA," "No team," "No pricing strategy," "No follow-up system"
+- GOOD: "Conversion constraint," "Revenue capture constraint," "Customer journey constraint," "Follow-up constraint," "Visibility constraint," "Operational leverage constraint," "Scalability constraint"
+
+Use this structure: Observation → Implication → Constraint → Opportunity
+
+Example:
+- Observation: The business has invested heavily in audience growth and content production.
+- Implication: This may indicate that visibility is no longer the primary growth constraint.
+- Constraint: Revenue capture — the transition from engaged audience to paying customer appears less emphasized than content delivery.
+- Opportunity: Improving conversion systems and customer journeys may produce a higher return than increasing traffic.
+
+WHAT TO REFERENCE (prioritize these):
+- Actual products, services, or offers visible on the site
+- Specific pricing, frameworks, or methodologies mentioned
+- Headlines, taglines, or positioning statements
+- Content themes and patterns
+- Visible customer touchpoints
+- Business model indicators
+
+WHAT TO AVOID:
+- Stating that something is "missing" or "absent" without evidence
+- Assuming the business doesn't have systems just because they aren't visible on the website
+- Generic observations that could apply to any business
+- Inventing problems to solve
+
 REPORT SECTIONS (generate in this order):
 
 1. EXECUTIVE SUMMARY
 A concise overview of the business's current position, primary strength, and the most significant opportunity identified. 3-4 sentences maximum.
 
 2. REVENUE & CONVERSION OBSERVATIONS
-2-3 observations about how the business generates (or fails to generate) revenue from its visible assets. Focus on pricing, offers, conversion paths, and monetization gaps.
+2-3 observations about how the business generates revenue from its visible assets. Focus on what IS visible — pricing, offers, conversion paths, content-to-revenue transitions — and identify constraints in the revenue capture process.
 
 3. OPERATIONAL EFFICIENCY OBSERVATIONS
-2-3 observations about visible operational patterns — content production workflows, service delivery, team structure indicators, scalability constraints.
+2-3 observations about visible operational patterns — content production workflows, service delivery indicators, business model structure. Identify operational leverage constraints based on what you can see, not what you can't.
 
 4. CUSTOMER JOURNEY & FOLLOW-UP
-2-3 observations about the visible customer experience — from first touch to purchase. Look for gaps in follow-up, nurturing, or retention systems.
+2-3 observations about the visible customer experience — from first touch to purchase. Identify journey constraints based on observable touchpoints, not assumed missing systems.
 
 5. HIDDEN OPPORTUNITY
 Identify the single largest visible opportunity that the business owner may not currently be focused on. This should feel insightful and slightly contrarian. Examples: Conversion instead of traffic, Retention instead of acquisition, Follow-up instead of lead generation, Systems instead of more content, Operations instead of visibility.
