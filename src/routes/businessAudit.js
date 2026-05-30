@@ -5,9 +5,9 @@
  * Receives form submission, saves lead to business_intakes table immediately,
  * then asynchronously scrapes website, generates AI report, and emails it.
  *
- * Scraper Fallback Chain:
- *   Level 1: Normal HTML fetch + cheerio extraction
- *   Level 2: Jina.ai reader (renders JS, returns markdown)
+ * Scraper Fallback Chain (v3.4):
+ *   Level 1: Jina.ai reader (most reliable — renders JS, returns markdown)
+ *   Level 2: Direct HTML fetch + cheerio extraction
  *   Level 3: Meta/OG tag extraction only
  *   Level 4: Form-provided business details as evidence base
  */
@@ -22,7 +22,89 @@ const logger = require('../utils/logger');
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// ─── Scraper Level 1: Normal HTML Fetch ──────────────────────────────────────
+// ─── Scraper Level 1: Jina.ai Reader (PRIMARY) ──────────────────────────────
+
+async function scrapeLevel1_Jina(url) {
+  console.log(`[BusinessAudit] L1 (jina.ai): attempting ${url}`);
+  try {
+    const jinaUrl = `https://r.jina.ai/${url}`;
+    console.log(`[BusinessAudit] L1: fetching ${jinaUrl}`);
+    const response = await axios.get(jinaUrl, {
+      timeout: 45000,
+      headers: {
+        'Accept': 'text/plain',
+        'User-Agent': 'Mozilla/5.0 (compatible; TurboSystems/1.0)',
+      },
+    });
+
+    const markdown = (typeof response.data === 'string') ? response.data : '';
+    console.log(`[BusinessAudit] L1 (jina.ai): received ${markdown.length} chars`);
+
+    if (markdown.length < 100) {
+      console.log(`[BusinessAudit] L1 (jina.ai): INSUFFICIENT content (${markdown.length} chars < 100 threshold)`);
+      return { success: false, level: 1, error: 'Jina returned insufficient content', contentLength: 0 };
+    }
+
+    // Parse the markdown response to extract structured data
+    const lines = markdown.split('\n');
+    const titleMatch = markdown.match(/^Title:\s*(.+)$/m);
+    const title = titleMatch ? titleMatch[1].trim() : '';
+
+    // Extract headings from markdown (## heading format)
+    const headings = lines
+      .filter(l => /^#{1,3}\s/.test(l))
+      .map(l => l.replace(/^#+\s*/, '').trim())
+      .filter(Boolean)
+      .slice(0, 20);
+
+    // Extract pricing from markdown text
+    const priceMatches = (markdown.match(/\$\d+[\d,.]*|\d+\s*(?:\/mo|\/month|\/year|per month)/gi) || []).slice(0, 10);
+
+    // Extract meaningful paragraphs (lines with 30+ chars that aren't headings or metadata)
+    const paragraphs = lines
+      .filter(l => l.length > 30 && !l.startsWith('#') && !l.startsWith('Title:') && !l.startsWith('URL Source:') && !l.startsWith('Markdown Content:') && !l.startsWith('!['))
+      .map(l => l.trim())
+      .slice(0, 25);
+
+    // Extract CTA-like text
+    const ctas = lines
+      .filter(l => l.length > 2 && l.length < 80 && /buy|start|get|join|sign|book|schedule|enroll|download|free|try|order|subscribe|apply|register|claim|access|unlock|copy|checkout/i.test(l))
+      .map(l => l.replace(/^\[|\].*$/g, '').replace(/[*_`]/g, '').trim())
+      .filter(Boolean)
+      .slice(0, 10);
+
+    // Extract list items (markdown bullet points)
+    const listItems = lines
+      .filter(l => /^[-*]\s/.test(l) && l.length > 5 && l.length < 200)
+      .map(l => l.replace(/^[-*]\s*/, '').trim())
+      .slice(0, 20);
+
+    const contentLength = markdown.length;
+
+    console.log(`[BusinessAudit] L1 (jina.ai): SUCCESS — ${contentLength} chars, ${headings.length} headings, ${paragraphs.length} paragraphs, ${priceMatches.length} prices, ${ctas.length} CTAs`);
+
+    return {
+      success: true,
+      level: 1,
+      title,
+      metaDesc: '',
+      ogTitle: '',
+      ogImage: '',
+      headings,
+      paragraphs,
+      ctas,
+      pricing: [...new Set(priceMatches)],
+      listItems,
+      bodyText: markdown.slice(0, 6000),
+      contentLength,
+    };
+  } catch (err) {
+    console.log(`[BusinessAudit] L1 (jina.ai): FAILED — ${err.message}`);
+    return { success: false, level: 1, error: err.message, contentLength: 0 };
+  }
+}
+
+// ─── Scraper Level 2: Direct HTML Fetch + Cheerio (FALLBACK) ─────────────────
 
 const USER_AGENTS = [
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -30,10 +112,12 @@ const USER_AGENTS = [
   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
 ];
 
-async function fetchWithRetry(url, options = {}, retries = 3) {
-  for (let attempt = 1; attempt <= retries; attempt++) {
+async function scrapeLevel2_DirectFetch(url) {
+  console.log(`[BusinessAudit] L2 (direct fetch): attempting ${url}`);
+  try {
+    let response;
     try {
-      const response = await axios.get(url, {
+      response = await axios.get(url, {
         timeout: 30000,
         headers: {
           'User-Agent': USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)],
@@ -45,14 +129,50 @@ async function fetchWithRetry(url, options = {}, retries = 3) {
         },
         maxRedirects: 5,
         validateStatus: (status) => status < 400,
-        ...options,
       });
-      return response;
-    } catch (err) {
-      logger.warn(`[BusinessAudit] Fetch attempt ${attempt}/${retries} failed`, { url, error: err.message });
-      if (attempt === retries) throw err;
-      await new Promise(r => setTimeout(r, 2000 * attempt));
+    } catch (httpsErr) {
+      // Try HTTP fallback if HTTPS fails
+      if (url.startsWith('https://')) {
+        const httpUrl = url.replace('https://', 'http://');
+        console.log(`[BusinessAudit] L2: HTTPS failed, trying HTTP: ${httpUrl}`);
+        response = await axios.get(httpUrl, {
+          timeout: 30000,
+          headers: {
+            'User-Agent': USER_AGENTS[0],
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9',
+          },
+          maxRedirects: 5,
+          validateStatus: (status) => status < 400,
+        });
+      } else {
+        throw httpsErr;
+      }
     }
+
+    const html = (typeof response.data === 'string') ? response.data : '';
+    console.log(`[BusinessAudit] L2: received ${html.length} chars of HTML`);
+
+    if (html.length < 200) {
+      console.log(`[BusinessAudit] L2: INSUFFICIENT HTML (${html.length} chars)`);
+      return { success: false, level: 2, error: 'HTML response too short', contentLength: 0 };
+    }
+
+    const extracted = extractFromHtml(html);
+    const meaningfulText = extracted.bodyText.length;
+
+    console.log(`[BusinessAudit] L2 (direct fetch): bodyText=${meaningfulText} chars, headings=${extracted.headings.length}, paragraphs=${extracted.paragraphs.length}, pricing=${extracted.pricing.length}, ctas=${extracted.ctas.length}`);
+
+    if (meaningfulText < 200) {
+      console.log(`[BusinessAudit] L2: THIN content after extraction (${meaningfulText} chars)`);
+      return { ...extracted, success: false, level: 2, error: 'Thin content after extraction', contentLength: meaningfulText };
+    }
+
+    console.log(`[BusinessAudit] L2 (direct fetch): SUCCESS — ${meaningfulText} chars meaningful text`);
+    return { ...extracted, success: true, level: 2, contentLength: meaningfulText };
+  } catch (err) {
+    console.log(`[BusinessAudit] L2 (direct fetch): FAILED — ${err.message}`);
+    return { success: false, level: 2, error: err.message, contentLength: 0 };
   }
 }
 
@@ -67,7 +187,7 @@ function extractFromHtml(html) {
   const ogTitle = $('meta[property="og:title"]').attr('content') || '';
   const ogImage = $('meta[property="og:image"]').attr('content') || '';
 
-  // Get all headings (h1-h4)
+  // Get all headings (h1-h3)
   const h1s = $('h1').map((_, el) => $(el).text().trim()).get().filter(Boolean).slice(0, 8);
   const h2s = $('h2').map((_, el) => $(el).text().trim()).get().filter(Boolean).slice(0, 12);
   const h3s = $('h3').map((_, el) => $(el).text().trim()).get().filter(Boolean).slice(0, 10);
@@ -110,115 +230,11 @@ function extractFromHtml(html) {
   };
 }
 
-async function scrapeLevel1(url) {
-  try {
-    let response;
-    try {
-      response = await fetchWithRetry(url);
-    } catch (httpsErr) {
-      if (url.startsWith('https://')) {
-        const httpUrl = url.replace('https://', 'http://');
-        logger.info('[BusinessAudit] L1: HTTPS failed, trying HTTP', { httpUrl });
-        response = await fetchWithRetry(httpUrl);
-      } else {
-        throw httpsErr;
-      }
-    }
-
-    const extracted = extractFromHtml(response.data);
-    const meaningfulText = extracted.bodyText.length;
-
-    logger.info('[BusinessAudit] L1 scrape result', {
-      url,
-      bodyLength: meaningfulText,
-      headingsCount: extracted.headings.length,
-      paragraphsCount: extracted.paragraphs.length,
-    });
-
-    return { ...extracted, success: true, level: 1, contentLength: meaningfulText };
-  } catch (err) {
-    logger.warn('[BusinessAudit] L1 scrape failed', { url, error: err.message });
-    return { success: false, level: 1, error: err.message, contentLength: 0 };
-  }
-}
-
-// ─── Scraper Level 2: Jina.ai Reader (renders JS) ───────────────────────────
-
-async function scrapeLevel2(url) {
-  try {
-    const jinaUrl = `https://r.jina.ai/${url}`;
-    const response = await axios.get(jinaUrl, {
-      timeout: 30000,
-      headers: { 'Accept': 'text/plain' },
-    });
-
-    const markdown = response.data || '';
-    if (markdown.length < 100) {
-      return { success: false, level: 2, error: 'Jina returned insufficient content', contentLength: 0 };
-    }
-
-    // Parse the markdown response to extract structured data
-    const lines = markdown.split('\n');
-    const titleMatch = markdown.match(/^Title:\s*(.+)$/m);
-    const title = titleMatch ? titleMatch[1].trim() : '';
-
-    // Extract headings from markdown
-    const headings = lines
-      .filter(l => /^#{1,3}\s/.test(l))
-      .map(l => l.replace(/^#+\s*/, '').trim())
-      .filter(Boolean)
-      .slice(0, 20);
-
-    // Extract pricing from markdown text
-    const priceMatches = (markdown.match(/\$\d+[\d,.]*|\d+\s*(?:\/mo|\/month|\/year|per month)/gi) || []).slice(0, 10);
-
-    // Extract meaningful paragraphs (lines with 30+ chars that aren't headings or metadata)
-    const paragraphs = lines
-      .filter(l => l.length > 30 && !l.startsWith('#') && !l.startsWith('Title:') && !l.startsWith('URL Source:') && !l.startsWith('Markdown Content:') && !l.startsWith('!['))
-      .map(l => l.trim())
-      .slice(0, 25);
-
-    // Extract CTA-like text
-    const ctas = lines
-      .filter(l => l.length > 2 && l.length < 80 && /buy|start|get|join|sign|book|schedule|enroll|download|free|try|order|subscribe|apply|register|claim|access|unlock|copy|checkout/i.test(l))
-      .map(l => l.replace(/^\[|\].*$/g, '').trim())
-      .slice(0, 10);
-
-    const contentLength = markdown.length;
-
-    logger.info('[BusinessAudit] L2 Jina scrape result', {
-      url,
-      contentLength,
-      headingsCount: headings.length,
-      paragraphsCount: paragraphs.length,
-    });
-
-    return {
-      success: true,
-      level: 2,
-      title,
-      metaDesc: '',
-      ogTitle: '',
-      ogImage: '',
-      headings,
-      paragraphs,
-      ctas,
-      pricing: [...new Set(priceMatches)],
-      listItems: [],
-      bodyText: markdown.slice(0, 5000),
-      contentLength,
-    };
-  } catch (err) {
-    logger.warn('[BusinessAudit] L2 Jina scrape failed', { url, error: err.message });
-    return { success: false, level: 2, error: err.message, contentLength: 0 };
-  }
-}
-
 // ─── Scraper Level 3: Meta/OG Tag Extraction Only ────────────────────────────
 
-async function scrapeLevel3(url) {
+async function scrapeLevel3_Meta(url) {
+  console.log(`[BusinessAudit] L3 (meta/OG): attempting ${url}`);
   try {
-    // Fetch just the head portion with a short timeout
     const response = await axios.get(url, {
       timeout: 15000,
       headers: {
@@ -240,7 +256,6 @@ async function scrapeLevel3(url) {
     const twitterDesc = $('meta[name="twitter:description"]').attr('content') || '';
     const keywords = $('meta[name="keywords"]').attr('content') || '';
 
-    // Collect social links
     const socialLinks = $('a[href*="instagram.com"], a[href*="twitter.com"], a[href*="linkedin.com"], a[href*="facebook.com"], a[href*="tiktok.com"], a[href*="youtube.com"]')
       .map((_, el) => $(el).attr('href'))
       .get()
@@ -248,16 +263,16 @@ async function scrapeLevel3(url) {
 
     const metaContent = [title, metaDesc, ogTitle, ogDesc, ogSiteName, twitterTitle, twitterDesc, keywords].filter(Boolean).join(' ');
 
-    logger.info('[BusinessAudit] L3 meta extraction result', {
-      url,
-      hasTitle: !!title,
-      hasOgTitle: !!ogTitle,
-      hasMetaDesc: !!metaDesc,
-      contentLength: metaContent.length,
-    });
+    console.log(`[BusinessAudit] L3 (meta/OG): title="${title}", ogTitle="${ogTitle}", metaDesc="${metaDesc ? metaDesc.slice(0, 60) + '...' : ''}", totalLength=${metaContent.length}`);
 
+    if (metaContent.length <= 20) {
+      console.log(`[BusinessAudit] L3: INSUFFICIENT meta content (${metaContent.length} chars)`);
+      return { success: false, level: 3, error: 'Insufficient meta content', contentLength: 0 };
+    }
+
+    console.log(`[BusinessAudit] L3 (meta/OG): SUCCESS — ${metaContent.length} chars from meta tags`);
     return {
-      success: metaContent.length > 20,
+      success: true,
       level: 3,
       title: title || ogTitle || twitterTitle,
       metaDesc: metaDesc || ogDesc || twitterDesc,
@@ -275,7 +290,7 @@ async function scrapeLevel3(url) {
       contentLength: metaContent.length,
     };
   } catch (err) {
-    logger.warn('[BusinessAudit] L3 meta extraction failed', { url, error: err.message });
+    console.log(`[BusinessAudit] L3 (meta/OG): FAILED — ${err.message}`);
     return { success: false, level: 3, error: err.message, contentLength: 0 };
   }
 }
@@ -285,37 +300,43 @@ async function scrapeLevel3(url) {
 async function scrapeWebsite(url) {
   // Normalize URL
   if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+  console.log(`[BusinessAudit] ═══ SCRAPER START ═══ URL: ${url}`);
 
-  // Level 1: Normal HTML fetch
-  let result = await scrapeLevel1(url);
-  if (result.success && result.bodyText && result.bodyText.length >= 500) {
-    logger.info('[BusinessAudit] Using L1 scrape (sufficient content)', { url, contentLength: result.contentLength });
-    return result;
-  }
-
-  // Level 2: Jina.ai reader (renders JS)
-  logger.info('[BusinessAudit] L1 thin/failed, trying L2 Jina reader', { url, l1Length: result.contentLength || 0 });
-  const jinaResult = await scrapeLevel2(url);
-  if (jinaResult.success && jinaResult.contentLength >= 500) {
-    logger.info('[BusinessAudit] Using L2 Jina scrape', { url, contentLength: jinaResult.contentLength });
+  // Level 1: Jina.ai reader (PRIMARY — most reliable, renders JS)
+  const jinaResult = await scrapeLevel1_Jina(url);
+  if (jinaResult.success && jinaResult.contentLength >= 300) {
+    console.log(`[BusinessAudit] ✓ Using L1 (jina.ai) — ${jinaResult.contentLength} chars`);
     return jinaResult;
   }
 
+  // Level 2: Direct HTML fetch + cheerio
+  console.log(`[BusinessAudit] L1 insufficient (${jinaResult.contentLength || 0} chars), falling back to L2 (direct fetch)...`);
+  const fetchResult = await scrapeLevel2_DirectFetch(url);
+  if (fetchResult.success && fetchResult.contentLength >= 300) {
+    console.log(`[BusinessAudit] ✓ Using L2 (direct fetch) — ${fetchResult.contentLength} chars`);
+    return fetchResult;
+  }
+
   // Level 3: Meta/OG tags only
-  logger.info('[BusinessAudit] L2 thin/failed, trying L3 meta extraction', { url, l2Length: jinaResult.contentLength || 0 });
-  const metaResult = await scrapeLevel3(url);
+  console.log(`[BusinessAudit] L2 insufficient (${fetchResult.contentLength || 0} chars), falling back to L3 (meta/OG)...`);
+  const metaResult = await scrapeLevel3_Meta(url);
   if (metaResult.success) {
-    logger.info('[BusinessAudit] Using L3 meta extraction', { url, contentLength: metaResult.contentLength });
+    console.log(`[BusinessAudit] ✓ Using L3 (meta/OG) — ${metaResult.contentLength} chars`);
     return metaResult;
   }
 
-  // All levels failed — return best available (L1 if it got anything, otherwise failure)
-  if (result.success && result.contentLength > 0) {
-    logger.info('[BusinessAudit] All levels thin, using best L1 result', { url, contentLength: result.contentLength });
-    return result;
+  // Return best available result even if thin
+  console.log(`[BusinessAudit] ✗ ALL LEVELS FAILED or thin content`);
+  if (jinaResult.contentLength > 0) {
+    console.log(`[BusinessAudit] Returning best available: L1 jina with ${jinaResult.contentLength} chars`);
+    return { ...jinaResult, success: true };
+  }
+  if (fetchResult.contentLength > 0) {
+    console.log(`[BusinessAudit] Returning best available: L2 fetch with ${fetchResult.contentLength} chars`);
+    return { ...fetchResult, success: true };
   }
 
-  logger.error('[BusinessAudit] All scraper levels failed', { url });
+  console.log(`[BusinessAudit] ═══ SCRAPER END ═══ TOTAL FAILURE — no content retrieved`);
   return { success: false, level: 0, error: 'All scraper levels failed', contentLength: 0 };
 }
 
@@ -346,6 +367,12 @@ function calculateEvidenceScore(scraped, formData) {
     const ctaCount = Math.min((scraped.ctas || []).length, 5);
     score += ctaCount * 2;
     if (ctaCount > 0) details.push(`ctas:+${ctaCount * 2}`);
+
+    // Bonus: if bodyText is substantial, add points
+    if ((scraped.bodyText || '').length >= 1000) {
+      score += 3;
+      details.push('bodyText:+3');
+    }
   }
 
   // Form-provided details: +2 each
@@ -353,6 +380,7 @@ function calculateEvidenceScore(scraped, formData) {
   if (formData.priceRange) { score += 2; details.push('priceRange:+2'); }
   if (formData.mainCTA) { score += 2; details.push('mainCTA:+2'); }
 
+  console.log(`[BusinessAudit] Evidence score: ${score} (${details.join(', ')})`);
   return { score, details };
 }
 
@@ -377,6 +405,8 @@ async function generateAuditReport(data, reportMode) {
   } else {
     websiteContext = `Website URL provided: ${websiteUrl || 'None'}. (Could not scrape — website content unavailable.)`;
   }
+
+  console.log(`[BusinessAudit] Website context for OpenAI: ${websiteContext.length} chars (mode: ${reportMode})`);
 
   // Form-provided business details
   const formContext = `BUSINESS OWNER PROVIDED DETAILS:
@@ -879,7 +909,7 @@ router.post('/business-audit', async (req, res) => {
       [fullName, email, businessName, websiteUrl || null, instagramUrl || null, industry || null, biggestChallenge || null]
     );
     const leadId = insertResult.rows[0]?.id;
-    logger.info('[BusinessAudit] Lead saved', { leadId, email, businessName });
+    console.log(`[BusinessAudit] Lead saved: id=${leadId}, email=${email}, business=${businessName}`);
 
     // Respond immediately — report mode will be determined during async processing
     res.status(201).json({
@@ -891,19 +921,15 @@ router.post('/business-audit', async (req, res) => {
     // ── Async background processing ──────────────────────────────────────────
     (async () => {
       try {
-        logger.info(`[BusinessAudit] Starting async processing for lead ${leadId}`);
+        console.log(`[BusinessAudit] ═══ ASYNC START ═══ Lead ${leadId}, URL: ${websiteUrl || 'NONE'}`);
 
         // 1. Scrape website (4-level fallback chain)
         let scraped = null;
         if (websiteUrl) {
           scraped = await scrapeWebsite(websiteUrl);
-          logger.info(`[BusinessAudit] Scrape complete`, {
-            success: scraped.success,
-            level: scraped.level,
-            leadId,
-            contentLength: scraped.contentLength || 0,
-            url: websiteUrl,
-          });
+          console.log(`[BusinessAudit] Scrape complete for lead ${leadId}: success=${scraped.success}, level=${scraped.level}, content=${scraped.contentLength || 0} chars`);
+        } else {
+          console.log(`[BusinessAudit] No website URL provided for lead ${leadId}`);
         }
 
         // 2. Calculate evidence score
@@ -911,23 +937,15 @@ router.post('/business-audit', async (req, res) => {
         const { score: evidenceScore, details: evidenceDetails } = calculateEvidenceScore(scraped, formData);
         const reportMode = evidenceScore >= 5 ? 'full' : 'limited';
 
-        logger.info(`[BusinessAudit] Evidence score calculated`, {
-          leadId,
-          evidenceScore,
-          reportMode,
-          details: evidenceDetails.join(', '),
-        });
+        console.log(`[BusinessAudit] Lead ${leadId}: evidenceScore=${evidenceScore}, mode=${reportMode}, details=[${evidenceDetails.join(', ')}]`);
 
         // 3. Generate AI report (mode-dependent)
+        console.log(`[BusinessAudit] Generating ${reportMode} report for lead ${leadId}...`);
         const report = await generateAuditReport(
           { fullName, businessName, websiteUrl, instagramUrl, industry, biggestChallenge, scraped, mainOffer, priceRange, mainCTA },
           reportMode
         );
-        logger.info(`[BusinessAudit] AI report generated for lead ${leadId}`, {
-          reportMode,
-          evidenceScore,
-          hasVisibleSignals: !!(report.visibleSignals && report.visibleSignals.length > 0),
-        });
+        console.log(`[BusinessAudit] AI report generated for lead ${leadId}: mode=${reportMode}, signals=${(report.visibleSignals || []).length}`);
 
         // 4. Build HTML
         const htmlReport = buildReportHtml(report, businessName, fullName, reportMode);
@@ -941,7 +959,7 @@ router.post('/business-audit', async (req, res) => {
           subject: emailSubject,
           html: htmlReport,
         });
-        logger.info(`[BusinessAudit] Email sent: ${emailSent}`, { leadId, email, reportMode });
+        console.log(`[BusinessAudit] Email sent for lead ${leadId}: ${emailSent ? 'SUCCESS' : 'FAILED'}`);
 
         // 6. Update DB record
         const reportSummary = JSON.stringify({
@@ -958,7 +976,7 @@ router.post('/business-audit', async (req, res) => {
           `UPDATE business_intakes SET status='follow_up', short_term_goal=$1, long_term_vision=$2, updated_at=NOW() WHERE id=$3`,
           [reportSummary.slice(0, 1000), htmlReport, leadId]
         );
-        logger.info(`[BusinessAudit] DB record updated for lead ${leadId}`);
+        console.log(`[BusinessAudit] DB updated for lead ${leadId}`);
 
         // 7. Notify owner
         const adminEmail = process.env.ADMIN_EMAIL || 'collinsdemarcus4@gmail.com';
@@ -973,12 +991,16 @@ router.post('/business-audit', async (req, res) => {
                  <p>Email sent: <strong>${emailSent ? 'YES' : 'FAILED'}</strong></p>`,
         }).catch(() => {});
 
+        console.log(`[BusinessAudit] ═══ ASYNC COMPLETE ═══ Lead ${leadId}`);
+
       } catch (asyncErr) {
+        console.error(`[BusinessAudit] ASYNC ERROR for lead ${leadId}: ${asyncErr.message}`, asyncErr.stack);
         logger.error('[BusinessAudit] Async processing error', { error: asyncErr.message, leadId });
       }
     })();
 
   } catch (err) {
+    console.error(`[BusinessAudit] ROUTE ERROR: ${err.message}`, err.stack);
     logger.error('[BusinessAudit] Route error', { error: err.message });
     res.status(500).json({ success: false, error: err.message || 'Internal server error' });
   }
