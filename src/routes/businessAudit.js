@@ -406,7 +406,8 @@ async function generateAuditReport(data, reportMode) {
     websiteContext = `Website URL provided: ${websiteUrl || 'None'}. (Could not scrape — website content unavailable.)`;
   }
 
-  console.log(`[BusinessAudit] Website context for OpenAI: ${websiteContext.length} chars (mode: ${reportMode})`);
+  console.log(`[BusinessAudit] Website context for OpenAI — length: ${websiteContext.length}, first 300 chars: ${websiteContext.substring(0, 300)}`);
+  console.log(`[BusinessAudit] Scraped data check — success: ${scraped ? scraped.success : 'null'}, level: ${scraped ? scraped.level : 'null'}, headings: ${scraped ? (scraped.headings || []).length : 0}, paragraphs: ${scraped ? (scraped.paragraphs || []).length : 0}`);
 
   // Form-provided business details
   const formContext = `BUSINESS OWNER PROVIDED DETAILS:
@@ -1004,6 +1005,93 @@ router.post('/business-audit', async (req, res) => {
     logger.error('[BusinessAudit] Route error', { error: err.message });
     res.status(500).json({ success: false, error: err.message || 'Internal server error' });
   }
+});
+
+// ─── GET /api/business-audit/debug-scrape ────────────────────────────────────
+// Temporary debug endpoint to test scraper from Render's environment.
+// Usage: GET /api/business-audit/debug-scrape?url=https://www.yammifr.com
+
+router.get('/business-audit/debug-scrape', async (req, res) => {
+  const url = req.query.url;
+  if (!url) {
+    return res.status(400).json({ error: 'Missing ?url= parameter' });
+  }
+
+  console.log(`[BusinessAudit] ═══ DEBUG SCRAPE ═══ URL: ${url}`);
+  const results = {};
+
+  // Test Level 1: Jina.ai
+  try {
+    const jinaStart = Date.now();
+    const jinaResult = await scrapeLevel1_Jina(url);
+    results.jinaAttempt = {
+      success: jinaResult.success,
+      contentLength: jinaResult.contentLength || 0,
+      error: jinaResult.error || null,
+      durationMs: Date.now() - jinaStart,
+      headingsCount: (jinaResult.headings || []).length,
+      paragraphsCount: (jinaResult.paragraphs || []).length,
+      pricingCount: (jinaResult.pricing || []).length,
+      ctasCount: (jinaResult.ctas || []).length,
+      firstChars: (jinaResult.bodyText || '').substring(0, 500),
+    };
+  } catch (err) {
+    results.jinaAttempt = { success: false, error: err.message, contentLength: 0 };
+  }
+
+  // Test Level 2: Direct fetch
+  try {
+    const fetchStart = Date.now();
+    const fetchResult = await scrapeLevel2_DirectFetch(url);
+    results.directFetchAttempt = {
+      success: fetchResult.success,
+      contentLength: fetchResult.contentLength || 0,
+      error: fetchResult.error || null,
+      durationMs: Date.now() - fetchStart,
+      headingsCount: (fetchResult.headings || []).length,
+      paragraphsCount: (fetchResult.paragraphs || []).length,
+      pricingCount: (fetchResult.pricing || []).length,
+      ctasCount: (fetchResult.ctas || []).length,
+      firstChars: (fetchResult.bodyText || '').substring(0, 500),
+    };
+  } catch (err) {
+    results.directFetchAttempt = { success: false, error: err.message, contentLength: 0 };
+  }
+
+  // Determine which level would be used
+  const scraped = (results.jinaAttempt.success && results.jinaAttempt.contentLength >= 300)
+    ? { success: true, level: 1, headings: [], paragraphs: [], pricing: [], ctas: [], bodyText: results.jinaAttempt.firstChars, contentLength: results.jinaAttempt.contentLength }
+    : (results.directFetchAttempt.success && results.directFetchAttempt.contentLength >= 300)
+      ? { success: true, level: 2, headings: [], paragraphs: [], pricing: [], ctas: [], bodyText: results.directFetchAttempt.firstChars, contentLength: results.directFetchAttempt.contentLength }
+      : { success: false, level: 0, contentLength: 0 };
+
+  // Calculate evidence score (simplified — just using the winning scrape)
+  let winningResult = null;
+  if (results.jinaAttempt.success && results.jinaAttempt.contentLength >= 300) {
+    winningResult = results.jinaAttempt;
+  } else if (results.directFetchAttempt.success && results.directFetchAttempt.contentLength >= 300) {
+    winningResult = results.directFetchAttempt;
+  }
+
+  let evidenceScore = 0;
+  if (winningResult) {
+    evidenceScore += Math.min(winningResult.headingsCount, 10) * 2;
+    evidenceScore += Math.min(winningResult.paragraphsCount, 10);
+    if (winningResult.pricingCount > 0) evidenceScore += 3;
+    evidenceScore += Math.min(winningResult.ctasCount, 5) * 2;
+    if (winningResult.contentLength >= 1000) evidenceScore += 3;
+  }
+
+  results.summary = {
+    scrapeLevel: scraped.level,
+    wouldUseMode: evidenceScore >= 5 ? 'full' : 'limited',
+    evidenceScore,
+    url,
+    timestamp: new Date().toISOString(),
+  };
+
+  console.log(`[BusinessAudit] ═══ DEBUG SCRAPE COMPLETE ═══`, JSON.stringify(results.summary));
+  res.json(results);
 });
 
 // ─── GET /api/business-audit/list ───────────────────────────────────────────
