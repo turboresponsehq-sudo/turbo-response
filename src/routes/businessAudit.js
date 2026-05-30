@@ -61,64 +61,81 @@ async function generateAuditReport(data) {
     ? `Website Title: ${scraped.title}\nMeta Description: ${scraped.metaDesc}\nKey Headings: ${scraped.headings.join(' | ')}\nPage Content Excerpt: ${scraped.bodyText}`
     : `Website URL provided: ${websiteUrl || 'None'}. (Could not scrape — use business info only.)`;
 
-  const systemPrompt = `ROLE
+  const systemPrompt = `You are a Business Intelligence Advisor and Operations Strategist for Turbo Systems, a business intelligence and operations advisory firm. You analyze businesses based on publicly visible information and generate executive-level intelligence reports.
 
-You are Turbo Systems Business Intelligence — an executive business strategist specializing in operations, revenue systems, customer acquisition infrastructure, automation, and business growth.
+PRIMARY OBJECTIVE:
+The goal is NOT to generate recommendations. The goal is to generate observations that create authority, curiosity, and business conversations. The business owner should repeatedly think: "How did they notice that?" Every recommendation must be based on a visible observation or business inference.
 
-Your job is to identify visible business opportunities, operational bottlenecks, positioning weaknesses, revenue gaps, and automation opportunities based on publicly available business information.
+OBSERVATION-FIRST STRUCTURE:
+Never jump directly to recommendations. Use this structure for every insight:
+- Observation (what you actually see)
+- Business Implication (what it likely means)
+- Opportunity (what could be done differently)
 
-You are NOT performing a technical audit. You are performing a strategic business observation.
+EXECUTIVE POSITIONING:
+Act as: Business Intelligence Advisor, Operations Strategist, Growth Systems Consultant, Revenue Optimization Analyst.
+Do NOT act as: Marketing Consultant, Social Media Coach, SEO Consultant, Technical Auditor.
 
-CRITICAL INSTRUCTIONS
+MONEY-FIRST FRAMEWORK (priority order):
+1. Revenue
+2. Conversion
+3. Lead Flow
+4. Follow-Up Systems
+5. Customer Journey
+6. Operational Efficiency
+7. Automation
+8. Marketing (only when connected to revenue or operational outcomes)
 
-1. You MUST reference at least 3 specific details from the business's actual website content, social presence, or stated challenge. Generic observations that could apply to any business are unacceptable.
+FORCED SPECIFICITY RULES:
+- You MUST reference actual content from the website: products, offers, pricing, headlines, calls-to-action, frameworks, services, statements, claims.
+- BAD: "Improve your conversions."
+- GOOD: "The site clearly explains the 60/30/10 framework, but the transition from education to transaction appears less emphasized than the educational content itself."
+- Each section MUST contain 2-3 specific observations minimum, each following the Observation → Implication → Opportunity structure.
+- Include at least one quantified observation (e.g., "With X followers and a $Y product, even a Z% conversion rate represents significant untapped revenue").
 
-2. You MUST address the business owner's stated challenge by name in the Executive Summary and tie at least one recommendation directly to solving it.
+REPORT SECTIONS (generate in this order):
 
-3. Prioritize observations in this order:
-   - Operations first (how the business runs, processes, systems)
-   - Revenue second (how money is made, conversion, monetization)
-   - Marketing third (visibility, positioning, audience)
+1. EXECUTIVE SUMMARY
+A concise overview of the business's current position, primary strength, and the most significant opportunity identified. 3-4 sentences maximum.
 
-4. Create at least 2-3 "how did they notice that?" moments — observations that feel specific and insightful enough that the business owner feels genuinely analyzed, not generically assessed.
+2. REVENUE & CONVERSION OBSERVATIONS
+2-3 observations about how the business generates (or fails to generate) revenue from its visible assets. Focus on pricing, offers, conversion paths, and monetization gaps.
 
-5. Do NOT use generic recommendations like "improve conversions" or "use automation" or "increase visibility" without explaining the SPECIFIC gap you observed and WHY it matters for THIS business.
+3. OPERATIONAL EFFICIENCY OBSERVATIONS
+2-3 observations about visible operational patterns — content production workflows, service delivery, team structure indicators, scalability constraints.
 
-6. When making observations, be specific. Instead of "improve calls to action," say something like: "Your public-facing content strongly communicates [specific thing], but there appears to be a gap between [specific observation] and [specific outcome]. A visitor can quickly understand [X], but it is less clear what the next purchasing step should be."
+4. CUSTOMER JOURNEY & FOLLOW-UP
+2-3 observations about the visible customer experience — from first touch to purchase. Look for gaps in follow-up, nurturing, or retention systems.
 
-7. Mix confident observations with hedging language. Use hedging ("may indicate," "appears to," "suggests") for uncertain inferences, but use confident language for things that are clearly visible.
+5. HIDDEN OPPORTUNITY
+Identify the single largest visible opportunity that the business owner may not currently be focused on. This should feel insightful and slightly contrarian. Examples: Conversion instead of traffic, Retention instead of acquisition, Follow-up instead of lead generation, Systems instead of more content, Operations instead of visibility.
 
-Rule 1: Observation Before Recommendation
+6. EXECUTIVE RISK
+Identify one visible business risk that could limit future growth. Examples: Heavy dependence on founder, Lack of follow-up systems, Revenue concentration, Operational bottlenecks, Inconsistent customer journey. Use cautious language: "may indicate," "appears to," "could suggest." Do NOT overstate.
 
-Every recommendation must be preceded by an observation, an indicator, and a business inference. Never just say "Do X." Instead: "We observed Y, which may indicate Z. Therefore, consider X."
+7. EXECUTIVE INSIGHT
+Challenge a common assumption the business owner likely holds. Introduce a strategic perspective that creates a "pause and think" moment. This should feel like something a paid consultant would say — not generic advice.
 
-Rule 2: Force One Contrarian Insight
+8. STRATEGIC RECOMMENDATIONS (exactly 3)
+Prioritized by business impact. Each must trace back to a specific observation from the report. Label them: Highest Impact, Second Priority, Third Priority. Each recommendation gets a title and 2-3 sentence explanation connecting it to the observation.
 
-The Executive Insight section MUST contain a contrarian or non-obvious observation. Something the business owner has NOT already thought of. Example pattern: "Businesses at this stage often believe their next challenge is [common assumption]. Based on the public signals reviewed, the larger opportunity may be [unexpected insight] rather than [what they expect]."
+REPORT TONE:
+- Executive, Strategic, Direct, Observational, Credible, Concise
+- Avoid: hype, motivational language, generic business advice, marketing consultant tone
+- Use language like: "Our analysis indicates...", "The visible data suggests...", "Based on observable patterns..."
 
-Rule 3: Money Language
+OUTPUT FORMAT:
+Return a valid JSON object with these exact keys:
+- executiveSummary (string)
+- revenueConversion (array of objects with "observation", "implication", "opportunity" keys)
+- operationalEfficiency (array of objects with "observation", "implication", "opportunity" keys)
+- customerJourney (array of objects with "observation", "implication", "opportunity" keys)
+- hiddenOpportunity (object with "title" and "analysis" keys)
+- executiveRisk (object with "title" and "analysis" keys)
+- executiveInsight (string)
+- recommendations (array of 3 objects with "priority", "title", "explanation" keys where priority is "Highest Impact", "Second Priority", or "Third Priority")
 
-The report should frequently reference: revenue, conversion, lead flow, customer journey, response speed, follow-up, retention, monetization. Avoid centering observations around: engagement, followers, content consistency — UNLESS those directly connect to a revenue outcome.
-
-Rule 4: Prioritize Opportunities
-
-In the Strategic Recommendations section, frame recommendations as prioritized impact areas. Label them clearly (e.g., "Highest Impact," "Second Priority," "Third Priority"). Business owners respond to clear prioritization. Use these labels as the priority field values in the JSON.
-
-Rule 5: End With a Gap
-
-The closing CTA must create curiosity about what ELSE might be found. Use the exact closing text specified in the CALL TO ACTION section below.
-
-TONE
-
-Executive. Strategic. Consultative. Professional. Clear. Confident. Specific.
-
-Write like a senior strategist who has analyzed hundreds of businesses and can immediately see patterns and opportunities.
-
-LENGTH
-
-700-1200 words maximum.
-
-Output ONLY valid JSON with the exact keys specified.`;
+WORD COUNT: Target 800-1400 words total across all sections.`;
 
   const userPrompt = `Analyze this business and produce a Business Intelligence Report.
 
@@ -132,28 +149,7 @@ BUSINESS DETAILS:
 WEBSITE INTELLIGENCE:
 ${websiteContext}
 
-REPORT SECTIONS — return a JSON object with these exact keys:
-{
-  "executiveSummary": "Short overview of the business, its visible strengths, and the most important opportunities observed. MUST reference the owner's stated challenge directly.",
-  "customerAcquisition": ["specific observation about lead generation, messaging, trust building, social presence, calls to action, or conversion — reference actual content from their website or social presence"],
-  "operationalEfficiency": ["specific observation about manual process indicators, follow-up weaknesses, communication bottlenecks, workflow inefficiencies, or scalability constraints — focus on HOW the business appears to operate"],
-  "automationOpportunities": ["specific area where automation could improve lead handling, customer communication, intake, scheduling, reporting, or follow-up — state WHAT should be automated and WHY based on what you observed"],
-  "revenueOpportunities": ["specific opportunity to increase conversion, improve retention, improve response speed, strengthen monetization systems, or improve the customer journey — focus on the gap between audience/traffic and actual revenue generation"],
-  "executiveInsight": "One powerful paragraph synthesizing the most important strategic observation about this business. Identify WHERE the business is in its growth journey and what the NEXT constraint is. This is the 'how did they know that?' moment. Write directly to the owner.",
-  "strategicRecommendations": [
-    {"priority": "Highest Impact", "action": "specific highest-impact action tied to an observed gap", "rationale": "observation + indicator + business inference for THIS business"},
-    {"priority": "Second Priority", "action": "specific second highest-impact action", "rationale": "observation + indicator + business inference for THIS business"},
-    {"priority": "Third Priority", "action": "specific third highest-impact action", "rationale": "observation + indicator + business inference for THIS business"}
-  ]
-}
-
-CALL TO ACTION
-
-Close the report with exactly this text (do not include it in the JSON — it will be appended by the system):
-
-"These observations are based entirely on publicly visible business information. Internal workflows, customer acquisition data, sales processes, and operational systems were not reviewed and may reveal additional high-impact opportunities not visible from the outside.
-
-If you would like a deeper business intelligence review, workflow assessment, or automation strategy session, Turbo Systems can provide a customized implementation roadmap."`;
+Return ONLY valid JSON matching the output format specified in your instructions.`;
 
   const timeoutPromise = new Promise((_, reject) =>
     setTimeout(() => reject(new Error('OpenAI timeout after 90 seconds')), 90000)
@@ -177,15 +173,23 @@ If you would like a deeper business intelligence review, workflow assessment, or
 // ─── HTML Report Builder ──────────────────────────────────────────────────────
 
 function buildReportHtml(report, businessName, fullName) {
-  const listItems = (arr) => (arr || []).map(item =>
-    `<li style="margin-bottom:10px;padding-left:4px;color:#2d3748;font-size:14px;line-height:1.7;">${item}</li>`).join('');
+  const observationItems = (arr) => (arr || []).map(item => `
+    <div style="margin-bottom:14px;">
+      <div style="font-size:13px;font-weight:700;color:#2d3748;margin-bottom:3px;">Observation:</div>
+      <div style="font-size:13px;color:#4a5568;line-height:1.6;margin-bottom:8px;">${item.observation || ''}</div>
+      <div style="font-size:13px;font-weight:700;color:#2d3748;margin-bottom:3px;">Business Implication:</div>
+      <div style="font-size:13px;color:#4a5568;line-height:1.6;margin-bottom:8px;">${item.implication || ''}</div>
+      <div style="font-size:13px;font-weight:700;color:#2d3748;margin-bottom:3px;">Opportunity:</div>
+      <div style="font-size:13px;color:#4a5568;line-height:1.6;">${item.opportunity || ''}</div>
+    </div>`).join('');
 
-  const strategicRecsHtml = (report.strategicRecommendations || []).map(rec => `
+  const strategicRecsHtml = (report.recommendations || []).map((rec, idx) => `
     <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:16px;">
-      <div style="min-width:32px;height:32px;background:#4285F4;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;flex-shrink:0;line-height:32px;text-align:center;">${rec.priority}</div>
+      <div style="min-width:36px;height:36px;background:#4285F4;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px;flex-shrink:0;">${idx + 1}</div>
       <div>
-        <div style="font-weight:700;color:#1a1a2e;font-size:14px;margin-bottom:4px;">${rec.action}</div>
-        <div style="color:#718096;font-size:13px;line-height:1.6;">${rec.rationale}</div>
+        <div style="display:inline-block;background:rgba(66,133,244,0.1);border:1px solid rgba(66,133,244,0.3);border-radius:12px;padding:2px 10px;font-size:11px;font-weight:700;color:#4285F4;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">${rec.priority || ''}</div>
+        <div style="font-weight:700;color:#1a1a2e;font-size:14px;margin-bottom:4px;">${rec.title || ''}</div>
+        <div style="color:#718096;font-size:13px;line-height:1.6;">${rec.explanation || ''}</div>
       </div>
     </div>`).join('');
 
@@ -218,29 +222,39 @@ function buildReportHtml(report, businessName, fullName) {
       <p style="margin:0;font-size:15px;color:#2d3748;line-height:1.7;">${report.executiveSummary || ''}</p>
     </div>
 
-    <!-- Customer Acquisition -->
+    <!-- Revenue & Conversion Observations -->
     <div style="background:#f0fff4;border:1px solid #c6f6d5;border-radius:8px;padding:20px 24px;margin-bottom:24px;">
-      <div style="font-size:11px;letter-spacing:2px;color:#38a169;text-transform:uppercase;font-weight:700;margin-bottom:12px;">Customer Acquisition Observations</div>
-      <ul style="margin:0;padding-left:20px;">${listItems(report.customerAcquisition)}</ul>
+      <div style="font-size:11px;letter-spacing:2px;color:#38a169;text-transform:uppercase;font-weight:700;margin-bottom:12px;">Revenue & Conversion Observations</div>
+      ${observationItems(report.revenueConversion)}
     </div>
 
-    <!-- Operational Efficiency -->
+    <!-- Operational Efficiency Observations -->
     <div style="background:#fffbeb;border:1px solid #fbd38d;border-radius:8px;padding:20px 24px;margin-bottom:24px;">
-      <div style="font-size:11px;letter-spacing:2px;color:#d69e2e;text-transform:uppercase;font-weight:700;margin-bottom:12px;">Operational Efficiency Opportunities</div>
-      <ul style="margin:0;padding-left:20px;">${listItems(report.operationalEfficiency)}</ul>
+      <div style="font-size:11px;letter-spacing:2px;color:#d69e2e;text-transform:uppercase;font-weight:700;margin-bottom:12px;">Operational Efficiency Observations</div>
+      ${observationItems(report.operationalEfficiency)}
     </div>
 
-    <!-- Automation Opportunities -->
+    <!-- Customer Journey & Follow-Up -->
     <div style="background:#ebf8ff;border:1px solid #bee3f8;border-radius:8px;padding:20px 24px;margin-bottom:24px;">
-      <div style="font-size:11px;letter-spacing:2px;color:#2b6cb0;text-transform:uppercase;font-weight:700;margin-bottom:12px;">Automation Opportunities</div>
-      <ul style="margin:0;padding-left:20px;">${listItems(report.automationOpportunities)}</ul>
+      <div style="font-size:11px;letter-spacing:2px;color:#2b6cb0;text-transform:uppercase;font-weight:700;margin-bottom:12px;">Customer Journey & Follow-Up</div>
+      ${observationItems(report.customerJourney)}
     </div>
 
-    <!-- Revenue Opportunities -->
+    <!-- Hidden Opportunity -->
+    ${report.hiddenOpportunity ? `
+    <div style="background:#faf5ff;border:1px solid #e9d8fd;border-radius:8px;padding:20px 24px;margin-bottom:24px;">
+      <div style="font-size:11px;letter-spacing:2px;color:#6b46c1;text-transform:uppercase;font-weight:700;margin-bottom:12px;">Hidden Opportunity</div>
+      <div style="font-weight:700;color:#1a1a2e;font-size:14px;margin-bottom:8px;">${report.hiddenOpportunity.title || ''}</div>
+      <p style="margin:0;font-size:13px;color:#4a5568;line-height:1.7;">${report.hiddenOpportunity.analysis || ''}</p>
+    </div>` : ''}
+
+    <!-- Executive Risk -->
+    ${report.executiveRisk ? `
     <div style="background:#fff5f5;border:1px solid #fed7d7;border-radius:8px;padding:20px 24px;margin-bottom:24px;">
-      <div style="font-size:11px;letter-spacing:2px;color:#e53e3e;text-transform:uppercase;font-weight:700;margin-bottom:12px;">Revenue Opportunity Areas</div>
-      <ul style="margin:0;padding-left:20px;">${listItems(report.revenueOpportunities)}</ul>
-    </div>
+      <div style="font-size:11px;letter-spacing:2px;color:#e53e3e;text-transform:uppercase;font-weight:700;margin-bottom:12px;">Executive Risk</div>
+      <div style="font-weight:700;color:#1a1a2e;font-size:14px;margin-bottom:8px;">${report.executiveRisk.title || ''}</div>
+      <p style="margin:0;font-size:13px;color:#4a5568;line-height:1.7;">${report.executiveRisk.analysis || ''}</p>
+    </div>` : ''}
 
     <!-- Executive Insight -->
     ${report.executiveInsight ? `
@@ -257,7 +271,7 @@ function buildReportHtml(report, businessName, fullName) {
 
     <!-- Call to Action -->
     <div style="background:linear-gradient(135deg,#1a1a2e,#0f3460);border-radius:8px;padding:28px 32px;margin-bottom:8px;">
-      <p style="margin:0 0 16px;font-size:13px;color:#a0aec0;line-height:1.7;">These observations are based entirely on publicly visible business information. Internal workflows, customer acquisition data, sales processes, and operational systems were not reviewed and may reveal additional high-impact opportunities not visible from the outside.</p>
+      <p style="margin:0 0 16px;font-size:13px;color:#a0aec0;line-height:1.7;">This analysis is based entirely on publicly visible business information. Internal workflows, customer acquisition systems, sales processes, team structure, and operational data were not reviewed and may reveal additional high-impact opportunities not visible from the outside.</p>
       <p style="margin:0;font-size:14px;color:#ffffff;line-height:1.7;">If you would like a deeper business intelligence review, workflow assessment, or automation strategy session, <strong style="color:#4285F4;">Turbo Systems</strong> can provide a customized implementation roadmap.</p>
     </div>
 
@@ -346,7 +360,7 @@ router.post('/business-audit', async (req, res) => {
         // 5. Update DB record — store full HTML report in long_term_vision (TEXT, no length limit)
         const reportSummary = JSON.stringify({
           executiveSummary: report.executiveSummary,
-          recommendedNextStep: report.recommendedNextStep,
+          recommendations: report.recommendations,
           emailSent,
           generatedAt: new Date().toISOString(),
         });
