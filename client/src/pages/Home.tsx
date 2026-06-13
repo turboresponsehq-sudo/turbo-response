@@ -30,7 +30,7 @@ export default function Home() {
             <Link href="/results" className="nav-link">Results</Link>
             <Link href="/testimonials" className="nav-link">Testimonials</Link>
             <Link href="/turbo-systems" className="nav-link nav-link-systems">⚡ Turbo Systems</Link>
-            <Link href="/intake" className="nav-link nav-link-cta">Start Your Case</Link>
+            <Link href="/consumer-solutions" className="nav-link nav-link-cta">Start Your Case</Link>
           </nav>
         </div>
       </header>
@@ -94,10 +94,10 @@ export default function Home() {
               {/* Intake Buttons Inside Consumer Box */}
               <div className="consumer-intake-buttons">
                 <Link href="/intake" className="cta-button secondary-button">
-                  RESPOND TO A NOTICE OR ISSUE
+                  🛡️ Respond to a Notice or Issue
                 </Link>
-                <Link href="/intake" className="cta-button secondary-button">
-                  APPLY, FILE, OR TAKE ACTION
+                <Link href="/consumer-solutions" className="cta-button secondary-button">
+                  ⚔️ Apply, File, or Take Action
                 </Link>
               </div>
             </div>
