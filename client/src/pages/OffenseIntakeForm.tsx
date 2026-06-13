@@ -242,7 +242,7 @@ export default function OffenseIntakeForm() {
                 <section className="form-section">
                   <h2 className="section-title">Contact Information</h2>
                   <div className="form-group">
-                    <label htmlFor="fullName" className="form-label">Full Name *</label>
+                    <label htmlFor="fullName" className="form-label" style={{ color: "#0A1A3F" }}>Full Name *</label>
                     <input
                       type="text"
                       id="fullName"
@@ -255,7 +255,7 @@ export default function OffenseIntakeForm() {
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="email" className="form-label">Email Address *</label>
+                    <label htmlFor="email" className="form-label" style={{ color: "#0A1A3F" }}>Email Address *</label>
                     <input
                       type="email"
                       id="email"
@@ -268,7 +268,7 @@ export default function OffenseIntakeForm() {
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="phone" className="form-label">Phone Number *</label>
+                    <label htmlFor="phone" className="form-label" style={{ color: "#0A1A3F" }}>Phone Number *</label>
                     <input
                       type="tel"
                       id="phone"
@@ -407,7 +407,7 @@ export default function OffenseIntakeForm() {
                       onChange={(e) => setTermsAccepted(e.target.checked)}
                       required
                     />
-                    <label htmlFor="termsAccepted">
+                    <label htmlFor="termsAccepted" style={{ color: "#0A1A3F" }}>
                       I understand Turbo Response is not a law firm and provides document preparation, research support, and advocacy assistance only. I understand Turbo Response does not provide legal advice and no attorney-client relationship is formed.
                     </label>
                   </div>
