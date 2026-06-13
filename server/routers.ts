@@ -6,6 +6,7 @@ import { screenshotRouter } from "./routers/screenshots";
 import { chatRouter } from "./routers/chatRouter";
 import { adminRouter } from "./routers/adminRouter";
 import { messagingRouter } from "./routers/messagingRouter";
+import { dashboardRouter } from "./routers/dashboardRouter";
 
 
 export const appRouter = router({
@@ -32,6 +33,9 @@ export const appRouter = router({
 
   // Messaging router for client-admin communication
   messaging: messagingRouter,
+
+  // Dashboard Layer 1 — CEO Home, Projects, Tasks
+  dashboard: dashboardRouter,
 });
 
 export type AppRouter = typeof appRouter;

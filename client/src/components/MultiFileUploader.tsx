@@ -227,7 +227,7 @@ export default function MultiFileUploader({
         onDragOver={handleDragOver}
         onDrop={handleDrop}
         style={{
-          border: isDragging ? '2px solid #06b6d4' : '2px dashed #cbd5e1',
+          border: isDragging ? '2px solid #4285F4' : '2px dashed #cbd5e1',
           borderRadius: '8px',
           padding: '2rem',
           textAlign: 'center',
@@ -249,7 +249,7 @@ export default function MultiFileUploader({
         />
 
         <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📤</div>
-        <p style={{ margin: '0.5rem 0', fontWeight: 600, color: '#1e293b' }}>
+        <p style={{ margin: '0.5rem 0', fontWeight: 600, color: '#0A1A3F' }}>
           {isUploading ? 'Uploading...' : 'Drag files here or click to select'}
         </p>
         <p style={{ margin: '0.25rem 0', fontSize: '0.875rem', color: '#64748b' }}>
@@ -268,7 +268,7 @@ export default function MultiFileUploader({
               marginBottom: '1rem',
             }}
           >
-            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1e293b' }}>
+            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#0A1A3F' }}>
               Upload Queue ({queue.length} files)
             </h3>
             {allUploaded && (
@@ -309,7 +309,7 @@ export default function MultiFileUploader({
               style={{
                 marginTop: '1rem',
                 padding: '0.75rem 1.5rem',
-                backgroundColor: isUploading ? '#cbd5e1' : '#06b6d4',
+                backgroundColor: isUploading ? '#cbd5e1' : '#4285F4',
                 color: 'white',
                 border: 'none',
                 borderRadius: '6px',
@@ -378,7 +378,7 @@ function FileQueueItem({
       case 'error':
         return '#dc2626';
       case 'uploading':
-        return '#06b6d4';
+        return '#4285F4';
       default:
         return '#64748b';
     }
@@ -409,7 +409,7 @@ function FileQueueItem({
                 margin: 0,
                 fontSize: '0.875rem',
                 fontWeight: 600,
-                color: '#1e293b',
+                color: '#0A1A3F',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',

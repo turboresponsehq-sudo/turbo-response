@@ -91,6 +91,7 @@ router.put('/verify/:case_id', async (req, res) => {
     const updateQuery = `
       UPDATE cases 
       SET payment_status = $1,
+          payment_verified = ${status === 'paid' ? 'true' : 'false'},
           payment_verified_by = $2,
           payment_verified_at = NOW()
       WHERE id = $3

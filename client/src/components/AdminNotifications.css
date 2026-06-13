@@ -1,6 +1,6 @@
 .admin-notifications {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  background: #F0F2F5;
+  border: 1px solid rgba(26, 63, 199, 0.2);
   border-radius: 12px;
   overflow: hidden;
 }
@@ -10,13 +10,13 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  background: rgba(6, 182, 212, 0.05);
-  border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+  background: rgba(26, 63, 199, 0.05);
+  border-bottom: 1px solid rgba(26, 63, 199, 0.2);
 }
 
 .notifications-header h3 {
   margin: 0;
-  color: #06b6d4;
+  color: #4285F4;
   font-size: 1.2rem;
 }
 
@@ -45,8 +45,8 @@
 .spinner-small {
   width: 30px;
   height: 30px;
-  border: 3px solid rgba(6, 182, 212, 0.2);
-  border-top-color: #06b6d4;
+  border: 3px solid rgba(26, 63, 199, 0.2);
+  border-top-color: #4285F4;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 0.5rem;
@@ -75,17 +75,17 @@
   display: flex;
   gap: 1rem;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid rgba(6, 182, 212, 0.1);
+  border-bottom: 1px solid rgba(26, 63, 199, 0.1);
   border-left: 3px solid transparent;
   transition: all 0.3s ease;
 }
 
 .notification-item:hover {
-  background: rgba(6, 182, 212, 0.05);
+  background: rgba(26, 63, 199, 0.05);
 }
 
 .notification-item.unread {
-  background: rgba(6, 182, 212, 0.03);
+  background: rgba(26, 63, 199, 0.03);
 }
 
 .notification-icon {
@@ -125,7 +125,7 @@
 }
 
 .notification-link {
-  color: #06b6d4;
+  color: #4285F4;
   font-size: 0.85rem;
   text-decoration: none;
   font-weight: 600;
@@ -133,21 +133,21 @@
 }
 
 .notification-link:hover {
-  color: #0891b2;
+  color: #4285F4;
 }
 
 .notifications-footer {
   padding: 1rem 1.5rem;
-  background: rgba(6, 182, 212, 0.05);
-  border-top: 1px solid rgba(6, 182, 212, 0.2);
+  background: rgba(26, 63, 199, 0.05);
+  border-top: 1px solid rgba(26, 63, 199, 0.2);
   text-align: center;
 }
 
 .btn-refresh,
 .btn-retry {
-  background: rgba(6, 182, 212, 0.1);
-  border: 1px solid rgba(6, 182, 212, 0.3);
-  color: #06b6d4;
+  background: rgba(26, 63, 199, 0.1);
+  border: 1px solid rgba(26, 63, 199, 0.3);
+  color: #4285F4;
   padding: 0.5rem 1rem;
   border-radius: 6px;
   cursor: pointer;
@@ -158,7 +158,7 @@
 
 .btn-refresh:hover,
 .btn-retry:hover {
-  background: rgba(6, 182, 212, 0.2);
+  background: rgba(26, 63, 199, 0.2);
 }
 
 @media (max-width: 768px) {

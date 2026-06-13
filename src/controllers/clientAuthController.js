@@ -95,9 +95,9 @@ async function requestLogin(req, res) {
       subject: `Turbo Response - Verification Code for Case ${caseData.case_number}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #06b6d4;">Turbo Response - Client Portal Access</h2>
+          <h2 style="color: #4285F4;">Turbo Response - Client Portal Access</h2>
           <p>Your verification code is:</p>
-          <div style="background: #0a1628; color: #06b6d4; font-size: 32px; font-weight: bold; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
+          <div style="background: #F0F2F5; color: #4285F4; font-size: 32px; font-weight: bold; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
             ${code}
           </div>
           <p>This code will expire in 10 minutes.</p>
@@ -276,6 +276,7 @@ async function getClientCase(req, res) {
         client_notes,
         payment_link,
         payment_verified,
+        payment_status,
         funnel_stage,
         pricing_tier,
         pricing_tier_amount,
@@ -333,6 +334,19 @@ async function getClientCase(req, res) {
     }
 
     const caseData = result.rows[0];
+
+    // SERVER-SIDE PAYMENT INVARIANT (Production Stability Protocol Rule #2)
+    // Single source of truth: payment_status
+    // If payment_status='paid' → access allowed (full data)
+    // If portal_enabled=false → access denied (handled by WHERE clause above)
+    // No other condition can block a paid user.
+    const isPaid = caseData.payment_status === 'paid' || caseData.payment_verified === true;
+    
+    // Add computed access field so frontend never has to guess
+    caseData.access_granted = isPaid;
+    caseData.access_reason = isPaid 
+      ? 'payment_confirmed' 
+      : (caseData.portal_enabled ? 'payment_pending' : 'portal_disabled');
 
     res.json({
       success: true,

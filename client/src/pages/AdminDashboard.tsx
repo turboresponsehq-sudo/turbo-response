@@ -28,12 +28,21 @@ interface CaseItem {
 
 export default function AdminDashboard() {
   const [, setLocation] = useLocation();
-  const { token, isAuthenticated, clearTokenAndRedirect } = useAdminAuth();
+  const { token, isAuthenticated, isLoading: authLoading, clearTokenAndRedirect } = useAdminAuth();
   const [cases, setCases] = useState<CaseItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Wait for auth context to finish reading from localStorage.
+    // On mobile browsers, the useEffect in AdminAuthContext runs asynchronously
+    // after the first render, so isAuthenticated is false until authLoading is false.
+    // Without this guard, mobile fires the API call with token=null and gets 401.
+    if (authLoading) {
+      console.log('[AdminDashboard] Auth context still initializing, waiting...');
+      return;
+    }
+
     // Check authentication
     if (!isAuthenticated) {
       console.warn('[AdminDashboard] Not authenticated - redirecting to login');
@@ -67,9 +76,11 @@ export default function AdminDashboard() {
         console.error('[AdminDashboard] Error fetching cases:', err);
         console.error('Error status:', err.response?.status);
         
-        // Handle 401 - token expired
-        if (err.response?.status === 401) {
-          console.warn('[AdminDashboard] 401 Unauthorized - token expired, redirecting');
+        // Handle 401 and 403 — both indicate an invalid or expired token.
+        // The server's auth middleware returns 403 (not 401) when jwt.verify() fails,
+        // so we must catch both codes and redirect to login.
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          console.warn(`[AdminDashboard] ${err.response.status} — token invalid/expired, redirecting to login`);
           clearTokenAndRedirect();
           return;
         }
@@ -83,7 +94,7 @@ export default function AdminDashboard() {
     };
 
     fetchCases();
-  }, [isAuthenticated, token, setLocation, clearTokenAndRedirect]);
+  }, [authLoading, isAuthenticated, token, setLocation, clearTokenAndRedirect]);
 
   const handleCaseClick = (caseId: number) => {
     setLocation(`/admin/cases/${caseId}`);
@@ -97,9 +108,9 @@ export default function AdminDashboard() {
   const getFunnelStageColor = (stage: string) => {
     switch (stage) {
       case 'lead':
-        return '#3b82f6';
+        return '#3B6BF5';
       case 'prospect':
-        return '#8b5cf6';
+        return '#3B6BF5';
       case 'qualified':
         return '#ec4899';
       case 'proposal':
@@ -107,7 +118,7 @@ export default function AdminDashboard() {
       case 'negotiation':
         return '#10b981';
       case 'closed_won':
-        return '#06b6d4';
+        return '#1A3FC7';
       case 'closed_lost':
         return '#6b7280';
       default:
@@ -158,7 +169,7 @@ export default function AdminDashboard() {
             onClick={() => setLocation('/admin/brain')}
             style={{
               padding: '8px 16px',
-              backgroundColor: '#8b5cf6',
+              backgroundColor: '#3B6BF5',
               color: 'white',
               border: 'none',
               borderRadius: '6px',
@@ -170,10 +181,25 @@ export default function AdminDashboard() {
             🧠 Brain
           </button>
           <button
+            onClick={() => setLocation('/admin/resources')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#1A3FC7',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            📋 Resources
+          </button>
+          <button
             onClick={() => setLocation('/admin/screenshots')}
             style={{
               padding: '8px 16px',
-              backgroundColor: '#3b82f6',
+              backgroundColor: '#3B6BF5',
               color: 'white',
               border: 'none',
               borderRadius: '6px',

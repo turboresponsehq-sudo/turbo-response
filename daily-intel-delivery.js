@@ -6,74 +6,60 @@
  * Purpose: Send daily intel email with consumer defense updates
  * Focus: FTC, CFPB, Federal Register enforcement and rule changes
  * 
- * Stop Rule: Only send if there are actionable updates
+ * Configuration: ALWAYS_SEND_DAILY_EMAIL (default: true)
+ *   - true: Send email every day, even if 0 actionable items
+ *   - false: Only send when there are actionable updates
  * 
- * Runs: 6:30am ET daily via GitHub Actions (after scanner completes)
+ * Runs: 6:00am ET daily via GitHub Actions (after scanner completes)
  */
 
 const fs = require('fs');
 const path = require('path');
-const https = require('https');
+const { execSync } = require('child_process');
+const sgMail = require('@sendgrid/mail');
 
 // Configuration
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || '';
 const TO_EMAIL = 'Turboresponsehq@gmail.com';
-const FROM_EMAIL = 'intel@turboresponsehq.ai';
+const FROM_EMAIL = 'Turboresponsehq@gmail.com';
 const FROM_NAME = 'Turbo Response Intel';
+
+// NEW: Configurable flag (default: true = always send)
+const ALWAYS_SEND_DAILY_EMAIL = process.env.ALWAYS_SEND_DAILY_EMAIL !== 'false';
 
 const REPORT_DIR = path.join(__dirname, 'docs', 'intel-reports');
 
-// Utility: Send email via SendGrid
-function sendEmail(to, subject, htmlBody, textBody) {
-  return new Promise((resolve, reject) => {
-    const data = JSON.stringify({
-      personalizations: [{
-        to: [{ email: to }],
-        subject: subject
-      }],
-      from: {
-        email: FROM_EMAIL,
-        name: FROM_NAME
-      },
-      content: [
-        {
-          type: 'text/plain',
-          value: textBody
-        },
-        {
-          type: 'text/html',
-          value: htmlBody
-        }
-      ]
-    });
+// Initialize SendGrid
+sgMail.setApiKey(SENDGRID_API_KEY);
 
-    const options = {
-      hostname: 'api.sendgrid.com',
-      path: '/v3/mail/send',
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${SENDGRID_API_KEY}`,
-        'Content-Type': 'application/json',
-        'Content-Length': data.length
-      }
-    };
-
-    const req = https.request(options, (res) => {
-      let responseData = '';
-      res.on('data', chunk => responseData += chunk);
-      res.on('end', () => {
-        if (res.statusCode === 202) {
-          resolve({ success: true, status: res.statusCode });
-        } else {
-          reject(new Error(`SendGrid returned ${res.statusCode}: ${responseData}`));
-        }
-      });
-    });
-
-    req.on('error', reject);
-    req.write(data);
-    req.end();
-  });
+// Utility: Send email via SendGrid SDK
+async function sendEmail(to, subject, htmlBody, textBody) {
+  const msg = {
+    to: to,
+    from: {
+      email: FROM_EMAIL,
+      name: FROM_NAME
+    },
+    subject: subject,
+    text: textBody,
+    html: htmlBody
+  };
+  
+  try {
+    console.log('[EMAIL_SEND_ATTEMPT] Calling SendGrid API...');
+    const response = await sgMail.send(msg);
+    
+    // Extract message ID from SendGrid response
+    const messageId = response[0]?.headers?.['x-message-id'] || 'n/a';
+    const statusCode = response[0]?.statusCode || 'n/a';
+    
+    console.log(`[SENDGRID_RESULT] status=${statusCode} message_id=${messageId}`);
+    
+    return { success: true, messageId, statusCode };
+  } catch (error) {
+    console.error(`[SENDGRID_RESULT] status=error message_id=n/a error="${error.message}"`);
+    throw new Error(`SendGrid error: ${error.message}`);
+  }
 }
 
 // Convert markdown report to HTML email
@@ -124,66 +110,145 @@ function markdownToHTML(markdown) {
 // Main execution
 async function main() {
   console.log('=== Daily Intel Delivery - Consumer Defense Intelligence ===');
-  console.log(`Started at: ${new Date().toISOString()}`);
+  console.log('Started at:', new Date().toISOString());
   console.log('');
-  
-  // Find today's report
-  const date = new Date().toISOString().split('T')[0];
-  const reportPath = path.join(REPORT_DIR, `intel-${date}.md`);
-  
-  if (!fs.existsSync(reportPath)) {
-    console.error(`[Error] Report not found: ${reportPath}`);
-    console.error('Scanner must run before delivery');
-    process.exit(1);
-  }
-  
-  // Read report
-  const reportMarkdown = fs.readFileSync(reportPath, 'utf8');
-  
-  // Check if Stop Rule applies (no actionable updates)
-  const isStopRule = reportMarkdown.includes('**Status:** No actionable updates today');
-  
-  if (isStopRule) {
-    console.log('[Stop Rule] No actionable updates today - skipping email');
-    console.log('Email will only be sent when there are actionable consumer defense updates');
-    process.exit(0);
-  }
-  
-  // Extract item count from report
-  const countMatch = reportMarkdown.match(/\*\*Total Actionable Items:\*\* (\d+)/);
-  const itemCount = countMatch ? countMatch[1] : '?';
-  
-  // Determine priority for subject line
-  let priorityLabel = '';
-  if (reportMarkdown.includes('## 🚨 CRITICAL (P0)')) {
-    priorityLabel = '🚨 CRITICAL - ';
-  } else if (reportMarkdown.includes('## ⚠️ HIGH PRIORITY (P1)')) {
-    priorityLabel = '⚠️ ';
-  }
-  
-  // Generate email
-  const subject = `${priorityLabel}Daily Intel Report - ${itemCount} Actionable Items - ${date}`;
-  const htmlBody = markdownToHTML(reportMarkdown);
-  const textBody = reportMarkdown;
-  
-  // Send email
-  console.log(`[Email] Sending to ${TO_EMAIL}...`);
-  console.log(`[Email] Subject: ${subject}`);
-  
+
   try {
-    const result = await sendEmail(TO_EMAIL, subject, htmlBody, textBody);
-    console.log(`[Email] ✅ Sent successfully (status: ${result.status})`);
+    // Get today's report file
+    const today = new Date().toISOString().split('T')[0];
+    const reportPath = path.join(REPORT_DIR, `intel-${today}.md`);
+
+    // Check if report exists
+    if (!fs.existsSync(reportPath)) {
+      console.log(`[Report] No report found for ${today} at ${reportPath}`);
+      console.log('Exiting - no report to send');
+      process.exit(0);
+    }
+
+    // Read report
+    const reportMarkdown = fs.readFileSync(reportPath, 'utf8');
+    console.log('[Report] Loaded report from:', reportPath);
+
+    // Check if there are actionable updates
+    const isNoUpdates = reportMarkdown.includes('**Status:** No actionable updates today');
+    
+    // Extract actionable count from report
+    const actionableMatch = reportMarkdown.match(/\*\*Total Actionable Items:\*\* (\d+)/);
+    const actionableCount = actionableMatch ? actionableMatch[1] : '0';
+
+    // NEW: Decision logging
+    console.log(`[EMAIL_DECISION] always_send=${ALWAYS_SEND_DAILY_EMAIL} actionable_count=${actionableCount}`);
+
+    // NEW: Conditional logic based on ALWAYS_SEND_DAILY_EMAIL flag
+    if (!ALWAYS_SEND_DAILY_EMAIL && isNoUpdates) {
+      console.log('[Skip Rule] No actionable updates today - skipping email (ALWAYS_SEND_DAILY_EMAIL=false)');
+      console.log('Email will only be sent when there are actionable consumer defense updates');
+      process.exit(0);
+    }
+
+    // Generate email subject and body
+    let subject, htmlBody, textBody;
+
+    if (isNoUpdates || actionableCount === '0') {
+      // NEW: Email template for "0 updates" days
+      subject = `Daily Intel Report — No actionable updates — ${today}`;
+      
+      const noUpdatesReport = `
+# Daily Intel Report — ${today}
+
+**Status:** System ran successfully
+
+**Actionable Items Found:** 0
+
+---
+
+## Summary
+
+The daily intelligence scanner successfully completed its monitoring of:
+- Federal Trade Commission (FTC) enforcement actions
+- Consumer Financial Protection Bureau (CFPB) updates
+- Federal Register consumer protection rules
+
+**No actionable consumer defense updates were found today.**
+
+---
+
+## Report Details
+
+Full report available at: \`docs/intel-reports/intel-${today}.md\`
+
+${reportMarkdown}
+
+---
+
+*This is an automated daily report. You will receive this email every day, even when there are no actionable items, to confirm the system is working correctly.*
+      `.trim();
+      
+      htmlBody = markdownToHTML(noUpdatesReport);
+      textBody = noUpdatesReport;
+    } else {
+      // Standard email for days with actionable updates
+      subject = `⚠️ Daily Intel Report - ${actionableCount} Actionable Items - ${today}`;
+      htmlBody = markdownToHTML(reportMarkdown);
+      textBody = reportMarkdown;
+    }
+
+    // Send email
+    console.log('[Email] Sending to', TO_EMAIL + '...');
+    console.log('[Email] Subject:', subject);
+
+    const emailResult = await sendEmail(TO_EMAIL, subject, htmlBody, textBody);
+
+    console.log('[Email] ✅ Sent successfully!');
+    
+    // CRITICAL: Final confirmation log (required for reliability monitoring)
+    const timestamp = new Date().toISOString();
+    console.log(`[DAILY_EMAIL_FINAL_STATUS] sent=true to=${TO_EMAIL} sendgrid_id=${emailResult.messageId} timestamp=${timestamp}`);
+    
+    // PROOF BLOCK (Production Stability Protocol Rule #5)
+    console.log('');
+    console.log('╔══════════════════════════════════════╗');
+    console.log('║         DAILY EMAIL PROOF BLOCK       ║');
+    console.log('╠══════════════════════════════════════╣');
+    console.log(`║ SendGrid ID:  ${emailResult.messageId}`);
+    console.log(`║ Status Code:  ${emailResult.statusCode}`);
+    console.log(`║ Delivered To: ${TO_EMAIL}`);
+    console.log(`║ Subject:      ${subject}`);
+    console.log(`║ Timestamp:    ${timestamp}`);
+    console.log(`║ Source Count: ${actionableCount} actionable items`);
+    console.log('╚══════════════════════════════════════╝');
+    
+    console.log('');
+    console.log('=== Delivery Complete ===');
+    process.exit(0);
+
   } catch (error) {
-    console.error(`[Email] ❌ Failed to send:`, error.message);
+    console.error('[Email] ❌ Failed to send:', error.message);
+    
+    // CRITICAL: Final failure log
+    const timestamp = new Date().toISOString();
+    console.error(`[DAILY_EMAIL_FINAL_STATUS] sent=false to=${TO_EMAIL} sendgrid_id=n/a timestamp=${timestamp} error="${error.message}"`);
+    
+    // FAILSAFE: Create GitHub issue for email failure
+    try {
+      console.log('[CRITICAL] DAILY EMAIL FAILED - NOT SENT');
+      console.log('[FAILSAFE] Attempting to create GitHub issue...');
+      
+      const issueTitle = `[CRITICAL] Daily Email Failed - ${timestamp}`;
+      const issueBody = `## 🚨 Daily Email Delivery Failure\n\n**Timestamp:** ${timestamp}\n**Status:** FAILED\n**Error:** ${error.message}\n\n---\n\n## What Happened\n\nThe daily intel email delivery script failed to send the email via SendGrid.\n\n**Expected:** Email sent successfully with 202 status code\n**Actual:** SendGrid API call failed\n\n---\n\n## Investigation Required\n\n1. Check SendGrid API key validity\n2. Check SendGrid account status (quota, suspension)\n3. Check network connectivity\n4. Review full workflow logs\n\n---\n\n## Impact\n\n⚠️ **Owner did NOT receive daily email**\n\nThis breaks the daily email reliability guarantee.\n\n---\n\n## Next Steps\n\n1. Investigate root cause\n2. Fix issue\n3. Run manual test\n4. Verify email received\n5. Close this issue with proof`;
+      
+      const command = `gh issue create --title "${issueTitle}" --body "${issueBody}" --label "critical,email-delivery,automation" --repo turboresponsehq-sudo/turbo-response`;
+      
+      const result = execSync(command, { encoding: 'utf8', stdio: 'pipe' });
+      console.log('[FAILSAFE] ✅ GitHub issue created:', result.trim());
+    } catch (issueError) {
+      console.error('[FAILSAFE] ❌ Failed to create GitHub issue:', issueError.message);
+      // Continue - failsafe failure should not block exit
+    }
+    
     process.exit(1);
   }
-  
-  console.log('');
-  console.log('=== Delivery Complete ===');
 }
 
 // Run
-main().catch(error => {
-  console.error('Fatal error:', error);
-  process.exit(1);
-});
+main();

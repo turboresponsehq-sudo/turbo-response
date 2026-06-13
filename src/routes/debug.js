@@ -109,4 +109,31 @@ router.get('/debug/all-cases', async (req, res) => {
   }
 });
 
+// GET /api/debug/schema/:tableName - Check if table exists and get schema
+router.get('/debug/schema/:tableName', async (req, res) => {
+  try {
+    const { tableName } = req.params;
+    
+    const result = await query(
+      `SELECT column_name, data_type, is_nullable, column_default
+       FROM information_schema.columns 
+       WHERE table_name = $1
+       ORDER BY ordinal_position`,
+      [tableName]
+    );
+    
+    res.json({
+      success: true,
+      table: tableName,
+      exists: result.rows.length > 0,
+      columns: result.rows
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;

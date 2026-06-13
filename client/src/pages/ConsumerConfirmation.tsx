@@ -33,8 +33,8 @@ export default function ConsumerConfirmation() {
   // If no case data, show fallback message
   if (!caseId) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
-        <div className="max-w-2xl w-full bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8 md:p-12">
+      <div className="min-h-screen bg-white flex items-center justify-center p-4">
+        <div className="max-w-2xl w-full bg-white backdrop-blur-lg rounded-2xl shadow-2xl border border-blue-100 p-8 md:p-12">
           {/* Info Icon */}
           <div className="flex justify-center mb-6">
             <div className="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center">
@@ -55,7 +55,7 @@ export default function ConsumerConfirmation() {
           </div>
 
           {/* Title */}
-          <h1 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-800 text-center mb-4">
             Looking for Your Case?
           </h1>
 
@@ -68,13 +68,13 @@ export default function ConsumerConfirmation() {
           <div className="flex flex-col sm:flex-row gap-4">
             <button
               onClick={() => setLocation("/")}
-              className="flex-1 px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg border border-white/20 transition-all duration-200"
+              className="flex-1 px-6 py-3 bg-white hover:bg-white/20 text-slate-800 font-semibold rounded-lg border border-blue-100 transition-all duration-200"
             >
               Return to Home
             </button>
             <button
               onClick={() => setLocation("/intake")}
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold rounded-lg shadow-lg transition-all duration-200"
+              className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-400 hover:from-blue-600 hover:to-blue-500 text-white font-semibold rounded-lg shadow-lg transition-all duration-200"
             >
               Start New Case
             </button>
@@ -86,7 +86,7 @@ export default function ConsumerConfirmation() {
               Questions? Contact us at{" "}
               <a
                 href="mailto:support@turboresponsehq.ai"
-                className="text-cyan-400 hover:text-cyan-300 underline"
+                className="text-blue-400 hover:text-blue-300 underline"
               >
                 support@turboresponsehq.ai
               </a>
@@ -99,8 +99,8 @@ export default function ConsumerConfirmation() {
 
   // Show full confirmation with case details
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
-      <div className="max-w-2xl w-full bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8 md:p-12">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+      <div className="max-w-2xl w-full bg-white backdrop-blur-lg rounded-2xl shadow-2xl border border-blue-100 p-8 md:p-12">
         {/* Success Icon */}
         <div className="flex justify-center mb-6">
           <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center">
@@ -121,7 +121,7 @@ export default function ConsumerConfirmation() {
         </div>
 
         {/* Title */}
-        <h1 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">
+        <h1 className="text-3xl md:text-4xl font-bold text-slate-800 text-center mb-4">
           Your Intake Has Been Received
         </h1>
 
@@ -132,18 +132,18 @@ export default function ConsumerConfirmation() {
 
         {/* Case Details Card */}
         <div className="bg-white/5 rounded-xl p-6 border border-white/10 mb-8">
-          <h2 className="text-xl font-semibold text-white mb-4">Case Details</h2>
+          <h2 className="text-xl font-semibold text-slate-800 mb-4">Case Details</h2>
           
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-gray-400">Case ID:</span>
-              <span className="text-white font-mono font-semibold">{caseId}</span>
+              <span className="text-slate-800 font-mono font-semibold">{caseId}</span>
             </div>
             
             {category && (
               <div className="flex justify-between items-center">
                 <span className="text-gray-400">Category:</span>
-                <span className="text-white font-semibold">{getCategoryName(category)}</span>
+                <span className="text-slate-800 font-semibold">{getCategoryName(category)}</span>
               </div>
             )}
             
@@ -180,8 +180,8 @@ export default function ConsumerConfirmation() {
         </div>
 
         {/* Important Note */}
-        <div className="bg-purple-500/10 rounded-xl p-6 border border-purple-500/20 mb-8">
-          <h3 className="text-lg font-semibold text-purple-300 mb-2">Important Note</h3>
+        <div className="bg-blue-500/10 rounded-xl p-6 border border-blue-500/20 mb-8">
+          <h3 className="text-lg font-semibold text-blue-300 mb-2">Important Note</h3>
           <p className="text-gray-300 text-sm">
             No payment is required at this time. Pricing will be discussed during your consultation call based on your specific case needs.
           </p>
@@ -191,13 +191,13 @@ export default function ConsumerConfirmation() {
         <div className="flex flex-col sm:flex-row gap-4">
           <button
             onClick={() => setLocation("/")}
-            className="flex-1 px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg border border-white/20 transition-all duration-200"
+            className="flex-1 px-6 py-3 bg-white hover:bg-white/20 text-slate-800 font-semibold rounded-lg border border-blue-100 transition-all duration-200"
           >
             Return to Home
           </button>
           <button
             onClick={() => setLocation("/intake")}
-            className="flex-1 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold rounded-lg shadow-lg transition-all duration-200"
+            className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-400 hover:from-blue-600 hover:to-blue-500 text-white font-semibold rounded-lg shadow-lg transition-all duration-200"
           >
             Submit Another Case
           </button>
@@ -209,7 +209,7 @@ export default function ConsumerConfirmation() {
             Questions? Contact us at{" "}
             <a
               href="mailto:support@turboresponsehq.ai"
-              className="text-cyan-400 hover:text-cyan-300 underline"
+              className="text-blue-400 hover:text-blue-300 underline"
             >
               support@turboresponsehq.ai
             </a>

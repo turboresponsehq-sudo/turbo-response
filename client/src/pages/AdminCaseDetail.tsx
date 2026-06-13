@@ -68,7 +68,7 @@ export default function AdminCaseDetail() {
         console.log('🔍 Case Data:', res.data.case);
         console.log('🔍 Case Number:', res.data.case?.case_number);
         console.log('🔍 Full Name:', res.data.case?.full_name);
-        setCaseData(res.data.case);
+        setCaseData({ ...res.data.case, case_type: res.data.case_type });
         setSelectedStatus(res.data.case.status);
         
         // Initialize pricing tier state from case data
@@ -431,7 +431,7 @@ export default function AdminCaseDetail() {
                 setAiError(null);
                 try {
                   const res = await axios.post(
-                    `${API_URL}/api/case/${params?.id}/analyze`,
+                    `${API_URL}/api/cases/${params?.id}/analyze`,
                     {},
                     { headers: { Authorization: `Bearer ${storedToken}` } }
                   );
@@ -447,7 +447,7 @@ export default function AdminCaseDetail() {
               style={{
                 padding: "0.75rem 1.5rem",
                 minHeight: "48px",
-                backgroundColor: analyzingAI ? "#6c757d" : "#06b6d4",
+                backgroundColor: analyzingAI ? "#6c757d" : "#1A3FC7",
                 color: "white",
                 border: "none",
                 borderRadius: "4px",
@@ -474,7 +474,7 @@ export default function AdminCaseDetail() {
               backgroundColor: "white",
               padding: "1rem",
               borderRadius: "6px",
-              border: "2px solid #06b6d4",
+              border: "2px solid #1A3FC7",
               marginBottom: "1rem"
             }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
@@ -725,7 +725,7 @@ export default function AdminCaseDetail() {
               const storedToken = localStorage.getItem("admin_session");
               try {
                 await axios.patch(
-                  `${API_URL}/api/case/${params?.id}`,
+                  `${API_URL}/api/cases/${params?.id}`,
                   {
                     client_status: caseData.client_status,
                     client_notes: caseData.client_notes,
@@ -865,7 +865,7 @@ export default function AdminCaseDetail() {
               try {
                 const token = localStorage.getItem('admin_session');
                 await axios.patch(
-                  `${API_URL}/api/case/${params?.id}/status`,
+                  `${API_URL}/api/cases/${params?.id}`,
                   {
                     pricing_tier: pricingTier,
                     pricing_tier_amount: parseInt(pricingAmount),
@@ -935,18 +935,18 @@ export default function AdminCaseDetail() {
           {/* Payment Status */}
           <div>
             <p style={{ margin: 0, fontSize: "0.875rem", color: "#856404" }}>Payment Status:</p>
-            <p style={{ 
-              margin: "0.5rem 0 0 0", 
-              fontSize: "1rem",
+            <p style={{
+              margin: 0,
+              fontSize: "0.875rem",
               fontWeight: 600,
-              color: caseData.payment_verified ? "#28a745" : "#dc3545"
+              color: caseData.payment_status === 'paid' ? "#28a745" : "#dc3545"
             }}>
-              {caseData.payment_verified ? "✅ Verified" : "❌ Not Verified"}
+              {caseData.payment_status === 'paid' ? "✅ Verified" : "❌ Not Verified"}
             </p>
           </div>
 
           {/* Mark as Paid Button */}
-          {!caseData.payment_verified && (
+          {caseData.payment_status !== 'paid' && (
             <button
               onClick={async () => {
                 if (!window.confirm('Are you sure you want to mark this payment as verified? This will activate the case and create a client account.')) {
@@ -955,7 +955,7 @@ export default function AdminCaseDetail() {
                 try {
                   const token = localStorage.getItem('admin_session');
                   await axios.patch(
-                    `${API_URL}/api/case/${params?.id}/verify-payment`,
+                    `${API_URL}/api/cases/${params?.id}/verify-payment`,
                     {},
                     { headers: { Authorization: `Bearer ${token}` } }
                   );

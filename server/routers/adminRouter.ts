@@ -7,6 +7,7 @@ import {
   getLeadWithConversation,
   updateLeadStatus,
 } from "../chatDb";
+import { getAllIntakeLeads, updateIntakeLeadStatus } from "../intakeLeadsDb";
 
 /**
  * Admin router for managing leads and conversations
@@ -74,6 +75,31 @@ export const adminRouter = router({
     )
     .mutation(async ({ input }) => {
       await updateLeadStatus(input.leadId, input.status, input.notes);
+      return { success: true };
+    }),
+
+  /**
+   * Get all intake form leads (from intake_leads table)
+   */
+  getIntakeLeads: protectedProcedure
+    .input(z.object({ limit: z.number().optional() }).optional())
+    .query(async ({ input }) => {
+      return await getAllIntakeLeads(input?.limit || 100);
+    }),
+
+  /**
+   * Update intake lead status and optional admin notes
+   */
+  updateIntakeLeadStatus: protectedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        status: z.enum(["new_lead", "reviewing", "follow_up", "converted"]),
+        adminNotes: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      await updateIntakeLeadStatus(input.id, input.status, input.adminNotes);
       return { success: true };
     }),
 });

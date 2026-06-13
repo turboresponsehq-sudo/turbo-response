@@ -1,5 +1,5 @@
 :root {
-  --grant-dark-blue: #0a1f3d;
+  --grant-dark-blue: #0A1A3F;
   --grant-medium-blue: #1a3a5c;
   --grant-light-blue: #2d5a8c;
   --grant-accent: #4a9eff;
@@ -14,11 +14,13 @@
   box-sizing: border-box;
 }
 
-body {
+/* Removed global body style - use .grant-page container instead */
+.grant-page {
   background: var(--grant-dark-blue);
   color: var(--grant-text-primary);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   line-height: 1.6;
+  min-height: 100vh;
 }
 
 /* Header */

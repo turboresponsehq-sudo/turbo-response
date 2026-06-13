@@ -416,16 +416,13 @@ router.delete('/delete/:id', accessToken, async (req, res) => {
     const { id } = req.params;
     console.log('[Brain Delete] Received delete request for ID:', id, 'Type:', typeof id);
 
-    // Convert to integer
-    const docId = parseInt(id);
-    
-    if (!id || isNaN(docId) || docId <= 0) {
-      console.error('[Brain Delete] Invalid ID:', { id, docId, type: typeof id });
+    // Validate ID exists (Supabase uses UUID, not integer)
+    if (!id || typeof id !== 'string' || id.trim() === '') {
+      console.error('[Brain Delete] Invalid ID:', { id, type: typeof id });
       return res.status(400).json({
         success: false,
         error: 'Invalid document ID',
-        received: id,
-        parsed: docId
+        received: id
       });
     }
 

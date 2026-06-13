@@ -47,8 +47,8 @@ router.get('/create-business-intakes-table', async (req, res) => {
       <head>
         <title>Table Created</title>
         <style>
-          body { font-family: Arial; padding: 40px; background: #0f172a; color: white; text-align: center; }
-          .container { max-width: 600px; margin: 0 auto; background: #1e293b; padding: 40px; border-radius: 10px; }
+          body { font-family: Arial; padding: 40px; background: #FFFFFF; color: #0A1A3F; text-align: center; }
+          .container { max-width: 600px; margin: 0 auto; background: #F0F2F5; padding: 40px; border-radius: 10px; }
           h1 { color: #10b981; }
           p { line-height: 1.6; }
         </style>
@@ -72,8 +72,8 @@ router.get('/create-business-intakes-table', async (req, res) => {
       <head>
         <title>Error</title>
         <style>
-          body { font-family: Arial; padding: 40px; background: #0f172a; color: white; }
-          .container { max-width: 600px; margin: 0 auto; background: #1e293b; padding: 40px; border-radius: 10px; }
+          body { font-family: Arial; padding: 40px; background: #FFFFFF; color: #0A1A3F; }
+          .container { max-width: 600px; margin: 0 auto; background: #F0F2F5; padding: 40px; border-radius: 10px; }
           h1 { color: #ef4444; }
           pre { background: #334155; padding: 15px; border-radius: 5px; overflow-x: auto; }
         </style>

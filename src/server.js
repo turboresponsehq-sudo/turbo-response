@@ -15,7 +15,7 @@ console.log('[ROUTES] authRoutes loaded:', !!authRoutes, typeof authRoutes);
 const intakeRoutes = require('./routes/intake');
 // LEGACY_ROUTES_DISABLED – not used by React app (2025-11-13)
 // const blueprintRoutes = require('./routes/blueprint');
-// const chatRoutes = require('./routes/chat');
+const chatRoutes = require('./routes/chat'); // Intelligence Capture - Chat API
 const paymentRoutes = require('./routes/payment');
 const adminRoutes = require('./routes/admin');
 const casesRoutes = require('./routes/cases');
@@ -36,6 +36,12 @@ const adminCasesRoutes = require('./routes/adminCases'); // Admin Case File Uplo
 const adminDiagnosticRoutes = require('./routes/adminDiagnostic'); // Admin diagnostic and reset
 const createAdminCasesTableRoutes = require('./routes/createAdminCasesTable'); // Create admin_cases table
 const createBusinessIntakesTableRoutes = require('./routes/createBusinessIntakesTable'); // Create business_intakes table
+const screenshotRoutes = require('./routes/screenshots'); // Screenshot upload
+const resourcesRoutes = require('./routes/resources'); // Grant & Resource Matching System (HTML form)
+const resourcesApiRoutes = require('./routes/resourcesApi'); // Grant & Resource Matching API (email-only)
+const resourceSuccessRoutes = require('./routes/resourceSuccess'); // Grant & Resource Success Page
+const adminResourcesRoutes = require('./routes/adminResources'); // Admin Resource Submissions Panel
+const businessAuditRoutes = require('./routes/businessAudit'); // Business Intelligence Audit MVP
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -74,6 +80,139 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
+// Also mount at /api/health for consistency
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    service: 'Turbo Response API',
+    version: '1.0.0',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Version beacon endpoint — never guess what's deployed again
+let buildMeta = { git_sha: 'unknown', build_time_utc: 'unknown' };
+try {
+  const fs = require('fs');
+  const metaPath = path.join(__dirname, 'build-meta.json');
+  if (fs.existsSync(metaPath)) {
+    buildMeta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+  }
+} catch (e) {
+  // build-meta.json not available (dev mode)
+}
+app.get('/api/version', (req, res) => {
+  res.json({
+    git_sha: buildMeta.git_sha || process.env.RENDER_GIT_COMMIT || 'unknown',
+    build_time_utc: buildMeta.build_time_utc || 'unknown',
+    env: process.env.NODE_ENV || 'unknown',
+    service: 'turbo-response-backend',
+    deployment_version: 'VERSION-BEACON-1',
+    uptime_seconds: Math.floor(process.uptime())
+  });
+});
+
+// ============================================================
+// PRODUCTION STABILITY PROTOCOL ENDPOINTS
+// ============================================================
+
+// DRIFT GUARD (Protocol Rule #2)
+// Detects payment field drift: payment_status='paid' but payment_verified=false
+// Returns count + affected case IDs for immediate action
+app.get('/api/admin/drift-check', async (req, res) => {
+  try {
+    const { query } = require('./services/database/db');
+    const result = await query(
+      `SELECT id, case_number, payment_status, payment_verified, funnel_stage
+       FROM cases
+       WHERE payment_status = 'paid' AND (payment_verified = false OR payment_verified IS NULL)`
+    );
+    const driftCount = result.rows.length;
+    const status = driftCount === 0 ? 'clean' : 'DRIFT_DETECTED';
+    
+    // Auto-fix if drift detected
+    let autoFixed = 0;
+    if (driftCount > 0) {
+      const fixResult = await query(
+        `UPDATE cases SET payment_verified = true, payment_verified_at = COALESCE(payment_verified_at, NOW())
+         WHERE payment_status = 'paid' AND (payment_verified = false OR payment_verified IS NULL)`
+      );
+      autoFixed = fixResult.rowCount;
+    }
+    
+    res.json({
+      status,
+      drift_count: driftCount,
+      auto_fixed: autoFixed,
+      affected_cases: result.rows.map(r => ({ id: r.id, case_number: r.case_number })),
+      checked_at: new Date().toISOString(),
+      rule: 'If payment_status=paid then payment_verified must be true'
+    });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: error.message });
+  }
+});
+
+// POST-DEPLOY SMOKE TEST (Protocol Rule #3)
+// Single endpoint that validates all critical systems
+app.get('/api/smoke-test', async (req, res) => {
+  const results = {
+    timestamp: new Date().toISOString(),
+    git_sha: buildMeta.git_sha || process.env.RENDER_GIT_COMMIT || 'unknown',
+    build_time_utc: buildMeta.build_time_utc || 'unknown',
+    env: process.env.NODE_ENV || 'unknown',
+    checks: {}
+  };
+  
+  // Check 1: Database connectivity
+  try {
+    const { query } = require('./services/database/db');
+    const dbResult = await query('SELECT 1 as ok');
+    results.checks.database = { status: 'ok', latency_ms: 0 };
+  } catch (e) {
+    results.checks.database = { status: 'fail', error: e.message };
+  }
+  
+  // Check 2: Paid case access (invariant: paid users can access portal)
+  try {
+    const { query } = require('./services/database/db');
+    const paidCases = await query(
+      `SELECT COUNT(*) as total_paid,
+              SUM(CASE WHEN portal_enabled = true THEN 1 ELSE 0 END) as portal_enabled_count,
+              SUM(CASE WHEN payment_verified = false OR payment_verified IS NULL THEN 1 ELSE 0 END) as drift_count
+       FROM cases WHERE payment_status = 'paid'`
+    );
+    const row = paidCases.rows[0];
+    const driftCount = parseInt(row.drift_count) || 0;
+    results.checks.payment_invariant = {
+      status: driftCount === 0 ? 'ok' : 'DRIFT',
+      total_paid: parseInt(row.total_paid) || 0,
+      portal_enabled: parseInt(row.portal_enabled_count) || 0,
+      drift_count: driftCount
+    };
+  } catch (e) {
+    results.checks.payment_invariant = { status: 'fail', error: e.message };
+  }
+  
+  // Check 3: SendGrid env configured
+  results.checks.sendgrid = {
+    status: process.env.SENDGRID_API_KEY ? 'configured' : 'missing',
+  };
+  
+  // Check 4: Environment variables
+  const requiredEnvs = ['DATABASE_URL', 'JWT_SECRET'];
+  const missingEnvs = requiredEnvs.filter(e => !process.env[e]);
+  results.checks.env_vars = {
+    status: missingEnvs.length === 0 ? 'ok' : 'missing',
+    missing: missingEnvs
+  };
+  
+  // Overall status
+  const allChecks = Object.values(results.checks);
+  results.overall = allChecks.every(c => c.status === 'ok' || c.status === 'configured') ? 'PASS' : 'FAIL';
+  
+  res.json(results);
+});
 
 // API Routes
 // Test route to verify routing works
@@ -87,7 +226,7 @@ app.use('/api/intake', intakeRoutes);
 app.use('/api/turbo-intake', turboIntakeRoutes);
 // LEGACY_ROUTES_DISABLED – not used by React app (2025-11-13)
 // app.use('/api/blueprint', blueprintRoutes);
-// app.use('/api/chat', chatRoutes);
+app.use('/api/chat', chatRoutes); // Intelligence Capture - Chat API
 app.use('/api/payment', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api', casesRoutes);  // Mount at /api for admin case routes
@@ -107,10 +246,18 @@ app.use('/api/admin/cases', adminCasesRoutes); // Admin case file upload center
 app.use('/api', adminDiagnosticRoutes); // Admin diagnostic
 app.use('/api', createAdminCasesTableRoutes); // Create admin_cases table
 app.use('/api', createBusinessIntakesTableRoutes); // Create business_intakes table
+app.use('/api/screenshots', screenshotRoutes); // Screenshot upload
+app.use('/api/admin/resources', adminResourcesRoutes); // Admin Resource Submissions Panel
+app.use('/api', businessAuditRoutes); // Business Intelligence Audit MVP
 
 // Serve frontend static files and SPA fallback
 const { serveFrontend } = require('../serve-frontend');
 serveFrontend(app);
+
+// Resources route MUST come after frontend serving because it renders HTML
+app.use('/resources', resourcesRoutes); // Grant & Resource Matching System (HTML form)
+app.use('/resources/success', resourceSuccessRoutes); // Grant & Resource Success Page
+app.use('/api/resources', resourcesApiRoutes); // Grant & Resource Matching API (email-only, no Supabase)
 
 // 404 handler for API routes only
 app.use((req, res, next) => {
