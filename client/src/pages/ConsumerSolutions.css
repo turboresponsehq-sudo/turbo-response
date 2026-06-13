@@ -439,3 +439,183 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Decision Screen Styles */
+.decision-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+}
+
+.decision-container {
+  max-width: 1000px;
+  width: 100%;
+}
+
+.decision-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-align: center;
+  color: #f8fafc;
+  margin-bottom: 15px;
+}
+
+.decision-subtitle {
+  font-size: 1.1rem;
+  text-align: center;
+  color: #cbd5e1;
+  margin-bottom: 50px;
+}
+
+.decision-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.decision-card {
+  background: rgba(30, 41, 59, 0.8);
+  border: 2px solid rgba(6, 182, 212, 0.2);
+  border-radius: 16px;
+  padding: 40px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.decision-card:hover {
+  border-color: rgba(6, 182, 212, 0.6);
+  box-shadow: 0 0 30px rgba(6, 182, 212, 0.2);
+  transform: translateY(-5px);
+}
+
+.defense-card {
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.defense-card:hover {
+  border-color: rgba(59, 130, 246, 0.8);
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.2);
+}
+
+.offense-card {
+  border-color: rgba(139, 92, 246, 0.3);
+}
+
+.offense-card:hover {
+  border-color: rgba(139, 92, 246, 0.8);
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.2);
+}
+
+.decision-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.decision-heading {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 8px;
+}
+
+.decision-label {
+  font-size: 0.9rem;
+  color: #06b6d4;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 20px;
+}
+
+.examples {
+  background: rgba(15, 23, 42, 0.6);
+  border-left: 3px solid #06b6d4;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+}
+
+.examples-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  margin-bottom: 10px;
+}
+
+.examples ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.examples li {
+  font-size: 0.95rem;
+  color: #cbd5e1;
+  padding: 5px 0;
+  padding-left: 20px;
+  position: relative;
+}
+
+.examples li:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #06b6d4;
+  font-weight: bold;
+}
+
+.decision-card .cta-button {
+  width: 100%;
+  padding: 14px 24px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.back-button {
+  display: block;
+  margin: 0 auto;
+  padding: 12px 30px;
+  background: transparent;
+  border: 2px solid #06b6d4;
+  color: #06b6d4;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  background: rgba(6, 182, 212, 0.1);
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+}
+
+@media (max-width: 768px) {
+  .decision-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .decision-title {
+    font-size: 1.8rem;
+  }
+
+  .decision-card {
+    padding: 25px;
+  }
+
+  .decision-icon {
+    font-size: 2.5rem;
+  }
+
+  .decision-heading {
+    font-size: 1.2rem;
+  }
+}
