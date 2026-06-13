@@ -44,7 +44,7 @@ export default function Home() {
           <div className="founder-ring founder-ring-2" />
           <div className="founder-ring founder-ring-3" />
           <img
-            src="/manus-storage/founder-hero_a3159459.png"
+            src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663092269987/afnNMAcQqXaUjWRx.png"
             alt=""
             className="founder-img"
             aria-hidden="true"
@@ -68,129 +68,158 @@ export default function Home() {
 
         <div className="hero-content">
           <h1 className="hero-title">
-            AI-Powered Systems for Businesses.<br />
-            Practical Solutions for Consumers.
+            ⚡ TURBO RESPONSE
           </h1>
+          <p className="hero-subtitle">Modern Problems. Modern Solutions.</p>
+          <p className="hero-description">
+            We combine AI, automation, and structured guidance to help businesses operate smarter and everyday people navigate life's toughest challenges with confidence.
+          </p>
 
           {/* Dual Value Propositions */}
           <div className="hero-propositions">
             {/* Business Proposition */}
             <div className="proposition business-prop">
               <div className="prop-icon">⚡</div>
+              <h3 className="prop-title">TURBO SYSTEMS</h3>
               <p className="prop-text">
-                <strong>Turbo Systems</strong> helps businesses leverage AI agents, automation, and streamlined workflows to eliminate busy work, improve efficiency, and get more done—without adding more hours to the day.
+                Use AI agents, automation, and streamlined workflows to eliminate busy work, improve efficiency, and get more done—without adding more hours to the day.
+              </p>
+              <p className="prop-subtext">
+                Businesses shouldn't have to choose between growth and burnout.
               </p>
               <Link href="/turbo-systems" className="cta-button primary-button">
                 Explore Turbo Systems
               </Link>
             </div>
 
-            {/* Consumer Proposition with Intake Buttons */}
+            {/* Consumer Proposition */}
             <div className="proposition consumer-prop">
               <div className="prop-icon">🛡️</div>
+              <h3 className="prop-title">CONSUMER SOLUTIONS</h3>
               <p className="prop-text">
-                <strong>Turbo Response</strong> helps consumers navigate credit, debt, housing, IRS, banking, and other real-world challenges through document preparation, research support, action plans, and practical guidance designed to help them move forward.
+                You don't have to fight yesterday's battles with yesterday's tools.
               </p>
-              
-              {/* Intake Buttons Inside Consumer Box */}
-              <div className="consumer-intake-buttons">
-                <Link href="/intake" className="cta-button secondary-button">
-                  🛡️ Respond to a Notice or Issue
-                </Link>
-                <Link href="/intake-offense" className="cta-button secondary-button">
-                  ⚔️ Apply, File, or Take Action
-                </Link>
-              </div>
+              <p className="prop-subtext">
+                Turbo Response combines AI agents, structured workflows, and practical support to help people navigate credit, debt, housing, IRS, banking, and other real-world challenges with greater clarity, speed, and confidence.
+              </p>
+              <p className="prop-subtext">
+                We help organize information, prepare documentation, and identify practical next steps when the stakes are high.
+              </p>
+              <p className="prop-subtext">
+                For too long, large organizations have benefited from better systems and faster processes. We believe everyday people deserve access to leverage too.
+              </p>
+              <Link href="/consumer-solutions" className="cta-button primary-button">
+                Explore Consumer Solutions
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-
-
-      {/* Problems We Solve. Results We Deliver */}
-      <section className="problems-section">
+      {/* Secondary Actions */}
+      <section className="secondary-actions">
         <div className="section-container">
-          <h2 className="section-title">PROBLEMS WE SOLVE. RESULTS WE DELIVER.</h2>
-          
-          <div className="problems-grid">
-            {/* Card 1: When Records Are an Emergency */}
-            <div className="problem-card">
-              <h3 className="problem-title">WHEN RECORDS ARE AN EMERGENCY</h3>
-              <p className="problem-body">
-                Turbo Response helps clients prepare documentation in cases where the wrong response — or no response — can create immediate consequences.
+          <h2 className="section-title">TAKE ACTION NOW</h2>
+          <div className="secondary-actions-grid">
+            <div className="action-card">
+              <h3 className="action-title">RESPOND TO A NOTICE OR ISSUE</h3>
+              <p className="action-description">
+                For people reacting to a problem, deadline, notice, or enforcement action.
               </p>
-              <p className="problem-subtitle">We support situations involving:</p>
-              <ul className="problem-list">
-                <li>Wrongful or improper evictions</li>
-                <li>IRS notices, audits, assessments, and enforcement</li>
-                <li>Wage garnishments and bank levies</li>
-                <li>Illegal auto repossessions</li>
-                <li>Yo‑yo financing and deceptive dealership practices</li>
-                <li>Debt collection violations</li>
-                <li>Benefit denials and administrative actions</li>
-                <li>Regulatory and compliance issues</li>
-              </ul>
-              <p className="problem-closing">
-                In these moments, speed, structure, and accuracy matter. Poorly prepared records can escalate situations that could have been contained.
-              </p>
+              <Link href="/intake" className="cta-button secondary-button">
+                Consumer Defense Intake
+              </Link>
             </div>
-
-            {/* Card 2: When Necessary Documentation Unlocks Opportunity */}
-            <div className="problem-card">
-              <h3 className="problem-title">WHEN NECESSARY DOCUMENTATION UNLOCKS OPPORTUNITY</h3>
-              <p className="problem-body">
-                Turbo Response also works with clients who are initiating action to secure outcomes — not just reacting to problems.
+            <div className="action-card">
+              <h3 className="action-title">APPLY, FILE, OR TAKE ACTION</h3>
+              <p className="action-description">
+                For people initiating disputes, complaints, recovery efforts, applications, appeals, or other actions.
               </p>
-              <p className="problem-subtitle">We prepare documentation for:</p>
-              <ul className="problem-list">
-                <li>Grant and funding opportunities</li>
-                <li>Credit, capital, and approval requests</li>
-                <li>Formal disputes and complaints</li>
-                <li>Settlement and recovery efforts</li>
-                <li>Contract challenges and corrections</li>
-                <li>Administrative reviews and appeals</li>
-              </ul>
-              <p className="problem-closing">
-                Here, documentation isn't defensive. It's what creates leverage, access, and opportunity.
-              </p>
+              <Link href="/intake-offense" className="cta-button secondary-button">
+                Consumer Offense Intake
+              </Link>
             </div>
-          </div>
-
-          {/* Full-width closing section */}
-          <div className="problems-close">
-            <h3 className="close-title">WHY TURBO RESPONSE DELIVERS RESULTS</h3>
-            <p className="close-body">
-              The majority of people don't lose because they aren't qualified. They lose because their records are disorganized, incomplete, late, or misaligned with what the system requires.
-            </p>
-            <p className="close-body">
-              Turbo Response delivers results by combining:
-            </p>
-            <ul className="close-list">
-              <li>AI‑driven processing to move faster than manual workflows</li>
-              <li>Strong structure and organization so nothing critical is missed</li>
-              <li>Clear case framing so information is easy to review and understand</li>
-              <li>Procedural discipline around rules, standards, and deadlines</li>
-            </ul>
-            <p className="close-body">
-              This is not basic form filling. This is preparation built to withstand review and produce outcomes.
-            </p>
-            <p className="close-closing">
-              When information is prepared correctly, outcomes change.
-            </p>
           </div>
         </div>
       </section>
 
-      {/* How Results Are Produced */}
-      <section className="how-results-section">
+      {/* Results Section */}
+      <section className="results-section">
         <div className="section-container">
-          <div className="how-results-card">
-            <h3 className="how-results-title">HOW RESULTS ARE PRODUCED</h3>
-            <p className="how-results-text">
-              AI-driven processing • Structured case framing • Submission readiness • Response & escalation support
-            </p>
+          <h2 className="section-title">RESULTS MATTER</h2>
+          <p className="section-subtitle">Modern tools only matter if they produce outcomes.</p>
+          <div className="results-list">
+            <div className="result-item">✔ Consumer disputes and documentation support</div>
+            <div className="result-item">✔ Credit-related victories and structured case preparation</div>
+            <div className="result-item">✔ IRS and administrative response preparation</div>
+            <div className="result-item">✔ Business systems designed to save time and increase efficiency</div>
           </div>
+          <p className="results-closing">People trust outcomes.</p>
+          <Link href="/results" className="cta-button primary-button">
+            See Results
+          </Link>
+        </div>
+      </section>
+
+      {/* What We Help With */}
+      <section className="what-we-help-section">
+        <div className="section-container">
+          <h2 className="section-title">WHAT WE HELP WITH</h2>
+          <div className="help-grid">
+            <div className="help-card">
+              <h3 className="help-title">RESPOND TO PROBLEMS</h3>
+              <p className="help-description">
+                When notices, deadlines, and enforcement actions appear, speed and structure matter.
+              </p>
+              <p className="help-subtitle">Examples:</p>
+              <ul className="help-list">
+                <li>IRS notices and audits</li>
+                <li>Debt collection issues</li>
+                <li>Evictions and housing matters</li>
+                <li>Wage garnishments</li>
+                <li>Auto repossessions</li>
+              </ul>
+              <Link href="/intake" className="cta-button secondary-button">
+                Respond to a Notice
+              </Link>
+            </div>
+            <div className="help-card">
+              <h3 className="help-title">CREATE OPPORTUNITIES</h3>
+              <p className="help-description">
+                Sometimes leverage comes from taking action first.
+              </p>
+              <p className="help-subtitle">Examples:</p>
+              <ul className="help-list">
+                <li>Disputes and complaints</li>
+                <li>Administrative appeals</li>
+                <li>Funding opportunities</li>
+                <li>Recovery efforts</li>
+                <li>Requests for reconsideration</li>
+              </ul>
+              <Link href="/intake-offense" className="cta-button secondary-button">
+                Apply, File, or Take Action
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Turbo Response */}
+      <section className="why-section">
+        <div className="section-container">
+          <h2 className="section-title">WHY TURBO RESPONSE</h2>
+          <p className="why-subtitle">
+            Most people don't lose because they aren't qualified.
+          </p>
+          <p className="why-body">
+            They lose because information is disorganized, incomplete, late, or difficult to understand.
+          </p>
+          <p className="why-body">
+            Turbo Response combines modern technology with practical execution to help people and businesses move forward with clarity, confidence, and leverage.
+          </p>
+          <p className="why-closing">
+            Because old problems deserve modern solutions.
+          </p>
         </div>
       </section>
 
@@ -260,7 +289,7 @@ export default function Home() {
             <Link href="/intake" className="cta-button primary-button">
               RESPOND TO A NOTICE OR ISSUE
             </Link>
-            <Link href="/intake" className="cta-button secondary-button">
+            <Link href="/intake-offense" className="cta-button secondary-button">
               APPLY, FILE, OR TAKE ACTION
             </Link>
           </div>
