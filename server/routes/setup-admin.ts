@@ -72,17 +72,17 @@ router.get('/setup-admin', async (req, res) => {
             min-height: 100vh;
             margin: 0;
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-            color: white;
+            color: #0A1A3F;
           }
           .container {
             text-align: center;
             padding: 40px;
-            background: rgba(15, 23, 42, 0.8);
+            background: #FFFFFF;
             border-radius: 20px;
-            border: 1px solid #06b6d4;
-            box-shadow: 0 10px 40px rgba(6, 182, 212, 0.3);
+            border: 1px solid #4285F4;
+            box-shadow: 0 10px 40px rgba(26, 63, 199, 0.3);
           }
-          h1 { color: #06b6d4; margin-bottom: 20px; }
+          h1 { color: #4285F4; margin-bottom: 20px; }
           .credentials {
             background: rgba(30, 41, 59, 0.6);
             padding: 20px;
@@ -95,22 +95,22 @@ router.get('/setup-admin', async (req, res) => {
             font-size: 18px;
           }
           .label { color: #94a3b8; }
-          .value { color: #06b6d4; font-weight: bold; }
+          .value { color: #4285F4; font-weight: bold; }
           a {
             display: inline-block;
             margin-top: 20px;
             padding: 15px 30px;
-            background: #06b6d4;
-            color: white;
+            background: #4285F4;
+            color: #0A1A3F;
             text-decoration: none;
             border-radius: 10px;
             font-weight: bold;
             transition: all 0.3s;
           }
           a:hover {
-            background: #0891b2;
+            background: #4285F4;
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(6, 182, 212, 0.4);
+            box-shadow: 0 5px 20px rgba(26, 63, 199, 0.4);
           }
         </style>
       </head>

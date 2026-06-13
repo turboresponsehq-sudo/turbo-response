@@ -11,6 +11,7 @@ import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { brainRouter } from "./brainRouter";
 import intakeRouter from "../routes/intake";
+import businessAuditRouter from "../routes/businessAudit";
 import { getDb } from "../db"; // Already imported above
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -72,6 +73,9 @@ async function startServer() {
   
   // Intake form routes (Offense and Defense)
   app.use("/api", intakeRouter);
+
+  // Business Intelligence Audit route
+  app.use("/api", businessAuditRouter);
   
   // Setup admin user (one-time)
   app.get("/api/setup-admin", async (req, res) => {
@@ -114,12 +118,12 @@ async function startServer() {
         <head>
           <title>Admin Setup Complete</title>
           <style>
-            body { font-family: Arial; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%); color: white; }
-            .container { text-align: center; padding: 40px; background: rgba(15, 23, 42, 0.8); border-radius: 20px; border: 1px solid #06b6d4; }
-            h1 { color: #06b6d4; }
+            body { font-family: Arial; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #FFFFFF; color: #0A1A3F; }
+            .container { text-align: center; padding: 40px; background: #FFFFFF; border-radius: 20px; border: 1px solid #4285F4; }
+            h1 { color: #4285F4; }
             .credentials { background: rgba(30, 41, 59, 0.6); padding: 20px; border-radius: 10px; margin: 20px 0; }
-            .value { color: #06b6d4; font-weight: bold; font-size: 18px; }
-            a { display: inline-block; margin-top: 20px; padding: 15px 30px; background: #06b6d4; color: white; text-decoration: none; border-radius: 10px; font-weight: bold; }
+            .value { color: #4285F4; font-weight: bold; font-size: 18px; }
+            a { display: inline-block; margin-top: 20px; padding: 15px 30px; background: #4285F4; color: #0A1A3F; text-decoration: none; border-radius: 10px; font-weight: bold; }
           </style>
         </head>
         <body>

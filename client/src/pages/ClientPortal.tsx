@@ -92,11 +92,11 @@ export default function ClientPortal() {
     return (
       <div style={{
         minHeight: "100vh",
-        background: "linear-gradient(135deg, #0a1628 0%, #1e293b 50%, #334155 100%)",
+        background: "#FFFFFF",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        color: "white",
+        color: "#0A1A3F",
         fontFamily: "system-ui, -apple-system, sans-serif"
       }}>
         <div style={{ textAlign: "center" }}>
@@ -111,7 +111,7 @@ export default function ClientPortal() {
     return (
       <div style={{
         minHeight: "100vh",
-        background: "linear-gradient(135deg, #0a1628 0%, #1e293b 50%, #334155 100%)",
+        background: "#FFFFFF",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -132,7 +132,7 @@ export default function ClientPortal() {
             onClick={() => setLocation('/client/login')}
             style={{
               padding: "0.75rem 1.5rem",
-              backgroundColor: "#06b6d4",
+              backgroundColor: "#4285F4",
               color: "white",
               border: "none",
               borderRadius: "8px",
@@ -151,7 +151,8 @@ export default function ClientPortal() {
   const documents = caseData?.documents || [];
 
   // Payment Gating: Check if payment is required
-  const isPaymentRequired = !caseData?.payment_verified;
+  // Emergency patch: Check BOTH fields (dual-field drift fix)
+  const isPaymentRequired = !(caseData?.payment_verified === true || caseData?.payment_status === 'paid');
   const isPaymentPending = caseData?.funnel_stage === 'Payment Pending';
   const hasPaymentLink = caseData?.payment_link;
 
@@ -160,7 +161,7 @@ export default function ClientPortal() {
     return (
       <div style={{
         minHeight: "100vh",
-        background: "linear-gradient(135deg, #0a1628 0%, #1e293b 50%, #334155 100%)",
+        background: "#FFFFFF",
         padding: "2rem 1rem",
         fontFamily: "system-ui, -apple-system, sans-serif",
         display: "flex",
@@ -175,8 +176,8 @@ export default function ClientPortal() {
           right: 0,
           bottom: 0,
           backgroundImage: `
-            linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px)
+            linear-gradient(rgba(66, 133, 244, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(66, 133, 244, 0.1) 1px, transparent 1px)
           `,
           backgroundSize: "50px 50px",
           opacity: 0.3,
@@ -206,7 +207,7 @@ export default function ClientPortal() {
                 <h1 style={{
                   fontSize: "1.5rem",
                   fontWeight: 700,
-                  background: "linear-gradient(135deg, #06b6d4, #0284c7)",
+                  background: "linear-gradient(135deg, #4285F4, #4285F4)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   margin: 0
@@ -293,18 +294,18 @@ export default function ClientPortal() {
                 {caseData?.pricing_tier_name && (
                   <div style={{
                     padding: "1.5rem",
-                    background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
+                    background: "#FFFFFF",
                     borderRadius: "12px",
                     marginBottom: "1.5rem",
-                    color: "white"
+                    color: "#0A1A3F"
                   }}>
-                    <div style={{ fontSize: "0.875rem", color: "#06b6d4", marginBottom: "0.5rem", fontWeight: 600 }}>
+                    <div style={{ fontSize: "0.875rem", color: "#4285F4", marginBottom: "0.5rem", fontWeight: 600 }}>
                       Your Package
                     </div>
                     <div style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.5rem" }}>
                       {caseData.pricing_tier_name}
                     </div>
-                    <div style={{ fontSize: "2.5rem", fontWeight: 700, color: "#06b6d4" }}>
+                    <div style={{ fontSize: "2.5rem", fontWeight: 700, color: "#4285F4" }}>
                       ${caseData.pricing_tier_amount}
                     </div>
                   </div>
@@ -316,7 +317,7 @@ export default function ClientPortal() {
                     style={{
                       display: "inline-block",
                       padding: "1rem 2rem",
-                      background: "linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)",
+                      background: "linear-gradient(135deg, #4285F4 0%, #2D7FF9 100%)",
                       color: "white",
                       border: "none",
                       borderRadius: "8px",
@@ -324,7 +325,7 @@ export default function ClientPortal() {
                       fontWeight: 700,
                       textDecoration: "none",
                       cursor: "pointer",
-                      boxShadow: "0 10px 30px rgba(6, 182, 212, 0.3)"
+                      boxShadow: "0 10px 30px rgba(66, 133, 244, 0.3)"
                     }}
                   >
                     📝 Sign Contract & Proceed to Payment →
@@ -352,7 +353,7 @@ export default function ClientPortal() {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "linear-gradient(135deg, #0a1628 0%, #1e293b 50%, #334155 100%)",
+      background: "#FFFFFF",
       padding: "2rem 1rem",
       fontFamily: "system-ui, -apple-system, sans-serif"
     }}>
@@ -364,8 +365,8 @@ export default function ClientPortal() {
         right: 0,
         bottom: 0,
         backgroundImage: `
-          linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px)
+          linear-gradient(rgba(66, 133, 244, 0.1) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(66, 133, 244, 0.1) 1px, transparent 1px)
         `,
         backgroundSize: "50px 50px",
         opacity: 0.3,
@@ -397,7 +398,7 @@ export default function ClientPortal() {
               <h1 style={{
                 fontSize: "1.5rem",
                 fontWeight: 700,
-                background: "linear-gradient(135deg, #06b6d4, #0284c7)",
+                background: "linear-gradient(135deg, #4285F4, #4285F4)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 margin: 0
@@ -437,7 +438,7 @@ export default function ClientPortal() {
           <h2 style={{
             fontSize: "1.25rem",
             fontWeight: 600,
-            color: "#1e293b",
+            color: "#0A1A3F",
             marginBottom: "1rem",
             display: "flex",
             alignItems: "center",
@@ -449,14 +450,14 @@ export default function ClientPortal() {
           <div style={{
             padding: "1rem",
             backgroundColor: "#f0f9ff",
-            border: "2px solid #06b6d4",
+            border: "2px solid #4285F4",
             borderRadius: "8px",
             marginBottom: "1rem"
           }}>
             <div style={{ fontSize: "0.875rem", color: "#64748b", marginBottom: "0.25rem" }}>
               Current Status
             </div>
-            <div style={{ fontSize: "1.25rem", fontWeight: 600, color: "#0284c7" }}>
+            <div style={{ fontSize: "1.25rem", fontWeight: 600, color: "#4285F4" }}>
               {caseData?.client_status || caseData?.status || 'Under Review'}
             </div>
           </div>
@@ -465,18 +466,18 @@ export default function ClientPortal() {
           {caseData?.pricing_tier_name && (
             <div style={{
               padding: "1rem",
-              background: "linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1))",
-              border: "2px solid rgba(102, 126, 234, 0.3)",
+              background: "linear-gradient(135deg, rgba(66, 133, 244, 0.1), rgba(59, 130, 246, 0.1))",
+              border: "2px solid rgba(66, 133, 244, 0.3)",
               borderRadius: "8px",
               marginBottom: "1rem"
             }}>
-              <div style={{ fontSize: "0.875rem", color: "#667eea", marginBottom: "0.5rem", fontWeight: 600 }}>
+              <div style={{ fontSize: "0.875rem", color: "#4285F4", marginBottom: "0.5rem", fontWeight: 600 }}>
                 Your Package
               </div>
               <div style={{ fontSize: "1.125rem", fontWeight: 700, color: "#212529", marginBottom: "0.25rem" }}>
                 {caseData.pricing_tier_name}
               </div>
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "#667eea" }}>
+              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "#4285F4" }}>
                 ${caseData.pricing_tier_amount}
               </div>
             </div>
@@ -510,7 +511,7 @@ export default function ClientPortal() {
           <h2 style={{
             fontSize: "1.25rem",
             fontWeight: 600,
-            color: "#1e293b",
+            color: "#0A1A3F",
             marginBottom: "1rem",
             display: "flex",
             alignItems: "center",
@@ -524,7 +525,7 @@ export default function ClientPortal() {
               <div style={{ fontSize: "0.875rem", color: "#64748b", marginBottom: "0.25rem" }}>
                 Category
               </div>
-              <div style={{ fontSize: "1rem", color: "#1e293b", fontWeight: 500 }}>
+              <div style={{ fontSize: "1rem", color: "#0A1A3F", fontWeight: 500 }}>
                 {CATEGORY_NAMES[caseData?.category] || caseData?.category || 'N/A'}
               </div>
             </div>
@@ -533,7 +534,7 @@ export default function ClientPortal() {
               <div style={{ fontSize: "0.875rem", color: "#64748b", marginBottom: "0.25rem" }}>
                 Submitted
               </div>
-              <div style={{ fontSize: "1rem", color: "#1e293b" }}>
+              <div style={{ fontSize: "1rem", color: "#0A1A3F" }}>
                 {caseData?.created_at ? new Date(caseData.created_at).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',
@@ -547,7 +548,7 @@ export default function ClientPortal() {
                 <div style={{ fontSize: "0.875rem", color: "#64748b", marginBottom: "0.25rem" }}>
                   Amount
                 </div>
-                <div style={{ fontSize: "1rem", color: "#1e293b", fontWeight: 500 }}>
+                <div style={{ fontSize: "1rem", color: "#0A1A3F", fontWeight: 500 }}>
                   ${parseFloat(caseData.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </div>
               </div>
@@ -567,7 +568,7 @@ export default function ClientPortal() {
             <h2 style={{
               fontSize: "1.25rem",
               fontWeight: 600,
-              color: "#1e293b",
+              color: "#0A1A3F",
               marginBottom: "1rem",
               display: "flex",
               alignItems: "center",
@@ -608,14 +609,14 @@ export default function ClientPortal() {
               }}
               style={{
                 padding: "0.75rem 1.5rem",
-                background: "linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)",
+                background: "linear-gradient(135deg, #4285F4 0%, #2D7FF9 100%)",
                 color: "white",
                 border: "none",
                 borderRadius: "8px",
                 fontSize: "0.875rem",
                 fontWeight: 600,
                 cursor: "pointer",
-                boxShadow: "0 4px 12px rgba(6, 182, 212, 0.3)"
+                boxShadow: "0 4px 12px rgba(66, 133, 244, 0.3)"
               }}
             >
               💾 Download Contract PDF
@@ -634,7 +635,7 @@ export default function ClientPortal() {
           <h2 style={{
             fontSize: "1.25rem",
             fontWeight: 600,
-            color: "#1e293b",
+            color: "#0A1A3F",
             marginBottom: "1rem",
             display: "flex",
             alignItems: "center",
@@ -660,7 +661,7 @@ export default function ClientPortal() {
                   }}
                 >
                   <div style={{ flex: "1 1 auto", minWidth: 0 }}>
-                    <div style={{ fontWeight: 500, fontSize: "0.875rem", color: "#1e293b" }}>
+                    <div style={{ fontWeight: 500, fontSize: "0.875rem", color: "#0A1A3F" }}>
                       Document {idx + 1}
                     </div>
                     <div style={{
@@ -680,7 +681,7 @@ export default function ClientPortal() {
                       rel="noopener noreferrer"
                       style={{
                         padding: "0.5rem 1rem",
-                        backgroundColor: "#06b6d4",
+                        backgroundColor: "#4285F4",
                         color: "white",
                         textDecoration: "none",
                         borderRadius: "6px",
@@ -726,7 +727,7 @@ export default function ClientPortal() {
             <h2 style={{
               fontSize: "1.25rem",
               fontWeight: 600,
-              color: "#1e293b",
+              color: "#0A1A3F",
               marginBottom: "1rem",
               display: "flex",
               alignItems: "center",
@@ -771,11 +772,11 @@ export default function ClientPortal() {
 
         {/* Help Section */}
         <div style={{
-          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          backgroundColor: "#F0F2F5",
           borderRadius: "12px",
           padding: "1.5rem",
           textAlign: "center",
-          color: "white"
+          color: "#0A1A3F"
         }}>
           <p style={{ marginBottom: "0.5rem" }}>
             Need help or have questions?
@@ -783,7 +784,7 @@ export default function ClientPortal() {
           <a
             href="mailto:support@turboresponsehq.ai"
             style={{
-              color: "#06b6d4",
+              color: "#4285F4",
               textDecoration: "none",
               fontWeight: 600
             }}

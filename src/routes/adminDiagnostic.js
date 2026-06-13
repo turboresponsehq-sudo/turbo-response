@@ -24,11 +24,11 @@ router.get('/admin-diagnostic', async (req, res) => {
         <head>
           <title>Admin Diagnostic</title>
           <style>
-            body { font-family: Arial; padding: 40px; background: #0f172a; color: white; }
-            .container { max-width: 800px; margin: 0 auto; background: #1e293b; padding: 30px; border-radius: 10px; }
+            body { font-family: Arial; padding: 40px; background: #FFFFFF; color: #0A1A3F; }
+            .container { max-width: 800px; margin: 0 auto; background: #F0F2F5; padding: 30px; border-radius: 10px; }
             h1 { color: #ef4444; }
-            button { padding: 15px 30px; background: #06b6d4; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
-            button:hover { background: #0891b2; }
+            button { padding: 15px 30px; background: #4285F4; color: #0A1A3F; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+            button:hover { background: #4285F4; }
           </style>
         </head>
         <body>
@@ -54,17 +54,17 @@ router.get('/admin-diagnostic', async (req, res) => {
       <head>
         <title>Admin Diagnostic</title>
         <style>
-          body { font-family: Arial; padding: 40px; background: #0f172a; color: white; }
-          .container { max-width: 800px; margin: 0 auto; background: #1e293b; padding: 30px; border-radius: 10px; }
-          h1 { color: #06b6d4; }
+          body { font-family: Arial; padding: 40px; background: #FFFFFF; color: #0A1A3F; }
+          .container { max-width: 800px; margin: 0 auto; background: #F0F2F5; padding: 30px; border-radius: 10px; }
+          h1 { color: #4285F4; }
           .info { background: #334155; padding: 15px; border-radius: 5px; margin: 15px 0; }
           .label { color: #94a3b8; }
-          .value { color: #06b6d4; font-weight: bold; }
+          .value { color: #4285F4; font-weight: bold; }
           .status { padding: 10px; border-radius: 5px; margin: 10px 0; }
           .success { background: #065f46; color: #10b981; }
           .error { background: #7f1d1d; color: #ef4444; }
-          button { padding: 15px 30px; background: #06b6d4; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 20px; }
-          button:hover { background: #0891b2; }
+          button { padding: 15px 30px; background: #4285F4; color: #0A1A3F; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 20px; }
+          button:hover { background: #4285F4; }
         </style>
       </head>
       <body>
@@ -94,7 +94,7 @@ router.get('/admin-diagnostic', async (req, res) => {
               <div><span class="label">Email:</span> <span class="value">turboresponsehq@gmail.com</span></div>
               <div><span class="label">Password:</span> <span class="value">admin123</span></div>
             </div>
-            <a href="/admin/login" style="display: inline-block; padding: 15px 30px; background: #06b6d4; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px;">Go to Login</a>
+            <a href="/admin/login" style="display: inline-block; padding: 15px 30px; background: #4285F4; color: #0A1A3F; text-decoration: none; border-radius: 5px; margin-top: 20px;">Go to Login</a>
           `}
         </div>
       </body>
@@ -127,10 +127,10 @@ router.post('/admin-diagnostic/reset', async (req, res) => {
       <head>
         <title>Password Reset</title>
         <style>
-          body { font-family: Arial; padding: 40px; background: #0f172a; color: white; text-align: center; }
-          .container { max-width: 600px; margin: 0 auto; background: #1e293b; padding: 40px; border-radius: 10px; }
+          body { font-family: Arial; padding: 40px; background: #FFFFFF; color: #0A1A3F; text-align: center; }
+          .container { max-width: 600px; margin: 0 auto; background: #F0F2F5; padding: 40px; border-radius: 10px; }
           h1 { color: #10b981; }
-          a { display: inline-block; padding: 15px 30px; background: #06b6d4; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+          a { display: inline-block; padding: 15px 30px; background: #4285F4; color: #0A1A3F; text-decoration: none; border-radius: 5px; margin-top: 20px; }
         </style>
       </head>
       <body>
@@ -172,10 +172,10 @@ router.post('/admin-diagnostic/create', async (req, res) => {
       <head>
         <title>Admin Created</title>
         <style>
-          body { font-family: Arial; padding: 40px; background: #0f172a; color: white; text-align: center; }
-          .container { max-width: 600px; margin: 0 auto; background: #1e293b; padding: 40px; border-radius: 10px; }
+          body { font-family: Arial; padding: 40px; background: #FFFFFF; color: #0A1A3F; text-align: center; }
+          .container { max-width: 600px; margin: 0 auto; background: #F0F2F5; padding: 40px; border-radius: 10px; }
           h1 { color: #10b981; }
-          a { display: inline-block; padding: 15px 30px; background: #06b6d4; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+          a { display: inline-block; padding: 15px 30px; background: #4285F4; color: #0A1A3F; text-decoration: none; border-radius: 5px; margin-top: 20px; }
         </style>
       </head>
       <body>

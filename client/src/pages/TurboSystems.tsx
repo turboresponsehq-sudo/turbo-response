@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import "./TurboSystems.css";
 
@@ -47,56 +48,57 @@ const services = [
 ];
 
 const proofPoints = [
-  {
-    stat: "0",
-    label: "Manual steps",
-    detail: "in the daily intel pipeline",
-  },
-  {
-    stat: "6",
-    label: "Hours",
-    detail: "to pivot a full intelligence domain",
-  },
-  {
-    stat: "100%",
-    label: "Free infra",
-    detail: "via GitHub Actions automation",
-  },
-  {
-    stat: "<5min",
-    label: "Deploy time",
-    detail: "with proof-first CI/CD",
-  },
+  { stat: "0", label: "Manual steps", detail: "in the daily intel pipeline" },
+  { stat: "6", label: "Hours", detail: "to pivot a full intelligence domain" },
+  { stat: "100%", label: "Free infra", detail: "via GitHub Actions automation" },
+  { stat: "<5min", label: "Deploy time", detail: "with proof-first CI/CD" },
 ];
 
-const process = [
+const systemFlow = [
   {
     step: "01",
-    title: "Discovery Call",
+    icon: "📡",
+    title: "Data Ingestion",
     description:
-      "We map your current operations, identify the highest-value automation targets, and define success metrics before writing a single line of code.",
+      "Ingested from federal databases, APIs, RSS feeds, and internal systems — on schedule or event-driven.",
   },
   {
     step: "02",
-    title: "Architecture Design",
+    icon: "🧠",
+    title: "AI Classification",
     description:
-      "We design the system architecture — data flows, integrations, deployment strategy — and document it so you own it completely.",
+      "Signals ranked P0/P1/P2, structured, and routed to the appropriate workflow automatically.",
   },
   {
     step: "03",
-    title: "Build & Deploy",
+    icon: "⚙️",
+    title: "Workflow Execution",
     description:
-      "We build in production-ready increments with checkpoints, version control, and live preview at every stage. No black boxes.",
+      "Agents generate documents, create tasks, send notifications, and trigger downstream actions.",
   },
   {
     step: "04",
-    title: "Handoff & Stability",
+    icon: "📤",
+    title: "Output Delivery",
     description:
-      "Every system ships with monitoring, incident templates, runbooks, and a stability protocol. You get infrastructure that proves it's working every day.",
+      "Reports emailed, tasks created, dashboards updated, clients notified — zero human intervention.",
   },
 ];
 
+const infraStack = [
+  { label: "Daily intel pipeline", detail: "Scans 6 federal sources, classifies P0/P1/P2, delivers at 6am ET" },
+  { label: "Production stability", detail: "Drift guards, version beacons, smoke tests, incident templates" },
+  { label: "Client portal", detail: "Payment gate, document management, real-time messaging" },
+  { label: "CI/CD pipeline", detail: "Auto-deploy, proof-first deploys, zero manual steps" },
+];
+
 export default function TurboSystems() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    document.title = "Turbo Systems ⚡ AI Infrastructure — Turbo Response HQ";
+  }, []);
+
   return (
     <div className="ts-root">
       {/* Animated background */}
@@ -116,42 +118,49 @@ export default function TurboSystems() {
               TURBO <span className="ts-logo-accent">SYSTEMS</span>
             </span>
           </Link>
-          <nav className="ts-nav-links">
-            <Link href="/" className="ts-nav-link">
+          <button
+            className={`ts-hamburger${menuOpen ? " ts-is-open" : ""}`}
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle navigation"
+          >
+            <span /><span /><span />
+          </button>
+          <nav className={`ts-nav-links${menuOpen ? " ts-mobile-open" : ""}`}>
+            <Link href="/" className="ts-nav-link" onClick={() => setMenuOpen(false)}>
               ← Back to Turbo Response
             </Link>
-            <a href="#services" className="ts-nav-link">
-              Services
+            <a href="#services" className="ts-nav-link" onClick={() => setMenuOpen(false)}>
+              What We Build
             </a>
-            <a href="#process" className="ts-nav-link">
-              Process
+            <a href="#how-it-works" className="ts-nav-link" onClick={() => setMenuOpen(false)}>
+              How It Works
             </a>
-            <a href="#contact" className="ts-nav-cta">
-              Book a Call
+            <a href="#contact" className="ts-nav-cta" onClick={() => setMenuOpen(false)}>
+              Build With Us
             </a>
           </nav>
         </div>
       </header>
 
-      {/* Hero */}
+      {/* ── SECTION 1: HERO ── */}
       <section className="ts-hero">
-        <div className="ts-hero-badge">⚡ AI Infrastructure Layer</div>
+        <div className="ts-hero-badge">⚡ AI Infrastructure Platform</div>
         <h1 className="ts-hero-title">
           Build Systems That
           <br />
           <span className="ts-gradient-text">Run Without You</span>
         </h1>
         <p className="ts-hero-sub">
-          Turbo Systems designs and deploys AI-powered infrastructure for
-          businesses that need automation, intelligence pipelines, and
-          production-grade systems — not just tools.
+          Turbo Systems designs and deploys automated business infrastructure —
+          intelligence pipelines, AI agents, and production-grade systems that
+          execute without manual intervention.
         </p>
         <div className="ts-hero-actions">
           <a href="#contact" className="ts-btn-primary">
             Book a Strategy Call
           </a>
           <a href="#services" className="ts-btn-ghost">
-            See What We Build →
+            What We Build →
           </a>
         </div>
 
@@ -167,21 +176,41 @@ export default function TurboSystems() {
         </div>
       </section>
 
-      {/* Divider */}
       <div className="ts-divider" />
 
-      {/* Services */}
+      {/* ── SECTION 2: WHAT WE BUILD ── */}
       <section id="services" className="ts-section">
         <div className="ts-container">
           <div className="ts-section-header">
             <span className="ts-section-tag">What We Build</span>
             <h2 className="ts-section-title">AI Infrastructure Services</h2>
             <p className="ts-section-sub">
-              Every system is built to production standards, documented, and
-              shipped with monitoring. No prototypes. No guessing.
+              We design and deploy production-grade systems — intelligence pipelines,
+              AI agents, and automated workflows — built to run without you.
+              Every build is version-controlled, monitored, and shipped with stability protocols.
             </p>
           </div>
 
+          {/* Three pillars */}
+          <div className="ts-pillars">
+            <div className="ts-pillar">
+              <span className="ts-pillar-icon">🧠</span>
+              <h4>Intelligence Layer</h4>
+              <p>AI pipelines that classify, prioritize, and act on real-world data streams</p>
+            </div>
+            <div className="ts-pillar">
+              <span className="ts-pillar-icon">⚙️</span>
+              <h4>Automation Engine</h4>
+              <p>Multi-agent workflows that execute tasks, generate outputs, and trigger actions</p>
+            </div>
+            <div className="ts-pillar">
+              <span className="ts-pillar-icon">🏗️</span>
+              <h4>Production Infrastructure</h4>
+              <p>Deployed systems with CI/CD, monitoring, drift guards, and incident protocols</p>
+            </div>
+          </div>
+
+          {/* Service cards */}
           <div className="ts-services-grid">
             {services.map((s) => (
               <div key={s.title} className="ts-service-card">
@@ -190,9 +219,7 @@ export default function TurboSystems() {
                 <p className="ts-service-desc">{s.description}</p>
                 <div className="ts-service-tags">
                   {s.tags.map((t) => (
-                    <span key={t} className="ts-tag">
-                      {t}
-                    </span>
+                    <span key={t} className="ts-tag">{t}</span>
                   ))}
                 </div>
               </div>
@@ -201,87 +228,97 @@ export default function TurboSystems() {
         </div>
       </section>
 
-      {/* Proof / Live Systems */}
-      <section className="ts-proof-section">
-        <div className="ts-container">
-          <div className="ts-proof-card">
-            <div className="ts-proof-label-top">Live System — Proof of Build</div>
-            <h2 className="ts-proof-title">
-              This site runs on Turbo Systems infrastructure.
-            </h2>
-            <p className="ts-proof-body">
-              The platform you're on right now — client portals, admin
-              dashboards, automated daily intelligence delivery, payment
-              processing, document management, and production stability
-              monitoring — was designed and deployed using the same methodology
-              we apply to client engagements.
-            </p>
-            <div className="ts-proof-items">
-              <div className="ts-proof-line">
-                <span className="ts-check">✓</span>
-                <span>
-                  Daily intel pipeline: scans 6 federal sources, classifies
-                  P0/P1/P2, delivers email + creates tasks at 6am ET
-                </span>
-              </div>
-              <div className="ts-proof-line">
-                <span className="ts-check">✓</span>
-                <span>
-                  Production stability protocol: drift guards, version beacons,
-                  smoke tests, incident templates
-                </span>
-              </div>
-              <div className="ts-proof-line">
-                <span className="ts-check">✓</span>
-                <span>
-                  Client portal with payment gate, document management, and
-                  real-time messaging
-                </span>
-              </div>
-              <div className="ts-proof-line">
-                <span className="ts-check">✓</span>
-                <span>
-                  Full CI/CD with auto-deploy, proof-first deploys, and zero
-                  manual steps
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <div className="ts-divider" />
 
-      {/* Process */}
-      <section id="process" className="ts-section">
+      {/* ── SECTION 3: HOW IT WORKS ── */}
+      <section id="how-it-works" className="ts-section">
         <div className="ts-container">
           <div className="ts-section-header">
             <span className="ts-section-tag">How It Works</span>
-            <h2 className="ts-section-title">From Discovery to Deployed</h2>
+            <h2 className="ts-section-title">Data → AI → Execution → Output</h2>
+            <p className="ts-section-sub">
+              Every Turbo Systems build follows the same production-proven flow.
+            </p>
           </div>
 
-          <div className="ts-process-grid">
-            {process.map((p) => (
-              <div key={p.step} className="ts-process-card">
-                <div className="ts-process-step">{p.step}</div>
-                <h3 className="ts-process-title">{p.title}</h3>
-                <p className="ts-process-desc">{p.description}</p>
+          <div className="ts-flow-grid">
+            {systemFlow.map((f, i) => (
+              <div key={f.step} className="ts-flow-card">
+                <div className="ts-flow-step">{f.step}</div>
+                <div className="ts-flow-icon">{f.icon}</div>
+                <h3 className="ts-flow-title">{f.title}</h3>
+                <p className="ts-flow-desc">{f.description}</p>
+                {i < systemFlow.length - 1 && (
+                  <div className="ts-flow-arrow">→</div>
+                )}
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
+      {/* ── SECTION 4: INFRASTRUCTURE / PROOF ── */}
+      <section className="ts-infra-section">
+        <div className="ts-container">
+          <div className="ts-infra-inner">
+            <div className="ts-infra-left">
+              <span className="ts-section-tag">Infrastructure / Proof</span>
+              <h2 className="ts-infra-title">
+                This site runs on<br />
+                <span className="ts-gradient-text">Turbo Systems infrastructure.</span>
+              </h2>
+              <p className="ts-infra-body">
+                The platform you're on right now — client portals, admin dashboards,
+                automated intelligence delivery, payment processing, and production
+                stability monitoring — was built using the same methodology we apply
+                to every client engagement.
+              </p>
+            </div>
+            <div className="ts-infra-right">
+              {infraStack.map((item) => (
+                <div key={item.label} className="ts-infra-item">
+                  <div className="ts-infra-check">✓</div>
+                  <div>
+                    <div className="ts-infra-label">{item.label}</div>
+                    <div className="ts-infra-detail">{item.detail}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SECTION 5: BUILD WITH US ── */}
       <section id="contact" className="ts-cta-section">
         <div className="ts-container">
           <div className="ts-cta-card">
             <div className="ts-cta-glow" />
-            <span className="ts-section-tag">Ready to Build?</span>
+
+            {/* Founder identity */}
+            <div className="ts-founder-row">
+              <div className="ts-founder-avatar">DC</div>
+              <div className="ts-founder-meta">
+                <div className="ts-founder-name">Demarcus Collins</div>
+                <div className="ts-founder-role">Founder · Turbo Response &amp; Turbo Systems</div>
+                <div className="ts-founder-tags">
+                  <span className="ts-tag">Google Developer</span>
+                  <span className="ts-tag">Manus AI Builder</span>
+                  <span className="ts-tag">Production Systems</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="ts-cta-divider" />
+
+            <span className="ts-section-tag">Build With Us</span>
             <h2 className="ts-cta-title">
-              Let's Design Your AI Infrastructure
+              Let's Design Your<br />
+              <span className="ts-gradient-text">AI Infrastructure</span>
             </h2>
             <p className="ts-cta-sub">
-              Book a 30-minute strategy call. We'll map your highest-value
-              automation targets and define a build plan before any commitment.
+              Book a 30-minute strategy call. We'll map your highest-value automation
+              targets and define a build plan — before any commitment.
             </p>
             <div className="ts-cta-actions">
               <a
@@ -295,8 +332,7 @@ export default function TurboSystems() {
               </Link>
             </div>
             <p className="ts-cta-note">
-              No sales pitch. No commitment. Just a clear picture of what's
-              possible.
+              No sales pitch. No commitment. Just a clear picture of what's possible.
             </p>
           </div>
         </div>
@@ -316,15 +352,10 @@ export default function TurboSystems() {
               </span>
             </div>
             <div className="ts-footer-links">
-              <Link href="/" className="ts-footer-link">
-                Consumer Defense
-              </Link>
-              <Link href="/services" className="ts-footer-link">
-                Services
-              </Link>
-              <Link href="/intake-offense" className="ts-footer-link">
-                Submit Brief
-              </Link>
+              <Link href="/" className="ts-footer-link">Home</Link>
+              <Link href="/services" className="ts-footer-link">Services</Link>
+              <Link href="/pricing" className="ts-footer-link">Pricing</Link>
+              <Link href="/intake-offense" className="ts-footer-link">Submit Brief</Link>
             </div>
           </div>
         </div>

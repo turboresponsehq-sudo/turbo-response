@@ -1,35 +1,130 @@
+import { useEffect } from "react";
 import { Link } from "wouter";
 import "./Disclaimer.css";
 
 export default function Disclaimer() {
+  useEffect(() => {
+    document.title = "Disclaimer — Turbo Response";
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
-    <div className="disclaimer-page">
-      <div className="disclaimer-container">
-        <h1>⚠️ Legal Disclaimer</h1>
+    <div className="disc-root">
 
-        <div className="disclaimer-box">
-          <p><strong>Turbo Response is NOT a law firm.</strong> We are a consumer advocacy technology platform that provides AI-powered software to help you create your own advocacy documents and response letters. We do NOT provide legal advice, and no attorney-client relationship is formed by using our services. We provide document preparation and consumer advocacy support services ONLY.</p>
+      {/* ── HEADER ─────────────────────────────────────────────────────────── */}
+      <header className="disc-header">
+        <div className="disc-nav-inner">
+          <Link href="/" className="disc-logo">
+            <span>⚡</span>
+            <span>TURBO RESPONSE</span>
+          </Link>
+          <nav className="disc-nav">
+            <Link href="/services" className="disc-nav-link">Infrastructure</Link>
+            <Link href="/industries" className="disc-nav-link">Industries</Link>
+            <Link href="/turbo-systems" className="disc-nav-link disc-nav-systems">⚡ Turbo Systems</Link>
+            <Link href="/turbo-intake" className="disc-nav-cta">Build With Us</Link>
+          </nav>
         </div>
+      </header>
 
-        <p>The information and documents provided through the Turbo Response platform are for informational and self-advocacy purposes only and are NOT a substitute for legal advice from a qualified attorney licensed to practice in your jurisdiction. We do NOT practice law.</p>
-
-        <p>Your use of our platform is subject to our <Link href="/terms-of-service">Terms of Service</Link>. By using Turbo Response, you acknowledge and agree that:</p>
-        <ul>
-          <li>The information on this site is NOT legal advice.</li>
-          <li>We do NOT practice law and do NOT provide legal representation.</li>
-          <li>We do NOT guarantee any specific outcome for your situation. Results vary based on the facts of each situation.</li>
-          <li>You are responsible for the accuracy of the information you provide and for correctly using the documents we generate.</li>
-          <li>You are representing yourself in your matter - we do NOT represent you.</li>
-        </ul>
-
-        <p><strong>IMPORTANT:</strong> We strongly recommend that you consult with a licensed attorney for legal advice on your specific situation. Turbo Response is a document preparation tool to assist you with self-advocacy, NOT a replacement for professional legal counsel or legal representation.</p>
-
-        <p>For any questions, please refer to our <Link href="/terms-of-service">Terms of Service</Link> or contact us at <a href="mailto:TurboResponseHQ@gmail.com">TurboResponseHQ@gmail.com</a>.</p>
-
-        <div className="back-link">
-          <Link href="/">← Back to Homepage</Link>
+      {/* ── HERO ───────────────────────────────────────────────────────────── */}
+      <section className="disc-hero">
+        <div className="disc-hero-inner">
+          <div className="disc-section-label">Legal Disclaimer</div>
+          <h1 className="disc-hero-h1">Platform Disclaimer &amp; Limitations</h1>
+          <p className="disc-hero-sub">
+            Turbo Response is an AI systems and operational infrastructure company. Please read the following carefully before using this platform.
+          </p>
         </div>
-      </div>
+      </section>
+
+      {/* ── DISCLAIMER CONTENT ─────────────────────────────────────────────── */}
+      <section className="disc-section">
+        <div className="disc-section-inner">
+
+          {/* Primary notice */}
+          <div className="disc-notice">
+            <div className="disc-notice-icon">⚡</div>
+            <div className="disc-notice-body">
+              <strong>Turbo Response is NOT a law firm.</strong> Turbo Response is an AI systems and operational infrastructure platform. We provide workflow automation, document intelligence, operational organization systems, and AI-assisted infrastructure tools. We do not provide legal advice, and no attorney-client relationship is formed by using our platform or services.
+            </div>
+          </div>
+
+          {/* Sections */}
+          <div className="disc-blocks">
+
+            <div className="disc-block">
+              <h2 className="disc-block-title">What Turbo Response Is</h2>
+              <p className="disc-block-body">
+                Turbo Response is an operational intelligence and AI infrastructure platform. We build and deploy AI systems, automation workflows, document intelligence pipelines, and organizational infrastructure for founders, operators, agencies, and organizations. Where applicable, these systems may assist users in organizing, structuring, and preparing operational documentation — including documentation relevant to disputes, complaints, or administrative processes. This constitutes operational and organizational support only.
+              </p>
+            </div>
+
+            <div className="disc-block">
+              <h2 className="disc-block-title">What Turbo Response Is Not</h2>
+              <ul className="disc-list">
+                <li>Turbo Response is <strong>not a law firm</strong> and does not practice law.</li>
+                <li>We do <strong>not provide legal advice</strong> of any kind.</li>
+                <li>We do <strong>not provide legal representation</strong>.</li>
+                <li>No attorney-client relationship is created by using this platform.</li>
+                <li>We are <strong>not a substitute</strong> for qualified legal counsel.</li>
+              </ul>
+            </div>
+
+            <div className="disc-block">
+              <h2 className="disc-block-title">Informational &amp; Operational Use Only</h2>
+              <p className="disc-block-body">
+                All content, systems, outputs, and materials provided through the Turbo Response platform are for informational and operational support purposes only. They do not constitute legal, financial, regulatory, or professional advice. Results and outcomes vary based on the specific facts, circumstances, and jurisdictions applicable to each situation. Turbo Response makes no guarantees regarding specific outcomes.
+              </p>
+            </div>
+
+            <div className="disc-block">
+              <h2 className="disc-block-title">User Responsibilities</h2>
+              <ul className="disc-list">
+                <li>You are responsible for the accuracy of all information you provide to the platform.</li>
+                <li>You are responsible for the appropriate use of any outputs, documents, or materials generated.</li>
+                <li>You are representing yourself in any matter — Turbo Response does not represent you.</li>
+                <li>Your use of this platform is subject to our <Link href="/terms-of-service" className="disc-link">Terms of Service</Link>.</li>
+              </ul>
+            </div>
+
+            <div className="disc-block">
+              <h2 className="disc-block-title">Professional Counsel Recommendation</h2>
+              <p className="disc-block-body">
+                For any matter involving legal rights, obligations, disputes, regulatory compliance, or financial decisions, Turbo Response strongly recommends consulting with a licensed professional — including a licensed attorney, financial advisor, or relevant subject-matter expert — for advice specific to your situation. Our platform is an operational infrastructure tool, not a replacement for professional counsel.
+              </p>
+            </div>
+
+            <div className="disc-block">
+              <h2 className="disc-block-title">Contact</h2>
+              <p className="disc-block-body">
+                For questions regarding this disclaimer or our platform, contact us at <a href="mailto:TurboResponseHQ@gmail.com" className="disc-link">TurboResponseHQ@gmail.com</a> or review our <Link href="/terms-of-service" className="disc-link">Terms of Service</Link>.
+              </p>
+            </div>
+
+          </div>
+
+          <div className="disc-back">
+            <Link href="/" className="disc-back-link">← Back to Homepage</Link>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ── FOOTER ─────────────────────────────────────────────────────────── */}
+      <footer className="disc-footer">
+        <div className="disc-footer-inner">
+          <div className="disc-footer-brand">⚡ Turbo Response — Operational Intelligence Infrastructure</div>
+          <div className="disc-footer-links">
+            <Link href="/" className="disc-footer-link">Home</Link>
+            <Link href="/services" className="disc-footer-link">Infrastructure</Link>
+            <Link href="/industries" className="disc-footer-link">Industries</Link>
+            <Link href="/turbo-systems" className="disc-footer-link disc-footer-link-systems">⚡ Turbo Systems</Link>
+          </div>
+          <div className="disc-footer-copy">© 2026 Turbo Response HQ · turboresponsehq.ai · Operational intelligence and AI infrastructure systems.</div>
+        </div>
+      </footer>
+
     </div>
   );
 }

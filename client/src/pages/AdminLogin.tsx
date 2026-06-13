@@ -26,8 +26,9 @@ export default function AdminLogin() {
 
     try {
       // Authenticate with backend
+      // Normalize email to lowercase to handle iOS autocapitalize
       const response = await api.post('/api/auth/login', {
-        email,
+        email: email.trim().toLowerCase(),
         password,
       });
 
@@ -72,6 +73,9 @@ export default function AdminLogin() {
               placeholder="Enter email"
               required
               autoComplete="email"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />

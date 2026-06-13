@@ -44,7 +44,7 @@ export default function AIUsageTracker() {
   };
 
   const getCapStatusColor = () => {
-    if (!stats?.cap_percentage) return '#06b6d4';
+    if (!stats?.cap_percentage) return '#4285F4';
     if (stats.cap_percentage >= 90) return '#ef4444'; // Red
     if (stats.cap_percentage >= 75) return '#f97316'; // Orange
     if (stats.cap_percentage >= 50) return '#fbbf24'; // Yellow

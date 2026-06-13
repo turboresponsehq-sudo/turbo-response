@@ -255,7 +255,7 @@ export default function AdminMessaging({ caseId, clientName }: AdminMessagingPro
                   maxWidth: "70%",
                   padding: "0.75rem 1rem",
                   borderRadius: "12px",
-                  backgroundColor: msg.sender === "admin" ? "#3b82f6" : "white",
+                  backgroundColor: msg.sender === "admin" ? "#3B6BF5" : "white",
                   color: msg.sender === "admin" ? "white" : "#111827",
                   border: msg.sender === "client" ? "1px solid #e5e7eb" : "none",
                   boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)"
@@ -318,7 +318,7 @@ export default function AdminMessaging({ caseId, clientName }: AdminMessagingPro
           <div style={{
             padding: "0.75rem",
             backgroundColor: "#eff6ff",
-            border: "1px solid #3b82f6",
+            border: "1px solid #3B6BF5",
             borderRadius: "6px",
             color: "#1e40af",
             fontSize: "0.875rem",
@@ -376,7 +376,7 @@ export default function AdminMessaging({ caseId, clientName }: AdminMessagingPro
             disabled={sending || !newMessage.trim() || uploading}
             style={{
               padding: "0.75rem 1.5rem",
-              backgroundColor: sending || !newMessage.trim() || uploading ? "#9ca3af" : "#3b82f6",
+              backgroundColor: sending || !newMessage.trim() || uploading ? "#9ca3af" : "#3B6BF5",
               color: "white",
               border: "none",
               borderRadius: "6px",

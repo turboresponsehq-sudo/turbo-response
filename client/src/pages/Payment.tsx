@@ -197,8 +197,8 @@ export default function Payment() {
             <div
               className="payment-method"
               style={{
-                border: "2px solid #06b6d4",
-                background: "rgba(6, 182, 212, 0.05)",
+                border: "2px solid #4285F4",
+                background: "rgba(66, 133, 244, 0.05)",
               }}
             >
               <div className="payment-method-info">
@@ -214,7 +214,7 @@ export default function Payment() {
                 </div>
               </div>
               <div style={{ maxWidth: "300px" }}>
-                <p style={{ color: "#cbd5e1", fontSize: "0.9rem" }}>
+                <p style={{ color: "#374151", fontSize: "0.9rem" }}>
                   PayPal integration coming soon
                 </p>
               </div>
