@@ -37,6 +37,34 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="hero">
+        {/* Founder Image Wrap with Galaxy Effects */}
+        <div className="founder-wrap" aria-hidden="true">
+          <div className="founder-ring founder-ring-1" />
+          <div className="founder-ring founder-ring-2" />
+          <div className="founder-ring founder-ring-3" />
+          <img
+            src="/manus-storage/founder-hero_a3159459.png"
+            alt=""
+            className="founder-img"
+            aria-hidden="true"
+          />
+          <div className="founder-overlay-left" />
+          <div className="founder-overlay-bottom" />
+          <div className="founder-overlay-top" />
+          <div className="founder-glow-blue" />
+          <div className="founder-glow-purple" />
+          <div className="orb-particles" aria-hidden="true">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className={`particle particle-${i + 1}`} />
+            ))}
+          </div>
+        </div>
+
+        {/* Light beam streaks */}
+        <div className="light-trail trail-1" aria-hidden="true" />
+        <div className="light-trail trail-2" aria-hidden="true" />
+        <div className="light-trail trail-3" aria-hidden="true" />
+
         <div className="hero-content">
           <h1 className="hero-title">
             AI-Powered Systems for Businesses.<br />
@@ -56,31 +84,22 @@ export default function Home() {
               </Link>
             </div>
 
-            {/* Consumer Proposition */}
+            {/* Consumer Proposition with Intake Buttons */}
             <div className="proposition consumer-prop">
               <div className="prop-icon">🛡️</div>
               <p className="prop-text">
                 <strong>Turbo Response</strong> helps consumers navigate credit, debt, housing, IRS, banking, and other real-world challenges through document preparation, research support, action plans, and practical guidance designed to help them move forward.
               </p>
-              <Link href="/consumer-solutions" className="cta-button secondary-button">
-                Explore Consumer Solutions
-              </Link>
-            </div>
-          </div>
-
-          {/* Dual Intake Buttons */}
-          <div className="intake-buttons-container">
-            <div className="intake-button-group">
-              <Link href="/turbo-intake" className="cta-button primary-button">
-                APPLY, FILE, OR TAKE ACTION
-              </Link>
-              <p className="button-helper">Use this if you are initiating an application, request, dispute, or claim.</p>
-            </div>
-            <div className="intake-button-group">
-              <Link href="/intake" className="cta-button secondary-button">
-                RESPOND TO A NOTICE OR ISSUE
-              </Link>
-              <p className="button-helper">Use this if you received a notice, denial, demand, or enforcement action.</p>
+              
+              {/* Intake Buttons Inside Consumer Box */}
+              <div className="consumer-intake-buttons">
+                <Link href="/intake" className="cta-button secondary-button">
+                  RESPOND TO A NOTICE OR ISSUE
+                </Link>
+                <Link href="/intake" className="cta-button secondary-button">
+                  APPLY, FILE, OR TAKE ACTION
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -237,11 +256,11 @@ export default function Home() {
           <p className="cta-subtitle">Choose the option that matches your situation:</p>
           
           <div className="final-buttons">
-            <Link href="/turbo-intake" className="cta-button primary-button">
-              APPLY, FILE, OR TAKE ACTION
+            <Link href="/intake" className="cta-button primary-button">
+              RESPOND TO A NOTICE OR ISSUE
             </Link>
             <Link href="/intake" className="cta-button secondary-button">
-              RESPOND TO A NOTICE OR ISSUE
+              APPLY, FILE, OR TAKE ACTION
             </Link>
           </div>
         </div>
