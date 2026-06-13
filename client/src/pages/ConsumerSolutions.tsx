@@ -1,10 +1,7 @@
 import { Link } from "wouter";
-import { useState } from "react";
 import "./ConsumerSolutions.css";
 
 export default function ConsumerSolutions() {
-  const [showDecision, setShowDecision] = useState(false);
-
   return (
     <>
       {/* Animated Background */}
@@ -37,27 +34,64 @@ export default function ConsumerSolutions() {
         </div>
       </header>
 
-      {!showDecision ? (
-        <>
-          {/* Hero Section */}
-          <section className="hero">
-            <div className="hero-content">
-              <h1 className="hero-title">
-                Practical Solutions for Real-World Challenges
-              </h1>
-              <p className="hero-description">
-                Turbo Response helps consumers navigate credit, debt, housing, IRS, banking, and other real-world challenges through document preparation, research support, action plans, and practical guidance designed to help you move forward.
-              </p>
+      {/* Hero Section */}
+      <section className="hero">
+        <div className="hero-content">
+          <h1 className="hero-title">
+            Practical Solutions for Real-World Challenges
+          </h1>
+          <p className="hero-description">
+            Turbo Response helps consumers navigate credit, debt, housing, IRS, banking, and other real-world challenges through document preparation, research support, action plans, and practical guidance designed to help you move forward.
+          </p>
 
-              {/* CTA Button to Decision Screen */}
-              <button onClick={() => setShowDecision(true)} className="cta-button primary-button">
-                Get Started
-              </button>
+          {/* Two Direct Action Buttons — no extra steps */}
+          <div className="decision-grid" style={{ marginTop: '2rem' }}>
+            <div className="decision-card defense-card">
+              <div className="decision-icon">🛡️</div>
+              <h3 className="decision-heading">I'm Responding to Something</h3>
+              <p className="decision-label">Defense</p>
+              <div className="examples">
+                <p className="examples-title">Examples:</p>
+                <ul>
+                  <li>Eviction notice</li>
+                  <li>Debt collection letter</li>
+                  <li>IRS notice</li>
+                  <li>Wage garnishment</li>
+                  <li>Benefits denial</li>
+                  <li>Repossession</li>
+                  <li>Enforcement action</li>
+                </ul>
+              </div>
+              <Link href="/intake" className="cta-button primary-button">
+                Respond to a Notice →
+              </Link>
             </div>
-          </section>
+            <div className="decision-card offense-card">
+              <div className="decision-icon">⚔️</div>
+              <h3 className="decision-heading">I'm Taking Action</h3>
+              <p className="decision-label">Offense</p>
+              <div className="examples">
+                <p className="examples-title">Examples:</p>
+                <ul>
+                  <li>Filing a dispute</li>
+                  <li>Requesting reconsideration</li>
+                  <li>Applying for relief</li>
+                  <li>Seeking compensation</li>
+                  <li>Submitting a complaint</li>
+                  <li>Recovering funds</li>
+                  <li>Initiating a claim</li>
+                </ul>
+              </div>
+              <Link href="/intake-offense" className="cta-button secondary-button">
+                Apply, File, or Take Action →
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
 
-          {/* What We Help With */}
-          <section className="what-we-help">
+      {/* What We Help With */}
+      <section className="what-we-help">
             <div className="section-container">
               <h2 className="section-title">What We Help With</h2>
               <div className="help-grid">
@@ -93,10 +127,10 @@ export default function ConsumerSolutions() {
                 </div>
               </div>
             </div>
-          </section>
+      </section>
 
-          {/* How It Works */}
-          <section className="how-it-works">
+      {/* How It Works */}
+      <section className="how-it-works">
             <div className="section-container">
               <h2 className="section-title">How It Works</h2>
               <div className="steps-grid">
@@ -122,10 +156,10 @@ export default function ConsumerSolutions() {
                 </div>
               </div>
             </div>
-          </section>
+      </section>
 
-          {/* Why Choose Turbo Response */}
-          <section className="why-choose">
+      {/* Why Choose Turbo Response */}
+      <section className="why-choose">
             <div className="section-container">
               <h2 className="section-title">Why Choose Turbo Response</h2>
               <div className="benefits-grid">
@@ -151,77 +185,7 @@ export default function ConsumerSolutions() {
                 </div>
               </div>
             </div>
-          </section>
-        </>
-      ) : (
-        <>
-          {/* Decision Screen */}
-          <section className="decision-section">
-            <div className="decision-container">
-              <h2 className="decision-title">What best describes your situation?</h2>
-              <p className="decision-subtitle">Choose one to get started</p>
-
-              <div className="decision-grid">
-                {/* Defense Option */}
-                <div className="decision-card defense-card">
-                  <div className="decision-icon">🛡️</div>
-                  <h3 className="decision-heading">I'm Responding to Something</h3>
-                  <p className="decision-label">Defense</p>
-                  
-                  <div className="examples">
-                    <p className="examples-title">Examples:</p>
-                    <ul>
-                      <li>Eviction notice</li>
-                      <li>Debt collection letter</li>
-                      <li>IRS notice</li>
-                      <li>Wage garnishment</li>
-                      <li>Benefits denial</li>
-                      <li>Repossession</li>
-                      <li>Enforcement action</li>
-                    </ul>
-                  </div>
-
-                  <Link href="/intake" className="cta-button primary-button">
-                    Respond to a Notice
-                  </Link>
-                </div>
-
-                {/* Offense Option */}
-                <div className="decision-card offense-card">
-                  <div className="decision-icon">⚔️</div>
-                  <h3 className="decision-heading">I'm Taking Action</h3>
-                  <p className="decision-label">Offense</p>
-                  
-                  <div className="examples">
-                    <p className="examples-title">Examples:</p>
-                    <ul>
-                      <li>Filing a dispute</li>
-                      <li>Requesting reconsideration</li>
-                      <li>Applying for relief</li>
-                      <li>Seeking compensation</li>
-                      <li>Submitting a complaint</li>
-                      <li>Recovering funds</li>
-                      <li>Initiating a claim</li>
-                    </ul>
-                  </div>
-
-                  <Link href="/intake-offense" className="cta-button secondary-button">
-                    Apply, File, or Take Action
-                  </Link>
-                </div>
-              </div>
-
-              {/* Back Button */}
-              <button 
-                onClick={() => setShowDecision(false)} 
-                className="back-button"
-              >
-                ← Back
-              </button>
-            </div>
-          </section>
-        </>
-      )}
+      </section>
 
       {/* Footer */}
       <footer className="footer">
