@@ -96,7 +96,7 @@ export default function Home() {
                 <Link href="/intake" className="cta-button secondary-button">
                   🛡️ Respond to a Notice or Issue
                 </Link>
-                <Link href="/consumer-solutions" className="cta-button secondary-button">
+                <Link href="/intake-offense" className="cta-button secondary-button">
                   ⚔️ Apply, File, or Take Action
                 </Link>
               </div>
