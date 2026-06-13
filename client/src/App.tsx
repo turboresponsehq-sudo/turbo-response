@@ -39,6 +39,7 @@ import AdminCasesDetail from "./pages/AdminCaseDetail";
 import GrantDemo from "./pages/GrantDemo";
 import EvictionDemo from "./pages/EvictionDemo";
 import TurboSystemsPage from "./pages/TurboSystems";
+import Industries from "./pages/Industries";
 import HQControlPanel from "./pages/HQControlPanel";
 import CommandCenter from "./pages/CommandCenter";
 import ConsumerSolutions from "./pages/ConsumerSolutions";
@@ -53,6 +54,7 @@ function Router() {
       <Route path="/grant-demo" component={GrantDemo} />
       <Route path="/eviction-demo" component={EvictionDemo} />
       <Route path="/turbo-systems" component={TurboSystemsPage} />
+      <Route path="/industries" component={Industries} />
       <Route path="/consumer-solutions" component={ConsumerSolutions} />
       <Route path="/black-future" component={BlackFuture} />
       <Route path="/hq" component={HQControlPanel} />
