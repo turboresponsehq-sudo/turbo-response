@@ -163,7 +163,7 @@ export default function BlackFuture() {
         {/* Rooftop founders image — cinematic background */}
         <div className="bf-hero-img-wrap" aria-hidden="true">
           <img
-            src="/images/black-future-hero.png"
+            src="/manus-storage/black-future-hero_0c7143f2.png"
             alt=""
             className="bf-hero-img"
             loading="eager"
