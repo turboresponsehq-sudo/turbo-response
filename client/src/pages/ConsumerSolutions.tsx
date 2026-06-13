@@ -205,7 +205,7 @@ export default function ConsumerSolutions() {
                     </ul>
                   </div>
 
-                  <Link href="/turbo-intake" className="cta-button secondary-button">
+                  <Link href="/intake-offense" className="cta-button secondary-button">
                     Apply, File, or Take Action
                   </Link>
                 </div>

@@ -33,6 +33,7 @@ import ClientPortal from "./pages/ClientPortal";
 import PaymentPage from "./pages/PaymentPage";
 import SignContract from "./pages/SignContract";
 import TurboIntakeForm from "./pages/TurboIntakeForm";
+import OffenseIntakeForm from "./pages/OffenseIntakeForm";
 import AdminCasesList from "./pages/AdminCasesList";
 import AdminCasesDetail from "./pages/AdminCaseDetail";
 import GrantDemo from "./pages/GrantDemo";
@@ -70,9 +71,10 @@ function Router() {
       <Route path="/payment" component={Payment} />
       <Route path="/turbo" component={TurboHQ} />
       
-      {/* Offense Intake - Business */}
-      <Route path="/intake-offense" component={TurboIntakeForm} />
-      {/* Redirect legacy route */}
+      {/* Offense Intake - Consumer */}
+      <Route path="/intake-offense" component={OffenseIntakeForm} />
+      
+      {/* Business Build Intake */}
       <Route path="/turbo-intake" component={TurboIntakeForm} />
       
       {/* Client Portal Routes */}
