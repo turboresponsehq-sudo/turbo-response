@@ -40,6 +40,7 @@ import EvictionDemo from "./pages/EvictionDemo";
 import TurboSystemsPage from "./pages/TurboSystems";
 import HQControlPanel from "./pages/HQControlPanel";
 import CommandCenter from "./pages/CommandCenter";
+import ConsumerSolutions from "./pages/ConsumerSolutions";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -50,6 +51,7 @@ function Router() {
       <Route path="/grant-demo" component={GrantDemo} />
       <Route path="/eviction-demo" component={EvictionDemo} />
       <Route path="/turbo-systems" component={TurboSystemsPage} />
+      <Route path="/consumer-solutions" component={ConsumerSolutions} />
       <Route path="/hq" component={HQControlPanel} />
       <Route path="/command-center" component={CommandCenter} />
       <Route path="/services" component={Services} />

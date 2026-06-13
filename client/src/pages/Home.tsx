@@ -39,11 +39,34 @@ export default function Home() {
       <section className="hero">
         <div className="hero-content">
           <h1 className="hero-title">
-            AI‑DRIVEN DOCUMENTATION & RESPONSE
+            AI-Powered Systems for Businesses.<br />
+            Practical Solutions for Consumers.
           </h1>
-          <p className="hero-description">
-            Turbo Response helps clients prepare, organize, and respond when entities require proof, records, or formal responses. We use AI‑driven systems to move faster, stay consistent, and keep documentation structured — so clients are positioned correctly before decisions are made.
-          </p>
+
+          {/* Dual Value Propositions */}
+          <div className="hero-propositions">
+            {/* Business Proposition */}
+            <div className="proposition business-prop">
+              <div className="prop-icon">⚡</div>
+              <p className="prop-text">
+                <strong>Turbo Systems</strong> helps businesses leverage AI agents, automation, and streamlined workflows to eliminate busy work, improve efficiency, and get more done—without adding more hours to the day.
+              </p>
+              <Link href="/turbo-systems" className="cta-button primary-button">
+                Explore Turbo Systems
+              </Link>
+            </div>
+
+            {/* Consumer Proposition */}
+            <div className="proposition consumer-prop">
+              <div className="prop-icon">🛡️</div>
+              <p className="prop-text">
+                <strong>Turbo Response</strong> helps consumers navigate credit, debt, housing, IRS, banking, and other real-world challenges through document preparation, research support, action plans, and practical guidance designed to help them move forward.
+              </p>
+              <Link href="/consumer-solutions" className="cta-button secondary-button">
+                Explore Consumer Solutions
+              </Link>
+            </div>
+          </div>
 
           {/* Dual Intake Buttons */}
           <div className="intake-buttons-container">
