@@ -29,6 +29,7 @@ export default function Home() {
             <Link href="/pricing" className="nav-link">Pricing</Link>
             <Link href="/results" className="nav-link">Results</Link>
             <Link href="/testimonials" className="nav-link">Testimonials</Link>
+            <Link href="/black-future" className="nav-link">Black Future</Link>
             <Link href="/turbo-systems" className="nav-link nav-link-systems">⚡ Turbo Systems</Link>
             <Link href="/consumer-solutions" className="nav-link nav-link-cta">Start Your Case</Link>
           </nav>
