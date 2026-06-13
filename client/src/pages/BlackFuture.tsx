@@ -163,7 +163,7 @@ export default function BlackFuture() {
         {/* Rooftop founders image — cinematic background */}
         <div className="bf-hero-img-wrap" aria-hidden="true">
           <img
-            src="/manus-storage/black-future-hero_0c7143f2.png"
+            src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663092269987/MUfsIbZkaSBDMvzF.png"
             alt=""
             className="bf-hero-img"
             loading="eager"
