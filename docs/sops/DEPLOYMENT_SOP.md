@@ -27,7 +27,7 @@ This procedure is **MANDATORY** for any change that affects:
   - Inspect the element being changed
   - Go to "Computed" tab
   - Screenshot the computed style showing the exact CSS values
-  - Verify values match BRAND_STYLE_GUIDE.md
+  - Verify values match ../architecture/BRAND_STYLE_GUIDE.md
 
 - [ ] **Visual Screenshot:**
   - Take full-page screenshot of the change
