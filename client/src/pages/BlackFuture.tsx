@@ -57,7 +57,7 @@ const MEDIA_ITEMS = [
     tag: "Featured",
     color: "blue",
     youtubeUrl: "https://youtu.be/A5dmyjBKz6E",
-    thumbnail: "/manus-storage/11518_d7b30d94.jpg",
+    thumbnail: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663092269987/JcIEMEetaXdcXEua.jpg",
   },
   {
     id: 1,
