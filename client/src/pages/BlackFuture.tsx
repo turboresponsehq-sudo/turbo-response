@@ -293,14 +293,6 @@ export default function BlackFuture() {
                     <img
                       src={item.thumbnail}
                       alt={item.title}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                      }}
                     />
                   ) : (
                     <div className="bf-media-thumb-bg" aria-hidden="true" />
