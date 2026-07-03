@@ -51,6 +51,14 @@ const COVER_CARDS = [
 
 const MEDIA_ITEMS = [
   {
+    id: 0,
+    duration: "NEW",
+    title: "The Future is Now",
+    tag: "Featured",
+    color: "blue",
+    youtubeUrl: "https://youtu.be/A5dmyjBKz6E",
+  },
+  {
     id: 1,
     duration: "28:45",
     title: "Building the Future: A Conversation with Visionaries",
@@ -270,7 +278,14 @@ export default function BlackFuture() {
 
           <div className="bf-media-grid">
             {MEDIA_ITEMS.map((item) => (
-              <div key={item.id} className={`bf-media-card bf-media-${item.color}`}>
+              <a
+                key={item.id}
+                href={item.youtubeUrl || "#"}
+                target={item.youtubeUrl ? "_blank" : undefined}
+                rel={item.youtubeUrl ? "noopener noreferrer" : undefined}
+                className={`bf-media-card bf-media-${item.color}`}
+                style={{ textDecoration: "none", cursor: item.youtubeUrl ? "pointer" : "default" }}
+              >
                 {/* Thumbnail placeholder */}
                 <div className="bf-media-thumb">
                   <div className="bf-media-thumb-bg" aria-hidden="true" />
@@ -281,7 +296,7 @@ export default function BlackFuture() {
                 <div className="bf-media-info">
                   <p className="bf-media-title">{item.title}</p>
                 </div>
-              </div>
+              </a>
             ))}
           </div>
 
