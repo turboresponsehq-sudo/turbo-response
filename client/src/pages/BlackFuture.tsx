@@ -57,6 +57,7 @@ const MEDIA_ITEMS = [
     tag: "Featured",
     color: "blue",
     youtubeUrl: "https://youtu.be/A5dmyjBKz6E",
+    thumbnail: "/manus-storage/11518_d7b30d94.jpg",
   },
   {
     id: 1,
@@ -286,9 +287,24 @@ export default function BlackFuture() {
                 className={`bf-media-card bf-media-${item.color}`}
                 style={{ textDecoration: "none", cursor: item.youtubeUrl ? "pointer" : "default" }}
               >
-                {/* Thumbnail placeholder */}
+                {/* Thumbnail placeholder or custom image */}
                 <div className="bf-media-thumb">
-                  <div className="bf-media-thumb-bg" aria-hidden="true" />
+                  {item.thumbnail ? (
+                    <img
+                      src={item.thumbnail}
+                      alt={item.title}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                      }}
+                    />
+                  ) : (
+                    <div className="bf-media-thumb-bg" aria-hidden="true" />
+                  )}
                   <div className="bf-media-play-btn" aria-hidden="true">▶</div>
                   <span className="bf-media-duration">{item.duration}</span>
                   <span className="bf-media-tag">{item.tag}</span>
