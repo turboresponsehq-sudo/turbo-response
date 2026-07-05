@@ -44,6 +44,8 @@ import HQControlPanel from "./pages/HQControlPanel";
 import CommandCenter from "./pages/CommandCenter";
 import ConsumerSolutions from "./pages/ConsumerSolutions";
 import BlackFuture from "./pages/BlackFuture";
+import AdminKnowledgeBase from "./pages/AdminKnowledgeBase";
+import AdminKnowledgeBaseImport from "./pages/AdminKnowledgeBaseImport";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -91,6 +93,8 @@ function Router() {
       
       <Route path="/admin/login" component={AdminLogin} />
       {/* Admin workflow routes - restored to specification */}
+      <Route path="/admin/knowledge-base/import" component={AdminKnowledgeBaseImport} />
+      <Route path="/admin/knowledge-base" component={AdminKnowledgeBase} />
       <Route path="/admin/brain" component={AdminBrainUpload} />
       <Route path="/admin/case-upload" component={CaseUploadCenter} />
       <Route path="/admin/screenshots" component={ScreenshotCapture} />

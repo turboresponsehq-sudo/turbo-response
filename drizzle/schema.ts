@@ -1,4 +1,4 @@
-import { mysqlTable, mysqlSchema, AnyMySqlColumn, index, bigint, int, text, json, varchar, timestamp, decimal, mysqlEnum, longtext } from "drizzle-orm/mysql-core"
+import { mysqlTable, mysqlSchema, AnyMySqlColumn, index, bigint, int, text, json, varchar, timestamp, decimal, mysqlEnum, longtext, tinyint } from "drizzle-orm/mysql-core"
 import { sql } from "drizzle-orm"
 
 export const brainEmbeddings = mysqlTable("brain_embeddings", {
@@ -12,7 +12,7 @@ export const brainEmbeddings = mysqlTable("brain_embeddings", {
 	documentDomain: varchar("document_domain", { length: 100 }),
 	documentCategory: varchar("document_category", { length: 100 }),
 	documentTags: text("document_tags"),
-	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	createdAt: timestamp("created_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`),
 },
 (table) => [
 	index("document_id").on(table.documentId, table.chunkIndex),
@@ -42,8 +42,8 @@ export const businessIntakes = mysqlTable("business_intakes", {
 	status: varchar({ length: 50 }).default('New'),
 	portalEnabled: tinyint("portal_enabled").default(0),
 	unreadMessagesCount: int("unread_messages_count").default(0),
-	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
+	createdAt: timestamp("created_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow(),
 });
 
 export const caseAnalyses = mysqlTable("case_analyses", {
@@ -58,8 +58,8 @@ export const caseAnalyses = mysqlTable("case_analyses", {
 	pricingSuggestion: decimal("pricing_suggestion", { precision: 10, scale: 2 }),
 	pricingTier: varchar("pricing_tier", { length: 50 }),
 	summary: text(),
-	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
+	createdAt: timestamp("created_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow(),
 },
 (table) => [
 	index("idx_case_id").on(table.caseId),
@@ -87,11 +87,12 @@ export const caseMessages = mysqlTable("case_messages", {
 	filePath: text(),
 	fileName: varchar({ length: 255 }),
 	fileType: varchar({ length: 50 }),
-	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	createdAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export const cases = mysqlTable("cases", {
 	id: int().autoincrement().notNull(),
+	conversationId: int("conversationId"),
 	title: varchar({ length: 255 }).notNull(),
 	category: varchar({ length: 50 }),
 	caseType: varchar({ length: 20 }),
@@ -100,8 +101,8 @@ export const cases = mysqlTable("cases", {
 	clientName: varchar({ length: 255 }),
 	clientEmail: varchar({ length: 320 }),
 	clientPhone: varchar({ length: 50 }),
-	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
-	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	createdAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+	updatedAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow().notNull(),
 });
 
 export const conversations = mysqlTable("conversations", {
@@ -113,8 +114,8 @@ export const conversations = mysqlTable("conversations", {
 	messageCount: int().default(0).notNull(),
 	evidenceCount: int().default(0).notNull(),
 	convertedToLead: int().default(0).notNull(),
-	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
-	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	createdAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+	updatedAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow().notNull(),
 });
 
 export const dashboardLeads = mysqlTable("dashboard_leads", {
@@ -123,8 +124,8 @@ export const dashboardLeads = mysqlTable("dashboard_leads", {
 	status: mysqlEnum(['new','reviewing','follow_up','converted','closed']).default('new').notNull(),
 	note: varchar({ length: 500 }),
 	hubspotUrl: varchar({ length: 1000 }),
-	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
-	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	createdAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+	updatedAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow().notNull(),
 });
 
 export const defenseCases = mysqlTable("defense_cases", {
@@ -136,8 +137,8 @@ export const defenseCases = mysqlTable("defense_cases", {
 	caseCategory: varchar({ length: 50 }).notNull(),
 	caseDescription: text().notNull(),
 	status: varchar({ length: 50 }).default('open').notNull(),
-	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
-	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	createdAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+	updatedAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow().notNull(),
 });
 
 export const eligibilityProfiles = mysqlTable("eligibility_profiles", {
@@ -156,8 +157,8 @@ export const eligibilityProfiles = mysqlTable("eligibility_profiles", {
 	benefitsConsent: int().default(0).notNull(),
 	lastMatchedAt: timestamp({ mode: 'string' }),
 	matchCount: int().default(0).notNull(),
-	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
-	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	createdAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+	updatedAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow().notNull(),
 	matchingStatus: varchar({ length: 20 }).default('pending'),
 	matchingScore: int(),
 	matchedPrograms: json(),
@@ -195,7 +196,7 @@ export const intakeLeads = mysqlTable("intake_leads", {
 	status: mysqlEnum(['new_lead','reviewing','follow_up','converted']).default('new_lead').notNull(),
 	adminNotes: longtext(),
 	submittedAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
-	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	updatedAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow().notNull(),
 });
 
 export const leadNotes = mysqlTable("lead_notes", {
@@ -204,7 +205,7 @@ export const leadNotes = mysqlTable("lead_notes", {
 	content: text().notNull(),
 	noteType: varchar({ length: 50 }).default('general').notNull(),
 	createdBy: varchar({ length: 255 }),
-	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	createdAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export const leads = mysqlTable("leads", {
@@ -217,8 +218,8 @@ export const leads = mysqlTable("leads", {
 	status: varchar({ length: 50 }).default('new').notNull(),
 	notes: text(),
 	category: varchar({ length: 50 }),
-	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
-	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	createdAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+	updatedAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow().notNull(),
 });
 
 export const messages = mysqlTable("messages", {
@@ -227,7 +228,7 @@ export const messages = mysqlTable("messages", {
 	role: varchar({ length: 20 }).notNull(),
 	content: text().notNull(),
 	metadata: text(),
-	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	createdAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export const offenseCases = mysqlTable("offense_cases", {
@@ -250,8 +251,8 @@ export const offenseCases = mysqlTable("offense_cases", {
 	deadline: varchar({ length: 50 }),
 	caseDescription: text().notNull(),
 	status: varchar({ length: 50 }).default('open').notNull(),
-	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
-	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	createdAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+	updatedAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow().notNull(),
 });
 
 export const priorities = mysqlTable("priorities", {
@@ -259,8 +260,8 @@ export const priorities = mysqlTable("priorities", {
 	text: varchar({ length: 500 }).notNull(),
 	urgent: int().default(0).notNull(),
 	done: int().default(0).notNull(),
-	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
-	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	createdAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+	updatedAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow().notNull(),
 });
 
 export const projects = mysqlTable("projects", {
@@ -272,8 +273,8 @@ export const projects = mysqlTable("projects", {
 	objective: text(),
 	keySteps: longtext(),
 	notes: longtext(),
-	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
-	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	createdAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+	updatedAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow().notNull(),
 	driveUrl: varchar({ length: 1000 }),
 });
 
@@ -282,8 +283,8 @@ export const tasks = mysqlTable("tasks", {
 	text: varchar({ length: 500 }).notNull(),
 	bucket: mysqlEnum(['today','week','someday']).default('today').notNull(),
 	done: int().default(0).notNull(),
-	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
-	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	createdAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+	updatedAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow().notNull(),
 });
 
 export const turboIntakeSubmissions = mysqlTable("turbo_intake_submissions", {
@@ -311,8 +312,8 @@ export const turboIntakeSubmissions = mysqlTable("turbo_intake_submissions", {
 	blueprintGenerated: int().default(0).notNull(),
 	blueprintGeneratedAt: timestamp({ mode: 'string' }),
 	blueprintReportPath: varchar({ length: 500 }),
-	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
-	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	createdAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+	updatedAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow().notNull(),
 },
 (table) => [
 	index("turbo_intake_submissions_submissionId_unique").on(table.submissionId),
@@ -325,8 +326,8 @@ export const users = mysqlTable("users", {
 	email: varchar({ length: 320 }),
 	loginMethod: varchar({ length: 64 }),
 	role: mysqlEnum(['user','admin']).default('user').notNull(),
-	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
-	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	createdAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+	updatedAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow().notNull(),
 	lastSignedIn: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 	password: varchar({ length: 255 }),
 },
@@ -367,8 +368,29 @@ export const knowledgeDocuments = mysqlTable("knowledge_documents", {
 	/** Workspace ID for future multi-tenant support */
 	workspace_id: int(),
 	dateAdded: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
-	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	updatedAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow().notNull(),
 });
 
 export type KnowledgeDocument = typeof knowledgeDocuments.$inferSelect;
 export type InsertKnowledgeDocument = typeof knowledgeDocuments.$inferInsert;
+
+export type IntakeLead = typeof intakeLeads.$inferSelect;
+export type InsertIntakeLead = typeof intakeLeads.$inferInsert;
+
+export type Message = typeof messages.$inferSelect;
+export type InsertMessage = typeof messages.$inferInsert;
+
+export type EvidenceUpload = typeof evidenceUploads.$inferSelect;
+export type InsertEvidenceUpload = typeof evidenceUploads.$inferInsert;
+
+export type Lead = typeof leads.$inferSelect;
+export type InsertLead = typeof leads.$inferInsert;
+
+export type Conversation = typeof conversations.$inferSelect;
+export type InsertConversation = typeof conversations.$inferInsert;
+
+export type User = typeof users.$inferSelect;
+export type InsertUser = typeof users.$inferInsert;
+
+
+

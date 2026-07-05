@@ -706,7 +706,7 @@ function ProjectsPage() {
           <div style={{ background: "#111318", border: "1px solid #1e2130", borderRadius: 10, padding: "18px 20px" }}>
             <div style={{ fontSize: 11, fontWeight: 800, color: "#4b5368", textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: 12 }}>Milestones</div>
             {selected.keySteps.length === 0 && <div style={{ fontSize: 13, color: "#4b5368", fontStyle: "italic" }}>No milestones defined yet</div>}
-            {selected.keySteps.map((step, i) => (
+            {selected.keySteps.map((step: string, i: number) => (
               <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "8px 0", borderBottom: i < selected.keySteps.length - 1 ? "1px solid #1a1d28" : "none" }}>
                 <div style={{ width: 20, height: 20, borderRadius: "50%", background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 800, color: "#4285F4", flexShrink: 0, marginTop: 1 }}>{i + 1}</div>
                 <div style={{ fontSize: 13, color: "#e8eaf0", lineHeight: 1.5 }}>{step}</div>
@@ -723,7 +723,7 @@ function ProjectsPage() {
                 <textarea value={editNotes} onChange={e => setEditNotes(e.target.value)} style={{ width: "100%", minHeight: 120, background: "#0b0d12", border: "1px solid #2a2f45", borderRadius: 7, color: "#e8eaf0", fontSize: 13, padding: "10px 12px", resize: "vertical", outline: "none", boxSizing: "border-box" }} />
                 <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
                   <button onClick={handleSaveNotes} style={{ fontSize: 12, fontWeight: 700, padding: "6px 14px", borderRadius: 7, border: "none", background: "#3B6BF5", color: "#fff", cursor: "pointer" }}>Save</button>
-                  <button onClick={() => { setEditingNotes(false); setEditNotes(selected.notes); }} style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 7, border: "1px solid #1e2130", background: "transparent", color: "#4b5368", cursor: "pointer" }}>Cancel</button>
+                  <button onClick={() => { setEditingNotes(false); setEditNotes(selected.notes || ""); }} style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 7, border: "1px solid #1e2130", background: "transparent", color: "#4b5368", cursor: "pointer" }}>Cancel</button>
                 </div>
               </div>
             ) : (

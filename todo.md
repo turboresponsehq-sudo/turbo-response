@@ -632,3 +632,46 @@
 - [ ] Website chatbot (retrieve relevant documents)
 - [ ] Voice agent (use xAI Collections for fast retrieval)
 - [ ] Internal business assistant (access all knowledge)
+
+
+## 🧠 KNOWLEDGE BASE PHASE 1 — DATA MODEL & ADMIN UI (JUL 5 2026)
+
+### Schema & Database
+- [x] Add source_system enum field (google_drive, upload, xai_collection, manual)
+- [x] Add last_synced_at timestamp field (nullable)
+- [x] Add xai_collection_id varchar(255) field (nullable)
+- [x] Add synced_to_xai int field (default 0)
+- [x] Add workspace_id int field (nullable, multi-tenant foundation)
+- [x] Add content_hash varchar(64) field (SHA256 for change detection)
+- [x] Run database migration — all fields confirmed in knowledge_documents table
+- [x] Fix duplicate knowledgeDocuments table definition in drizzle/schema.ts
+- [x] Resolve all TypeScript errors (0 errors confirmed)
+
+### Backend
+- [x] Create server/knowledgeBaseDb.ts with CRUD helpers
+- [x] Add calculateContentHash() for SHA256 content hashing
+- [x] Add hasContentChanged() for change detection
+- [x] Add getDocumentsPendingSync() for xAI sync queue
+- [x] Add getKnowledgeBaseStats() with sync pending count
+- [x] Create server/routers/knowledgeBaseRouter.ts with tRPC procedures
+- [x] Wire knowledgeBaseRouter into appRouter
+
+### Admin UI
+- [x] Create /admin/knowledge-base page (AdminKnowledgeBase.tsx)
+- [x] Stats dashboard (total, active, needs_review, archived, pending sync)
+- [x] Document list table with search, status filter, category filter
+- [x] Tabs: All Documents / Needs Review / Pending xAI Sync
+- [x] Create document modal with all fields
+- [x] Edit document modal
+- [x] Delete document with confirmation modal
+- [x] Register route in App.tsx
+
+### Architecture
+- [x] Create KNOWLEDGE_BASE_ARCHITECTURE.md
+
+### Pending (Phase 2)
+- [ ] Google Drive integration — list and import documents
+- [ ] Document ingestion workflow with text extraction
+- [ ] Change detection UI — show when Google Drive docs have changed
+- [ ] xAI Collections sync workflow
+- [ ] Bulk import from Google Drive

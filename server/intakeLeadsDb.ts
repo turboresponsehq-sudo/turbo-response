@@ -1,6 +1,7 @@
 import { eq, desc } from "drizzle-orm";
 import { getDb } from "./db";
-import { intakeLeads, type InsertIntakeLead, type IntakeLead } from "../drizzle/schema";
+import { intakeLeads } from "../drizzle/schema";
+import type { InsertIntakeLead, IntakeLead } from "../drizzle/schema";
 
 /**
  * Save a new intake lead to the database

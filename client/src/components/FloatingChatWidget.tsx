@@ -29,7 +29,7 @@ async function getSessionId(): Promise<string> {
     sessionId = null;
   }
   
-  if (!sessionId) {
+  if (sessionId === undefined) {
     // Create new session via API
     try {
       const response = await fetch('/api/chat/sessions', {
@@ -47,8 +47,11 @@ async function getSessionId(): Promise<string> {
       
       if (response.ok) {
         const data = await response.json();
-        sessionId = data.session.session_id;
-        localStorage.setItem('turbo_session_id', sessionId);
+        sessionId = data.session.session_id as string;
+        if (sessionId === undefined) {
+          throw new Error('Session ID not returned from API');
+        }
+        localStorage.setItem("turbo_session_id", sessionId);
         console.log('[Chat] Session created:', sessionId);
       } else {
         throw new Error('Failed to create session');
@@ -60,7 +63,10 @@ async function getSessionId(): Promise<string> {
     }
   }
   
-  return sessionId;
+  if (sessionId === undefined) {
+    throw new Error('Session ID is null after creation attempt');
+  }
+  return sessionId as string;
 }
 
 export default function FloatingChatWidget() {
