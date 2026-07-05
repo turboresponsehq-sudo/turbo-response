@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE knowledge_documents \nADD COLUMN last_synced_at TIMESTAMP NULL AFTER adminNotes;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute ALTER TABLE knowledge_documents \nADD COLUMN last_synced_at TIMESTAMP NULL AFTER adminNotes;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 513
+}

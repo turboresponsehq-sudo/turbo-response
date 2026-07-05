@@ -345,7 +345,10 @@ export const knowledgeDocuments = mysqlTable("knowledge_documents", {
 	title: varchar({ length: 500 }).notNull(),
 	category: varchar({ length: 100 }).notNull(),
 	subcategory: varchar({ length: 100 }),
+	/** Source system: google_drive, upload, xai_collection, manual */
 	source: varchar({ length: 50 }).default('google_drive').notNull(),
+	/** Renamed to sourceSystem for clarity with new source_system field */
+	source_system: mysqlEnum(['google_drive', 'upload', 'xai_collection', 'manual']).default('google_drive').notNull(),
 	sourceUrl: varchar({ length: 1000 }),
 	fileType: varchar({ length: 50 }),
 	content: longtext(),
@@ -353,6 +356,14 @@ export const knowledgeDocuments = mysqlTable("knowledge_documents", {
 	status: mysqlEnum(['active', 'archived', 'needs_review']).default('active').notNull(),
 	isProcessed: int().default(0).notNull(),
 	adminNotes: text(),
+	/** Timestamp of last sync to xAI Collections */
+	last_synced_at: timestamp({ mode: 'string' }),
+	/** xAI Collections ID (populated after sync) */
+	xai_collection_id: varchar({ length: 255 }),
+	/** Flag indicating if document has been synced to xAI Collections */
+	synced_to_xai: int().default(0).notNull(),
+	/** Workspace ID for future multi-tenant support */
+	workspace_id: int(),
 	dateAdded: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
 });
