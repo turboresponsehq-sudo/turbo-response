@@ -1,6 +1,9 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, screenshots, Screenshot, InsertScreenshot } from "../drizzle/schema";
+import { users, cases, leads } from "../drizzle/schema";
+import type { InsertUser } from "../drizzle/schema";
+import { desc } from "drizzle-orm";
+
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -61,11 +64,11 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     }
 
     if (!values.lastSignedIn) {
-      values.lastSignedIn = new Date();
+      values.lastSignedIn = new Date().toISOString();
     }
 
     if (Object.keys(updateSet).length === 0) {
-      updateSet.lastSignedIn = new Date();
+      updateSet.lastSignedIn = new Date().toISOString();
     }
 
     await db.insert(users).values(values).onDuplicateKeyUpdate({
@@ -89,104 +92,9 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-/**
- * Save a screenshot with metadata
- */
-export async function saveScreenshot(screenshot: InsertScreenshot): Promise<Screenshot | null> {
-  const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot save screenshot: database not available");
-    return null;
-  }
 
-  try {
-    const result = await db.insert(screenshots).values(screenshot);
-    const id = result[0];
-    
-    if (id) {
-      const saved = await db.select().from(screenshots).where(eq(screenshots.id, id)).limit(1);
-      return saved.length > 0 ? saved[0] : null;
-    }
-    return null;
-  } catch (error) {
-    console.error("[Database] Failed to save screenshot:", error);
-    throw error;
-  }
-}
 
-/**
- * Get all screenshots for a user
- */
-export async function getUserScreenshots(userId: number): Promise<Screenshot[]> {
-  const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot get screenshots: database not available");
-    return [];
-  }
 
-  try {
-    const result = await db.select().from(screenshots).where(eq(screenshots.userId, userId));
-    return result;
-  } catch (error) {
-    console.error("[Database] Failed to get screenshots:", error);
-    return [];
-  }
-}
-
-/**
- * Get a single screenshot by ID
- */
-export async function getScreenshot(id: number): Promise<Screenshot | null> {
-  const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot get screenshot: database not available");
-    return null;
-  }
-
-  try {
-    const result = await db.select().from(screenshots).where(eq(screenshots.id, id)).limit(1);
-    return result.length > 0 ? result[0] : null;
-  } catch (error) {
-    console.error("[Database] Failed to get screenshot:", error);
-    return null;
-  }
-}
-
-/**
- * Mark a screenshot as saved (prevents auto-delete)
- */
-export async function markScreenshotAsSaved(id: number): Promise<void> {
-  const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot update screenshot: database not available");
-    return;
-  }
-
-  try {
-    await db.update(screenshots).set({ isSaved: 1 }).where(eq(screenshots.id, id));
-  } catch (error) {
-    console.error("[Database] Failed to mark screenshot as saved:", error);
-    throw error;
-  }
-}
-
-/**
- * Delete a screenshot record
- */
-export async function deleteScreenshot(id: number): Promise<void> {
-  const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot delete screenshot: database not available");
-    return;
-  }
-
-  try {
-    await db.delete(screenshots).where(eq(screenshots.id, id));
-  } catch (error) {
-    console.error("[Database] Failed to delete screenshot:", error);
-    throw error;
-  }
-}
 
 /**
  * List all cases from leads table
@@ -200,22 +108,19 @@ export async function listCases() {
 
   try {
     // Query leads table which contains the actual cases
-    const result = await db.raw(`
-      SELECT 
-        id,
-        conversationId,
-        clientName as client_name,
-        clientEmail as client_email,
-        clientPhone as client_phone,
-        caseTitle as title,
-        caseCategory as category,
-        caseDescription as description,
-        status,
-        createdAt
-      FROM leads
-      ORDER BY createdAt DESC
-    `);
-    return result || [];
+    const result = await db.select({
+      id: cases.id,
+      conversationId: cases.conversationId,
+      client_name: cases.clientName,
+      client_email: cases.clientEmail,
+      client_phone: cases.clientPhone,
+      title: cases.title,
+      category: cases.category,
+      description: cases.description,
+      status: cases.status,
+      createdAt: cases.createdAt,
+    }).from(cases).orderBy(desc(cases.createdAt));
+    return result;
   } catch (error) {
     console.error('[Database] Failed to list cases:', error);
     return [];
@@ -232,27 +137,16 @@ export async function createCase(caseData: any) {
   }
 
   try {
-    const result = await db.raw(`
-      INSERT INTO leads (
-        clientName,
-        clientEmail,
-        clientPhone,
-        caseTitle,
-        caseCategory,
-        caseDescription,
-        status,
-        conversationId
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `, [
-      caseData.clientName || null,
-      caseData.clientEmail || null,
-      caseData.clientPhone || null,
-      caseData.title || null,
-      caseData.category || null,
-      caseData.description || null,
-      caseData.status || 'open',
-      caseData.conversationId || null
-    ]);
+    const result = await db.insert(cases).values({
+      clientName: caseData.clientName || null,
+      clientEmail: caseData.clientEmail || null,
+      clientPhone: caseData.clientPhone || null,
+      title: caseData.title || null,
+      category: caseData.category || null,
+      description: caseData.description || null,
+      status: caseData.status || 'open',
+      conversationId: caseData.conversationId || null,
+    });
     return result;
   } catch (error) {
     console.error('[Database] Failed to create case:', error);

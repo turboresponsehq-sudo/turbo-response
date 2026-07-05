@@ -6,7 +6,19 @@ const API_BASE = import.meta.env.VITE_API_URL || '';
 
 export default function AdminCasesList() {
   const [, setLocation] = useLocation();
-  const [cases, setCases] = useState([]);
+  interface CaseItem {
+    id: number;
+    conversationId: number;
+    client_name: string;
+    client_email: string;
+    client_phone: string;
+    title: string;
+    category: string;
+    description: string;
+    status: string;
+    createdAt: string;
+  }
+  const [cases, setCases] = useState<CaseItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
@@ -78,7 +90,7 @@ export default function AdminCasesList() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('admin_session');
@@ -129,7 +141,7 @@ export default function AdminCasesList() {
       console.error('Failed to create case:', error);
     }
   };
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -180,7 +192,7 @@ export default function AdminCasesList() {
               <div className="case-meta">
                 <span className="case-status">{caseItem.status}</span>
                 <span className="case-date">
-                  {new Date(caseItem.created_at).toLocaleDateString()}
+                  {new Date(caseItem.createdAt).toLocaleDateString()}
                 </span>
               </div>
             </div>
@@ -232,7 +244,7 @@ export default function AdminCasesList() {
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  rows="3"
+                  rows={3}
                   placeholder="Brief case description..."
                 />
               </div>

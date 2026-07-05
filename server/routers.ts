@@ -2,11 +2,14 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
-import { screenshotRouter } from "./routers/screenshots";
+
 import { chatRouter } from "./routers/chatRouter";
 import { adminRouter } from "./routers/adminRouter";
 import { messagingRouter } from "./routers/messagingRouter";
 import { dashboardRouter } from "./routers/dashboardRouter";
+import { knowledgeBaseRouter } from "./routers/knowledgeBaseRouter";
+import { googleDriveRouter } from "./routers/googleDriveRouter";
+
 
 
 export const appRouter = router({
@@ -23,7 +26,7 @@ export const appRouter = router({
     }),
   }),
 
-  screenshots: screenshotRouter,
+
 
   // Chat router for conversational AI
   chat: chatRouter,
@@ -36,6 +39,8 @@ export const appRouter = router({
 
   // Dashboard Layer 1 — CEO Home, Projects, Tasks
   dashboard: dashboardRouter,
+  knowledgeBase: knowledgeBaseRouter,
+  googleDrive: googleDriveRouter,
 });
 
 export type AppRouter = typeof appRouter;

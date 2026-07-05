@@ -5,6 +5,8 @@ import { api } from "@/lib/api";
 import MultiFileUploader from "@/components/MultiFileUploader";
 import "./IntakeForm.css";
 
+const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turboresponsehq.ai";
+
 const actionTypes = [
   { id: "credit-dispute", icon: "💳", name: "Credit Dispute" },
   { id: "debt-validation", icon: "📋", name: "Debt Validation Request" },
@@ -375,7 +377,10 @@ export default function OffenseIntakeForm() {
                 {/* Document Upload */}
                 <section className="form-section">
                   <h2 className="section-title">Do you have documents to upload?</h2>
-                  <MultiFileUploader onUploadComplete={handleUploadComplete} />
+                  <MultiFileUploader
+                    onUploadComplete={handleUploadComplete}
+                    apiUrl={API_URL}
+                  />
                   {uploadedFiles.length > 0 && (
                     <div className="uploaded-files">
                       <h3>Uploaded Files ({uploadedFiles.length})</h3>
