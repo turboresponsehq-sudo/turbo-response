@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS knowledge_documents (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  title VARCHAR(500) NOT NULL,\n  category VARCHAR(100) NOT NULL,\n  subcategory VARCHAR(100),\n  source VARCHAR(50) NOT NULL DEFAULT 'google_drive',\n  sourceUrl VARCHAR(1000),\n  fileType VARCHAR(50),\n  content LONGTEXT,\n  summary TEXT,\n  status ENUM('active', 'archived', 'needs_review') NOT NULL DEFAULT 'active',\n  isProcessed INT NOT NULL DEFAULT 0,\n  adminNotes TEXT,\n  dateAdded TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute CREATE TABLE IF NOT EXISTS knowledge_documents (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  title VARCHAR(500) NOT NULL,\n  category VARCHAR(100) NOT NULL,\n  subcategory VARCHAR(100),\n  source VARCHAR(50) NOT NULL DEFAULT 'google_drive',\n  sourceUrl VARCHAR(1000),\n  fileType VARCHAR(50),\n  content LONGTEXT,\n  summary TEXT,\n  status ENUM('active', 'archived', 'needs_review') NOT NULL DEFAULT 'active',\n  isProcessed INT NOT NULL DEFAULT 0,\n  adminNotes TEXT,\n  dateAdded TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 330
+}
