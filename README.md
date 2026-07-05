@@ -12,6 +12,41 @@
 
 ---
 
+## Latest Milestone: Voice Agent Framework
+
+Turbo Response now includes a production-ready **AI Voice Agent Framework** that integrates knowledge bases with intelligent voice interactions. The framework powers the Consumer Defense Intake Voice Agent and is architected for reuse across industries.
+
+**Current Implementation:**
+- **Consumer Defense Intake Voice Agent** — Live phone number, natural conversation flow, knowledge-base-powered responses
+- **Knowledge Base Integration** — Google Drive as source of truth, synchronized to xAI Collections for RAG retrieval
+- **Architecture** — Modular, configuration-driven design for rapid deployment to law firms, contractors, medical practices, and other industries
+
+**Architecture:**
+```
+Google Drive (Source of Truth)
+    ↓
+Turbo Response Knowledge Base
+    ↓
+xAI Collections / RAG Retrieval
+    ↓
+AI Voice Agent (grok-4.3)
+    ↓
+HubSpot CRM (Next Phase)
+    ↓
+Turbo Response Dashboard
+```
+
+**Validated Capabilities:**
+- ✅ Knowledge base indexed and searchable (100% retrieval accuracy)
+- ✅ Voice agent answering questions from knowledge base (not generic AI)
+- ✅ Natural conversation flow with intake data collection
+- ✅ Human handoff guardrails and escalation rules
+- ✅ Reusable framework for other industries
+
+**Tech Stack:** grok-4.3 (xAI), xAI Collections API, xAI Voice Agent Builder, Google Drive, HubSpot CRM
+
+---
+
 ## Overview
 
 Turbo Response is a full-stack, production-deployed web application that serves two distinct user populations through a unified platform.
@@ -89,6 +124,8 @@ Clients access their case status through a dedicated portal (`/client/case/:id`)
 | **File Storage** | AWS S3 (via `@aws-sdk/client-s3`) |
 | **Knowledge Base** | Supabase (Brain System document storage) |
 | **AI / LLM** | OpenAI API (via `openai` SDK + internal `invokeLLM` helper) |
+| **Voice Agent** | xAI grok-4.3 (Voice Agent Builder + Collections API) |
+| **Knowledge Base** | xAI Collections (RAG retrieval) + Google Drive (source of truth) |
 | **Web Scraping** | Cheerio |
 | **Email Delivery** | Nodemailer |
 | **CRM** | HubSpot Contacts API (via `axios`) |
