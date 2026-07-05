@@ -1,214 +1,361 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, longtext } from "drizzle-orm/mysql-core";
+import { mysqlTable, mysqlSchema, AnyMySqlColumn, index, bigint, int, text, json, varchar, timestamp, decimal, mysqlEnum, longtext } from "drizzle-orm/mysql-core"
+import { sql } from "drizzle-orm"
 
-/**
- * Core user table backing auth flow.
- * Extend this file with additional tables as your product grows.
- * Columns use camelCase to match both database fields and generated types.
- */
-export const users = mysqlTable("users", {
-  /**
-   * Surrogate primary key. Auto-incremented numeric value managed by the database.
-   * Use this for relations between tables.
-   */
-  id: int("id").autoincrement().primaryKey(),
-  /** Manus OAuth identifier (openId) returned from the OAuth callback. Unique per user. */
-  openId: varchar("openId", { length: 64 }).notNull().unique(),
-  name: text("name"),
-  email: varchar("email", { length: 320 }),
-  loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-  lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
+export const brainEmbeddings = mysqlTable("brain_embeddings", {
+	id: bigint({ mode: "number", unsigned: true }).autoincrement().notNull(),
+	documentId: int("document_id").notNull(),
+	chunkIndex: int("chunk_index").notNull(),
+	chunkText: text("chunk_text").notNull(),
+	chunkTokens: int("chunk_tokens"),
+	embedding: json().notNull(),
+	documentTitle: text("document_title"),
+	documentDomain: varchar("document_domain", { length: 100 }),
+	documentCategory: varchar("document_category", { length: 100 }),
+	documentTags: text("document_tags"),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+},
+(table) => [
+	index("document_id").on(table.documentId, table.chunkIndex),
+	index("id").on(table.id),
+	index("idx_embeddings_document").on(table.documentId),
+	index("idx_embeddings_domain").on(table.documentDomain),
+	index("idx_embeddings_category").on(table.documentCategory),
+]);
+
+export const businessIntakes = mysqlTable("business_intakes", {
+	id: int().autoincrement().notNull(),
+	businessName: varchar("business_name", { length: 255 }),
+	websiteUrl: varchar("website_url", { length: 500 }),
+	fullName: varchar("full_name", { length: 255 }).notNull(),
+	email: varchar({ length: 255 }).notNull(),
+	phone: varchar({ length: 50 }),
+	whatYouSell: text("what_you_sell"),
+	idealCustomer: text("ideal_customer"),
+	biggestStruggle: text("biggest_struggle"),
+	shortTermGoal: text("short_term_goal"),
+	longTermVision: text("long_term_vision"),
+	instagramUrl: varchar("instagram_url", { length: 500 }),
+	tiktokUrl: varchar("tiktok_url", { length: 500 }),
+	facebookUrl: varchar("facebook_url", { length: 500 }),
+	youtubeUrl: varchar("youtube_url", { length: 500 }),
+	linkinbioUrl: varchar("linkinbio_url", { length: 500 }),
+	status: varchar({ length: 50 }).default('New'),
+	portalEnabled: tinyint("portal_enabled").default(0),
+	unreadMessagesCount: int("unread_messages_count").default(0),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
 });
 
-export type User = typeof users.$inferSelect;
-export type InsertUser = typeof users.$inferInsert;
+export const caseAnalyses = mysqlTable("case_analyses", {
+	id: int().autoincrement().notNull(),
+	caseId: int("case_id").notNull(),
+	violations: text(),
+	lawsCited: text("laws_cited"),
+	recommendedActions: text("recommended_actions"),
+	urgencyLevel: varchar("urgency_level", { length: 50 }),
+	estimatedValue: decimal("estimated_value", { precision: 10, scale: 2 }),
+	successProbability: decimal("success_probability", { precision: 3, scale: 2 }),
+	pricingSuggestion: decimal("pricing_suggestion", { precision: 10, scale: 2 }),
+	pricingTier: varchar("pricing_tier", { length: 50 }),
+	summary: text(),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
+},
+(table) => [
+	index("idx_case_id").on(table.caseId),
+	index("case_id").on(table.caseId),
+]);
 
-/**
- * Screenshots table for research capture feature
- * Stores uploaded screenshots with descriptions, research notes, and extracted text
- * Auto-deletes after 30 days via S3 lifecycle policy
- */
-export const screenshots = mysqlTable("screenshots", {
-  id: int("id").autoincrement().primaryKey(),
-  /** User who uploaded the screenshot */
-  userId: int("userId").notNull(),
-  /** S3 file key for the original image */
-  imageKey: varchar("imageKey", { length: 512 }).notNull(),
-  /** S3 URL to the image (for easy access) */
-  imageUrl: text("imageUrl").notNull(),
-  /** User's quick description of the screenshot */
-  description: text("description").notNull(),
-  /** Optional research notes, Grok output, contact info, etc. */
-  researchNotes: longtext("researchNotes"),
-  /** Extracted text from OCR processing */
-  extractedText: longtext("extractedText"),
-  /** Auto-detected category: grant, partnership, lead, alert, event, other */
-  category: varchar("category", { length: 50 }).default("other"),
-  /** Extracted dates found in the screenshot (comma-separated) */
-  extractedDates: text("extractedDates"),
-  /** Extracted contact info: names, emails, phone numbers */
-  extractedContacts: longtext("extractedContacts"),
-  /** File size in bytes */
-  fileSize: int("fileSize"),
-  /** MIME type of uploaded file */
-  mimeType: varchar("mimeType", { length: 50 }),
-  /** When the screenshot was uploaded */
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  /** When the screenshot will be deleted from S3 (30 days after upload) */
-  expiresAt: timestamp("expiresAt").notNull(),
-  /** Whether user manually saved this (prevents auto-delete) */
-  isSaved: int("isSaved").default(0).notNull(),
-  /** Notes about the screenshot for internal use */
-  internalNotes: text("internalNotes"),
+export const caseDocuments = mysqlTable("case_documents", {
+	id: int().autoincrement().notNull(),
+	caseId: int().notNull(),
+	fileKey: varchar({ length: 500 }).notNull(),
+	fileUrl: text().notNull(),
+	fileName: varchar({ length: 255 }).notNull(),
+	mimeType: varchar({ length: 100 }),
+	fileSize: int(),
+	note: text(),
+	uploadedAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 });
 
-export type Screenshot = typeof screenshots.$inferSelect;
-export type InsertScreenshot = typeof screenshots.$inferInsert;
-
-/**
- * Resource requests table - stores grant/resource intake form submissions
- * This is the system of record for all client resource requests
- * Email notifications are backups; this table is the source of truth
- */
-export const resourceRequests = mysqlTable("resource_requests", {
-  /** Unique identifier for each request */
-  id: int("id").autoincrement().primaryKey(),
-  /** Submitter's full name */
-  fullName: varchar("fullName", { length: 255 }).notNull(),
-  /** Submitter's email address */
-  email: varchar("email", { length: 320 }).notNull(),
-  /** Submitter's phone number */
-  phone: varchar("phone", { length: 20 }).notNull(),
-  /** Submitter's location (city/state or region) */
-  location: varchar("location", { length: 255 }).notNull(),
-  /** JSON array of resource types requested: housing, legal, financial, food, healthcare, etc. */
-  resourceTypes: longtext("resourceTypes").notNull(), // JSON array stored as string
-  /** Income level: under_30k, 30k_50k, 50k_75k, 75k_100k, over_100k */
-  incomeLevel: varchar("incomeLevel", { length: 50 }),
-  /** Household size: number of people in household */
-  householdSize: varchar("householdSize", { length: 50 }),
-  /** JSON array of demographics: veteran, elderly, disabled, student, parent, etc. */
-  demographics: longtext("demographics"), // JSON array stored as string
-  /** Detailed description of situation/needs */
-  description: longtext("description").notNull(),
-  /** Status of the request: new, processing, matched, closed, archived */
-  status: mysqlEnum("status", ["new", "processing", "matched", "closed", "archived"]).default("new").notNull(),
-  /** When the request was submitted */
-  submittedAt: timestamp("submittedAt").defaultNow().notNull(),
-  /** When the request was last updated */
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-  /** Admin notes about this request (internal use only) */
-  adminNotes: longtext("adminNotes"),
+export const caseMessages = mysqlTable("case_messages", {
+	id: int().autoincrement().notNull(),
+	caseId: int().notNull(),
+	sender: varchar({ length: 20 }).notNull(),
+	senderName: varchar({ length: 255 }),
+	messageText: text(),
+	filePath: text(),
+	fileName: varchar({ length: 255 }),
+	fileType: varchar({ length: 50 }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 });
 
-export type ResourceRequest = typeof resourceRequests.$inferSelect;
-export type InsertResourceRequest = typeof resourceRequests.$inferInsert;
-
-/**
- * Intake leads table - stores all form submissions from TurboIntakeForm and IntakeForm
- * This is the central lead database for the Command Center
- */
-export const intakeLeads = mysqlTable("intake_leads", {
-  id: int("id").autoincrement().primaryKey(),
-  /** Full name of the submitter */
-  fullName: varchar("fullName", { length: 255 }).notNull(),
-  /** Email address */
-  email: varchar("email", { length: 320 }).notNull(),
-  /** Phone number */
-  phone: varchar("phone", { length: 100 }),
-  /** Instagram/TikTok/Facebook handle if provided */
-  socialHandle: varchar("socialHandle", { length: 255 }),
-  /** Short preview of their situation (first 500 chars of description) */
-  situationPreview: text("situationPreview"),
-  /** Full situation description */
-  fullSituation: longtext("fullSituation"),
-  /** Source of submission: turbo-intake (offense) or intake (defense) */
-  source: varchar("source", { length: 50 }).default("intake").notNull(),
-  /** Lead status for pipeline tracking */
-  status: mysqlEnum("status", ["new_lead", "reviewing", "follow_up", "converted"]).default("new_lead").notNull(),
-  /** Internal admin notes */
-  adminNotes: longtext("adminNotes"),
-  /** When the lead was submitted */
-  submittedAt: timestamp("submittedAt").defaultNow().notNull(),
-  /** When the record was last updated */
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+export const cases = mysqlTable("cases", {
+	id: int().autoincrement().notNull(),
+	title: varchar({ length: 255 }).notNull(),
+	category: varchar({ length: 50 }),
+	caseType: varchar({ length: 20 }),
+	status: varchar({ length: 50 }).default('open').notNull(),
+	description: text(),
+	clientName: varchar({ length: 255 }),
+	clientEmail: varchar({ length: 320 }),
+	clientPhone: varchar({ length: 50 }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
 });
 
-export type IntakeLead = typeof intakeLeads.$inferSelect;
-export type InsertIntakeLead = typeof intakeLeads.$inferInsert;
-
-/**
- * CEO Home priorities — daily focus list, manual entry by owner
- * Resets are handled by the UI (marking done), not by the DB
- */
-export const priorities = mysqlTable("priorities", {
-  id: int("id").autoincrement().primaryKey(),
-  text: varchar("text", { length: 500 }).notNull(),
-  urgent: int("urgent").default(0).notNull(), // 1 = urgent, 0 = normal
-  done: int("done").default(0).notNull(),     // 1 = done, 0 = pending
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+export const conversations = mysqlTable("conversations", {
+	id: int().autoincrement().notNull(),
+	userId: int(),
+	category: varchar({ length: 50 }),
+	status: varchar({ length: 50 }).default('active').notNull(),
+	summary: text(),
+	messageCount: int().default(0).notNull(),
+	evidenceCount: int().default(0).notNull(),
+	convertedToLead: int().default(0).notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
 });
 
-export type Priority = typeof priorities.$inferSelect;
-export type InsertPriority = typeof priorities.$inferInsert;
-
-/**
- * Projects — long-term initiatives with multiple steps
- * Manual entry by owner only
- */
-export const projects = mysqlTable("projects", {
-  id: int("id").autoincrement().primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
-  status: mysqlEnum("status", ["active", "paused", "done"]).default("active").notNull(),
-  progress: int("progress").default(0).notNull(), // 0-100
-  nextStep: varchar("nextStep", { length: 500 }),
-  objective: text("objective"),
-  keySteps: longtext("keySteps"), // JSON array stored as string
-  notes: longtext("notes"),
-  /** Google Drive folder or doc URL — source of truth for project files */
-  driveUrl: varchar("driveUrl", { length: 1000 }),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type Project = typeof projects.$inferSelect;
-export type InsertProject = typeof projects.$inferInsert;
-
-/**
- * Tasks — execution list, simple and flat
- * Buckets: today / week / someday
- */
-export const tasks = mysqlTable("tasks", {
-  id: int("id").autoincrement().primaryKey(),
-  text: varchar("text", { length: 500 }).notNull(),
-  bucket: mysqlEnum("bucket", ["today", "week", "someday"]).default("today").notNull(),
-  done: int("done").default(0).notNull(), // 1 = done, 0 = pending
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type Task = typeof tasks.$inferSelect;
-export type InsertTask = typeof tasks.$inferInsert;
-
-/**
- * Dashboard leads — lightweight display layer only
- * HubSpot is the source of truth; this table stores name/status/link for quick display
- * Future: replace with live HubSpot API pull
- */
 export const dashboardLeads = mysqlTable("dashboard_leads", {
-  id: int("id").autoincrement().primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
-  status: mysqlEnum("status", ["new", "reviewing", "follow_up", "converted", "closed"]).default("new").notNull(),
-  /** Short note about this lead */
-  note: varchar("note", { length: 500 }),
-  /** Direct link to HubSpot contact/deal record */
-  hubspotUrl: varchar("hubspotUrl", { length: 1000 }),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+	id: int().autoincrement().notNull(),
+	name: varchar({ length: 255 }).notNull(),
+	status: mysqlEnum(['new','reviewing','follow_up','converted','closed']).default('new').notNull(),
+	note: varchar({ length: 500 }),
+	hubspotUrl: varchar({ length: 1000 }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
 });
 
-export type DashboardLead = typeof dashboardLeads.$inferSelect;
-export type InsertDashboardLead = typeof dashboardLeads.$inferInsert;
+export const defenseCases = mysqlTable("defense_cases", {
+	id: int().autoincrement().notNull(),
+	fullName: varchar({ length: 255 }).notNull(),
+	email: varchar({ length: 320 }).notNull(),
+	phone: varchar({ length: 50 }).notNull(),
+	address: text(),
+	caseCategory: varchar({ length: 50 }).notNull(),
+	caseDescription: text().notNull(),
+	status: varchar({ length: 50 }).default('open').notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export const eligibilityProfiles = mysqlTable("eligibility_profiles", {
+	id: int().autoincrement().notNull(),
+	defenseCaseId: int(),
+	caseId: int().notNull(),
+	userEmail: varchar({ length: 320 }).notNull(),
+	zipCode: varchar({ length: 10 }),
+	state: varchar({ length: 2 }),
+	county: varchar({ length: 100 }),
+	householdSize: int(),
+	monthlyIncomeRange: varchar({ length: 50 }),
+	housingStatus: varchar({ length: 50 }),
+	employmentStatus: varchar({ length: 50 }),
+	specialCircumstances: text(),
+	benefitsConsent: int().default(0).notNull(),
+	lastMatchedAt: timestamp({ mode: 'string' }),
+	matchCount: int().default(0).notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	matchingStatus: varchar({ length: 20 }).default('pending'),
+	matchingScore: int(),
+	matchedPrograms: json(),
+	reportGeneratedAt: timestamp({ mode: 'string' }),
+	approvedBy: varchar({ length: 255 }),
+	approvedAt: timestamp({ mode: 'string' }),
+},
+(table) => [
+	index("idx_case_id").on(table.caseId),
+	index("idx_user_email").on(table.userEmail),
+	index("idx_benefits_consent").on(table.benefitsConsent),
+	index("idx_zip_code").on(table.zipCode),
+]);
+
+export const evidenceUploads = mysqlTable("evidence_uploads", {
+	id: int().autoincrement().notNull(),
+	conversationId: int().notNull(),
+	fileKey: varchar({ length: 500 }).notNull(),
+	fileUrl: text().notNull(),
+	filename: varchar({ length: 255 }),
+	mimeType: varchar({ length: 100 }),
+	fileSize: int(),
+	uploadedAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});
+
+export const intakeLeads = mysqlTable("intake_leads", {
+	id: int().autoincrement().notNull(),
+	fullName: varchar({ length: 255 }).notNull(),
+	email: varchar({ length: 320 }).notNull(),
+	phone: varchar({ length: 100 }),
+	socialHandle: varchar({ length: 255 }),
+	situationPreview: text(),
+	fullSituation: longtext(),
+	source: varchar({ length: 50 }).default('intake').notNull(),
+	status: mysqlEnum(['new_lead','reviewing','follow_up','converted']).default('new_lead').notNull(),
+	adminNotes: longtext(),
+	submittedAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export const leadNotes = mysqlTable("lead_notes", {
+	id: int().autoincrement().notNull(),
+	leadId: int().notNull(),
+	content: text().notNull(),
+	noteType: varchar({ length: 50 }).default('general').notNull(),
+	createdBy: varchar({ length: 255 }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});
+
+export const leads = mysqlTable("leads", {
+	id: int().autoincrement().notNull(),
+	conversationId: int().notNull(),
+	name: varchar({ length: 255 }).notNull(),
+	email: varchar({ length: 320 }).notNull(),
+	phone: varchar({ length: 50 }),
+	bestTimeToCall: varchar({ length: 20 }),
+	status: varchar({ length: 50 }).default('new').notNull(),
+	notes: text(),
+	category: varchar({ length: 50 }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export const messages = mysqlTable("messages", {
+	id: int().autoincrement().notNull(),
+	conversationId: int().notNull(),
+	role: varchar({ length: 20 }).notNull(),
+	content: text().notNull(),
+	metadata: text(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});
+
+export const offenseCases = mysqlTable("offense_cases", {
+	id: int().autoincrement().notNull(),
+	fullName: varchar({ length: 255 }).notNull(),
+	email: varchar({ length: 320 }).notNull(),
+	phone: varchar({ length: 50 }).notNull(),
+	businessName: varchar({ length: 255 }),
+	entityType: varchar({ length: 50 }),
+	websiteUrl: text(),
+	instagramUrl: text(),
+	tiktokUrl: text(),
+	facebookUrl: text(),
+	youtubeUrl: text(),
+	linkInBio: text(),
+	primaryGoal: varchar({ length: 100 }),
+	targetAuthority: text(),
+	stage: varchar({ length: 100 }),
+	estimatedAmount: varchar({ length: 50 }),
+	deadline: varchar({ length: 50 }),
+	caseDescription: text().notNull(),
+	status: varchar({ length: 50 }).default('open').notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export const priorities = mysqlTable("priorities", {
+	id: int().autoincrement().notNull(),
+	text: varchar({ length: 500 }).notNull(),
+	urgent: int().default(0).notNull(),
+	done: int().default(0).notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export const projects = mysqlTable("projects", {
+	id: int().autoincrement().notNull(),
+	name: varchar({ length: 255 }).notNull(),
+	status: mysqlEnum(['active','paused','done']).default('active').notNull(),
+	progress: int().default(0).notNull(),
+	nextStep: varchar({ length: 500 }),
+	objective: text(),
+	keySteps: longtext(),
+	notes: longtext(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	driveUrl: varchar({ length: 1000 }),
+});
+
+export const tasks = mysqlTable("tasks", {
+	id: int().autoincrement().notNull(),
+	text: varchar({ length: 500 }).notNull(),
+	bucket: mysqlEnum(['today','week','someday']).default('today').notNull(),
+	done: int().default(0).notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export const turboIntakeSubmissions = mysqlTable("turbo_intake_submissions", {
+	id: int().autoincrement().notNull(),
+	submissionId: varchar({ length: 100 }).notNull(),
+	businessName: varchar({ length: 255 }).notNull(),
+	ownerName: varchar({ length: 255 }).notNull(),
+	industry: varchar({ length: 255 }),
+	email: varchar({ length: 320 }).notNull(),
+	phone: varchar({ length: 50 }),
+	whatYouSell: text(),
+	idealCustomer: text(),
+	biggestStruggle: text(),
+	goal60To90Days: text(),
+	longTermVision: text(),
+	websiteUrl: varchar({ length: 500 }),
+	instagramHandle: varchar({ length: 100 }),
+	facebookUrl: varchar({ length: 500 }),
+	tiktokHandle: varchar({ length: 100 }),
+	otherSocialMedia: text(),
+	status: varchar({ length: 50 }).default('pending').notNull(),
+	auditGenerated: int().default(0).notNull(),
+	auditGeneratedAt: timestamp({ mode: 'string' }),
+	auditReportPath: varchar({ length: 500 }),
+	blueprintGenerated: int().default(0).notNull(),
+	blueprintGeneratedAt: timestamp({ mode: 'string' }),
+	blueprintReportPath: varchar({ length: 500 }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+},
+(table) => [
+	index("turbo_intake_submissions_submissionId_unique").on(table.submissionId),
+]);
+
+export const users = mysqlTable("users", {
+	id: int().autoincrement().notNull(),
+	openId: varchar({ length: 64 }).notNull(),
+	name: text(),
+	email: varchar({ length: 320 }),
+	loginMethod: varchar({ length: 64 }),
+	role: mysqlEnum(['user','admin']).default('user').notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	lastSignedIn: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	password: varchar({ length: 255 }),
+},
+(table) => [
+	index("users_openId_unique").on(table.openId),
+]);
+
+/**
+ * Knowledge Base Documents — foundation for RAG system
+ * Stores metadata and extracted text from Google Drive documents
+ * Google Drive is the source of truth; this table stores searchable content + metadata
+ * Later: embeddings stored in Supabase pgvector, not here
+ */
+export const knowledgeDocuments = mysqlTable("knowledge_documents", {
+	id: int().autoincrement().notNull(),
+	title: varchar({ length: 500 }).notNull(),
+	category: varchar({ length: 100 }).notNull(),
+	subcategory: varchar({ length: 100 }),
+	source: varchar({ length: 50 }).default('google_drive').notNull(),
+	sourceUrl: varchar({ length: 1000 }),
+	fileType: varchar({ length: 50 }),
+	content: longtext(),
+	summary: text(),
+	status: mysqlEnum(['active', 'archived', 'needs_review']).default('active').notNull(),
+	isProcessed: int().default(0).notNull(),
+	adminNotes: text(),
+	dateAdded: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export type KnowledgeDocument = typeof knowledgeDocuments.$inferSelect;
+export type InsertKnowledgeDocument = typeof knowledgeDocuments.$inferInsert;
