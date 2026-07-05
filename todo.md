@@ -690,3 +690,37 @@
 - [ ] Change detection UI — show when Google Drive docs have changed
 - [ ] xAI Collections sync workflow
 - [ ] Bulk import from Google Drive (UI ready, backend ready)
+
+
+## 🔄 PHASE 2: xAI COLLECTIONS SYNC BACKEND (JUL 5 2026)
+
+### Backend Implementation
+- [x] Create xaiSyncService.ts with sync logic
+- [x] Implement syncDocumentToXAI(documentId) with retry logic
+- [x] Implement syncPendingDocumentsToXAI() for bulk sync
+- [x] Implement resyncDocumentIfChanged() for change detection
+- [x] Implement getDocumentSyncStatus() for status queries
+- [x] Wire xaiSyncService into knowledgeBaseRouter
+- [x] Add tRPC mutations: syncToXAI, syncPendingToXAI, resyncIfChanged
+- [x] Add tRPC query: getSyncStatus
+- [x] Write vitest tests for sync service (3/3 passing)
+
+### Admin UI Updates
+- [x] Add syncToXAIMutation to AdminKnowledgeBase
+- [x] Add syncPendingMutation to AdminKnowledgeBase
+- [x] Add "Sync Pending" button in header (purple, disabled if no pending)
+- [x] Add "Sync" button per document row (only shows if not synced)
+- [x] Wire mutations to UI with loading states
+- [x] Update cache invalidation on sync success
+
+### Testing
+- [ ] Test end-to-end: Import from Google Drive → MySQL → xAI Collections
+- [ ] Verify sync status updates in database
+- [ ] Test Voice Agent retrieval from synced collection
+- [ ] Test retry logic with failed sync
+- [ ] Test change detection and re-sync
+
+### Documentation
+- [ ] Update VOICE_AGENT_FRAMEWORK.md with sync architecture
+- [ ] Document sync workflow in README
+- [ ] Add sync troubleshooting guide
