@@ -580,3 +580,55 @@
 - [ ] V2: Connect real case count from admin API
 - [ ] V2: Persist leads/content ideas to database
 - [ ] V2: Add admin auth gate to /command-center route
+
+
+---
+
+## KNOWLEDGE BASE FOUNDATION (JULY 2026)
+
+### Phase 1: Database Schema & Architecture ✅ COMPLETED
+- [x] Create knowledge_documents table in MySQL with 20 columns
+- [x] Add fields for xAI Collections sync (synced_to_xai, xai_collection_id, last_synced_at)
+- [x] Add content_hash field (SHA256) for change detection
+- [x] Add source_system enum (google_drive, upload, xai_collection, manual)
+- [x] Add workspace_id for future multi-tenant support
+- [x] Update drizzle/schema.ts with table definition and TypeScript types
+- [x] Implement knowledgeBaseDb.ts with CRUD operations
+- [x] Implement calculateContentHash() function
+- [x] Implement hasContentChanged() for change detection
+- [x] Implement getDocumentsPendingSync() for xAI sync workflow
+- [x] Create comprehensive KNOWLEDGE_BASE_ARCHITECTURE.md documentation
+- [x] Document governance model (Google Drive → MySQL → xAI/Supabase)
+- [x] Document data flow for all phases
+- [x] Document database schema with all 20 fields
+- [x] Document integration points and security model
+
+### Phase 1 (Continued): Admin UI & Google Drive Integration
+- [ ] Build Knowledge Base admin page at /admin/knowledge-base
+- [ ] Create tRPC procedures for document operations (list, create, update, delete)
+- [ ] Implement Google Drive folder browser (1DFOON2HGxRc-fWtswTpLpBlXvsBfxX4r)
+- [ ] Implement document import workflow with text extraction
+- [ ] Add document preview and metadata editing UI
+- [ ] Implement change detection UI (show when document has changed)
+- [ ] Add status management (active, archived, needs_review)
+- [ ] Test with Consumer Defense, Turbo Response, and SOPs documents
+
+### Phase 2: Text Processing & Embeddings (Future)
+- [ ] Implement text chunking service (512-1024 token chunks)
+- [ ] Integrate embedding service (OpenAI/xAI)
+- [ ] Set up Supabase pgvector integration
+- [ ] Implement batch processing for embeddings
+- [ ] Create vector search functionality
+
+### Phase 2+: xAI Collections Sync (Future)
+- [ ] Implement xAI Collections API integration
+- [ ] Create sync service for pending documents
+- [ ] Implement update detection (check for content changes)
+- [ ] Add retry logic for failed syncs
+- [ ] Create sync monitoring dashboard
+
+### Phase 3+: AI Feature Integration (Future)
+- [ ] Dashboard AI assistant (query knowledge base)
+- [ ] Website chatbot (retrieve relevant documents)
+- [ ] Voice agent (use xAI Collections for fast retrieval)
+- [ ] Internal business assistant (access all knowledge)
