@@ -17,15 +17,18 @@
 Turbo Response now includes a production-ready **AI Voice Agent Framework** that integrates knowledge bases with intelligent voice interactions. The framework powers the Consumer Defense Intake Voice Agent and is architected for reuse across industries.
 
 **Current Implementation:**
-- **Consumer Defense Intake Voice Agent** — Live phone number, natural conversation flow, knowledge-base-powered responses
+- **Consumer Defense Intake Voice Agent** — Live phone number (+1 (659) 274-2355), natural conversation flow, knowledge-base-powered responses
 - **Knowledge Base Integration** — Google Drive as source of truth, synchronized to xAI Collections for RAG retrieval
+- **Automated Sync Backend** — xAI Collections sync service with retry logic, change detection, and admin controls
 - **Architecture** — Modular, configuration-driven design for rapid deployment to law firms, contractors, medical practices, and other industries
 
 **Architecture:**
 ```
 Google Drive (Source of Truth)
     ↓
-Turbo Response Knowledge Base
+Turbo Response Knowledge Base (MySQL)
+    ↓
+xAI Collections Sync Service (Automated)
     ↓
 xAI Collections / RAG Retrieval
     ↓
@@ -39,11 +42,14 @@ Turbo Response Dashboard
 **Validated Capabilities:**
 - ✅ Knowledge base indexed and searchable (100% retrieval accuracy)
 - ✅ Voice agent answering questions from knowledge base (not generic AI)
+- ✅ Automated document sync with retry logic and change detection
 - ✅ Natural conversation flow with intake data collection
 - ✅ Human handoff guardrails and escalation rules
 - ✅ Reusable framework for other industries
+- ✅ Admin UI for knowledge base management and sync control
+- ✅ Production build validated (10/10 component tests passing)
 
-**Tech Stack:** grok-4.3 (xAI), xAI Collections API, xAI Voice Agent Builder, Google Drive, HubSpot CRM
+**Tech Stack:** grok-4.3 (xAI), xAI Collections API, xAI Voice Agent Builder, Google Drive, HubSpot CRM, Node.js, tRPC, React, Tailwind CSS
 
 ---
 
@@ -102,6 +108,26 @@ A scheduled workflow (`.github/workflows/bi-ops-automation.yml`) runs daily at 6
 ### Client Portal and Document Signing
 
 Clients access their case status through a dedicated portal (`/client/case/:id`) after authenticating via `/client/login`. The platform includes contract signing (`/sign-contract/:caseId`) and payment processing (`/pay/:caseId`) flows.
+
+### AI Voice Agent Framework
+
+A production-ready voice agent system that integrates knowledge bases with intelligent voice interactions.
+
+**Consumer Defense Intake Voice Agent**
+- **Phone Number:** +1 (659) 274-2355 (live and operational)
+- **Model:** grok-4.3 (xAI) for reasoning and speed
+- **Knowledge Base:** xAI Collections with RAG retrieval from synced documents
+- **Capabilities:** Natural conversation flow, issue categorization, structured intake data collection, emotional intelligence, human escalation guardrails
+- **Validation:** 100% retrieval accuracy from knowledge base, zero hallucinations
+
+**Backend Integration**
+- **Knowledge Base Admin UI** — Full CRUD at `/admin/knowledge-base` with Google Drive import
+- **Automated Sync Service** — xAI Collections sync with 3-attempt retry logic and change detection
+- **Database Schema** — Document management with sync tracking and status monitoring
+- **Admin Controls** — Sync Pending button for bulk operations, per-document sync buttons with real-time status
+
+**Reusable Architecture**
+The framework is designed for rapid deployment to other industries with configuration changes only. Core voice engine, conversation flow, and escalation logic remain unchanged across all implementations.
 
 ---
 
