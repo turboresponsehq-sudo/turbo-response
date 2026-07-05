@@ -116,6 +116,22 @@ export default function AdminKnowledgeBase() {
     },
   });
 
+  const syncToXAIMutation = trpc.knowledgeBase.syncToXAI.useMutation({
+    onSuccess: () => {
+      utils.knowledgeBase.list.invalidate();
+      utils.knowledgeBase.getPendingSync.invalidate();
+      utils.knowledgeBase.getStats.invalidate();
+    },
+  });
+
+  const syncPendingMutation = trpc.knowledgeBase.syncPendingToXAI.useMutation({
+    onSuccess: () => {
+      utils.knowledgeBase.list.invalidate();
+      utils.knowledgeBase.getPendingSync.invalidate();
+      utils.knowledgeBase.getStats.invalidate();
+    },
+  });
+
   const handleOpenCreate = () => {
     setEditingId(null);
     setForm(EMPTY_FORM);
@@ -197,6 +213,13 @@ export default function AdminKnowledgeBase() {
             className="px-3 py-2 text-sm bg-gray-700 hover:bg-gray-600 text-white rounded transition-colors flex items-center gap-1"
           >
             📁 Import from Drive
+          </button>
+          <button
+            onClick={() => syncPendingMutation.mutate()}
+            disabled={syncPendingMutation.isPending || (stats?.syncPending ?? 0) === 0}
+            className="px-3 py-2 text-sm bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded transition-colors flex items-center gap-1"
+          >
+            {syncPendingMutation.isPending ? "🔄 Syncing..." : "🚀 Sync Pending"}
           </button>
           <Button
             onClick={handleOpenCreate}
@@ -347,6 +370,15 @@ export default function AdminKnowledgeBase() {
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex gap-2 justify-end">
+                        {!doc.synced_to_xai && (
+                          <button
+                            onClick={() => syncToXAIMutation.mutate({ id: doc.id })}
+                            disabled={syncToXAIMutation.isPending}
+                            className="text-xs text-purple-400 hover:text-purple-300 disabled:text-gray-500 px-2 py-1 rounded border border-purple-800 hover:border-purple-600 disabled:border-gray-700 transition-colors"
+                          >
+                            {syncToXAIMutation.isPending ? "Syncing..." : "Sync"}
+                          </button>
+                        )}
                         <button
                           onClick={() => handleOpenEdit(doc)}
                           className="text-xs text-blue-400 hover:text-blue-300 px-2 py-1 rounded border border-blue-800 hover:border-blue-600 transition-colors"
