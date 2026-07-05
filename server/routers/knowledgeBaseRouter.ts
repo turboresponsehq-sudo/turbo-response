@@ -12,6 +12,12 @@ import {
   getDocumentsPendingSync,
   hasContentChanged,
 } from "../knowledgeBaseDb";
+import {
+  syncDocumentToXAI,
+  syncPendingDocumentsToXAI,
+  resyncDocumentIfChanged,
+  getDocumentSyncStatus,
+} from "../services/xaiSyncService";
 
 export const knowledgeBaseRouter = router({
   list: protectedProcedure
@@ -96,5 +102,29 @@ export const knowledgeBaseRouter = router({
     .input(z.object({ id: z.number(), newContent: z.string() }))
     .query(async ({ input }) => {
       return hasContentChanged(input.id, input.newContent);
+    }),
+
+  // xAI Collections Sync Mutations
+  syncToXAI: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input }) => {
+      return syncDocumentToXAI(input.id);
+    }),
+
+  syncPendingToXAI: protectedProcedure
+    .mutation(async () => {
+      return syncPendingDocumentsToXAI();
+    }),
+
+  resyncIfChanged: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input }) => {
+      return resyncDocumentIfChanged(input.id);
+    }),
+
+  getSyncStatus: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ input }) => {
+      return getDocumentSyncStatus(input.id);
     }),
 });
