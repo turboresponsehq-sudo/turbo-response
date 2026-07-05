@@ -1,0 +1,170 @@
+{
+  "query": "DESCRIBE knowledge_documents;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute DESCRIBE knowledge_documents;",
+  "rows": [
+    {
+      "Field": "id",
+      "Type": "int",
+      "Null": "NO",
+      "Key": "PRI",
+      "Default": "NULL",
+      "Extra": "auto_increment"
+    },
+    {
+      "Field": "title",
+      "Type": "varchar(500)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "category",
+      "Type": "varchar(100)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "subcategory",
+      "Type": "varchar(100)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "source",
+      "Type": "varchar(50)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "google_drive",
+      "Extra": ""
+    },
+    {
+      "Field": "source_system",
+      "Type": "enum('google_drive','upload','xai_collection','manual')",
+      "Null": "NO",
+      "Key": "",
+      "Default": "google_drive",
+      "Extra": ""
+    },
+    {
+      "Field": "sourceUrl",
+      "Type": "varchar(1000)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "fileType",
+      "Type": "varchar(50)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "content",
+      "Type": "longtext",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "summary",
+      "Type": "text",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "status",
+      "Type": "enum('active','archived','needs_review')",
+      "Null": "NO",
+      "Key": "",
+      "Default": "active",
+      "Extra": ""
+    },
+    {
+      "Field": "isProcessed",
+      "Type": "int",
+      "Null": "NO",
+      "Key": "",
+      "Default": "0",
+      "Extra": ""
+    },
+    {
+      "Field": "adminNotes",
+      "Type": "text",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "last_synced_at",
+      "Type": "timestamp",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "xai_collection_id",
+      "Type": "varchar(255)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "synced_to_xai",
+      "Type": "int",
+      "Null": "NO",
+      "Key": "",
+      "Default": "0",
+      "Extra": ""
+    },
+    {
+      "Field": "content_hash",
+      "Type": "varchar(64)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "workspace_id",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "dateAdded",
+      "Type": "timestamp",
+      "Null": "NO",
+      "Key": "",
+      "Default": "CURRENT_TIMESTAMP",
+      "Extra": ""
+    },
+    {
+      "Field": "updatedAt",
+      "Type": "timestamp",
+      "Null": "NO",
+      "Key": "",
+      "Default": "CURRENT_TIMESTAMP",
+      "Extra": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP"
+    }
+  ],
+  "messages": [],
+  "stdout": "Field\tType\tNull\tKey\tDefault\tExtra\nid\tint\tNO\tPRI\tNULL\tauto_increment\ntitle\tvarchar(500)\tNO\t\tNULL\t\ncategory\tvarchar(100)\tNO\t\tNULL\t\nsubcategory\tvarchar(100)\tYES\t\tNULL\t\nsource\tvarchar(50)\tNO\t\tgoogle_drive\t\nsource_system\tenum('google_drive','upload','xai_collection','manual')\tNO\t\tgoogle_drive\t\nsourceUrl\tvarchar(1000)\tYES\t\tNULL\t\nfileType\tvarchar(50)\tYES\t\tNULL\t\ncontent\tlongtext\tYES\t\tNULL\t\nsummary\ttext\tYES\t\tNULL\t\nstatus\tenum('active','archived','needs_review')\tNO\t\tactive\t\nisProcessed\tint\tNO\t\t0\t\nadminNotes\ttext\tYES\t\tNULL\t\nlast_synced_at\ttimestamp\tYES\t\tNULL\t\nxai_collection_id\tvarchar(255)\tYES\t\tNULL\t\nsynced_to_xai\tint\tNO\t\t0\t\ncontent_hash\tvarchar(64)\tYES\t\tNULL\t\nworkspace_id\tint\tYES\t\tNULL\t\ndateAdded\ttimestamp\tNO\t\tCURRENT_TIMESTAMP\t\nupdatedAt\ttimestamp\tNO\t\tCURRENT_TIMESTAMP\tDEFAULT_GENERATED on update CURRENT_TIMESTAMP\n",
+  "stderr": "",
+  "execution_time_ms": 978
+}

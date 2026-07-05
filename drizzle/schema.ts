@@ -362,6 +362,8 @@ export const knowledgeDocuments = mysqlTable("knowledge_documents", {
 	xai_collection_id: varchar({ length: 255 }),
 	/** Flag indicating if document has been synced to xAI Collections */
 	synced_to_xai: int().default(0).notNull(),
+	/** SHA256 hash of document content for change detection */
+	content_hash: varchar({ length: 64 }),
 	/** Workspace ID for future multi-tenant support */
 	workspace_id: int(),
 	dateAdded: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
