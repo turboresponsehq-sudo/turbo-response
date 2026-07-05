@@ -1,0 +1,8 @@
+{
+  "query": "ALTER TABLE knowledge_documents \nADD COLUMN source_system ENUM('google_drive', 'upload', 'xai_collection', 'manual') NOT NULL DEFAULT 'google_drive' AFTER source,\nADD COLUMN last_synced_at TIMESTAMP NULL AFTER adminNotes,\nADD COLUMN xai_collection_id VARCHAR(255) NULL AFTER last_synced_at,\nADD COLUMN synced_to_xai INT NOT NULL DEFAULT 0 AFTER xai_collection_id,\nADD COLUMN workspace_id INT NULL AFTER synced_to_xai;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute ALTER TABLE knowledge_documents \nADD COLUMN source_system ENUM('google_drive', 'upload', 'xai_collection', 'manual') NOT NULL DEFAULT 'google_drive' AFTER source,\nADD COLUMN last_synced_at TIMESTAMP NULL AFTER adminNotes,\nADD COLUMN xai_collection_id VARCHAR(255) NULL AFTER last_synced_at,\nADD COLUMN synced_to_xai INT NOT NULL DEFAULT 0 AFTER xai_collection_id,\nADD COLUMN workspace_id INT NULL AFTER synced_to_xai;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'last_synced_at' in 'knowledge_documents'"
+  ]
+}
