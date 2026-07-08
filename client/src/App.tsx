@@ -40,12 +40,12 @@ import GrantDemo from "./pages/GrantDemo";
 import EvictionDemo from "./pages/EvictionDemo";
 import TurboSystemsPage from "./pages/TurboSystems";
 import Industries from "./pages/Industries";
-import HQControlPanel from "./pages/HQControlPanel";
-import CommandCenter from "./pages/CommandCenter";
+// Archived: HQControlPanel and CommandCenter consolidated into AdminCommandCenter
 import ConsumerSolutions from "./pages/ConsumerSolutions";
 import BlackFuture from "./pages/BlackFuture";
 import AdminKnowledgeBase from "./pages/AdminKnowledgeBase";
 import AdminKnowledgeBaseImport from "./pages/AdminKnowledgeBaseImport";
+import AdminCommandCenter from "./pages/AdminCommandCenter";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -59,8 +59,7 @@ function Router() {
       <Route path="/industries" component={Industries} />
       <Route path="/consumer-solutions" component={ConsumerSolutions} />
       <Route path="/black-future" component={BlackFuture} />
-      <Route path="/hq" component={HQControlPanel} />
-      <Route path="/command-center" component={CommandCenter} />
+      {/* Archived routes: /hq and /command-center consolidated into /admin/command-center */}
       <Route path="/services" component={Services} />
       <Route path="/pricing" component={Pricing} />
       <Route path="/results" component={Results} />
@@ -93,6 +92,7 @@ function Router() {
       
       <Route path="/admin/login" component={AdminLogin} />
       {/* Admin workflow routes - restored to specification */}
+      <Route path="/admin/command-center" component={AdminCommandCenter} />
       <Route path="/admin/knowledge-base/import" component={AdminKnowledgeBaseImport} />
       <Route path="/admin/knowledge-base" component={AdminKnowledgeBase} />
       <Route path="/admin/brain" component={AdminBrainUpload} />
