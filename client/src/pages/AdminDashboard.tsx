@@ -166,6 +166,21 @@ export default function AdminDashboard() {
         </h1>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <button
+            onClick={() => setLocation('/admin/command-center')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#10b981',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            🎛️ Command Center
+          </button>
+          <button
             onClick={() => setLocation('/admin/brain')}
             style={{
               padding: '8px 16px',
