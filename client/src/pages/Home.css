@@ -750,3 +750,25 @@
 .hp-status-divider { margin: 6px 0 !important; }
 .hp-status-number { font-size: 18px !important; }
 .hp-status-metrics-row { gap: 18px !important; }
+
+/* ── STATUS PANEL TAGLINE ─────────────────────────────────────────────────── */
+.hp-status-tagline {
+  font-size: 10px;
+  color: var(--hp-text-dim);
+  letter-spacing: 0.04em;
+  margin: 0 0 4px;
+  line-height: 1.4;
+}
+
+/* ── PILLARS SIGNATURE SENTENCE ──────────────────────────────────────────── */
+.hp-pillars-tagline {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--hp-accent);
+  letter-spacing: 0.02em;
+  margin: 0 auto 20px;
+  max-width: 640px;
+  line-height: 1.5;
+  opacity: 0.9;
+}

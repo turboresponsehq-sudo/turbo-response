@@ -86,16 +86,14 @@ export default function Home() {
             </h1>
 
             <p className="hp-hero-sub">
-              When a matter is complex, the documents become overwhelming, the rules become complicated, and the stakes become higher.
-              Turbo Response helps consumers and organizations organize what they have, identify what matters, and respond with speed, precision, and confidence.
+              When the stakes are high, the documents are overwhelming, and the rules are complex, Turbo Response helps consumers and organizations organize information, identify what matters, and respond with speed, precision, and confidence.
             </p>
 
             <p className="hp-hero-sub-2 hp-hide-mobile">
-              Whether you’re bringing a claim, responding to a claim, preparing for an investigation, managing compliance, reviewing contracts,
-              dealing with code enforcement, or organizing hundreds of pages of documentation, Turbo Response helps turn information into intelligent action.
+              From claims and investigations to compliance, contracts, code enforcement, and complex documentation, Turbo Response turns information into intelligent action.
             </p>
             <p className="hp-hero-sub-2 hp-show-mobile">
-              Serving consumers, businesses, and organizations managing documentation-heavy, regulatory, and high-stakes matters.
+              From claims and investigations to compliance, contracts, and complex documentation, Turbo Response turns information into intelligent action.
             </p>
 
             <div className="hp-hero-btns">
@@ -113,6 +111,7 @@ export default function Home() {
                 <span className="hp-status-title">Verified Systems Portfolio</span>
                 <span className="hp-status-live">● ACTIVE</span>
               </div>
+              <p className="hp-status-tagline">Built, documented, and continuously refined through real-world operational use.</p>
               <div className="hp-status-divider" />
               <div className="hp-status-metrics-row">
                 <div className="hp-status-metric">
@@ -158,7 +157,8 @@ export default function Home() {
       <section className="hp-pillars">
         <div className="hp-pillars-bg" aria-hidden="true" />
         <div className="hp-section-inner">
-              <div className="hp-eyebrow hp-eyebrow-center">What We Do</div>
+              <div className="hp-eyebrow hp-eyebrow-center">How Turbo Response Helps</div>
+              <p className="hp-pillars-tagline">Better information leads to better decisions. Better decisions lead to better outcomes.</p>
               <h2 className="hp-section-h2 hp-h2-center">
                 From Complexity to Clarity. From Information to Action.
               </h2>
@@ -245,19 +245,19 @@ export default function Home() {
         <div className="hp-strip-inner">
           <div className="hp-strip-item">
             <div className="hp-strip-icon">⚡</div>
-            <div className="hp-strip-title">For Consumers</div>
+            <div className="hp-strip-title">Consumer Matters</div>
             <div className="hp-strip-body">Disputes. Credit reporting. Banking. Insurance. Housing. Debt collection. IRS notices. Code enforcement. Administrative matters.</div>
           </div>
           <div className="hp-strip-sep" />
           <div className="hp-strip-item">
             <div className="hp-strip-icon">🏗️</div>
-            <div className="hp-strip-title">For Businesses &amp; Organizations</div>
+            <div className="hp-strip-title">Business &amp; Compliance</div>
             <div className="hp-strip-body">Compliance. Regulatory response. Merchant account disputes. Contract documentation. Internal investigations. Vendor disputes. Arbitration preparation. Operational documentation.</div>
           </div>
           <div className="hp-strip-sep" />
           <div className="hp-strip-item">
             <div className="hp-strip-icon">🌐</div>
-            <div className="hp-strip-title">For Complex Matters</div>
+            <div className="hp-strip-title">High-Stakes Matters</div>
             <div className="hp-strip-body">When documentation becomes overwhelming, regulations become complicated, and outcomes matter—Turbo Response helps organize the information, identify what matters, and prepare the strongest possible response.</div>
           </div>
 
@@ -278,7 +278,7 @@ export default function Home() {
             <span className="hp-gateway-accent">Call Turbo Response.</span>
           </h2>
           <p className="hp-gateway-sub">
-            Turbo Response brings together the research, documentation, evidence, compliance, and operational structure needed to help consumers and organizations move forward with greater clarity and confidence.
+            Turbo Response brings together research, documentation, evidence, compliance, and intelligent systems to help you move forward with clarity, confidence, and control.
           </p>
           <Link href="/turbo-intake" className="hp-btn hp-btn-primary hp-btn-xl">
             Start Your Matter →
