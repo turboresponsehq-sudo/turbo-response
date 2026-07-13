@@ -225,7 +225,7 @@
   right: 0;
   top: 0;
   bottom: 0;
-  width: 50%;
+  width: 62%;
   pointer-events: none;
   z-index: 1;
   overflow: hidden;
@@ -247,7 +247,7 @@
 }
 /* Left edge fade — blends image into the dark background */
 .hp-founder-overlay-left {
-  position: absolute; top: 0; left: 0; bottom: 0; width: 55%;
+  position: absolute; top: 0; left: 0; bottom: 0; width: 60%;
   background: linear-gradient(90deg, var(--hp-bg) 0%, rgba(3,5,15,0.65) 50%, transparent 100%);
   z-index: 2;
 }
