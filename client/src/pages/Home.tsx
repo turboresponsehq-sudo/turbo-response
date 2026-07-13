@@ -80,21 +80,15 @@ export default function Home() {
             </div>
 
             <h1 className="hp-hero-h1">
-              From Complexity<br />
-              To<br />
-              <span className="hp-hero-accent">Clarity.</span>
+              The Rules Are Complicated.<br />
+              <span className="hp-hero-accent">Your Next Step Shouldn't Be.</span>
             </h1>
 
             <p className="hp-hero-sub">
-              When the stakes are high, the documents are overwhelming, and the rules are complex, Turbo Response helps consumers and organizations organize information, identify what matters, and respond with speed, precision, and confidence.
+              Millions of laws, regulations, policies, codes, and procedures shape business and everyday decisions. Knowing which ones apply—and how to respond—can change the outcome. Turbo Response helps organize the facts, identify the governing rules, and build a stronger strategy before you take action.
             </p>
 
-            <p className="hp-hero-sub-2 hp-hide-mobile">
-              From claims and investigations to compliance, contracts, code enforcement, and complex documentation, Turbo Response turns information into intelligent action.
-            </p>
-            <p className="hp-hero-sub-2 hp-show-mobile">
-              From claims and investigations to compliance, contracts, and complex documentation, Turbo Response turns information into intelligent action.
-            </p>
+            <p className="hp-hero-tagline">Research the rules. Organize the evidence. Build the right response.</p>
 
             <div className="hp-hero-btns">
               <Link href="/turbo-intake" className="hp-btn hp-btn-primary hp-btn-lg">

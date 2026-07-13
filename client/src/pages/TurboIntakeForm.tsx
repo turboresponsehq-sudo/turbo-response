@@ -23,9 +23,9 @@ export default function TurboIntakeForm() {
     facebookUrl: '',
     youtubeUrl: '',
     linkInBio: '',
-    primaryGoal: 'Document Review & Analysis',
+    primaryGoal: 'Documents & Research',
     targetAuthority: '',
-    stage: 'Unsure where to begin',
+    stage: 'Just Getting Started',
     deadline: '',
     estimatedAmount: '',
     caseDescription: '',
@@ -149,7 +149,7 @@ export default function TurboIntakeForm() {
             <span className="bi-badge">⚡ Confidential Case Review</span>
             <h1 className="bi-title">Start Your Matter</h1>
             <p className="bi-subtitle">
-              Tell us what happened. We'll review your documentation, identify what matters, and determine the clearest path forward.
+              Tell us what happened. We'll review your documentation, identify the rules and issues that matter, and determine the clearest next step.
             </p>
           </div>
 
@@ -277,21 +277,11 @@ export default function TurboIntakeForm() {
                 <div className="bi-field">
                   <label htmlFor="primaryGoal">What Type of Matter Are You Dealing With? *</label>
                   <select id="primaryGoal" name="primaryGoal" value={formData.primaryGoal} onChange={handleChange} required>
-                    <option value="Document Review & Analysis">Document Review &amp; Analysis</option>
-                    <option value="Compliance Matter">Compliance Matter</option>
-                    <option value="Claim Preparation">Claim Preparation</option>
-                    <option value="Response to a Claim">Response to a Claim</option>
-                    <option value="Investigation Support">Investigation Support</option>
-                    <option value="Code Enforcement Matter">Code Enforcement Matter</option>
-                    <option value="Contract or Vendor Dispute">Contract or Vendor Dispute</option>
-                    <option value="Banking or Merchant Account Dispute">Banking or Merchant Account Dispute</option>
-                    <option value="Insurance Matter">Insurance Matter</option>
-                    <option value="Consumer Rights Matter">Consumer Rights Matter</option>
-                    <option value="Regulatory or Administrative Matter">Regulatory or Administrative Matter</option>
-                    <option value="Arbitration Preparation">Arbitration Preparation</option>
-                    <option value="Research Request">Research Request</option>
-                    <option value="Evidence Organization">Evidence Organization</option>
-                    <option value="Other Complex Matter">Other Complex Matter</option>
+                    <option value="Documents & Research">Documents &amp; Research</option>
+                    <option value="Claims & Disputes">Claims &amp; Disputes</option>
+                    <option value="Business & Compliance">Business &amp; Compliance</option>
+                    <option value="Government & Regulatory">Government &amp; Regulatory</option>
+                    <option value="Not Sure Yet">Not Sure Yet</option>
                   </select>
                 </div>
                 <div className="bi-field">
@@ -302,16 +292,11 @@ export default function TurboIntakeForm() {
                 <div className="bi-field">
                   <label htmlFor="stage">Current Matter Status</label>
                   <select id="stage" name="stage" value={formData.stage} onChange={handleChange}>
-                    <option value="Just received the notice or claim">Just received the notice or claim</option>
-                    <option value="Gathering documents">Gathering documents</option>
-                    <option value="Researching options">Researching options</option>
-                    <option value="Preparing a claim">Preparing a claim</option>
-                    <option value="Preparing a response">Preparing a response</option>
-                    <option value="Under investigation">Under investigation</option>
-                    <option value="Facing a deadline">Facing a deadline</option>
-                    <option value="Preparing for arbitration or mediation">Preparing for arbitration or mediation</option>
-                    <option value="Already working with an attorney">Already working with an attorney</option>
-                    <option value="Unsure where to begin">Unsure where to begin</option>
+                    <option value="Just Getting Started">Just Getting Started</option>
+                    <option value="Need Help Now">Need Help Now</option>
+                    <option value="Responding to a Notice or Claim">Responding to a Notice or Claim</option>
+                    <option value="Under Investigation">Under Investigation</option>
+                    <option value="Not Sure">Not Sure</option>
                   </select>
                 </div>
               </div>
@@ -339,7 +324,7 @@ export default function TurboIntakeForm() {
                 <label htmlFor="caseDescription">Tell Us What Happened *</label>
                 <textarea id="caseDescription" name="caseDescription" value={formData.caseDescription}
                   onChange={handleChange} rows={5} required
-                  placeholder="Explain what happened, who is involved, what documents you have, what deadlines exist, and what outcome you're trying to achieve." />
+                  placeholder="Explain what happened, who is involved, what documents you have, whether a deadline exists, and what outcome you are trying to achieve." />
               </div>
             </div>
 

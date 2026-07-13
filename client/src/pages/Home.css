@@ -225,7 +225,7 @@
   right: 0;
   top: 0;
   bottom: 0;
-  width: 72%;
+  width: 50%;
   pointer-events: none;
   z-index: 1;
   overflow: hidden;
@@ -247,7 +247,7 @@
 }
 /* Left edge fade — blends image into the dark background */
 .hp-founder-overlay-left {
-  position: absolute; top: 0; left: 0; bottom: 0; width: 45%;
+  position: absolute; top: 0; left: 0; bottom: 0; width: 55%;
   background: linear-gradient(90deg, var(--hp-bg) 0%, rgba(3,5,15,0.65) 50%, transparent 100%);
   z-index: 2;
 }
@@ -337,7 +337,7 @@
   padding: 120px 60px 100px 60px;
   display: flex; align-items: center;
 }
-.hp-hero-content { flex: 0 0 auto; width: 440px; min-width: 0; }
+.hp-hero-content { flex: 0 0 auto; width: 480px; min-width: 0; max-width: 50%; }
 
 .hp-hero-eyebrow {
   display: inline-flex; align-items: center; gap: 10px;
@@ -365,8 +365,16 @@
   display: block;
 }
 .hp-hero-sub {
-  font-size: clamp(15px, 1.7vw, 18px); color: var(--hp-text-mid);
-  line-height: 1.8; max-width: 480px; margin-bottom: 28px;
+  font-size: clamp(14px, 1.5vw, 17px); color: var(--hp-text-mid);
+  line-height: 1.8; max-width: 460px; margin-bottom: 16px;
+}
+.hp-hero-tagline {
+  font-size: clamp(13px, 1.3vw, 15px);
+  color: var(--hp-accent);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-bottom: 28px;
+  opacity: 0.85;
 }
 .hp-hero-powered {
   display: inline-flex; align-items: center; gap: 10px; margin-bottom: 36px;
