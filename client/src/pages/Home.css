@@ -729,3 +729,24 @@
 .hp-footer-link-systems { text-decoration: none; font-size: 13px; font-weight: 700; color: var(--hp-accent); opacity: 0.75; transition: opacity 0.2s; }
 .hp-footer-link-systems:hover { opacity: 1; }
 .hp-footer-copy { font-size: 12px; color: rgba(255,255,255,0.12); max-width: 600px; line-height: 1.6; }
+
+/* ── MOBILE SHOW/HIDE UTILITIES ──────────────────────────────────────────── */
+/* hp-hide-mobile: visible on desktop, hidden on mobile */
+.hp-hide-mobile { display: block; }
+/* hp-show-mobile: hidden on desktop, visible on mobile */
+.hp-show-mobile { display: none; }
+
+@media (max-width: 960px) {
+  .hp-hide-mobile { display: none; }
+  .hp-show-mobile { display: block; }
+}
+
+/* ── COMPACT STATUS PANEL ─────────────────────────────────────────────────── */
+/* Reduce vertical padding and number size for a tighter panel */
+.hp-status-panel {
+  padding: 10px 18px !important;
+}
+.hp-status-header { margin-bottom: 6px !important; }
+.hp-status-divider { margin: 6px 0 !important; }
+.hp-status-number { font-size: 18px !important; }
+.hp-status-metrics-row { gap: 18px !important; }

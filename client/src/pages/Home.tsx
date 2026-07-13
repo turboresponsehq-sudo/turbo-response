@@ -86,14 +86,16 @@ export default function Home() {
             </h1>
 
             <p className="hp-hero-sub">
-              When a matter is complex, the documents are overwhelming, and the stakes are high—
-              Turbo Response helps you organize what you have, find what matters,
-              and respond with precision and confidence.
+              When a matter is complex, the documents become overwhelming, the rules become complicated, and the stakes become higher.
+              Turbo Response helps consumers and organizations organize what they have, identify what matters, and respond with speed, precision, and confidence.
             </p>
 
-            <p className="hp-hero-sub-2">
-              We serve consumers, businesses, property owners, contractors, compliance teams,
-              and organizations navigating documentation-heavy, rule-driven, and regulatory matters.
+            <p className="hp-hero-sub-2 hp-hide-mobile">
+              Whether you’re bringing a claim, responding to a claim, preparing for an investigation, managing compliance, reviewing contracts,
+              dealing with code enforcement, or organizing hundreds of pages of documentation, Turbo Response helps turn information into intelligent action.
+            </p>
+            <p className="hp-hero-sub-2 hp-show-mobile">
+              Serving consumers, businesses, and organizations managing documentation-heavy, regulatory, and high-stakes matters.
             </p>
 
             <div className="hp-hero-btns">
@@ -158,7 +160,7 @@ export default function Home() {
         <div className="hp-section-inner">
               <div className="hp-eyebrow hp-eyebrow-center">What We Do</div>
               <h2 className="hp-section-h2 hp-h2-center">
-                We Help You Make Sense of Complex Matters.
+                From Complexity to Clarity. From Information to Action.
               </h2>
               <p className="hp-pillars-sub">
                 Three capabilities. One platform. Built for the matters that demand more than a simple answer.
@@ -173,13 +175,15 @@ export default function Home() {
               <div className="hp-pillar-icon">⚡</div>
               <h3 className="hp-pillar-title">Review Hundreds of Pages in Minutes, Not Days.</h3>
               <p className="hp-pillar-body">
-                When documents pile up, clarity disappears. We organize records, build timelines,
-                and surface the facts that matter—so you can move forward instead of staying buried.
+                When documents pile up, clarity disappears.
+              </p>
+              <p className="hp-pillar-body">
+                Turbo Response helps organize records, build timelines, identify key facts, and surface the information that actually matters.
               </p>
               <ul className="hp-pillar-list">
-                <li>Document analysis &amp; organization</li>
-                <li>Record structuring &amp; timelines</li>
-                <li>Evidence identification</li>
+                <li>Document analysis</li>
+                <li>Timeline creation</li>
+                <li>Evidence organization</li>
                 <li>Contract &amp; notice review</li>
                 <li>Key fact extraction</li>
               </ul>
@@ -193,15 +197,18 @@ export default function Home() {
               <div className="hp-pillar-icon">◈</div>
               <h3 className="hp-pillar-title">Find the Regulations, Policies, and Evidence That Actually Matter.</h3>
               <p className="hp-pillar-body">
-                Not a simple internet search. We research the laws, agency guidance, procedures,
-                and public records that apply to your specific situation—and present them clearly.
+                Real research goes beyond internet searches.
+              </p>
+              <p className="hp-pillar-body">
+                Turbo Response researches laws, regulations, agency guidance, policies, procedures, public records, and supporting documentation that directly impact your matter.
               </p>
               <ul className="hp-pillar-list">
-                <li>Regulatory &amp; policy research</li>
-                <li>Agency guidance analysis</li>
-                <li>Public records investigation</li>
-                <li>Compliance requirement mapping</li>
-                <li>Procedure &amp; precedent review</li>
+                <li>Regulatory research</li>
+                <li>Agency guidance</li>
+                <li>Policy analysis</li>
+                <li>Public records</li>
+                <li>Compliance research</li>
+                <li>Supporting documentation</li>
               </ul>
               <Link href="/services" className="hp-pillar-cta hp-pillar-cta-purple">Explore Services →</Link>
             </div>
@@ -213,15 +220,15 @@ export default function Home() {
               <div className="hp-pillar-icon">◉</div>
               <h3 className="hp-pillar-title">Build Stronger Claims. Prepare Stronger Responses.</h3>
               <p className="hp-pillar-body">
-                Whether you are bringing a claim or responding to one, we help structure your matter,
-                organize your evidence, and prepare responses that are clear, complete, and credible.
+                Whether you’re bringing a claim or responding to one, Turbo Response helps organize evidence, structure documentation, prepare supporting materials, and strengthen your overall position.
               </p>
               <ul className="hp-pillar-list">
-                <li>Claim &amp; complaint preparation</li>
+                <li>Claim preparation</li>
+                <li>Response preparation</li>
                 <li>Evidence organization</li>
-                <li>Investigation &amp; enforcement response</li>
-                <li>Administrative notice handling</li>
-                <li>Arbitration &amp; matter structuring</li>
+                <li>Investigation support</li>
+                <li>Administrative response</li>
+                <li>Matter organization</li>
               </ul>
               <Link href="/services" className="hp-pillar-cta hp-pillar-cta-green">Explore Services →</Link>
             </div>
@@ -239,19 +246,19 @@ export default function Home() {
           <div className="hp-strip-item">
             <div className="hp-strip-icon">⚡</div>
             <div className="hp-strip-title">For Consumers</div>
-            <div className="hp-strip-body">Dealing with a dispute, an investigation, code enforcement, or a complex claim? We help you organize, research, and respond.</div>
+            <div className="hp-strip-body">Disputes. Credit reporting. Banking. Insurance. Housing. Debt collection. IRS notices. Code enforcement. Administrative matters.</div>
           </div>
           <div className="hp-strip-sep" />
           <div className="hp-strip-item">
             <div className="hp-strip-icon">🏗️</div>
             <div className="hp-strip-title">For Businesses &amp; Organizations</div>
-            <div className="hp-strip-body">Managing compliance, responding to notices, or preparing for arbitration? We build the operational infrastructure your matter requires.</div>
+            <div className="hp-strip-body">Compliance. Regulatory response. Merchant account disputes. Contract documentation. Internal investigations. Vendor disputes. Arbitration preparation. Operational documentation.</div>
           </div>
           <div className="hp-strip-sep" />
           <div className="hp-strip-item">
             <div className="hp-strip-icon">🌐</div>
             <div className="hp-strip-title">For Complex Matters</div>
-            <div className="hp-strip-body">When the documents are dense, the rules are complicated, and the outcome matters—Turbo Response brings clarity, speed, and precision.</div>
+            <div className="hp-strip-body">When documentation becomes overwhelming, regulations become complicated, and outcomes matter—Turbo Response helps organize the information, identify what matters, and prepare the strongest possible response.</div>
           </div>
 
         </div>
@@ -267,12 +274,11 @@ export default function Home() {
         <div className="hp-gateway-inner">
           <div className="hp-eyebrow hp-eyebrow-center">Legal Technology for Complex Matters</div>
           <h2 className="hp-gateway-h2">
-            These Are the People<br />
-            <span className="hp-gateway-accent">You Call.</span>
+            When the Matter Is Complex,<br />
+            <span className="hp-gateway-accent">Call Turbo Response.</span>
           </h2>
           <p className="hp-gateway-sub">
-            When the matter is complex, the documents are overwhelming, and you need clarity—
-            Turbo Response is the team that helps you organize, research, and respond with confidence.
+            Turbo Response brings together the research, documentation, evidence, compliance, and operational structure needed to help consumers and organizations move forward with greater clarity and confidence.
           </p>
           <Link href="/turbo-intake" className="hp-btn hp-btn-primary hp-btn-xl">
             Start Your Matter →
@@ -300,7 +306,8 @@ export default function Home() {
           </nav>
           <p className="hp-footer-copy">
             © {new Date().getFullYear()} Turbo Response · Legal Technology for Complex Matters · turboresponsehq.ai<br />
-            Turbo Response is a legal technology and operational support platform. We do not provide legal advice, legal representation, or replace licensed counsel.
+            Turbo Response is a legal technology and operational support platform. We provide intelligent research, documentation, workflow, organization, compliance support, and matter preparation.
+            We do not provide legal advice or legal representation.
           </p>
         </div>
       </footer>
