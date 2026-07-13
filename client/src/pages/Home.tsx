@@ -6,7 +6,7 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    document.title = "Turbo Response — AI-Powered Legal Technology";
+    document.title = "Turbo Response — Legal Technology for Complex Matters";
   }, []);
 
   return (
@@ -27,12 +27,12 @@ export default function Home() {
             <span /><span /><span />
           </button>
           <nav className={`hp-nav${menuOpen ? " open" : ""}`}>
-            <Link href="/solutions" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Solutions</Link>
-            <Link href="/use-cases" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Use Cases</Link>
-            <Link href="/research" className="hp-nav-link hp-nav-systems" onClick={() => setMenuOpen(false)}>⚡ Research</Link>
-            <Link href="/compliance" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Compliance</Link>
-            <Link href="/contact" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Contact</Link>
-            <Link href="/demo" className="hp-nav-cta" onClick={() => setMenuOpen(false)}>Request Demo →</Link>
+            <Link href="/services" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Services</Link>
+            <Link href="/industries" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Industries</Link>
+            <Link href="/turbo-systems" className="hp-nav-link hp-nav-systems" onClick={() => setMenuOpen(false)}>⚡ Turbo Systems</Link>
+            <Link href="/consumer-solutions" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Consumer Solutions</Link>
+            <Link href="/black-future" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Black Future</Link>
+            <Link href="/turbo-intake" className="hp-nav-cta" onClick={() => setMenuOpen(false)}>Start Your Matter →</Link>
           </nav>
         </div>
       </header>
@@ -76,7 +76,7 @@ export default function Home() {
           <div className="hp-hero-content">
             <div className="hp-hero-eyebrow">
               <span className="hp-badge-dot" />
-              ⚡ AI-POWERED LEGAL TECHNOLOGY
+              ⚡ LEGAL TECHNOLOGY FOR COMPLEX MATTERS
             </div>
 
             <h1 className="hp-hero-h1">
@@ -86,48 +86,48 @@ export default function Home() {
             </h1>
 
             <p className="hp-hero-sub">
-              Turbo Response empowers legal professionals and organizations to navigate
-              complex, documentation-heavy matters with unparalleled speed and precision.
-              Transform overwhelming information into actionable intelligence.
+              When a matter is complex, the documents are overwhelming, and the stakes are high—
+              Turbo Response helps you organize what you have, find what matters,
+              and respond with precision and confidence.
             </p>
 
             <p className="hp-hero-sub-2">
-              We don't just automate tasks. We provide the strategic advantage needed
-              to build stronger cases, ensure compliance, and respond with confidence.
+              We serve consumers, businesses, property owners, contractors, compliance teams,
+              and organizations navigating documentation-heavy, rule-driven, and regulatory matters.
             </p>
 
             <div className="hp-hero-btns">
-              <Link href="/request-demo" className="hp-btn hp-btn-primary hp-btn-lg">
-                Request Demo →
+              <Link href="/turbo-intake" className="hp-btn hp-btn-primary hp-btn-lg">
+                Start Your Matter →
               </Link>
-              <Link href="/solutions" className="hp-btn hp-btn-ghost hp-btn-lg">
-                Explore Solutions →
+              <Link href="/services" className="hp-btn hp-btn-ghost hp-btn-lg">
+                Explore Services →
               </Link>
             </div>
 
             {/* Status panel — horizontal, left-aligned, below CTAs */}
             <div className="hp-status-panel">
               <div className="hp-status-header">
-                <span className="hp-status-title">Operational Advantage</span>
+                <span className="hp-status-title">Verified Systems Portfolio</span>
                 <span className="hp-status-live">● ACTIVE</span>
               </div>
               <div className="hp-status-divider" />
               <div className="hp-status-metrics-row">
                 <div className="hp-status-metric">
-                  <span className="hp-status-label">Cases Managed</span>
-                  <span className="hp-status-number">500+</span>
+                  <span className="hp-status-label">Operational Systems</span>
+                  <span className="hp-status-number">41</span>
                 </div>
                 <div className="hp-status-metric">
-                  <span className="hp-status-label">Documents Analyzed</span>
-                  <span className="hp-status-number">100K+</span>
+                  <span className="hp-status-label">Workflows</span>
+                  <span className="hp-status-number">14</span>
                 </div>
                 <div className="hp-status-metric">
-                  <span className="hp-status-label">Compliance Checks</span>
-                  <span className="hp-status-number">99.9%</span>
+                  <span className="hp-status-label">Automations</span>
+                  <span className="hp-status-number">11</span>
                 </div>
                 <div className="hp-status-metric">
-                  <span className="hp-status-label">Response Time</span>
-                  <span className="hp-status-online">MINUTES</span>
+                  <span className="hp-status-label">AI Agents</span>
+                  <span className="hp-status-online">9</span>
                 </div>
               </div>
             </div>
@@ -156,12 +156,12 @@ export default function Home() {
       <section className="hp-pillars">
         <div className="hp-pillars-bg" aria-hidden="true" />
         <div className="hp-section-inner">
-              <div className="hp-eyebrow hp-eyebrow-center">Our Core Capabilities</div>
+              <div className="hp-eyebrow hp-eyebrow-center">What We Do</div>
               <h2 className="hp-section-h2 hp-h2-center">
-                Intelligent Solutions for Complex Legal Matters.
+                We Help You Make Sense of Complex Matters.
               </h2>
               <p className="hp-pillars-sub">
-                Three pillars of operational intelligence. One unified platform for clarity and control.
+                Three capabilities. One platform. Built for the matters that demand more than a simple answer.
               </p>
 
           <div className="hp-pillars-grid">
@@ -171,20 +171,19 @@ export default function Home() {
               <div className="hp-pillar-glow" aria-hidden="true" />
               <div className="hp-pillar-number">01</div>
               <div className="hp-pillar-icon">⚡</div>
-              <h3 className="hp-pillar-title">Document Intelligence &amp; Organization</h3>
+              <h3 className="hp-pillar-title">Review Hundreds of Pages in Minutes, Not Days.</h3>
               <p className="hp-pillar-body">
-                Transform overwhelming volumes of legal documents into organized, actionable intelligence.
-                Our AI-powered platform extracts key data, identifies patterns, and structures information
-                for rapid analysis and strategic decision-making.
+                When documents pile up, clarity disappears. We organize records, build timelines,
+                and surface the facts that matter—so you can move forward instead of staying buried.
               </p>
               <ul className="hp-pillar-list">
-                <li>Automated document analysis</li>
-                <li>Evidence organization</li>
-                <li>Contract review &amp; extraction</li>
-                <li>Policy &amp; regulation mapping</li>
-                <li>Data extraction &amp; structuring</li>
+                <li>Document analysis &amp; organization</li>
+                <li>Record structuring &amp; timelines</li>
+                <li>Evidence identification</li>
+                <li>Contract &amp; notice review</li>
+                <li>Key fact extraction</li>
               </ul>
-              <Link href="/solutions" className="hp-pillar-cta">Explore Solutions →</Link>
+              <Link href="/services" className="hp-pillar-cta">Explore Services →</Link>
             </div>
 
             {/* Pillar 2 */}
@@ -192,20 +191,19 @@ export default function Home() {
               <div className="hp-pillar-glow hp-pillar-glow-purple" aria-hidden="true" />
               <div className="hp-pillar-number">02</div>
               <div className="hp-pillar-icon">◈</div>
-              <h3 className="hp-pillar-title">Intelligent Research &amp; Compliance</h3>
+              <h3 className="hp-pillar-title">Find the Regulations, Policies, and Evidence That Actually Matter.</h3>
               <p className="hp-pillar-body">
-                Go beyond simple searches. Our platform conducts deep, AI-powered research into laws,
-                regulations, agency guidance, and historical records. Ensure compliance and build
-                unassailable arguments with precise, verifiable intelligence.
+                Not a simple internet search. We research the laws, agency guidance, procedures,
+                and public records that apply to your specific situation—and present them clearly.
               </p>
               <ul className="hp-pillar-list">
-                <li>Legal &amp; regulatory research</li>
-                <li>Compliance monitoring</li>
+                <li>Regulatory &amp; policy research</li>
                 <li>Agency guidance analysis</li>
                 <li>Public records investigation</li>
-                <li>Historical documentation review</li>
+                <li>Compliance requirement mapping</li>
+                <li>Procedure &amp; precedent review</li>
               </ul>
-              <Link href="/research" className="hp-pillar-cta hp-pillar-cta-purple">Explore Research →</Link>
+              <Link href="/services" className="hp-pillar-cta hp-pillar-cta-purple">Explore Services →</Link>
             </div>
 
             {/* Pillar 3 */}
@@ -213,20 +211,19 @@ export default function Home() {
               <div className="hp-pillar-glow hp-pillar-glow-green" aria-hidden="true" />
               <div className="hp-pillar-number">03</div>
               <div className="hp-pillar-icon">◉</div>
-              <h3 className="hp-pillar-title">Strategic Response &amp; Case Building</h3>
+              <h3 className="hp-pillar-title">Build Stronger Claims. Prepare Stronger Responses.</h3>
               <p className="hp-pillar-body">
-                Prepare for any matter, offensive or defensive. Turbo Response provides the tools
-                to build stronger claims, organize evidence, and craft administrative responses
-                with speed, precision, and unwavering confidence.
+                Whether you are bringing a claim or responding to one, we help structure your matter,
+                organize your evidence, and prepare responses that are clear, complete, and credible.
               </p>
               <ul className="hp-pillar-list">
-                <li>Offensive &amp; defensive matter prep</li>
-                <li>Claim &amp; complaint building</li>
-                <li>Evidence organization &amp; analysis</li>
-                <li>Administrative response drafting</li>
-                <li>Investigation support</li>
+                <li>Claim &amp; complaint preparation</li>
+                <li>Evidence organization</li>
+                <li>Investigation &amp; enforcement response</li>
+                <li>Administrative notice handling</li>
+                <li>Arbitration &amp; matter structuring</li>
               </ul>
-              <Link href="/use-cases" className="hp-pillar-cta hp-pillar-cta-green">Explore Use Cases →</Link>
+              <Link href="/services" className="hp-pillar-cta hp-pillar-cta-green">Explore Services →</Link>
             </div>
 
           </div>
@@ -240,21 +237,21 @@ export default function Home() {
       <section className="hp-strip">
         <div className="hp-strip-inner">
           <div className="hp-strip-item">
-            <div className="hp-strip-icon">⚙️</div>
-            <div className="hp-strip-title">AI-Powered Legal Intelligence</div>
-            <div className="hp-strip-body">Rapidly analyze documents. Automate compliance. Gain strategic insights.</div>
+            <div className="hp-strip-icon">⚡</div>
+            <div className="hp-strip-title">For Consumers</div>
+            <div className="hp-strip-body">Dealing with a dispute, an investigation, code enforcement, or a complex claim? We help you organize, research, and respond.</div>
           </div>
           <div className="hp-strip-sep" />
           <div className="hp-strip-item">
             <div className="hp-strip-icon">🏗️</div>
-            <div className="hp-strip-title">Scalable Legal Infrastructure</div>
-            <div className="hp-strip-body">From case management to regulatory tracking, build systems that grow with your practice.</div>
+            <div className="hp-strip-title">For Businesses &amp; Organizations</div>
+            <div className="hp-strip-body">Managing compliance, responding to notices, or preparing for arbitration? We build the operational infrastructure your matter requires.</div>
           </div>
           <div className="hp-strip-sep" />
           <div className="hp-strip-item">
             <div className="hp-strip-icon">🌐</div>
-            <div className="hp-strip-title">Strategic Legal Advantage</div>
-            <div className="hp-strip-body">Empowering legal professionals with tools for precision, speed, and confidence.</div>
+            <div className="hp-strip-title">For Complex Matters</div>
+            <div className="hp-strip-body">When the documents are dense, the rules are complicated, and the outcome matters—Turbo Response brings clarity, speed, and precision.</div>
           </div>
 
         </div>
@@ -268,16 +265,17 @@ export default function Home() {
         <div className="hp-gateway-orb-purple" aria-hidden="true" />
         <div className="hp-gateway-horizon-top" aria-hidden="true" />
         <div className="hp-gateway-inner">
-          <div className="hp-eyebrow hp-eyebrow-center">Your Legal Edge</div>
+          <div className="hp-eyebrow hp-eyebrow-center">Legal Technology for Complex Matters</div>
           <h2 className="hp-gateway-h2">
-            Transforming Legal Practice.<br />
-            <span className="hp-gateway-accent">Delivering Unmatched Clarity.</span>
+            These Are the People<br />
+            <span className="hp-gateway-accent">You Call.</span>
           </h2>
           <p className="hp-gateway-sub">
-            Experience the future of legal technology. Request a demo to see Turbo Response in action.
+            When the matter is complex, the documents are overwhelming, and you need clarity—
+            Turbo Response is the team that helps you organize, research, and respond with confidence.
           </p>
-          <Link href="/request-demo" className="hp-btn hp-btn-primary hp-btn-xl">
-            Request a Demo →
+          <Link href="/turbo-intake" className="hp-btn hp-btn-primary hp-btn-xl">
+            Start Your Matter →
           </Link>
           <p className="hp-gateway-url">turboresponsehq.ai</p>
         </div>
@@ -292,17 +290,17 @@ export default function Home() {
             <span>TURBO RESPONSE</span>
           </div>
           <nav className="hp-footer-links">
-            <Link href="/solutions" className="hp-footer-link">Solutions</Link>
-            <Link href="/use-cases" className="hp-footer-link">Use Cases</Link>
-            <Link href="/research" className="hp-footer-link">Research</Link>
-            <Link href="/compliance" className="hp-footer-link">Compliance</Link>
-            <Link href="/contact" className="hp-footer-link">Contact</Link>
+            <Link href="/services" className="hp-footer-link">Services</Link>
+            <Link href="/industries" className="hp-footer-link">Industries</Link>
+            <Link href="/turbo-systems" className="hp-footer-link">⚡ Turbo Systems</Link>
+            <Link href="/consumer-solutions" className="hp-footer-link">Consumer Solutions</Link>
+            <Link href="/black-future" className="hp-footer-link">Black Future</Link>
             <Link href="/privacy-policy" className="hp-footer-link">Privacy Policy</Link>
             <Link href="/terms-of-service" className="hp-footer-link">Terms of Service</Link>
           </nav>
           <p className="hp-footer-copy">
-            © {new Date().getFullYear()} Turbo Response. AI-powered legal technology.
-            Not a law firm. No legal advice.
+            © {new Date().getFullYear()} Turbo Response · Legal Technology for Complex Matters · turboresponsehq.ai<br />
+            Turbo Response is a legal technology and operational support platform. We do not provide legal advice, legal representation, or replace licensed counsel.
           </p>
         </div>
       </footer>
