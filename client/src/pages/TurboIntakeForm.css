@@ -513,3 +513,50 @@
     justify-content: center;
   }
 }
+
+/* ── HOW IT WORKS ─────────────────────────────────────────── */
+.bi-how-it-works {
+  background: linear-gradient(135deg, rgba(0, 163, 255, 0.08) 0%, rgba(99, 51, 255, 0.08) 100%);
+  border: 1px solid rgba(0, 163, 255, 0.25);
+  border-radius: 12px;
+  padding: 2rem 2.5rem;
+  margin-bottom: 1.5rem;
+}
+.bi-hiw-title {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #00BFFF;
+  margin-bottom: 1.5rem;
+}
+.bi-hiw-steps { display: flex; flex-direction: column; gap: 0; }
+.bi-hiw-step { display: flex; align-items: flex-start; gap: 1rem; padding: 0.5rem 0; }
+.bi-hiw-num {
+  display: flex; align-items: center; justify-content: center;
+  width: 2rem; height: 2rem; min-width: 2rem; border-radius: 50%;
+  background: rgba(0, 163, 255, 0.15);
+  border: 1px solid rgba(0, 163, 255, 0.4);
+  color: #00BFFF; font-weight: 700; font-size: 0.9rem;
+}
+.bi-hiw-step strong { display: block; color: #f0f4ff; font-size: 0.95rem; font-weight: 600; margin-bottom: 0.2rem; }
+.bi-hiw-step p { color: rgba(200, 210, 230, 0.8); font-size: 0.875rem; margin: 0; line-height: 1.5; }
+.bi-hiw-arrow { color: rgba(0, 191, 255, 0.5); font-size: 1.2rem; padding: 0.1rem 0 0.1rem 0.9rem; }
+
+/* ── FORM TAGLINE ─────────────────────────────────────────── */
+.bi-form-tagline {
+  text-align: center;
+  color: rgba(200, 210, 230, 0.6);
+  font-size: 0.875rem;
+  font-style: italic;
+  letter-spacing: 0.03em;
+  margin-bottom: 1.5rem;
+}
+
+/* ── TRUST STATEMENT ─────────────────────────────────────────── */
+.bi-trust-statement {
+  font-size: 0.8rem;
+  color: rgba(0, 191, 255, 0.8);
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}

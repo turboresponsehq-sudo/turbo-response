@@ -23,16 +23,16 @@ export default function TurboIntakeForm() {
     facebookUrl: '',
     youtubeUrl: '',
     linkInBio: '',
-    primaryGoal: 'AI System Build',
+    primaryGoal: 'Document Review & Analysis',
     targetAuthority: '',
-    stage: 'Exploring options',
+    stage: 'Unsure where to begin',
     deadline: '',
     estimatedAmount: '',
     caseDescription: '',
   });
 
   useEffect(() => {
-    document.title = 'Build Intake — Turbo Response HQ';
+    document.title = 'Turbo Response — Start Your Matter';
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -116,8 +116,8 @@ export default function TurboIntakeForm() {
         <div className="bi-success-wrap">
           <div className="bi-success-card">
             <div className="bi-success-icon">✓</div>
-            <h2>Build Intake Received</h2>
-            <p>We'll review your brief and follow up within 24–48 hours with next steps.</p>
+            <h2>Matter Intake Received</h2>
+            <p>No commitment. We'll review your submission and follow up within 24–48 hours.</p>
           </div>
         </div>
       </div>
@@ -146,13 +146,44 @@ export default function TurboIntakeForm() {
         <div className="bi-container">
 
           <div className="bi-page-header">
-            <span className="bi-badge">⚡ Build Intake</span>
-            <h1 className="bi-title">Start Your Build</h1>
+            <span className="bi-badge">⚡ Confidential Case Review</span>
+            <h1 className="bi-title">Start Your Matter</h1>
             <p className="bi-subtitle">
-              Tell us what you're building. We'll map your highest-value automation targets
-              and define a build plan — before any commitment.
+              Tell us what happened. We'll review your documentation, identify what matters, and determine the clearest path forward.
             </p>
           </div>
+
+          {/* ── HOW IT WORKS ─────────────────────────────────────────── */}
+          <div className="bi-how-it-works">
+            <h2 className="bi-hiw-title">How It Works</h2>
+            <div className="bi-hiw-steps">
+              <div className="bi-hiw-step">
+                <span className="bi-hiw-num">1</span>
+                <div>
+                  <strong>Submit Your Matter</strong>
+                  <p>Upload your documents and explain what's happening.</p>
+                </div>
+              </div>
+              <div className="bi-hiw-arrow">↓</div>
+              <div className="bi-hiw-step">
+                <span className="bi-hiw-num">2</span>
+                <div>
+                  <strong>We Review Everything</strong>
+                  <p>We organize the facts, identify issues, research the rules, and determine what matters most.</p>
+                </div>
+              </div>
+              <div className="bi-hiw-arrow">↓</div>
+              <div className="bi-hiw-step">
+                <span className="bi-hiw-num">3</span>
+                <div>
+                  <strong>You Receive a Clear Next Step</strong>
+                  <p>If Turbo Response is a good fit, we'll outline how we can help.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p className="bi-form-tagline">Every complex matter begins with better information.</p>
 
           {error && (
             <div className="bi-error-banner">
@@ -194,11 +225,15 @@ export default function TurboIntakeForm() {
                 <div className="bi-field">
                   <label htmlFor="entityType">Entity Type</label>
                   <select id="entityType" name="entityType" value={formData.entityType} onChange={handleChange}>
-                    <option value="Individual">Individual / Solo Founder</option>
-                    <option value="LLC">LLC</option>
+                    <option value="Individual / Consumer">Individual / Consumer</option>
+                    <option value="Solo Founder">Solo Founder</option>
+                    <option value="Small Business">Small Business</option>
                     <option value="Corporation">Corporation</option>
-                    <option value="Nonprofit">Nonprofit</option>
-                    <option value="Creator / Brand">Creator / Brand</option>
+                    <option value="Nonprofit Organization">Nonprofit Organization</option>
+                    <option value="Property Owner / Manager">Property Owner / Manager</option>
+                    <option value="Contractor">Contractor</option>
+                    <option value="Compliance Team">Compliance Team</option>
+                    <option value="Professional Services Firm">Professional Services Firm</option>
                     <option value="Other">Other</option>
                   </select>
                 </div>
@@ -237,51 +272,61 @@ export default function TurboIntakeForm() {
             </div>
 
             <div className="bi-card">
-              <h2 className="bi-section-title">Build Objective</h2>
+              <h2 className="bi-section-title">Matter Overview</h2>
               <div className="bi-field-grid">
                 <div className="bi-field">
-                  <label htmlFor="primaryGoal">What Are You Building? *</label>
+                  <label htmlFor="primaryGoal">What Type of Matter Are You Dealing With? *</label>
                   <select id="primaryGoal" name="primaryGoal" value={formData.primaryGoal} onChange={handleChange} required>
-                    <option value="AI System Build">AI System Build</option>
-                    <option value="Automation Workflow">Automation Workflow</option>
-                    <option value="Intelligence Pipeline">Intelligence Pipeline</option>
-                    <option value="Production Infrastructure">Production Infrastructure</option>
-                    <option value="Content / Media System">Content / Media System</option>
-                    <option value="Founder OS / Operations">Founder OS / Operations</option>
-                    <option value="Research / Data Intelligence">Research / Data Intelligence</option>
-                    <option value="Ecosystem / Community Build">Ecosystem / Community Build</option>
-                    <option value="Workflow Optimization">Workflow Optimization</option>
-                    <option value="Other">Other (describe below)</option>
+                    <option value="Document Review & Analysis">Document Review &amp; Analysis</option>
+                    <option value="Compliance Matter">Compliance Matter</option>
+                    <option value="Claim Preparation">Claim Preparation</option>
+                    <option value="Response to a Claim">Response to a Claim</option>
+                    <option value="Investigation Support">Investigation Support</option>
+                    <option value="Code Enforcement Matter">Code Enforcement Matter</option>
+                    <option value="Contract or Vendor Dispute">Contract or Vendor Dispute</option>
+                    <option value="Banking or Merchant Account Dispute">Banking or Merchant Account Dispute</option>
+                    <option value="Insurance Matter">Insurance Matter</option>
+                    <option value="Consumer Rights Matter">Consumer Rights Matter</option>
+                    <option value="Regulatory or Administrative Matter">Regulatory or Administrative Matter</option>
+                    <option value="Arbitration Preparation">Arbitration Preparation</option>
+                    <option value="Research Request">Research Request</option>
+                    <option value="Evidence Organization">Evidence Organization</option>
+                    <option value="Other Complex Matter">Other Complex Matter</option>
                   </select>
                 </div>
                 <div className="bi-field">
-                  <label htmlFor="targetAuthority">Target Platform / Tool / Integration</label>
+                  <label htmlFor="targetAuthority">Agency, Company, Platform, or Organization Involved</label>
                   <input type="text" id="targetAuthority" name="targetAuthority" value={formData.targetAuthority}
-                    onChange={handleChange} placeholder="e.g. Notion, Airtable, Stripe, custom API..." />
+                    onChange={handleChange} placeholder="Example: city agency, bank, insurer, employer, contractor, Stripe, PayPal, Amazon…" />
                 </div>
                 <div className="bi-field">
-                  <label htmlFor="stage">Where Are You Now?</label>
+                  <label htmlFor="stage">Current Matter Status</label>
                   <select id="stage" name="stage" value={formData.stage} onChange={handleChange}>
-                    <option value="Exploring options">Exploring options</option>
-                    <option value="Have a clear vision">Have a clear vision</option>
-                    <option value="Partially built">Partially built — need to finish or fix</option>
-                    <option value="Ready to deploy">Ready to deploy</option>
-                    <option value="Need to scale">Already running — need to scale</option>
+                    <option value="Just received the notice or claim">Just received the notice or claim</option>
+                    <option value="Gathering documents">Gathering documents</option>
+                    <option value="Researching options">Researching options</option>
+                    <option value="Preparing a claim">Preparing a claim</option>
+                    <option value="Preparing a response">Preparing a response</option>
+                    <option value="Under investigation">Under investigation</option>
+                    <option value="Facing a deadline">Facing a deadline</option>
+                    <option value="Preparing for arbitration or mediation">Preparing for arbitration or mediation</option>
+                    <option value="Already working with an attorney">Already working with an attorney</option>
+                    <option value="Unsure where to begin">Unsure where to begin</option>
                   </select>
                 </div>
               </div>
             </div>
 
             <div className="bi-card">
-              <h2 className="bi-section-title">Timeline & Budget</h2>
+              <h2 className="bi-section-title">Timeline & Urgency</h2>
               <div className="bi-field-grid bi-field-grid-2">
                 <div className="bi-field">
-                  <label htmlFor="deadline">Target Launch Date</label>
+                  <label htmlFor="deadline">Important Deadline</label>
                   <input type="date" id="deadline" name="deadline" value={formData.deadline}
                     onChange={handleChange} />
                 </div>
                 <div className="bi-field">
-                  <label htmlFor="estimatedAmount">Estimated Budget</label>
+                  <label htmlFor="estimatedAmount">Estimated Support Budget</label>
                   <input type="number" id="estimatedAmount" name="estimatedAmount" value={formData.estimatedAmount}
                     onChange={handleChange} placeholder="Optional" step="0.01" />
                 </div>
@@ -289,18 +334,19 @@ export default function TurboIntakeForm() {
             </div>
 
             <div className="bi-card">
-              <h2 className="bi-section-title">Project Brief</h2>
+              <h2 className="bi-section-title">Matter Details</h2>
               <div className="bi-field">
-                <label htmlFor="caseDescription">Describe What You're Building *</label>
+                <label htmlFor="caseDescription">Tell Us What Happened *</label>
                 <textarea id="caseDescription" name="caseDescription" value={formData.caseDescription}
                   onChange={handleChange} rows={5} required
-                  placeholder="What operational problem are you solving? What does success look like? What's the bottleneck right now?" />
+                  placeholder="Explain what happened, who is involved, what documents you have, what deadlines exist, and what outcome you're trying to achieve." />
               </div>
             </div>
 
             <div className="bi-card">
               <h2 className="bi-section-title">Supporting Files <span className="bi-optional">(Optional)</span></h2>
-              <p className="bi-field-hint">Upload any relevant documents, wireframes, screenshots, or reference materials.</p>
+              <p className="bi-field-hint">Upload relevant notices, contracts, policies, screenshots, emails, reports, letters, evidence, timelines, or other supporting records.</p>
+              <p className="bi-trust-statement">🔒 Your documents remain confidential and are never shared without your permission.</p>
               <MultiFileUploader
                 onUploadComplete={handleUploadComplete}
                 apiUrl={getApiUrl()}
@@ -325,8 +371,7 @@ export default function TurboIntakeForm() {
                 <input type="checkbox" checked={termsAccepted}
                   onChange={(e) => setTermsAccepted(e.target.checked)} required />
                 <span>
-                  I understand that Turbo Response provides AI systems, automation, and infrastructure
-                  build services. This intake is for project scoping only — no commitment required.
+                  I understand that Turbo Response provides legal technology, research, documentation, organization, compliance support, and matter preparation services. Turbo Response is not a law firm and does not provide legal advice or legal representation. This intake is for initial review and scoping only.
                 </span>
               </label>
             </div>
@@ -336,10 +381,10 @@ export default function TurboIntakeForm() {
                 {loading ? (
                   <><span className="bi-spinner" /> Submitting...</>
                 ) : (
-                  <>Submit Build Intake <span className="bi-arrow">→</span></>
+                  <>Submit Matter Intake <span className="bi-arrow">→</span></>
                 )}
               </button>
-              <p className="bi-submit-note">No commitment. We'll follow up within 24–48 hours.</p>
+              <p className="bi-submit-note">No commitment. We'll review your submission and follow up within 24–48 hours.</p>
             </div>
 
           </form>
