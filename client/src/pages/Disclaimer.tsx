@@ -19,10 +19,12 @@ export default function Disclaimer() {
             <span>TURBO RESPONSE</span>
           </Link>
           <nav className="disc-nav">
-            <Link href="/services" className="disc-nav-link">Infrastructure</Link>
-            <Link href="/industries" className="disc-nav-link">Industries</Link>
-            <Link href="/turbo-systems" className="disc-nav-link disc-nav-systems">⚡ Turbo Systems</Link>
-            <Link href="/turbo-intake" className="disc-nav-cta">Build With Us</Link>
+            <Link href="/solutions" className="disc-nav-link">Solutions</Link>
+            <Link href="/use-cases" className="disc-nav-link">Use Cases</Link>
+            <Link href="/research" className="disc-nav-link disc-nav-systems">⚡ Research</Link>
+            <Link href="/compliance" className="disc-nav-link">Compliance</Link>
+            <Link href="/contact" className="disc-nav-link">Contact</Link>
+            <Link href="/demo" className="disc-nav-cta">Request Demo</Link>
           </nav>
         </div>
       </header>
@@ -114,14 +116,18 @@ export default function Disclaimer() {
       {/* ── FOOTER ─────────────────────────────────────────────────────────── */}
       <footer className="disc-footer">
         <div className="disc-footer-inner">
-          <div className="disc-footer-brand">⚡ Turbo Response — Operational Intelligence Infrastructure</div>
+          <div className="disc-footer-brand">⚡ Turbo Response — AI-Powered Legal Technology</div>
           <div className="disc-footer-links">
             <Link href="/" className="disc-footer-link">Home</Link>
-            <Link href="/services" className="disc-footer-link">Infrastructure</Link>
-            <Link href="/industries" className="disc-footer-link">Industries</Link>
-            <Link href="/turbo-systems" className="disc-footer-link disc-footer-link-systems">⚡ Turbo Systems</Link>
+            <Link href="/solutions" className="disc-footer-link">Solutions</Link>
+            <Link href="/use-cases" className="disc-footer-link">Use Cases</Link>
+            <Link href="/research" className="disc-footer-link">Research</Link>
+            <Link href="/compliance" className="disc-footer-link">Compliance</Link>
+            <Link href="/contact" className="disc-footer-link">Contact</Link>
+            <Link href="/privacy-policy" className="disc-footer-link">Privacy Policy</Link>
+            <Link href="/terms-of-service" className="disc-footer-link">Terms of Service</Link>
           </div>
-          <div className="disc-footer-copy">© 2026 Turbo Response HQ · turboresponsehq.ai · Operational intelligence and AI infrastructure systems.</div>
+          <div className="disc-footer-copy">© {new Date().getFullYear()} Turbo Response. AI-powered legal technology. Not a law firm. No legal advice.</div>
         </div>
       </footer>
 
