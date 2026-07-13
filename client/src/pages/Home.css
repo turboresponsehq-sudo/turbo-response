@@ -351,8 +351,8 @@
 
 /* Massive cinematic headline */
 .hp-hero-h1 {
-  font-size: clamp(60px, 10vw, 130px);
-  font-weight: 900; line-height: 0.90; letter-spacing: -0.045em;
+  font-size: clamp(32px, 4.5vw, 64px);
+  font-weight: 900; line-height: 1.05; letter-spacing: -0.03em;
   margin-bottom: 32px;
   background: linear-gradient(160deg, #FFFFFF 0%, #E8F2FF 50%, #C0DCFF 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
@@ -496,7 +496,7 @@
 
 @media (max-width: 600px) {
   .hp-hero-inner { padding: 72px 20px 40px; }
-  .hp-hero-h1 { font-size: clamp(52px, 14vw, 90px); }
+  .hp-hero-h1 { font-size: clamp(28px, 8vw, 48px); line-height: 1.1; }
 }
 
 /* ── SECTION DIVIDERS ─────────────────────────────────────────────────────── */
