@@ -43,7 +43,10 @@ import AdminCasesList from "./pages/AdminCasesList";
 import AdminCasesDetail from "./pages/AdminCaseDetail";
 import GrantDemo from "./pages/GrantDemo";
 import EvictionDemo from "./pages/EvictionDemo";
-
+import TurboSystemsPage from "./pages/TurboSystems";
+import Industries from "./pages/Industries";
+import ConsumerSolutions from "./pages/ConsumerSolutions";
+import BlackFuture from "./pages/BlackFuture";
 import AdminKnowledgeBase from "./pages/AdminKnowledgeBase";
 import AdminKnowledgeBaseImport from "./pages/AdminKnowledgeBaseImport";
 import AdminCommandCenter from "./pages/AdminCommandCenter";
@@ -56,6 +59,10 @@ function Router() {
       <Route path="/violations" component={Violations} />
       <Route path="/grant-demo" component={GrantDemo} />
       <Route path="/eviction-demo" component={EvictionDemo} />
+      <Route path="/turbo-systems" component={TurboSystemsPage} />
+      <Route path="/industries" component={Industries} />
+      <Route path="/consumer-solutions" component={ConsumerSolutions} />
+      <Route path="/black-future" component={BlackFuture} />
       <Route path="/solutions" component={Solutions} />
       <Route path="/use-cases" component={UseCases} />
       <Route path="/research" component={Research} />
@@ -63,7 +70,6 @@ function Router() {
       <Route path="/contact" component={Contact} />
       <Route path="/demo" component={Demo} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
-      <Route path="/terms-of-service" component={TermsOfService} />
       {/* Defense Intake - Consumer */}
       <Route path="/intake-defense" component={IntakeForm} />
       {/* Redirect legacy route */}
