@@ -26,6 +26,7 @@ import ScreenshotCapture from "./pages/admin/ScreenshotCapture";
 import ConsumerConfirmation from "./pages/ConsumerConfirmation";
 import TurboHQ from "./pages/TurboHQ";
 import Solutions from "./pages/Solutions";
+import Services from "./pages/Services";
 import UseCases from "./pages/UseCases";
 import Research from "./pages/Research";
 import Compliance from "./pages/Compliance";
@@ -64,6 +65,7 @@ function Router() {
       <Route path="/consumer-solutions" component={ConsumerSolutions} />
       <Route path="/black-future" component={BlackFuture} />
       <Route path="/solutions" component={Solutions} />
+      <Route path="/services" component={Services} />
       <Route path="/use-cases" component={UseCases} />
       <Route path="/research" component={Research} />
       <Route path="/compliance" component={Compliance} />
