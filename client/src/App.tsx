@@ -7,7 +7,6 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { AdminAuthProvider } from "./contexts/AdminAuthContext";
 import { setupAxiosInterceptor } from "./lib/axiosInterceptor";
 import Home from "./pages/Home";
-import Violations from "./pages/Violations";
 import AdminDashboard from "./pages/AdminDashboard";
 import IntakeForm from "./pages/IntakeForm";
 import Payment from "./pages/Payment";
@@ -25,13 +24,8 @@ import CaseUploadCenter from "./pages/CaseUploadCenter";
 import ScreenshotCapture from "./pages/admin/ScreenshotCapture";
 import ConsumerConfirmation from "./pages/ConsumerConfirmation";
 import TurboHQ from "./pages/TurboHQ";
-import Solutions from "./pages/Solutions";
 import Services from "./pages/Services";
-import UseCases from "./pages/UseCases";
-import Research from "./pages/Research";
-import Compliance from "./pages/Compliance";
 import Contact from "./pages/Contact";
-import Demo from "./pages/Demo";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 import ClientLogin from "./pages/ClientLogin";
@@ -42,8 +36,7 @@ import TurboIntakeForm from "./pages/TurboIntakeForm";
 import OffenseIntakeForm from "./pages/OffenseIntakeForm";
 import AdminCasesList from "./pages/AdminCasesList";
 import AdminCasesDetail from "./pages/AdminCaseDetail";
-import GrantDemo from "./pages/GrantDemo";
-import EvictionDemo from "./pages/EvictionDemo";
+
 import TurboSystemsPage from "./pages/TurboSystems";
 import Industries from "./pages/Industries";
 import ConsumerSolutions from "./pages/ConsumerSolutions";
@@ -57,20 +50,13 @@ function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
-      <Route path="/violations" component={Violations} />
-      <Route path="/grant-demo" component={GrantDemo} />
-      <Route path="/eviction-demo" component={EvictionDemo} />
+
       <Route path="/turbo-systems" component={TurboSystemsPage} />
       <Route path="/industries" component={Industries} />
       <Route path="/consumer-solutions" component={ConsumerSolutions} />
       <Route path="/black-future" component={BlackFuture} />
-      <Route path="/solutions" component={Solutions} />
       <Route path="/services" component={Services} />
-      <Route path="/use-cases" component={UseCases} />
-      <Route path="/research" component={Research} />
-      <Route path="/compliance" component={Compliance} />
       <Route path="/contact" component={Contact} />
-      <Route path="/demo" component={Demo} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       {/* Defense Intake - Consumer */}
       <Route path="/intake-defense" component={IntakeForm} />
