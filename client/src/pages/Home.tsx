@@ -85,7 +85,7 @@ export default function Home() {
             </h1>
 
             <p className="hp-hero-sub">
-              Turbo Response helps case operations teams organize documents, build timelines, manage evidence, research regulations, and prepare stronger case files with AI. We transform scattered information into organized action so your team can process complex matters faster and with greater confidence.
+              Turbo Response helps organizations that manage complex cases organize documents, build timelines, manage evidence, research regulations, and prepare stronger case files with AI. We transform scattered information into organized action so teams can process complex matters faster and with greater confidence.
             </p>
 
             <p className="hp-hero-tagline">Organize the case. Accelerate the workflow. Strengthen every response.</p>
@@ -151,7 +151,7 @@ export default function Home() {
       <section className="hp-pillars">
         <div className="hp-pillars-bg" aria-hidden="true" />
         <div className="hp-section-inner">
-              <div className="hp-eyebrow hp-eyebrow-center">Built for Modern Case Operations Teams</div>
+              <div className="hp-eyebrow hp-eyebrow-center">Built for Organizations Managing Complex Cases</div>
               <p className="hp-pillars-tagline">Better case operations create better outcomes.</p>
               <h2 className="hp-section-h2 hp-h2-center">
                 From Scattered Information to Organized Action.
@@ -169,7 +169,7 @@ export default function Home() {
               <div className="hp-pillar-icon">⚡</div>
               <h3 className="hp-pillar-title">Organize Every Document Into One Intelligent Case File.</h3>
               <p className="hp-pillar-body">
-                Turbo Response organizes records, builds timelines, extracts key facts, and connects supporting evidence so your case operations team spends less time searching and more time moving cases forward.
+                Turbo Response organizes records, builds timelines, extracts key facts, and connects supporting evidence so your organization spends less time searching and more time moving cases forward.
               </p>
               <ul className="hp-pillar-list">
                 <li>Document analysis</li>
@@ -233,14 +233,14 @@ export default function Home() {
         <div className="hp-strip-inner">
           <div className="hp-strip-item">
             <div className="hp-strip-icon">⚡</div>
-            <div className="hp-strip-title">Built for Consumer Law Support Teams</div>
-            <div className="hp-strip-body">Organizations that help consumers navigate disputes, investigations, regulatory matters, administrative complaints, and complex documentation.</div>
+            <div className="hp-strip-title">Built for Organizations Managing Consumer Matters</div>
+            <div className="hp-strip-body">Organizations that manage consumer disputes, investigations, regulatory matters, administrative complaints, and complex documentation.</div>
           </div>
           <div className="hp-strip-sep" />
           <div className="hp-strip-item">
           <div className="hp-strip-icon">📁</div>
-          <div className="hp-strip-title">Built for Case Operations</div>
-            <div className="hp-strip-body">Case Managers, Intake Teams, Documentation Specialists, Operations Managers, Investigation Teams, and Client Success professionals managing high-volume case work.</div>
+          <div className="hp-strip-title">Built for Operational Teams</div>
+            <div className="hp-strip-body">Case Managers, Intake Teams, Documentation Specialists, Operations Managers, Investigation Teams, and Client Success professionals responsible for managing complex case workflows.</div>
           </div>
           <div className="hp-strip-sep" />
           <div className="hp-strip-item">
@@ -266,7 +266,7 @@ export default function Home() {
             <span className="hp-gateway-accent">Choose Turbo Response.</span>
           </h2>
           <p className="hp-gateway-sub">
-            Turbo Response is the AI-powered case operations platform for organizations managing complex matters. We help teams organize information, accelerate workflows, improve documentation, and prepare stronger responses.
+            Turbo Response is the AI-powered case operations platform for organizations managing complex matters. We help organizations organize information, accelerate workflows, improve documentation, and prepare stronger responses.
           </p>
           <Link href="/turbo-intake" className="hp-btn hp-btn-primary hp-btn-xl">
             Start Your Matter →
