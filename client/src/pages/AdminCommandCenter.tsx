@@ -30,7 +30,7 @@ const styles = {
   formGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' },
 };
 
-type Tab = 'home' | 'signals' | 'pipeline' | 'tasks';
+type Tab = 'home' | 'signals' | 'pipeline' | 'workspaces' | 'tasks';
 
 export default function AdminCommandCenter() {
   const [tab, setTab] = useState<Tab>('home');
@@ -40,7 +40,7 @@ export default function AdminCommandCenter() {
       <div style={styles.header}>
         <div style={styles.logo}>⚡ TURBO MISSION CONTROL</div>
         <nav style={styles.nav}>
-          {(['home', 'signals', 'pipeline', 'tasks'] as Tab[]).map(t => (
+          {(['home', 'signals', 'pipeline', 'workspaces', 'tasks'] as Tab[]).map(t => (
             <button key={t} style={styles.navBtn(tab === t)} onClick={() => setTab(t)}>
               {t === 'home' ? 'Mission Control' : t === 'signals' ? 'Turbo Signals' : t.charAt(0).toUpperCase() + t.slice(1)}
             </button>
@@ -50,6 +50,7 @@ export default function AdminCommandCenter() {
       {tab === 'home' && <HomeTab />}
       {tab === 'signals' && <SignalsTab />}
       {tab === 'pipeline' && <PipelineTab />}
+      {tab === 'workspaces' && <WorkspacesTab />}
       {tab === 'tasks' && <TasksTab />}
     </div>
   );
@@ -59,6 +60,7 @@ export default function AdminCommandCenter() {
 function HomeTab() {
   const { data: metrics, isLoading } = trpc.missionControl.metrics.summary.useQuery();
   const { data: tasks } = trpc.missionControl.tasks.list.useQuery();
+  const { data: wsMetrics } = trpc.workspaces.workspaces.metrics.useQuery();
 
   return (
     <div>
@@ -83,6 +85,29 @@ function HomeTab() {
         <div style={styles.metricCard}>
           <div style={styles.metricValue}>{isLoading ? '—' : metrics?.activeClients ?? 0}</div>
           <div style={styles.metricLabel}>Active Clients</div>
+        </div>
+      </div>
+
+      {/* Workspace Metrics */}
+      <div style={{ ...styles.card, marginBottom: '24px' }}>
+        <h3 style={styles.sectionTitle}>Workspaces</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: '#10b981' }}>{wsMetrics?.openWorkspaces ?? 0}</div>
+            <div style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase' }}>Open</div>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: '#ef4444' }}>{wsMetrics?.dueToday ?? 0}</div>
+            <div style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase' }}>Due Today</div>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: '#f59e0b' }}>{wsMetrics?.waiting ?? 0}</div>
+            <div style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase' }}>Waiting</div>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: '#8b5cf6' }}>{wsMetrics?.completedThisWeek ?? 0}</div>
+            <div style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase' }}>Completed This Week</div>
+          </div>
         </div>
       </div>
 
@@ -506,6 +531,515 @@ function TasksTab() {
             ))}
           </tbody>
         </table>
+      )}
+    </div>
+  );
+}
+
+
+// ── WORKSPACES TAB ────────────────────────────────────────────────────────────
+function WorkspacesTab() {
+  const [showForm, setShowForm] = useState(false);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [search, setSearch] = useState('');
+  const [filterType, setFilterType] = useState('all');
+  const [filterStatus, setFilterStatus] = useState('all');
+
+  const { data: workspacesList, isLoading, refetch } = trpc.workspaces.workspaces.list.useQuery({
+    search: search || undefined,
+    type: filterType !== 'all' ? filterType : undefined,
+    status: filterStatus !== 'all' ? filterStatus : undefined,
+  });
+  const createWorkspace = trpc.workspaces.workspaces.create.useMutation({ onSuccess: () => { refetch(); setShowForm(false); } });
+  const archiveWorkspace = trpc.workspaces.workspaces.archive.useMutation({ onSuccess: () => refetch() });
+  const deleteWorkspace = trpc.workspaces.workspaces.delete.useMutation({ onSuccess: () => refetch() });
+
+  const [form, setForm] = useState({
+    name: '', type: 'internal_case' as string, description: '', priority: 'normal' as string,
+    dueDate: '', status: 'planning' as string, assignedTo: '', notes: '',
+  });
+
+  const handleCreate = () => {
+    if (!form.name.trim()) return;
+    createWorkspace.mutate({
+      name: form.name,
+      type: form.type as any,
+      description: form.description || undefined,
+      priority: form.priority as any,
+      dueDate: form.dueDate || undefined,
+      status: form.status as any,
+      assignedTo: form.assignedTo || undefined,
+      notes: form.notes || undefined,
+    });
+    setForm({ name: '', type: 'internal_case', description: '', priority: 'normal', dueDate: '', status: 'planning', assignedTo: '', notes: '' });
+  };
+
+  // If a workspace is selected, show detail view
+  if (selectedId !== null) {
+    return <WorkspaceDetail workspaceId={selectedId} onBack={() => setSelectedId(null)} />;
+  }
+
+  const typeLabels: Record<string, string> = {
+    internal_case: 'Internal Case', consumer_case: 'Consumer Case',
+    client_project: 'Client Project', business_project: 'Business Project',
+  };
+  const statusColors: Record<string, string> = {
+    planning: '#64748b', active: '#10b981', waiting: '#f59e0b', completed: '#8b5cf6', archived: '#334155',
+  };
+  const priorityColors: Record<string, string> = {
+    low: '#64748b', normal: '#3b82f6', high: '#f59e0b', urgent: '#ef4444',
+  };
+
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+        <h2 style={styles.sectionTitle}>Workspaces</h2>
+        <button style={styles.btn('primary')} onClick={() => setShowForm(!showForm)}>
+          {showForm ? 'Cancel' : '+ New Workspace'}
+        </button>
+      </div>
+
+      {/* Search & Filters */}
+      <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
+        <input
+          style={{ ...styles.input, marginBottom: 0, maxWidth: '250px' }}
+          placeholder="Search workspaces..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
+        <select style={{ ...styles.select, marginBottom: 0, width: 'auto', minWidth: '140px' }} value={filterType} onChange={e => setFilterType(e.target.value)}>
+          <option value="all">All Types</option>
+          <option value="internal_case">Internal Case</option>
+          <option value="consumer_case">Consumer Case</option>
+          <option value="client_project">Client Project</option>
+          <option value="business_project">Business Project</option>
+        </select>
+        <select style={{ ...styles.select, marginBottom: 0, width: 'auto', minWidth: '130px' }} value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+          <option value="all">All Statuses</option>
+          <option value="planning">Planning</option>
+          <option value="active">Active</option>
+          <option value="waiting">Waiting</option>
+          <option value="completed">Completed</option>
+          <option value="archived">Archived</option>
+        </select>
+      </div>
+
+      {/* Create Form */}
+      {showForm && (
+        <div style={{ ...styles.card, marginBottom: '24px' }}>
+          <h3 style={{ fontSize: '16px', color: '#f1f5f9', marginBottom: '16px' }}>New Workspace</h3>
+          <div style={styles.formGrid}>
+            <div>
+              <label style={styles.label}>Workspace Name *</label>
+              <input style={styles.input} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="e.g. EEOC vs UNFI" />
+            </div>
+            <div>
+              <label style={styles.label}>Type *</label>
+              <select style={styles.select} value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}>
+                <option value="internal_case">Internal Case</option>
+                <option value="consumer_case">Consumer Case</option>
+                <option value="client_project">Client Project</option>
+                <option value="business_project">Business Project</option>
+              </select>
+            </div>
+            <div>
+              <label style={styles.label}>Status</label>
+              <select style={styles.select} value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
+                <option value="planning">Planning</option>
+                <option value="active">Active</option>
+                <option value="waiting">Waiting</option>
+              </select>
+            </div>
+            <div>
+              <label style={styles.label}>Priority</label>
+              <select style={styles.select} value={form.priority} onChange={e => setForm({ ...form, priority: e.target.value })}>
+                <option value="low">Low</option>
+                <option value="normal">Normal</option>
+                <option value="high">High</option>
+                <option value="urgent">Urgent</option>
+              </select>
+            </div>
+            <div>
+              <label style={styles.label}>Assigned To</label>
+              <input style={styles.input} value={form.assignedTo} onChange={e => setForm({ ...form, assignedTo: e.target.value })} placeholder="e.g. Demarcus" />
+            </div>
+            <div>
+              <label style={styles.label}>Due Date</label>
+              <input style={styles.input} type="date" value={form.dueDate} onChange={e => setForm({ ...form, dueDate: e.target.value })} />
+            </div>
+          </div>
+          <div>
+            <label style={styles.label}>Description</label>
+            <textarea style={styles.textarea} value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Brief description of this workspace..." />
+          </div>
+          <div>
+            <label style={styles.label}>Notes</label>
+            <textarea style={styles.textarea} value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} placeholder="Additional notes..." />
+          </div>
+          <button style={styles.btn('primary')} onClick={handleCreate} disabled={createWorkspace.isPending}>
+            {createWorkspace.isPending ? 'Creating...' : 'Create Workspace'}
+          </button>
+        </div>
+      )}
+
+      {/* Workspace List */}
+      {isLoading ? (
+        <p style={{ color: '#64748b' }}>Loading workspaces...</p>
+      ) : !workspacesList || workspacesList.length === 0 ? (
+        <div style={styles.card}><p style={{ color: '#64748b' }}>No workspaces found. Click "+ New Workspace" to get started.</p></div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '16px' }}>
+          {workspacesList.map((ws: any) => (
+            <div key={ws.id} style={{ ...styles.card, marginBottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                  <h4 style={{ fontSize: '16px', fontWeight: 600, color: '#f1f5f9', margin: 0 }}>{ws.name}</h4>
+                  <span style={styles.badge(statusColors[ws.status] || '#64748b')}>{ws.status}</span>
+                </div>
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                  <span style={styles.badge('#3b82f6')}>{typeLabels[ws.type] || ws.type}</span>
+                  <span style={styles.badge(priorityColors[ws.priority] || '#64748b')}>{ws.priority}</span>
+                </div>
+                {ws.dueDate && <div style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '4px' }}>Due: {ws.dueDate}</div>}
+                {ws.assignedTo && <div style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '4px' }}>Assigned: {ws.assignedTo}</div>}
+                <div style={{ fontSize: '11px', color: '#475569', marginTop: '8px' }}>Updated: {ws.updatedAt || '—'}</div>
+              </div>
+              <div style={{ display: 'flex', gap: '6px', marginTop: '12px', flexWrap: 'wrap' }}>
+                <button style={styles.btn('primary')} onClick={() => setSelectedId(ws.id)}>Open</button>
+                <button style={styles.btn('secondary')} onClick={() => { if (confirm('Archive this workspace?')) archiveWorkspace.mutate({ id: ws.id }); }}>Archive</button>
+                <button style={styles.btn('danger')} onClick={() => { if (confirm('Permanently delete this workspace and all its data?')) deleteWorkspace.mutate({ id: ws.id }); }}>Delete</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── WORKSPACE DETAIL VIEW ─────────────────────────────────────────────────────
+function WorkspaceDetail({ workspaceId, onBack }: { workspaceId: number; onBack: () => void }) {
+  const [section, setSection] = useState<'overview' | 'tasks' | 'notes' | 'documents' | 'timeline' | 'actions'>('overview');
+  const { data: workspace, refetch: refetchWs } = trpc.workspaces.workspaces.getById.useQuery({ id: workspaceId });
+  const updateWorkspace = trpc.workspaces.workspaces.update.useMutation({ onSuccess: () => refetchWs() });
+
+  const typeLabels: Record<string, string> = {
+    internal_case: 'Internal Case', consumer_case: 'Consumer Case',
+    client_project: 'Client Project', business_project: 'Business Project',
+  };
+
+  if (!workspace) return <p style={{ color: '#64748b' }}>Loading...</p>;
+
+  const sectionTabs = ['overview', 'tasks', 'notes', 'documents', 'timeline', 'actions'] as const;
+
+  return (
+    <div>
+      {/* Back button + Title */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px', flexWrap: 'wrap' }}>
+        <button style={styles.btn('secondary')} onClick={onBack}>← Back</button>
+        <h2 style={{ ...styles.sectionTitle, marginBottom: 0 }}>{workspace.name}</h2>
+        <span style={styles.badge('#3b82f6')}>{typeLabels[workspace.type] || workspace.type}</span>
+      </div>
+
+      {/* Section Tabs */}
+      <div style={{ display: 'flex', gap: '4px', marginBottom: '20px', flexWrap: 'wrap' }}>
+        {sectionTabs.map(s => (
+          <button key={s} style={styles.navBtn(section === s)} onClick={() => setSection(s)}>
+            {s.charAt(0).toUpperCase() + s.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {section === 'overview' && <WorkspaceOverview workspace={workspace} onUpdate={(data) => updateWorkspace.mutate({ id: workspaceId, ...data })} />}
+      {section === 'tasks' && <WorkspaceTasks workspaceId={workspaceId} />}
+      {section === 'notes' && <WorkspaceNotes workspaceId={workspaceId} />}
+      {section === 'documents' && <WorkspaceDocuments workspaceId={workspaceId} />}
+      {section === 'timeline' && <WorkspaceTimeline workspaceId={workspaceId} />}
+      {section === 'actions' && <WorkspaceActions workspaceId={workspaceId} />}
+    </div>
+  );
+}
+
+// ── WORKSPACE OVERVIEW ────────────────────────────────────────────────────────
+function WorkspaceOverview({ workspace, onUpdate }: { workspace: any; onUpdate: (data: any) => void }) {
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({
+    status: workspace.status, priority: workspace.priority, dueDate: workspace.dueDate || '',
+    assignedTo: workspace.assignedTo || '', description: workspace.description || '', notes: workspace.notes || '',
+  });
+
+  const statusColors: Record<string, string> = { planning: '#64748b', active: '#10b981', waiting: '#f59e0b', completed: '#8b5cf6', archived: '#334155' };
+  const priorityColors: Record<string, string> = { low: '#64748b', normal: '#3b82f6', high: '#f59e0b', urgent: '#ef4444' };
+
+  const save = () => { onUpdate(form); setEditing(false); };
+
+  return (
+    <div style={styles.card}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <h3 style={{ fontSize: '16px', color: '#f1f5f9', margin: 0 }}>Overview</h3>
+        <button style={styles.btn(editing ? 'success' : 'secondary')} onClick={editing ? save : () => setEditing(true)}>
+          {editing ? 'Save' : 'Edit'}
+        </button>
+      </div>
+      {editing ? (
+        <div style={styles.formGrid}>
+          <div><label style={styles.label}>Status</label>
+            <select style={styles.select} value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
+              <option value="planning">Planning</option><option value="active">Active</option>
+              <option value="waiting">Waiting</option><option value="completed">Completed</option>
+              <option value="archived">Archived</option>
+            </select></div>
+          <div><label style={styles.label}>Priority</label>
+            <select style={styles.select} value={form.priority} onChange={e => setForm({ ...form, priority: e.target.value })}>
+              <option value="low">Low</option><option value="normal">Normal</option>
+              <option value="high">High</option><option value="urgent">Urgent</option>
+            </select></div>
+          <div><label style={styles.label}>Due Date</label>
+            <input style={styles.input} type="date" value={form.dueDate} onChange={e => setForm({ ...form, dueDate: e.target.value })} /></div>
+          <div><label style={styles.label}>Assigned To</label>
+            <input style={styles.input} value={form.assignedTo} onChange={e => setForm({ ...form, assignedTo: e.target.value })} /></div>
+          <div style={{ gridColumn: '1 / -1' }}><label style={styles.label}>Description</label>
+            <textarea style={styles.textarea} value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} /></div>
+          <div style={{ gridColumn: '1 / -1' }}><label style={styles.label}>Notes</label>
+            <textarea style={styles.textarea} value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} /></div>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div><span style={{ fontSize: '12px', color: '#64748b' }}>Status</span><div><span style={styles.badge(statusColors[workspace.status] || '#64748b')}>{workspace.status}</span></div></div>
+          <div><span style={{ fontSize: '12px', color: '#64748b' }}>Priority</span><div><span style={styles.badge(priorityColors[workspace.priority] || '#64748b')}>{workspace.priority}</span></div></div>
+          <div><span style={{ fontSize: '12px', color: '#64748b' }}>Assigned To</span><div style={{ color: '#e2e8f0' }}>{workspace.assignedTo || '—'}</div></div>
+          <div><span style={{ fontSize: '12px', color: '#64748b' }}>Due Date</span><div style={{ color: '#e2e8f0' }}>{workspace.dueDate || '—'}</div></div>
+          <div><span style={{ fontSize: '12px', color: '#64748b' }}>Created</span><div style={{ color: '#e2e8f0' }}>{workspace.createdAt || '—'}</div></div>
+          <div><span style={{ fontSize: '12px', color: '#64748b' }}>Last Updated</span><div style={{ color: '#e2e8f0' }}>{workspace.updatedAt || '—'}</div></div>
+          {workspace.description && <div style={{ gridColumn: '1 / -1' }}><span style={{ fontSize: '12px', color: '#64748b' }}>Description</span><div style={{ color: '#e2e8f0', marginTop: '4px' }}>{workspace.description}</div></div>}
+          {workspace.notes && <div style={{ gridColumn: '1 / -1' }}><span style={{ fontSize: '12px', color: '#64748b' }}>Notes</span><div style={{ color: '#e2e8f0', marginTop: '4px' }}>{workspace.notes}</div></div>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── WORKSPACE TASKS ───────────────────────────────────────────────────────────
+function WorkspaceTasks({ workspaceId }: { workspaceId: number }) {
+  const [showForm, setShowForm] = useState(false);
+  const { data: tasks, refetch } = trpc.workspaces.tasks.list.useQuery({ workspaceId });
+  const addTask = trpc.workspaces.tasks.add.useMutation({ onSuccess: () => { refetch(); setShowForm(false); } });
+  const completeTask = trpc.workspaces.tasks.complete.useMutation({ onSuccess: () => refetch() });
+  const updateTask = trpc.workspaces.tasks.update.useMutation({ onSuccess: () => refetch() });
+  const deleteTask = trpc.workspaces.tasks.delete.useMutation({ onSuccess: () => refetch() });
+  const [form, setForm] = useState({ title: '', priority: 'normal', dueDate: '', notes: '' });
+
+  const priorityColors: Record<string, string> = { low: '#64748b', normal: '#3b82f6', high: '#f59e0b', urgent: '#ef4444' };
+
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <h3 style={{ fontSize: '16px', color: '#f1f5f9', margin: 0 }}>Tasks</h3>
+        <button style={styles.btn('primary')} onClick={() => setShowForm(!showForm)}>{showForm ? 'Cancel' : '+ Add'}</button>
+      </div>
+      {showForm && (
+        <div style={{ ...styles.card, marginBottom: '16px' }}>
+          <div style={styles.formGrid}>
+            <div><label style={styles.label}>Task *</label><input style={styles.input} value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="Task description" /></div>
+            <div><label style={styles.label}>Priority</label><select style={styles.select} value={form.priority} onChange={e => setForm({ ...form, priority: e.target.value })}><option value="low">Low</option><option value="normal">Normal</option><option value="high">High</option><option value="urgent">Urgent</option></select></div>
+            <div><label style={styles.label}>Due Date</label><input style={styles.input} type="date" value={form.dueDate} onChange={e => setForm({ ...form, dueDate: e.target.value })} /></div>
+          </div>
+          <button style={styles.btn('primary')} onClick={() => { if (form.title.trim()) { addTask.mutate({ workspaceId, title: form.title, priority: form.priority as any, dueDate: form.dueDate || undefined }); setForm({ title: '', priority: 'normal', dueDate: '', notes: '' }); } }}>Add Task</button>
+        </div>
+      )}
+      {!tasks || tasks.length === 0 ? (
+        <div style={styles.card}><p style={{ color: '#64748b' }}>No tasks yet.</p></div>
+      ) : (
+        <table style={styles.table}>
+          <thead><tr><th style={styles.th}>Task</th><th style={styles.th}>Status</th><th style={styles.th}>Due</th><th style={styles.th}>Priority</th><th style={styles.th}>Actions</th></tr></thead>
+          <tbody>
+            {tasks.map((t: any) => (
+              <tr key={t.id} style={{ opacity: t.status === 'completed' ? 0.5 : 1 }}>
+                <td style={styles.td}>{t.title}</td>
+                <td style={styles.td}>
+                  <select style={{ ...styles.select, marginBottom: 0, width: 'auto' }} value={t.status} onChange={e => updateTask.mutate({ id: t.id, status: e.target.value as any })}>
+                    <option value="pending">Pending</option><option value="in_progress">In Progress</option><option value="completed">Completed</option>
+                  </select>
+                </td>
+                <td style={styles.td}>{t.dueDate || '—'}</td>
+                <td style={styles.td}><span style={styles.badge(priorityColors[t.priority] || '#64748b')}>{t.priority}</span></td>
+                <td style={styles.td}>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    {t.status !== 'completed' && <button style={styles.btn('success')} onClick={() => completeTask.mutate({ id: t.id, workspaceId })}>✓</button>}
+                    <button style={styles.btn('danger')} onClick={() => deleteTask.mutate({ id: t.id })}>✕</button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+}
+
+// ── WORKSPACE NOTES ───────────────────────────────────────────────────────────
+function WorkspaceNotes({ workspaceId }: { workspaceId: number }) {
+  const [content, setContent] = useState('');
+  const { data: notes, refetch } = trpc.workspaces.notes.list.useQuery({ workspaceId });
+  const addNote = trpc.workspaces.notes.add.useMutation({ onSuccess: () => { refetch(); setContent(''); } });
+  const deleteNote = trpc.workspaces.notes.delete.useMutation({ onSuccess: () => refetch() });
+
+  return (
+    <div>
+      <h3 style={{ fontSize: '16px', color: '#f1f5f9', marginBottom: '16px' }}>Notes</h3>
+      <div style={{ ...styles.card, marginBottom: '16px' }}>
+        <textarea style={styles.textarea} value={content} onChange={e => setContent(e.target.value)} placeholder="Add a quick note..." />
+        <button style={styles.btn('primary')} onClick={() => { if (content.trim()) addNote.mutate({ workspaceId, content }); }} disabled={addNote.isPending}>
+          {addNote.isPending ? 'Saving...' : 'Add Note'}
+        </button>
+      </div>
+      {!notes || notes.length === 0 ? (
+        <div style={styles.card}><p style={{ color: '#64748b' }}>No notes yet.</p></div>
+      ) : (
+        <div>
+          {notes.map((note: any) => (
+            <div key={note.id} style={{ ...styles.card, position: 'relative' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <div style={{ fontSize: '12px', color: '#64748b' }}>
+                  <strong style={{ color: '#94a3b8' }}>{note.author}</strong> · {note.createdAt}
+                </div>
+                <button style={{ ...styles.btn('danger'), padding: '4px 8px', fontSize: '11px' }} onClick={() => deleteNote.mutate({ id: note.id })}>✕</button>
+              </div>
+              <div style={{ color: '#e2e8f0', whiteSpace: 'pre-wrap' }}>{note.content}</div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── WORKSPACE DOCUMENTS ───────────────────────────────────────────────────────
+function WorkspaceDocuments({ workspaceId }: { workspaceId: number }) {
+  const { data: docs, refetch } = trpc.workspaces.documents.list.useQuery({ workspaceId });
+  const uploadDoc = trpc.workspaces.documents.upload.useMutation({ onSuccess: () => refetch() });
+  const deleteDoc = trpc.workspaces.documents.delete.useMutation({ onSuccess: () => refetch() });
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const allowed = ['application/pdf', 'image/png', 'image/jpeg', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (!allowed.includes(file.type) && !file.name.match(/\.(pdf|png|jpg|jpeg|docx)$/i)) {
+      alert('Supported formats: PDF, PNG, JPG, DOCX');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) { alert('File too large (max 10MB)'); return; }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = (reader.result as string).split(',')[1];
+      uploadDoc.mutate({ workspaceId, fileName: file.name, fileData: base64, mimeType: file.type, fileSize: file.size });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const typeIcons: Record<string, string> = { pdf: '📄', png: '🖼️', jpg: '🖼️', jpeg: '🖼️', docx: '📝' };
+
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <h3 style={{ fontSize: '16px', color: '#f1f5f9', margin: 0 }}>Documents</h3>
+        <label style={{ ...styles.btn('primary'), cursor: 'pointer' }}>
+          {uploadDoc.isPending ? 'Uploading...' : '+ Upload'}
+          <input type="file" accept=".pdf,.png,.jpg,.jpeg,.docx" onChange={handleFileChange} style={{ display: 'none' }} />
+        </label>
+      </div>
+      {!docs || docs.length === 0 ? (
+        <div style={styles.card}><p style={{ color: '#64748b' }}>No documents uploaded yet.</p></div>
+      ) : (
+        <table style={styles.table}>
+          <thead><tr><th style={styles.th}>File</th><th style={styles.th}>Type</th><th style={styles.th}>Uploaded</th><th style={styles.th}>Actions</th></tr></thead>
+          <tbody>
+            {docs.map((doc: any) => (
+              <tr key={doc.id}>
+                <td style={styles.td}>{typeIcons[doc.fileType] || '📎'} {doc.fileName}</td>
+                <td style={styles.td}><span style={styles.badge('#3b82f6')}>{(doc.fileType || '').toUpperCase()}</span></td>
+                <td style={styles.td}>{doc.uploadedAt}</td>
+                <td style={styles.td}>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" style={{ ...styles.btn('secondary'), textDecoration: 'none' }}>View</a>
+                    <a href={doc.fileUrl} download={doc.fileName} style={{ ...styles.btn('secondary'), textDecoration: 'none' }}>↓</a>
+                    <button style={styles.btn('danger')} onClick={() => deleteDoc.mutate({ id: doc.id, workspaceId })}>✕</button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+}
+
+// ── WORKSPACE TIMELINE ────────────────────────────────────────────────────────
+function WorkspaceTimeline({ workspaceId }: { workspaceId: number }) {
+  const { data: events } = trpc.workspaces.timeline.list.useQuery({ workspaceId });
+
+  const eventIcons: Record<string, string> = {
+    workspace_created: '🚀', task_added: '✅', task_completed: '🎉',
+    note_added: '📝', document_uploaded: '📎', document_deleted: '🗑️',
+    status_changed: '🔄', workspace_archived: '📦',
+  };
+
+  return (
+    <div>
+      <h3 style={{ fontSize: '16px', color: '#f1f5f9', marginBottom: '16px' }}>Timeline</h3>
+      {!events || events.length === 0 ? (
+        <div style={styles.card}><p style={{ color: '#64748b' }}>No events yet.</p></div>
+      ) : (
+        <div>
+          {events.map((ev: any) => (
+            <div key={ev.id} style={{ display: 'flex', gap: '12px', padding: '12px 0', borderBottom: '1px solid #1e293b' }}>
+              <div style={{ fontSize: '20px' }}>{eventIcons[ev.eventType] || '•'}</div>
+              <div>
+                <div style={{ color: '#e2e8f0', fontSize: '14px' }}>{ev.event}</div>
+                <div style={{ color: '#64748b', fontSize: '12px', marginTop: '2px' }}>{ev.createdAt}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── WORKSPACE NEXT ACTIONS ────────────────────────────────────────────────────
+function WorkspaceActions({ workspaceId }: { workspaceId: number }) {
+  const [newAction, setNewAction] = useState('');
+  const { data: actions, refetch } = trpc.workspaces.nextActions.list.useQuery({ workspaceId });
+  const addAction = trpc.workspaces.nextActions.add.useMutation({ onSuccess: () => { refetch(); setNewAction(''); } });
+  const toggleAction = trpc.workspaces.nextActions.toggle.useMutation({ onSuccess: () => refetch() });
+  const deleteAction = trpc.workspaces.nextActions.delete.useMutation({ onSuccess: () => refetch() });
+
+  return (
+    <div>
+      <h3 style={{ fontSize: '16px', color: '#f1f5f9', marginBottom: '16px' }}>Next Actions</h3>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+        <input style={{ ...styles.input, marginBottom: 0, flex: 1 }} value={newAction} onChange={e => setNewAction(e.target.value)} placeholder="Add a next action..." onKeyDown={e => { if (e.key === 'Enter' && newAction.trim()) addAction.mutate({ workspaceId, action: newAction }); }} />
+        <button style={styles.btn('primary')} onClick={() => { if (newAction.trim()) addAction.mutate({ workspaceId, action: newAction }); }}>Add</button>
+      </div>
+      {!actions || actions.length === 0 ? (
+        <div style={styles.card}><p style={{ color: '#64748b' }}>No next actions. Add items above.</p></div>
+      ) : (
+        <div>
+          {actions.map((a: any) => (
+            <div key={a.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 0', borderBottom: '1px solid #1e293b' }}>
+              <input
+                type="checkbox"
+                checked={!!a.completed}
+                onChange={() => toggleAction.mutate({ id: a.id, completed: !a.completed })}
+                style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#00e5ff' }}
+              />
+              <span style={{ flex: 1, color: a.completed ? '#64748b' : '#e2e8f0', textDecoration: a.completed ? 'line-through' : 'none', fontSize: '14px' }}>{a.action}</span>
+              <button style={{ ...styles.btn('danger'), padding: '4px 8px', fontSize: '11px' }} onClick={() => deleteAction.mutate({ id: a.id })}>✕</button>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
