@@ -7,9 +7,10 @@ import { type Server } from "http";
 import { createServer as createViteServer } from "vite";
 import viteConfig from "../../vite.config";
 
-// ES module compatibility: get __dirname equivalent
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// CJS/ESM compatibility: use __dirname if available (CJS bundle), fallback to import.meta.url (ESM)
+const _dirname = typeof __dirname !== 'undefined' 
+  ? __dirname 
+  : path.dirname(fileURLToPath(import.meta.url));
 
 export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
@@ -31,7 +32,7 @@ export async function setupVite(app: Express, server: Server) {
 
     try {
       const clientTemplate = path.resolve(
-        __dirname,
+        _dirname,
         "../..",
         "client",
         "index.html"
@@ -55,8 +56,8 @@ export async function setupVite(app: Express, server: Server) {
 export function serveStatic(app: Express) {
   const distPath =
     process.env.NODE_ENV === "development"
-      ? path.resolve(__dirname, "../..", "dist", "public")
-      : path.resolve(__dirname, "public");
+      ? path.resolve(_dirname, "../..", "dist", "public")
+      : path.resolve(_dirname, "public");
   if (!fs.existsSync(distPath)) {
     console.error(
       `Could not find the build directory: ${distPath}, make sure to build the client first`
