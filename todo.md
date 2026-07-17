@@ -771,3 +771,19 @@
 - [x] Signal brief tailored sections (Why client, Buying signals, Suggested outreach, Priority)
 - [x] Architecture ready for LLM API integration (placeholder function)
 - [x] Dark theme consistent with existing design
+
+## AI ANALYSIS REPOSITORY (July 2026)
+- [x] Database table: workspace_ai_analyses (id, workspaceId, title, aiSource, analysisType, content, tags, metadata, createdAt, updatedAt)
+- [x] tRPC endpoint: create analysis (title, aiSource, analysisType, content, tags)
+- [x] tRPC endpoint: list analyses for workspace (with search/filter)
+- [x] tRPC endpoint: get analysis by ID
+- [x] tRPC endpoint: update analysis
+- [x] tRPC endpoint: delete analysis
+- [x] Workspace detail: new "🧠 AI Analysis" tab
+- [x] Add Analysis form (title, AI source dropdown, analysis type dropdown, date auto-filled, large text field, optional tags)
+- [x] Repository card view (title, source, type, date, tags, preview)
+- [x] Full analysis view (formatted content, metadata, copy button, edit button)
+- [x] Search by keywords, AI source, tags, analysis type
+- [x] Timeline integration (log "AI Analysis Added" and "AI Analysis Updated")
+- [x] Future-ready architecture (fields for API-generated, confidence scores, version history)
+- [x] Dark theme consistent with existing design

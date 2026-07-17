@@ -729,7 +729,7 @@ function WorkspacesTab() {
 
 // ── WORKSPACE DETAIL VIEW ─────────────────────────────────────────────────────
 function WorkspaceDetail({ workspaceId, onBack }: { workspaceId: number; onBack: () => void }) {
-  const [section, setSection] = useState<'overview' | 'tasks' | 'notes' | 'documents' | 'timeline' | 'actions' | 'ai_brief'>('overview');
+  const [section, setSection] = useState<'overview' | 'tasks' | 'notes' | 'documents' | 'timeline' | 'actions' | 'ai_brief' | 'ai_analysis'>('overview');
   const { data: workspace, refetch: refetchWs } = trpc.workspaces.workspaces.getById.useQuery({ id: workspaceId });
   const updateWorkspace = trpc.workspaces.workspaces.update.useMutation({ onSuccess: () => refetchWs() });
 
@@ -740,7 +740,7 @@ function WorkspaceDetail({ workspaceId, onBack }: { workspaceId: number; onBack:
 
   if (!workspace) return <p style={{ color: '#64748b' }}>Loading...</p>;
 
-  const sectionTabs = ['overview', 'tasks', 'notes', 'documents', 'timeline', 'actions', 'ai_brief'] as const;
+  const sectionTabs = ['overview', 'tasks', 'notes', 'documents', 'timeline', 'actions', 'ai_brief', 'ai_analysis'] as const;
 
   return (
     <div>
@@ -755,7 +755,7 @@ function WorkspaceDetail({ workspaceId, onBack }: { workspaceId: number; onBack:
       <div style={{ display: 'flex', gap: '4px', marginBottom: '20px', flexWrap: 'wrap' }}>
         {sectionTabs.map(s => (
           <button key={s} style={styles.navBtn(section === s)} onClick={() => setSection(s)}>
-            {s === 'ai_brief' ? '🧠 AI Brief' : s.charAt(0).toUpperCase() + s.slice(1)}
+            {s === 'ai_brief' ? '🧠 AI Brief' : s === 'ai_analysis' ? '🧠 AI Analysis' : s.charAt(0).toUpperCase() + s.slice(1)}
           </button>
         ))}
       </div>
@@ -767,6 +767,7 @@ function WorkspaceDetail({ workspaceId, onBack }: { workspaceId: number; onBack:
       {section === 'timeline' && <WorkspaceTimeline workspaceId={workspaceId} />}
       {section === 'actions' && <WorkspaceActions workspaceId={workspaceId} />}
       {section === 'ai_brief' && <WorkspaceAiBrief workspaceId={workspaceId} workspaceName={workspace.name} />}
+      {section === 'ai_analysis' && <WorkspaceAiAnalysis workspaceId={workspaceId} />}
     </div>
   );
 }
@@ -1420,4 +1421,336 @@ function SignalAiBrief({ signalId, signalName, onBack }: { signalId: number; sig
       )}
     </div>
   );
+}
+
+
+// ── WORKSPACE AI ANALYSIS REPOSITORY ─────────────────────────────────────────
+const AI_SOURCES = [
+  { value: 'chatgpt', label: 'ChatGPT' },
+  { value: 'manus', label: 'Manus' },
+  { value: 'claude', label: 'Claude' },
+  { value: 'gemini', label: 'Gemini' },
+  { value: 'grok', label: 'Grok' },
+  { value: 'perplexity', label: 'Perplexity' },
+  { value: 'notebooklm', label: 'NotebookLM' },
+  { value: 'other', label: 'Other' },
+];
+
+const ANALYSIS_TYPES = [
+  { value: 'strategy', label: 'Strategy' },
+  { value: 'research', label: 'Research' },
+  { value: 'case_review', label: 'Case Review' },
+  { value: 'risk_assessment', label: 'Risk Assessment' },
+  { value: 'document_review', label: 'Document Review' },
+  { value: 'client_recommendation', label: 'Client Recommendation' },
+  { value: 'sales_intelligence', label: 'Sales Intelligence' },
+  { value: 'general_notes', label: 'General Notes' },
+];
+
+const SOURCE_COLORS: Record<string, string> = {
+  chatgpt: '#10b981', manus: '#00e5ff', claude: '#f59e0b',
+  gemini: '#3b82f6', grok: '#8b5cf6', perplexity: '#ef4444',
+  notebooklm: '#ec4899', other: '#64748b',
+};
+
+function WorkspaceAiAnalysis({ workspaceId }: { workspaceId: number }) {
+  const [view, setView] = useState<'list' | 'add' | 'detail' | 'edit'>('list');
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [searchText, setSearchText] = useState('');
+  const [filterSource, setFilterSource] = useState('all');
+  const [filterType, setFilterType] = useState('all');
+  const [filterTag, setFilterTag] = useState('');
+  const [copied, setCopied] = useState(false);
+
+  // Form state
+  const today = new Date().toISOString().split('T')[0];
+  const [formTitle, setFormTitle] = useState('');
+  const [formSource, setFormSource] = useState('chatgpt');
+  const [formType, setFormType] = useState('strategy');
+  const [formContent, setFormContent] = useState('');
+  const [formTagInput, setFormTagInput] = useState('');
+  const [formTags, setFormTags] = useState<string[]>([]);
+
+  const { data: analyses, refetch } = trpc.aiAnalysis.list.useQuery({
+    workspaceId,
+    search: searchText || undefined,
+    aiSource: filterSource !== 'all' ? filterSource : undefined,
+    analysisType: filterType !== 'all' ? filterType : undefined,
+    tag: filterTag || undefined,
+  });
+
+  const { data: selectedAnalysis } = trpc.aiAnalysis.getById.useQuery(
+    { id: selectedId! },
+    { enabled: selectedId !== null && (view === 'detail' || view === 'edit') }
+  );
+
+  const createAnalysis = trpc.aiAnalysis.create.useMutation({
+    onSuccess: () => { refetch(); resetForm(); setView('list'); },
+  });
+
+  const updateAnalysis = trpc.aiAnalysis.update.useMutation({
+    onSuccess: () => { refetch(); setView('detail'); },
+  });
+
+  const deleteAnalysis = trpc.aiAnalysis.delete.useMutation({
+    onSuccess: () => { refetch(); setView('list'); setSelectedId(null); },
+  });
+
+  const resetForm = () => {
+    setFormTitle(''); setFormSource('chatgpt'); setFormType('strategy');
+    setFormContent(''); setFormTagInput(''); setFormTags([]);
+  };
+
+  const openEdit = (analysis: any) => {
+    setFormTitle(analysis.title);
+    setFormSource(analysis.aiSource);
+    setFormType(analysis.analysisType);
+    setFormContent(analysis.content);
+    setFormTags((analysis.tags as string[]) || []);
+    setFormTagInput('');
+    setView('edit');
+  };
+
+  const handleAddTag = () => {
+    const t = formTagInput.trim().toLowerCase();
+    if (t && !formTags.includes(t)) setFormTags([...formTags, t]);
+    setFormTagInput('');
+  };
+
+  const handleCopy = (content: string) => {
+    navigator.clipboard.writeText(content);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const getPreview = (content: string) => content.slice(0, 180) + (content.length > 180 ? '...' : '');
+
+  // ── LIST VIEW ──────────────────────────────────────────────────────────────
+  if (view === 'list') return (
+    <div>
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
+        <h3 style={{ color: '#f1f5f9', fontSize: '16px', margin: 0 }}>🧠 AI Analysis Repository</h3>
+        <button style={styles.btn('primary')} onClick={() => { resetForm(); setView('add'); }}>+ Add AI Analysis</button>
+      </div>
+
+      {/* Search & Filters */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '8px', marginBottom: '16px' }}>
+        <input
+          style={styles.input}
+          placeholder="Search title or content..."
+          value={searchText}
+          onChange={e => setSearchText(e.target.value)}
+        />
+        <select style={styles.input} value={filterSource} onChange={e => setFilterSource(e.target.value)}>
+          <option value="all">All Sources</option>
+          {AI_SOURCES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+        </select>
+        <select style={styles.input} value={filterType} onChange={e => setFilterType(e.target.value)}>
+          <option value="all">All Types</option>
+          {ANALYSIS_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+        </select>
+        <input
+          style={styles.input}
+          placeholder="Filter by tag..."
+          value={filterTag}
+          onChange={e => setFilterTag(e.target.value)}
+        />
+      </div>
+
+      {/* Cards */}
+      {!analyses || analyses.length === 0 ? (
+        <div style={{ ...styles.card, textAlign: 'center', padding: '48px 20px' }}>
+          <div style={{ fontSize: '48px', marginBottom: '12px' }}>🧠</div>
+          <h3 style={{ color: '#f1f5f9', marginBottom: '8px' }}>No analyses yet</h3>
+          <p style={{ color: '#64748b', marginBottom: '20px' }}>Paste AI responses from ChatGPT, Manus, Claude, or any AI model to build your analysis library.</p>
+          <button style={styles.btn('primary')} onClick={() => { resetForm(); setView('add'); }}>+ Add First Analysis</button>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {analyses.map((a: any) => (
+            <div key={a.id} style={{ ...styles.card, borderLeft: `3px solid ${SOURCE_COLORS[a.aiSource] || '#64748b'}` }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', flexWrap: 'wrap' }}>
+                <div style={{ flex: 1, minWidth: '200px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '6px' }}>
+                    <span style={{ color: '#f1f5f9', fontWeight: 600, fontSize: '14px' }}>{a.title}</span>
+                    <span style={{ ...styles.badge(SOURCE_COLORS[a.aiSource] || '#64748b'), fontSize: '10px' }}>
+                      {AI_SOURCES.find(s => s.value === a.aiSource)?.label || a.aiSource}
+                    </span>
+                    <span style={{ ...styles.badge('#334155'), fontSize: '10px' }}>
+                      {ANALYSIS_TYPES.find(t => t.value === a.analysisType)?.label || a.analysisType}
+                    </span>
+                  </div>
+                  <p style={{ color: '#94a3b8', fontSize: '12px', margin: '0 0 6px', lineHeight: 1.5 }}>{getPreview(a.content)}</p>
+                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
+                    <span style={{ color: '#64748b', fontSize: '11px' }}>{new Date(a.createdAt).toLocaleDateString()}</span>
+                    {(a.tags as string[] || []).map((tag: string) => (
+                      <span key={tag} style={{ ...styles.badge('#1e3a5f'), fontSize: '10px', cursor: 'pointer' }} onClick={() => setFilterTag(tag)}>#{tag}</span>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
+                  <button style={{ ...styles.btn('primary'), padding: '4px 10px', fontSize: '11px' }} onClick={() => { setSelectedId(a.id); setView('detail'); }}>View</button>
+                  <button style={{ ...styles.btn('secondary'), padding: '4px 10px', fontSize: '11px' }} onClick={() => { setSelectedId(a.id); openEdit(a); }}>Edit</button>
+                  <button style={{ ...styles.btn('secondary'), padding: '4px 10px', fontSize: '11px' }} onClick={() => handleCopy(a.content)}>📋</button>
+                  <button style={{ ...styles.btn('danger'), padding: '4px 10px', fontSize: '11px' }} onClick={() => { if (confirm('Delete this analysis?')) deleteAnalysis.mutate({ id: a.id }); }}>✕</button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  // ── ADD / EDIT FORM ────────────────────────────────────────────────────────
+  if (view === 'add' || view === 'edit') {
+    const isEdit = view === 'edit';
+    const handleSubmit = () => {
+      if (!formTitle.trim() || !formContent.trim()) return;
+      if (isEdit && selectedId) {
+        updateAnalysis.mutate({ id: selectedId, title: formTitle, aiSource: formSource as any, analysisType: formType as any, content: formContent, tags: formTags });
+      } else {
+        createAnalysis.mutate({ workspaceId, title: formTitle, aiSource: formSource as any, analysisType: formType as any, content: formContent, tags: formTags });
+      }
+    };
+
+    return (
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+          <button style={styles.btn('secondary')} onClick={() => setView(isEdit ? 'detail' : 'list')}>← Back</button>
+          <h3 style={{ color: '#f1f5f9', margin: 0, fontSize: '16px' }}>{isEdit ? 'Edit Analysis' : '+ Add AI Analysis'}</h3>
+        </div>
+
+        <div style={{ ...styles.card, display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          {/* Title */}
+          <div>
+            <label style={styles.label}>Analysis Title *</label>
+            <input style={styles.input} placeholder="e.g. Credit Strategy Review, FINRA Case Analysis..." value={formTitle} onChange={e => setFormTitle(e.target.value)} />
+          </div>
+
+          {/* Source + Type */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div>
+              <label style={styles.label}>AI Source *</label>
+              <select style={styles.input} value={formSource} onChange={e => setFormSource(e.target.value)}>
+                {AI_SOURCES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label style={styles.label}>Analysis Type *</label>
+              <select style={styles.input} value={formType} onChange={e => setFormType(e.target.value)}>
+                {ANALYSIS_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {/* Date (display only) */}
+          <div>
+            <label style={styles.label}>Date</label>
+            <input style={{ ...styles.input, color: '#64748b' }} value={today} readOnly />
+          </div>
+
+          {/* Content */}
+          <div>
+            <label style={styles.label}>AI Response *</label>
+            <textarea
+              style={{ ...styles.input, minHeight: '280px', resize: 'vertical', fontFamily: 'monospace', fontSize: '13px', lineHeight: 1.6 }}
+              placeholder="Paste the AI response here..."
+              value={formContent}
+              onChange={e => setFormContent(e.target.value)}
+            />
+          </div>
+
+          {/* Tags */}
+          <div>
+            <label style={styles.label}>Tags (optional)</label>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+              <input
+                style={{ ...styles.input, flex: 1 }}
+                placeholder="e.g. credit, finra, strategy..."
+                value={formTagInput}
+                onChange={e => setFormTagInput(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddTag(); } }}
+              />
+              <button style={styles.btn('secondary')} onClick={handleAddTag}>Add</button>
+            </div>
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+              {formTags.map(tag => (
+                <span key={tag} style={{ ...styles.badge('#1e3a5f'), cursor: 'pointer' }} onClick={() => setFormTags(formTags.filter(t => t !== tag))}>
+                  #{tag} ✕
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+            <button style={styles.btn('secondary')} onClick={() => setView(isEdit ? 'detail' : 'list')}>Cancel</button>
+            <button
+              style={styles.btn('primary')}
+              onClick={handleSubmit}
+              disabled={!formTitle.trim() || !formContent.trim() || createAnalysis.isPending || updateAnalysis.isPending}
+            >
+              {(createAnalysis.isPending || updateAnalysis.isPending) ? 'Saving...' : isEdit ? 'Save Changes' : 'Save Analysis'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── DETAIL VIEW ────────────────────────────────────────────────────────────
+  if (view === 'detail' && selectedAnalysis) {
+    const a = selectedAnalysis as any;
+    return (
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
+          <button style={styles.btn('secondary')} onClick={() => setView('list')}>← Back</button>
+          <h3 style={{ color: '#f1f5f9', margin: 0, fontSize: '16px', flex: 1 }}>{a.title}</h3>
+          <button style={styles.btn('secondary')} onClick={() => { setSelectedId(a.id); openEdit(a); }}>Edit</button>
+          <button style={styles.btn(copied ? 'success' : 'secondary')} onClick={() => handleCopy(a.content)}>
+            {copied ? '✓ Copied!' : '📋 Copy'}
+          </button>
+          <button style={styles.btn('danger')} onClick={() => { if (confirm('Delete this analysis?')) deleteAnalysis.mutate({ id: a.id }); }}>Delete</button>
+        </div>
+
+        {/* Metadata */}
+        <div style={{ ...styles.card, marginBottom: '16px' }}>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+            <span style={{ ...styles.badge(SOURCE_COLORS[a.aiSource] || '#64748b') }}>
+              {AI_SOURCES.find(s => s.value === a.aiSource)?.label || a.aiSource}
+            </span>
+            <span style={{ ...styles.badge('#334155') }}>
+              {ANALYSIS_TYPES.find(t => t.value === a.analysisType)?.label || a.analysisType}
+            </span>
+            <span style={{ color: '#64748b', fontSize: '12px' }}>
+              Created: {new Date(a.createdAt).toLocaleString()}
+            </span>
+            {a.updatedAt !== a.createdAt && (
+              <span style={{ color: '#64748b', fontSize: '12px' }}>
+                Updated: {new Date(a.updatedAt).toLocaleString()}
+              </span>
+            )}
+          </div>
+          {(a.tags as string[] || []).length > 0 && (
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '10px' }}>
+              {(a.tags as string[]).map((tag: string) => (
+                <span key={tag} style={styles.badge('#1e3a5f')}>#{tag}</span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Full Content */}
+        <div style={{ ...styles.card, border: `1px solid ${SOURCE_COLORS[a.aiSource] || '#64748b'}33` }}>
+          <pre style={{ color: '#e2e8f0', fontSize: '13px', lineHeight: 1.7, whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: 0, fontFamily: 'inherit' }}>
+            {a.content}
+          </pre>
+        </div>
+      </div>
+    );
+  }
+
+  return <p style={{ color: '#64748b' }}>Loading...</p>;
 }

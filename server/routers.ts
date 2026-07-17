@@ -12,6 +12,7 @@ import { googleDriveRouter } from "./routers/googleDriveRouter";
 import { missionControlRouter } from "./routers/missionControlRouter";
 import { workspacesRouter } from "./routers/workspacesRouter";
 import { aiBriefRouter } from "./routers/aiBriefRouter";
+import { aiAnalysisRouter } from "./routers/aiAnalysisRouter";
 
 
 
@@ -47,6 +48,7 @@ export const appRouter = router({
   missionControl: missionControlRouter,
   workspaces: workspacesRouter,
   aiBrief: aiBriefRouter,
+  aiAnalysis: aiAnalysisRouter,
 });
 
 export type AppRouter = typeof appRouter;
