@@ -1,200 +1,488 @@
 /**
- * Turbo Response — Command Center (Cleaned)
- * Admin-only internal dashboard. Requires admin login.
+ * Turbo Mission Control — Version 1
+ * The operating system for a freelance business.
  * Route: /admin/command-center
- * 
- * Real operational modules only:
- * - CEO/Home overview
- * - Projects
- * - Tasks/Priorities
- * - Leads
- * - Daily Ops
- * - Operator Input
- * - Core Tools
- * - Cases
- * - Knowledge Base
- * - Google Drive Sync
- * - xAI Collections Sync
- * - Voice Agents
- * - HubSpot/CRM
- * - System Health
- * 
- * Placeholder-only sections removed (Jul 7, 2026).
- * See: client/src/pages/archived/ for legacy implementations.
+ *
+ * Navigation: Mission Control | Turbo Signals | Pipeline | Clients | Projects | AI Agents | System
  */
 
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
-import { trpc } from "@/lib/trpc";
 
-type Section = "ceo_home" | "projects" | "tasks" | "leads" | "daily_ops" | "operator_input" | "core_tools";
+type Section = "mission_control" | "turbo_signals" | "pipeline" | "clients" | "projects" | "ai_agents" | "system";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turboresponsehq.ai";
 
-interface LiveCase {
-  id: number;
-  case_number: string;
-  category: string;
-  status: string;
-  first_name: string;
-  email: string;
-  phone?: string;
-  drive_folder_link?: string;
-  internal_notes?: string;
-  priority?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-// ── REAL OPERATIONAL DATA ──────────────────────────────────────────────────
-
-const TOOLS = [
-  { icon: "🛡️", label: "Admin Dashboard", sub: "turboresponsehq.ai/admin", href: "/admin", external: true },
-  { icon: "👤", label: "Client Portal", sub: "Client login & cases", href: "/client/login", external: true },
-  { icon: "📋", label: "Defense Intake", sub: "Consumer case intake", href: "/intake-defense", external: true },
-  { icon: "🧠", label: "Turbo Brain", sub: "AI knowledge upload", href: "/admin/brain", external: true },
-  { icon: "📸", label: "Screenshots", sub: "Screenshot capture tool", href: "/admin/screenshots", external: true },
-  { icon: "📁", label: "Resources", sub: "Grant & resource intake", href: "/admin/resources", external: true },
-  { icon: "📊", label: "Render Dashboard", sub: "Server & deploy status", href: "https://dashboard.render.com", external: true },
-  { icon: "💻", label: "GitHub Repo", sub: "turboresponsehq-sudo", href: "https://github.com/turboresponsehq-sudo/turbo-response", external: true },
-];
-
-const CASES = [
-  { id: "TR-00482910", type: "Credit Dispute", name: "Maria T.", days: "2 days ago", status: "Pending Review", color: "#f59e0b" },
-  { id: "TR-00481203", type: "Debt Collection", name: "James W.", days: "3 days ago", status: "Active", color: "#22c55e" },
-  { id: "TR-00479887", type: "Eviction Defense", name: "Sandra K.", days: "5 days ago", status: "In Review", color: "#4285F4" },
-  { id: "TR-00478001", type: "FCRA Violation", name: "David R.", days: "1 week ago", status: "Active", color: "#22c55e" },
-  { id: "TR-00476543", type: "IRS Dispute", name: "Angela M.", days: "1 week ago", status: "Long-Term", color: "#4285F4" },
-];
-
-const CHECKS = [
-  { name: "Site Uptime", ok: true },
-  { name: "Admin Login", ok: true },
-  { name: "Cases API", ok: true },
-  { name: "Database Health", ok: true },
-  { name: "SSL Certificate", ok: true },
-  { name: "Render Deploy", ok: true },
-  { name: "Voice Agent Service", ok: true },
-  { name: "xAI Collections API", ok: true },
-  { name: "Google Drive API", ok: true },
-  { name: "HubSpot API", ok: true },
-];
-
-const SOPS = [
-  { title: "Standard Operating Procedure", sub: "v1.0 · Jan 2026", status: "Active" },
-  { title: "Deployment SOP", sub: "Pre/post deploy checklist", status: "Active" },
-  { title: "Incident Response Template", sub: "Bug triage protocol", status: "Active" },
-  { title: "Production Stability Protocol", sub: "Rollback procedures", status: "Active" },
-];
-
-const LEADS = [
-  { name: "Marcus B.", source: "Facebook Group", type: "Credit dispute", status: "Contacted", color: "#f59e0b" },
-  { name: "Tanya R.", source: "Instagram", type: "Eviction notice", status: "Qualified", color: "#4285F4" },
-  { name: "Kevin D.", source: "LinkedIn", type: "Debt collection", status: "Converted", color: "#22c55e" },
-  { name: "Priya S.", source: "Referral", type: "FCRA violation", status: "New", color: "#9ca3af" },
-  { name: "Jerome W.", source: "Facebook Group", type: "IRS issue", status: "Contacted", color: "#f59e0b" },
-];
-
-// ── REAL MODULES ───────────────────────────────────────────────────────────
-
-const VOICE_AGENTS = [
-  {
-    id: "consumer-defense-intake",
-    name: "Consumer Defense Intake Specialist",
-    status: "Live",
-    phoneNumber: "+1 (659) 274-2355",
-    model: "grok-4.3",
-    callsToday: 12,
-    callsThisWeek: 87,
-    lastCall: "2 minutes ago",
-    retrievalAccuracy: "100%",
-    avgCallDuration: "4m 32s",
-    color: "#22c55e"
-  }
-];
-
-const KNOWLEDGE_BASE_SYNC = {
-  totalDocuments: 24,
-  lastUpdated: "2 hours ago",
-  googleDriveSyncStatus: "Success",
-  googleDriveSyncTime: "2 hours ago",
-  googleDriveDocsSynced: 24,
-  xaiCollectionsSyncStatus: "Success",
-  xaiCollectionsSyncTime: "2 hours ago",
-  xaiCollectionsDocsSynced: 24,
-  retrievalAccuracy: "100%",
-  lastError: null
+// ── STYLES ────────────────────────────────────────────────────────────────────
+const colors = {
+  bg: "#0f1117",
+  card: "#181b24",
+  border: "#1e2130",
+  borderActive: "#1a1d28",
+  text: "#e8eaf0",
+  textMuted: "#4b5368",
+  textSub: "#9ca3af",
+  blue: "#60a5fa",
+  blueAccent: "#3B6BF5",
+  green: "#22c55e",
+  teal: "#14b8a6",
+  amber: "#f59e0b",
+  red: "#ef4444",
+  purple: "#a78bfa",
 };
 
-const HUBSPOT_CRM = {
-  connectionStatus: "Connected",
-  lastSyncTime: "1 hour ago",
-  contactsSynced: 156,
-  dealsInPipeline: 23,
-  conversionRate: "14.7%",
-  lastError: null,
-  syncErrors: 0
-};
+// ── REUSABLE COMPONENTS ───────────────────────────────────────────────────────
 
-// ── COMPONENTS ─────────────────────────────────────────────────────────────
-
-const Badge = ({ label }: { label: string }) => (
-  <span style={{ fontSize: 10, fontWeight: 600, background: "rgba(59,130,246,0.1)", color: "#60a5fa", padding: "4px 10px", borderRadius: 6, whiteSpace: "nowrap" }}>
+const Badge = ({ label, color }: { label: string; color?: string }) => (
+  <span style={{ fontSize: 10, fontWeight: 600, background: `${color || colors.blue}20`, color: color || colors.blue, padding: "4px 10px", borderRadius: 6, whiteSpace: "nowrap" }}>
     {label}
   </span>
 );
 
-const StatCard = ({ label, value, sub, accent }: { label: string; value: string; sub: string; accent: string }) => (
-  <div style={{ background: "#181b24", border: "1px solid #1e2130", borderRadius: 10, padding: 16 }}>
-    <div style={{ fontSize: 11, color: "#4b5368", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.5px" }}>{label}</div>
-    <div style={{ fontSize: 28, fontWeight: 700, color: accent, marginBottom: 4 }}>{value}</div>
-    <div style={{ fontSize: 10, color: "#4b5368" }}>{sub}</div>
-  </div>
-);
-
-const SectionCard = ({ title, action, children }: { title: string; action?: string; children: React.ReactNode }) => (
-  <div style={{ background: "#181b24", border: "1px solid #1e2130", borderRadius: 10, padding: 16 }}>
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, paddingBottom: 12, borderBottom: "1px solid #1a1d28" }}>
-      <div style={{ fontSize: 14, fontWeight: 700, color: "#e8eaf0" }}>{title}</div>
-      {action && <button style={{ fontSize: 11, color: "#60a5fa", background: "transparent", border: "none", cursor: "pointer" }}>{action}</button>}
-    </div>
+const Card = ({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) => (
+  <div style={{ background: colors.card, border: `1px solid ${colors.border}`, borderRadius: 10, padding: 20, ...style }}>
     {children}
   </div>
 );
 
-const ItemRow = ({ icon, iconBg, title, sub, right }: { icon: string; iconBg: string; title: string; sub: string; right?: React.ReactNode }) => (
-  <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: "1px solid #1a1d28" }}>
-    <div style={{ width: 36, height: 36, borderRadius: 8, background: iconBg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>{icon}</div>
-    <div style={{ flex: 1 }}>
-      <div style={{ fontSize: 13, fontWeight: 500, color: "#e8eaf0" }}>{title}</div>
-      <div style={{ fontSize: 11, color: "#4b5368", marginTop: 2 }}>{sub}</div>
-    </div>
-    {right}
+const CardHeader = ({ title, action, onAction }: { title: string; action?: string; onAction?: () => void }) => (
+  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, paddingBottom: 12, borderBottom: `1px solid ${colors.borderActive}` }}>
+    <div style={{ fontSize: 14, fontWeight: 700, color: colors.text }}>{title}</div>
+    {action && <button onClick={onAction} style={{ fontSize: 11, color: colors.blue, background: "transparent", border: "none", cursor: "pointer" }}>{action}</button>}
   </div>
 );
 
-const QuickLink = ({ icon, label, sub, href, external }: { icon: string; label: string; sub: string; href: string; external?: boolean }) => (
-  <a href={href} target={external ? "_blank" : undefined} rel={external ? "noopener noreferrer" : undefined} style={{ textDecoration: "none" }}>
-    <div style={{ background: "#181b24", border: "1px solid #1e2130", borderRadius: 10, padding: 12, cursor: "pointer", transition: "all 0.2s", display: "flex", alignItems: "center", gap: 12 }}>
-      <div style={{ fontSize: 20 }}>{icon}</div>
-      <div>
-        <div style={{ fontSize: 12, fontWeight: 600, color: "#e8eaf0" }}>{label}</div>
-        <div style={{ fontSize: 10, color: "#4b5368", marginTop: 2 }}>{sub}</div>
-      </div>
-    </div>
-  </a>
+const StatusDot = ({ status }: { status: "green" | "yellow" | "red" }) => {
+  const c = status === "green" ? colors.green : status === "yellow" ? colors.amber : colors.red;
+  return <span style={{ display: "inline-block", width: 8, height: 8, borderRadius: "50%", background: c }} />;
+};
+
+const Btn = ({ children, variant, onClick, disabled, style }: { children: React.ReactNode; variant?: "primary" | "ghost"; onClick?: () => void; disabled?: boolean; style?: React.CSSProperties }) => (
+  <button
+    onClick={onClick}
+    disabled={disabled}
+    style={{
+      fontSize: 11,
+      fontWeight: 600,
+      padding: "6px 14px",
+      borderRadius: 6,
+      border: variant === "ghost" ? `1px solid ${colors.border}` : "none",
+      background: variant === "ghost" ? "transparent" : colors.blueAccent,
+      color: colors.text,
+      cursor: disabled ? "not-allowed" : "pointer",
+      opacity: disabled ? 0.5 : 1,
+      ...style,
+    }}
+  >
+    {children}
+  </button>
 );
 
-// ── MAIN COMPONENT ─────────────────────────────────────────────────────────
+// ── MISSION CONTROL (HOME) ────────────────────────────────────────────────────
+
+function MissionControlSection() {
+  const [briefing, setBriefing] = useState({
+    date: new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" }),
+    priorities: [
+      "Follow up with James Hardy",
+      "Send proposal to ABC Company",
+      "Review two client projects",
+      "One high-value buying signal detected",
+      "Publish LinkedIn post",
+    ],
+    recommendations: [
+      "Consider reaching out to companies showing recent hiring signals",
+      "Two pipeline deals have not been updated in 5+ days",
+    ],
+  });
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+      {/* CEO Daily Briefing */}
+      <Card>
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 11, color: colors.textMuted, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>{briefing.date}</div>
+          <h2 style={{ fontSize: 22, fontWeight: 700, color: colors.text, margin: 0 }}>Good Morning, Demarcus.</h2>
+          <p style={{ fontSize: 13, color: colors.textSub, marginTop: 8 }}>Here's what needs your attention today:</p>
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: colors.text, marginBottom: 10 }}>Today's Priorities</div>
+          {briefing.priorities.map((p, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 0", borderBottom: `1px solid ${colors.borderActive}` }}>
+              <span style={{ fontSize: 11, color: colors.blue, fontWeight: 700, width: 18 }}>{i + 1}.</span>
+              <span style={{ fontSize: 12, color: colors.text }}>{p}</span>
+            </div>
+          ))}
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: colors.text, marginBottom: 10 }}>AI Recommendations</div>
+          {briefing.recommendations.map((r, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "start", gap: 10, padding: "6px 0" }}>
+              <span style={{ fontSize: 12, color: colors.teal }}>→</span>
+              <span style={{ fontSize: 12, color: colors.textSub }}>{r}</span>
+            </div>
+          ))}
+        </div>
+        <Btn variant="primary">Generate New Briefing</Btn>
+      </Card>
+
+      {/* 4 Dashboard Cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 14 }}>
+        <Card>
+          <div style={{ fontSize: 11, color: colors.textMuted, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>Today's Tasks</div>
+          <div style={{ fontSize: 28, fontWeight: 700, color: colors.blueAccent }}>7</div>
+          <div style={{ fontSize: 10, color: colors.textMuted, marginTop: 4 }}>3 high priority</div>
+        </Card>
+        <Card>
+          <div style={{ fontSize: 11, color: colors.textMuted, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>Pipeline</div>
+          <div style={{ fontSize: 28, fontWeight: 700, color: colors.amber }}>$47,500</div>
+          <div style={{ fontSize: 10, color: colors.textMuted, marginTop: 4 }}>5 active opportunities</div>
+        </Card>
+        <Card>
+          <div style={{ fontSize: 11, color: colors.textMuted, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>Active Clients</div>
+          <div style={{ fontSize: 28, fontWeight: 700, color: colors.green }}>4</div>
+          <div style={{ fontSize: 10, color: colors.textMuted, marginTop: 4 }}>2 deliverables due this week</div>
+        </Card>
+        <Card>
+          <div style={{ fontSize: 11, color: colors.textMuted, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>Turbo Signals</div>
+          <div style={{ fontSize: 28, fontWeight: 700, color: colors.purple }}>3</div>
+          <div style={{ fontSize: 10, color: colors.textMuted, marginTop: 4 }}>New buying signals detected</div>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+// ── TURBO SIGNALS ─────────────────────────────────────────────────────────────
+
+function TurboSignalsSection() {
+  const signals = [
+    { company: "Apex Legal Services", score: 92, signal: "Hiring 3 case managers — scaling operations", summary: "Mid-size consumer law support company expanding team. Likely needs case operations infrastructure.", action: "Send intro email with case operations pitch" },
+    { company: "Guardian Consumer Group", score: 87, signal: "Posted about document management challenges on LinkedIn", summary: "Founder publicly discussed pain points with case documentation. Perfect timing for outreach.", action: "Comment on post, then DM with relevant case study" },
+    { company: "Fairway Dispute Resolution", score: 81, signal: "Raised Series A — $4.2M", summary: "Fresh capital means budget for operational tools. They handle high-volume consumer disputes.", action: "Send congratulations + schedule discovery call" },
+    { company: "TrueNorth Advocacy", score: 76, signal: "New compliance regulation affecting their vertical", summary: "Regulatory change creates urgency for better documentation and compliance workflows.", action: "Share regulatory brief + offer compliance audit" },
+    { company: "Meridian Claims Co.", score: 71, signal: "CTO left — operational restructuring likely", summary: "Leadership change often triggers tool evaluation. They process 200+ claims/month.", action: "Reach out to operations lead with efficiency pitch" },
+  ];
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: colors.text, margin: 0 }}>Turbo Signals</h2>
+          <p style={{ fontSize: 12, color: colors.textMuted, margin: "4px 0 0" }}>AI Client Intelligence Engine — Top 5 Opportunities</p>
+        </div>
+        <Btn variant="ghost">Upload Intelligence →</Btn>
+      </div>
+
+      {signals.map((s, i) => (
+        <Card key={i}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: 12 }}>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: colors.text }}>{s.company}</div>
+              <div style={{ fontSize: 11, color: colors.textMuted, marginTop: 4 }}>Latest Signal: {s.signal}</div>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              <div style={{ fontSize: 10, color: colors.textMuted }}>Opportunity Score</div>
+              <div style={{ fontSize: 20, fontWeight: 700, color: s.score >= 85 ? colors.green : s.score >= 75 ? colors.amber : colors.textSub }}>{s.score}</div>
+            </div>
+          </div>
+          <div style={{ fontSize: 12, color: colors.textSub, marginBottom: 12, lineHeight: 1.5 }}>{s.summary}</div>
+          <div style={{ fontSize: 11, color: colors.teal, marginBottom: 14 }}>Recommended: {s.action}</div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <Btn variant="primary">View Company</Btn>
+            <Btn variant="ghost">Add Note</Btn>
+            <Btn variant="ghost">Create Follow-up</Btn>
+            <Btn variant="ghost">Add to Pipeline</Btn>
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+// ── PIPELINE ──────────────────────────────────────────────────────────────────
+
+function PipelineSection() {
+  const stages = ["Lead", "Discovery", "Proposal", "Client", "Completed"];
+  const opportunities = [
+    { company: "Apex Legal Services", contact: "Sarah Chen", value: "$15,000", nextStep: "Send proposal by Friday", followUp: "Jul 18", stage: "Proposal" },
+    { company: "Guardian Consumer Group", contact: "Marcus Williams", value: "$12,500", nextStep: "Schedule discovery call", followUp: "Jul 16", stage: "Discovery" },
+    { company: "Fairway Dispute Resolution", contact: "Jennifer Park", value: "$8,000", nextStep: "Initial outreach", followUp: "Jul 17", stage: "Lead" },
+    { company: "TrueNorth Advocacy", contact: "David Kim", value: "$7,000", nextStep: "Follow up on proposal", followUp: "Jul 19", stage: "Proposal" },
+    { company: "Meridian Claims Co.", contact: "Angela Torres", value: "$5,000", nextStep: "Qualify opportunity", followUp: "Jul 20", stage: "Lead" },
+  ];
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h2 style={{ fontSize: 16, fontWeight: 700, color: colors.text, margin: 0 }}>Pipeline</h2>
+        <Btn variant="primary">+ Add Opportunity</Btn>
+      </div>
+
+      {/* Stage indicators */}
+      <div style={{ display: "flex", gap: 8 }}>
+        {stages.map(stage => {
+          const count = opportunities.filter(o => o.stage === stage).length;
+          return (
+            <div key={stage} style={{ flex: 1, background: colors.card, border: `1px solid ${colors.border}`, borderRadius: 8, padding: "10px 12px", textAlign: "center" }}>
+              <div style={{ fontSize: 10, color: colors.textMuted, textTransform: "uppercase" }}>{stage}</div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: count > 0 ? colors.blueAccent : colors.textMuted, marginTop: 4 }}>{count}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Opportunity list */}
+      {opportunities.map((o, i) => (
+        <Card key={i}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: colors.text }}>{o.company}</div>
+              <div style={{ fontSize: 11, color: colors.textMuted, marginTop: 4 }}>Contact: {o.contact}</div>
+              <div style={{ fontSize: 11, color: colors.textSub, marginTop: 4 }}>Next Step: {o.nextStep}</div>
+              <div style={{ fontSize: 10, color: colors.textMuted, marginTop: 4 }}>Follow-up: {o.followUp}</div>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              <div style={{ fontSize: 16, fontWeight: 700, color: colors.green }}>{o.value}</div>
+              <Badge label={o.stage} color={o.stage === "Proposal" ? colors.amber : o.stage === "Discovery" ? colors.blueAccent : colors.textMuted} />
+            </div>
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+// ── CLIENTS ───────────────────────────────────────────────────────────────────
+
+function ClientsSection() {
+  const clients = [
+    { company: "Brightline Consumer Law", project: "Case Operations Platform", status: "Active", deliverable: "Phase 2 Documentation System", due: "Jul 22", lastComm: "Yesterday" },
+    { company: "Vanguard Dispute Services", project: "AI Research Agent", status: "Active", deliverable: "Research workflow integration", due: "Jul 25", lastComm: "2 days ago" },
+    { company: "Summit Advocacy Group", project: "Intake Automation", status: "Active", deliverable: "Voice agent deployment", due: "Jul 30", lastComm: "3 days ago" },
+    { company: "Pacific Claims Network", project: "Document Intelligence", status: "Onboarding", deliverable: "Initial system setup", due: "Aug 1", lastComm: "Today" },
+  ];
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h2 style={{ fontSize: 16, fontWeight: 700, color: colors.text, margin: 0 }}>Clients</h2>
+        <Btn variant="primary">+ Add Client</Btn>
+      </div>
+
+      {clients.map((c, i) => (
+        <Card key={i}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: 12 }}>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: colors.text }}>{c.company}</div>
+              <div style={{ fontSize: 11, color: colors.textMuted, marginTop: 4 }}>Project: {c.project}</div>
+            </div>
+            <Badge label={c.status} color={c.status === "Active" ? colors.green : colors.blueAccent} />
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, fontSize: 11 }}>
+            <div><span style={{ color: colors.textMuted }}>Next Deliverable:</span><div style={{ color: colors.text, marginTop: 2 }}>{c.deliverable}</div></div>
+            <div><span style={{ color: colors.textMuted }}>Due:</span><div style={{ color: colors.amber, marginTop: 2 }}>{c.due}</div></div>
+            <div><span style={{ color: colors.textMuted }}>Last Communication:</span><div style={{ color: colors.textSub, marginTop: 2 }}>{c.lastComm}</div></div>
+          </div>
+          <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
+            <Btn variant="primary">View</Btn>
+            <Btn variant="ghost">Add Note</Btn>
+            <Btn variant="ghost">Add Task</Btn>
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+// ── PROJECTS ──────────────────────────────────────────────────────────────────
+
+function ProjectsSection() {
+  const projects = [
+    { name: "Case Operations Platform", client: "Brightline Consumer Law", progress: 65, deadline: "Aug 15", status: "On Track", tasks: 4 },
+    { name: "AI Research Agent", client: "Vanguard Dispute Services", progress: 40, deadline: "Aug 30", status: "On Track", tasks: 6 },
+    { name: "Intake Automation", client: "Summit Advocacy Group", progress: 80, deadline: "Jul 30", status: "Ahead", tasks: 2 },
+    { name: "Document Intelligence", client: "Pacific Claims Network", progress: 10, deadline: "Sep 15", status: "Starting", tasks: 8 },
+  ];
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h2 style={{ fontSize: 16, fontWeight: 700, color: colors.text, margin: 0 }}>Projects</h2>
+        <Btn variant="primary">+ New Project</Btn>
+      </div>
+
+      {projects.map((p, i) => (
+        <Card key={i}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: 12 }}>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: colors.text }}>{p.name}</div>
+              <div style={{ fontSize: 11, color: colors.textMuted, marginTop: 4 }}>Client: {p.client}</div>
+            </div>
+            <Badge label={p.status} color={p.status === "Ahead" ? colors.green : p.status === "On Track" ? colors.blueAccent : colors.textMuted} />
+          </div>
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: colors.textMuted, marginBottom: 4 }}>
+              <span>Progress</span><span>{p.progress}%</span>
+            </div>
+            <div style={{ height: 4, background: colors.border, borderRadius: 2 }}>
+              <div style={{ height: 4, background: colors.blueAccent, borderRadius: 2, width: `${p.progress}%` }} />
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 20, fontSize: 11 }}>
+            <span style={{ color: colors.textMuted }}>Deadline: <span style={{ color: colors.text }}>{p.deadline}</span></span>
+            <span style={{ color: colors.textMuted }}>Open Tasks: <span style={{ color: colors.amber }}>{p.tasks}</span></span>
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+// ── AI AGENTS ─────────────────────────────────────────────────────────────────
+
+function AIAgentsSection() {
+  const agents = [
+    { name: "Research Agent", status: "Active", lastActivity: "2 hours ago", currentTask: "Monitoring regulatory updates for Brightline" },
+    { name: "Knowledge Base", status: "Active", lastActivity: "30 minutes ago", currentTask: "24 documents indexed and searchable" },
+    { name: "HubSpot Integration", status: "Connected", lastActivity: "1 hour ago", currentTask: "156 contacts synced, 23 deals tracked" },
+    { name: "Voice Agent", status: "Live", lastActivity: "5 minutes ago", currentTask: "Consumer intake calls — +1 (659) 274-2355" },
+  ];
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h2 style={{ fontSize: 16, fontWeight: 700, color: colors.text, margin: 0 }}>AI Agents</h2>
+        <div style={{ fontSize: 11, color: colors.textMuted }}>{agents.length} agents deployed</div>
+      </div>
+
+      {agents.map((a, i) => (
+        <Card key={i}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: colors.text }}>{a.name}</div>
+              <div style={{ fontSize: 11, color: colors.textSub, marginTop: 6 }}>{a.currentTask}</div>
+              <div style={{ fontSize: 10, color: colors.textMuted, marginTop: 4 }}>Last Activity: {a.lastActivity}</div>
+            </div>
+            <Badge label={a.status} color={a.status === "Live" ? colors.green : a.status === "Active" ? colors.teal : colors.blueAccent} />
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+// ── SYSTEM ────────────────────────────────────────────────────────────────────
+
+function SystemSection() {
+  const systems = [
+    { name: "Database", status: "green" as const, detail: "TiDB — healthy, 0 errors" },
+    { name: "Website", status: "green" as const, detail: "turboresponsehq.ai — 200 OK" },
+    { name: "Authentication", status: "green" as const, detail: "Admin + Client login active" },
+    { name: "Voice Agent", status: "green" as const, detail: "+1 (659) 274-2355 — accepting calls" },
+    { name: "HubSpot", status: "green" as const, detail: "Connected — last sync 1h ago" },
+    { name: "Google Drive", status: "green" as const, detail: "24 docs synced — no errors" },
+    { name: "API Status", status: "green" as const, detail: "All endpoints responding" },
+  ];
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <h2 style={{ fontSize: 16, fontWeight: 700, color: colors.text, margin: 0 }}>System Health</h2>
+
+      <Card>
+        {systems.map((s, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 0", borderBottom: i < systems.length - 1 ? `1px solid ${colors.borderActive}` : "none" }}>
+            <StatusDot status={s.status} />
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 13, fontWeight: 500, color: colors.text }}>{s.name}</div>
+              <div style={{ fontSize: 11, color: colors.textMuted, marginTop: 2 }}>{s.detail}</div>
+            </div>
+            <Badge label={s.status === "green" ? "Healthy" : s.status === "yellow" ? "Warning" : "Down"} color={s.status === "green" ? colors.green : s.status === "yellow" ? colors.amber : colors.red} />
+          </div>
+        ))}
+      </Card>
+    </div>
+  );
+}
+
+// ── TODAY'S TASKS (used in Mission Control) ───────────────────────────────────
+
+function TasksSection() {
+  const [tasks] = useState([
+    { title: "Follow up with James Hardy", due: "Today", priority: "High", status: "Pending" },
+    { title: "Send proposal to ABC Company", due: "Today", priority: "High", status: "Pending" },
+    { title: "Review Brightline deliverable", due: "Today", priority: "High", status: "Pending" },
+    { title: "Review Vanguard research agent progress", due: "Today", priority: "Medium", status: "Pending" },
+    { title: "Publish LinkedIn post", due: "Today", priority: "Medium", status: "Pending" },
+    { title: "Update pipeline notes", due: "Tomorrow", priority: "Low", status: "Pending" },
+    { title: "Prepare weekly client report", due: "This Week", priority: "Medium", status: "Pending" },
+  ]);
+
+  const todayTasks = tasks.filter(t => t.due === "Today");
+  const tomorrowTasks = tasks.filter(t => t.due === "Tomorrow");
+  const weekTasks = tasks.filter(t => t.due === "This Week");
+
+  const TaskItem = ({ task }: { task: typeof tasks[0] }) => (
+    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: `1px solid ${colors.borderActive}` }}>
+      <div style={{ width: 18, height: 18, borderRadius: 4, border: `2px solid ${colors.border}`, cursor: "pointer" }} />
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: 12, color: colors.text }}>{task.title}</div>
+      </div>
+      <Badge label={task.priority} color={task.priority === "High" ? colors.red : task.priority === "Medium" ? colors.amber : colors.textMuted} />
+      <div style={{ display: "flex", gap: 4 }}>
+        <Btn variant="ghost" style={{ padding: "4px 8px", fontSize: 10 }}>Edit</Btn>
+        <Btn variant="ghost" style={{ padding: "4px 8px", fontSize: 10 }}>Delete</Btn>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h2 style={{ fontSize: 16, fontWeight: 700, color: colors.text, margin: 0 }}>Today's Tasks</h2>
+        <Btn variant="primary">+ Add Task</Btn>
+      </div>
+
+      <Card>
+        <div style={{ fontSize: 11, fontWeight: 600, color: colors.blue, textTransform: "uppercase", marginBottom: 8 }}>Today</div>
+        {todayTasks.map((t, i) => <TaskItem key={i} task={t} />)}
+      </Card>
+
+      {tomorrowTasks.length > 0 && (
+        <Card>
+          <div style={{ fontSize: 11, fontWeight: 600, color: colors.amber, textTransform: "uppercase", marginBottom: 8 }}>Tomorrow</div>
+          {tomorrowTasks.map((t, i) => <TaskItem key={i} task={t} />)}
+        </Card>
+      )}
+
+      {weekTasks.length > 0 && (
+        <Card>
+          <div style={{ fontSize: 11, fontWeight: 600, color: colors.textMuted, textTransform: "uppercase", marginBottom: 8 }}>This Week</div>
+          {weekTasks.map((t, i) => <TaskItem key={i} task={t} />)}
+        </Card>
+      )}
+    </div>
+  );
+}
+
+// ── MAIN COMPONENT ────────────────────────────────────────────────────────────
+
+const NAV_ITEMS: { key: Section; label: string }[] = [
+  { key: "mission_control", label: "Mission Control" },
+  { key: "turbo_signals", label: "Turbo Signals" },
+  { key: "pipeline", label: "Pipeline" },
+  { key: "clients", label: "Clients" },
+  { key: "projects", label: "Projects" },
+  { key: "ai_agents", label: "AI Agents" },
+  { key: "system", label: "System" },
+];
 
 export default function AdminCommandCenter() {
   const { user } = useAdminAuth();
   const [, setLocation] = useLocation();
-  const [section, setSection] = useState<Section>("ceo_home");
-  const [cases, setCases] = useState<LiveCase[]>([]);
-  const [casesLoading, setCasesLoading] = useState(false);
+  const [section, setSection] = useState<Section>("mission_control");
 
   useEffect(() => {
     if (!user) {
@@ -202,244 +490,55 @@ export default function AdminCommandCenter() {
     }
   }, [user, setLocation]);
 
-  useEffect(() => {
-    const fetchCases = async () => {
-      try {
-        setCasesLoading(true);
-        const response = await axios.get(`${API_URL}/api/cases`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
-        });
-        setCases(response.data.slice(0, 5));
-      } catch (error) {
-        console.error("Failed to fetch cases:", error);
-      } finally {
-        setCasesLoading(false);
-      }
-    };
-
-    if (user) {
-      fetchCases();
-    }
-  }, [user]);
-
-  const s = (sec: Section) => section === sec;
-
   if (!user) return null;
 
+  const renderSection = () => {
+    switch (section) {
+      case "mission_control": return <MissionControlSection />;
+      case "turbo_signals": return <TurboSignalsSection />;
+      case "pipeline": return <PipelineSection />;
+      case "clients": return <ClientsSection />;
+      case "projects": return <ProjectsSection />;
+      case "ai_agents": return <AIAgentsSection />;
+      case "system": return <SystemSection />;
+      default: return <MissionControlSection />;
+    }
+  };
+
   return (
-    <div style={{ background: "#0f1117", color: "#e8eaf0", minHeight: "100vh", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+    <div style={{ background: colors.bg, color: colors.text, minHeight: "100vh", fontFamily: "system-ui, -apple-system, sans-serif" }}>
       {/* Header */}
-      <div style={{ background: "#181b24", borderBottom: "1px solid #1e2130", padding: "16px 28px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h1 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>Turbo Response Command Center</h1>
-        <div style={{ fontSize: 12, color: "#4b5368" }}>Admin: {user?.email}</div>
+      <div style={{ background: colors.card, borderBottom: `1px solid ${colors.border}`, padding: "16px 28px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h1 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>⚡ Turbo Mission Control</h1>
+        <div style={{ fontSize: 11, color: colors.textMuted }}>Admin: {user?.email}</div>
       </div>
 
       {/* Navigation */}
-      <div style={{ background: "#181b24", borderBottom: "1px solid #1e2130", padding: "0 28px", display: "flex", gap: 0 }}>
-        {(["ceo_home", "projects", "tasks", "leads", "daily_ops", "operator_input", "core_tools"] as Section[]).map(sec => (
+      <div style={{ background: colors.card, borderBottom: `1px solid ${colors.border}`, padding: "0 28px", display: "flex", gap: 0, overflowX: "auto" }}>
+        {NAV_ITEMS.map(item => (
           <button
-            key={sec}
-            onClick={() => setSection(sec)}
+            key={item.key}
+            onClick={() => setSection(item.key)}
             style={{
               padding: "12px 16px",
               fontSize: 12,
               fontWeight: 600,
               background: "transparent",
               border: "none",
-              color: s(sec) ? "#60a5fa" : "#4b5368",
+              color: section === item.key ? colors.blue : colors.textMuted,
               cursor: "pointer",
-              borderBottom: s(sec) ? "2px solid #60a5fa" : "2px solid transparent",
-              textTransform: "capitalize",
+              borderBottom: section === item.key ? `2px solid ${colors.blue}` : "2px solid transparent",
+              whiteSpace: "nowrap",
             }}
           >
-            {sec.replace(/_/g, " ")}
+            {item.label}
           </button>
         ))}
       </div>
 
       {/* Content */}
-      <div style={{ padding: "24px 28px" }}>
-        {/* CEO HOME */}
-        {s("ceo_home") && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-            {/* Quick Stats */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
-              <StatCard label="Active Cases" value="23" sub="In progress" accent="#3B6BF5" />
-              <StatCard label="Voice Agent Calls" value="87" sub="This week" accent="#22c55e" />
-              <StatCard label="Knowledge Base" value="24" sub="Documents synced" accent="#14b8a6" />
-              <StatCard label="System Health" value="10/10" sub="All checks passing" accent="#22c55e" />
-            </div>
-
-            {/* Live Cases */}
-            <SectionCard title="Live Cases" action="View All →">
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                {CASES.map(c => (
-                  <div key={c.id} style={{ background: "#0f1117", border: `1px solid ${c.color}40`, borderRadius: 8, padding: 12 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: 8 }}>
-                      <div>
-                        <div style={{ fontSize: 12, fontWeight: 600, color: "#e8eaf0" }}>{c.id}</div>
-                        <div style={{ fontSize: 10, color: "#4b5368", marginTop: 2 }}>{c.type}</div>
-                      </div>
-                      <Badge label={c.status} />
-                    </div>
-                    <div style={{ fontSize: 11, color: "#9ca3af" }}>{c.name} · {c.days}</div>
-                  </div>
-                ))}
-              </div>
-            </SectionCard>
-
-            {/* System Health */}
-            <SectionCard title="System Health" action="Details →">
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 8 }}>
-                {CHECKS.map(c => (
-                  <div key={c.name} style={{ background: "#0f1117", border: "1px solid #1e2130", borderRadius: 8, padding: 10, textAlign: "center" }}>
-                    <div style={{ fontSize: 20, marginBottom: 6 }}>{c.ok ? "✅" : "⚠️"}</div>
-                    <div style={{ fontSize: 10, color: "#4b5368" }}>{c.name}</div>
-                  </div>
-                ))}
-              </div>
-            </SectionCard>
-          </div>
-        )}
-
-        {/* PROJECTS */}
-        {s("projects") && (
-          <div>
-            <SectionCard title="Projects" action="+ New Project">
-              <div style={{ color: "#4b5368", fontSize: 12, padding: "20px 0" }}>Projects module — connected to database</div>
-            </SectionCard>
-          </div>
-        )}
-
-        {/* TASKS */}
-        {s("tasks") && (
-          <div>
-            <SectionCard title="Tasks & Priorities" action="+ New Task">
-              <div style={{ color: "#4b5368", fontSize: 12, padding: "20px 0" }}>Tasks module — connected to database</div>
-            </SectionCard>
-          </div>
-        )}
-
-        {/* LEADS */}
-        {s("leads") && (
-          <div>
-            <SectionCard title="Leads Tracker" action="+ New Lead">
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
-                {LEADS.map(l => (
-                  <ItemRow key={l.name} icon="👤" iconBg={`${l.color}20`} title={l.name} sub={`${l.source} · ${l.type}`} right={<Badge label={l.status} />} />
-                ))}
-              </div>
-            </SectionCard>
-          </div>
-        )}
-
-        {/* DAILY OPS */}
-        {s("daily_ops") && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-            {/* Voice Agents */}
-            <SectionCard title="Voice Agents" action="Configure →">
-              {VOICE_AGENTS.map(agent => (
-                <div key={agent.id} style={{ background: "#0f1117", border: "1px solid #1e2130", borderRadius: 8, padding: 16 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: 12 }}>
-                    <div>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: "#e8eaf0" }}>{agent.name}</div>
-                      <div style={{ fontSize: 11, color: "#4b5368", marginTop: 4 }}>Phone: {agent.phoneNumber}</div>
-                    </div>
-                    <Badge label={agent.status} />
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginTop: 12 }}>
-                    <div><div style={{ fontSize: 10, color: "#4b5368" }}>Calls Today</div><div style={{ fontSize: 14, fontWeight: 700, color: "#22c55e", marginTop: 4 }}>{agent.callsToday}</div></div>
-                    <div><div style={{ fontSize: 10, color: "#4b5368" }}>This Week</div><div style={{ fontSize: 14, fontWeight: 700, color: "#3B6BF5", marginTop: 4 }}>{agent.callsThisWeek}</div></div>
-                    <div><div style={{ fontSize: 10, color: "#4b5368" }}>Accuracy</div><div style={{ fontSize: 14, fontWeight: 700, color: "#14b8a6", marginTop: 4 }}>{agent.retrievalAccuracy}</div></div>
-                    <div><div style={{ fontSize: 10, color: "#4b5368" }}>Avg Duration</div><div style={{ fontSize: 14, fontWeight: 700, color: "#f59e0b", marginTop: 4 }}>{agent.avgCallDuration}</div></div>
-                  </div>
-                </div>
-              ))}
-            </SectionCard>
-
-            {/* Knowledge Base Sync */}
-            <SectionCard title="Knowledge Base Sync" action="Sync Now →">
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                <div>
-                  <div style={{ fontSize: 11, color: "#4b5368", marginBottom: 8, textTransform: "uppercase" }}>Google Drive Sync</div>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: KNOWLEDGE_BASE_SYNC.googleDriveSyncStatus === "Success" ? "#22c55e" : "#ef4444" }}>
-                    {KNOWLEDGE_BASE_SYNC.googleDriveSyncStatus} ✓
-                  </div>
-                  <div style={{ fontSize: 10, color: "#4b5368", marginTop: 4 }}>
-                    {KNOWLEDGE_BASE_SYNC.googleDriveDocsSynced} docs · {KNOWLEDGE_BASE_SYNC.googleDriveSyncTime}
-                  </div>
-                </div>
-                <div>
-                  <div style={{ fontSize: 11, color: "#4b5368", marginBottom: 8, textTransform: "uppercase" }}>xAI Collections Sync</div>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: KNOWLEDGE_BASE_SYNC.xaiCollectionsSyncStatus === "Success" ? "#22c55e" : "#ef4444" }}>
-                    {KNOWLEDGE_BASE_SYNC.xaiCollectionsSyncStatus} ✓
-                  </div>
-                  <div style={{ fontSize: 10, color: "#4b5368", marginTop: 4 }}>
-                    {KNOWLEDGE_BASE_SYNC.xaiCollectionsDocsSynced} docs · {KNOWLEDGE_BASE_SYNC.xaiCollectionsSyncTime}
-                  </div>
-                </div>
-              </div>
-              <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid #1a1d28" }}>
-                <div style={{ fontSize: 11, color: "#4b5368", marginBottom: 4 }}>Retrieval Accuracy</div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: "#14b8a6" }}>{KNOWLEDGE_BASE_SYNC.retrievalAccuracy}</div>
-              </div>
-            </SectionCard>
-
-            {/* HubSpot CRM */}
-            <SectionCard title="HubSpot CRM Integration" action="Configure →">
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
-                <div>
-                  <div style={{ fontSize: 11, color: "#4b5368", marginBottom: 8, textTransform: "uppercase" }}>Status</div>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: HUBSPOT_CRM.connectionStatus === "Connected" ? "#22c55e" : "#ef4444" }}>
-                    {HUBSPOT_CRM.connectionStatus}
-                  </div>
-                </div>
-                <div>
-                  <div style={{ fontSize: 11, color: "#4b5368", marginBottom: 8, textTransform: "uppercase" }}>Contacts Synced</div>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: "#3B6BF5" }}>{HUBSPOT_CRM.contactsSynced}</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: 11, color: "#4b5368", marginBottom: 8, textTransform: "uppercase" }}>Deals in Pipeline</div>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: "#f59e0b" }}>{HUBSPOT_CRM.dealsInPipeline}</div>
-                </div>
-              </div>
-              <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #1a1d28" }}>
-                <div style={{ fontSize: 10, color: "#4b5368" }}>Conversion Rate: <span style={{ color: "#22c55e", fontWeight: 600 }}>{HUBSPOT_CRM.conversionRate}</span></div>
-                <div style={{ fontSize: 10, color: "#4b5368", marginTop: 4 }}>Last Sync: {HUBSPOT_CRM.lastSyncTime}</div>
-              </div>
-            </SectionCard>
-          </div>
-        )}
-
-        {/* OPERATOR INPUT */}
-        {s("operator_input") && (
-          <div>
-            <SectionCard title="Operator Input" action="+ New Entry">
-              <div style={{ color: "#4b5368", fontSize: 12, padding: "20px 0" }}>Operator input module — for internal notes and updates</div>
-            </SectionCard>
-          </div>
-        )}
-
-        {/* CORE TOOLS */}
-        {s("core_tools") && (
-          <div>
-            <SectionCard title="Daily Use Tools">
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 14 }}>
-                {TOOLS.map(t => (
-                  <QuickLink key={t.label} {...t} />
-                ))}
-              </div>
-            </SectionCard>
-
-            <div style={{ marginTop: 24 }}>
-              <SectionCard title="SOPs & Documents" action="Open Drive →">
-                {SOPS.map(s => (
-                  <ItemRow key={s.title} icon="📄" iconBg="rgba(59,130,246,0.1)" title={s.title} sub={s.sub} right={<Badge label={s.status} />} />
-                ))}
-              </SectionCard>
-            </div>
-          </div>
-        )}
+      <div style={{ padding: "24px 28px", maxWidth: 1000, margin: "0 auto" }}>
+        {renderSection()}
       </div>
     </div>
   );
