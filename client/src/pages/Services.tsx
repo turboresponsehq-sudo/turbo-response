@@ -5,9 +5,9 @@ import "./Services.css";
 const services = [
   {
     number: "01",
-    title: "Document Intelligence & Organization",
+    title: "Document & Evidence Organization",
     description:
-      "Organize hundreds of pages of documentation into structured, actionable information.",
+      "Transform scattered documents into organized, searchable, and actionable case files.",
     examples: [
       "Document review",
       "Evidence organization",
@@ -21,7 +21,7 @@ const services = [
     number: "02",
     title: "Research & Regulatory Intelligence",
     description:
-      "Research the laws, regulations, agency guidance, public records, and policies that apply to your situation.",
+      "Research regulations, agency guidance, policies, procedures, and public records that support better case decisions.",
     examples: [
       "Agency research",
       "Public records",
@@ -33,9 +33,9 @@ const services = [
   },
   {
     number: "03",
-    title: "Claims & Response Preparation",
+    title: "Case Preparation & Response Support",
     description:
-      "Prepare stronger documentation before submitting a complaint, claim, dispute, appeal, or response.",
+      "Prepare organized documentation, supporting evidence, and structured case files before submission or review.",
     examples: [
       "Claim preparation",
       "Response drafting",
@@ -47,9 +47,9 @@ const services = [
   },
   {
     number: "04",
-    title: "Compliance & Documentation Support",
+    title: "Operational Workflow Support",
     description:
-      "Help organizations manage documentation-heavy compliance and operational requirements.",
+      "Improve documentation workflows, operational processes, and AI-assisted case management across your organization.",
     examples: [
       "Internal documentation",
       "Compliance reviews",
@@ -61,9 +61,9 @@ const services = [
   },
   {
     number: "05",
-    title: "Consumer Solutions",
+    title: "Consumer Case Operations",
     description:
-      "Support for individuals dealing with documentation-heavy situations.",
+      "Support organizations managing consumer disputes, investigations, complaints, and documentation-intensive matters.",
     examples: [
       "Credit",
       "Housing",
@@ -78,8 +78,8 @@ const services = [
   },
   {
     number: "06",
-    title: "Business & Organization Solutions",
-    description: "Support for companies and organizations.",
+    title: "Organization Operations",
+    description: "Support organizations managing complex documentation, investigations, compliance, and operational case workflows.",
     examples: [
       "Contracts",
       "Vendors",
@@ -95,22 +95,22 @@ const services = [
 ];
 
 const howItWorks = [
-  { step: "01", label: "Review the documents." },
-  { step: "02", label: "Identify what matters." },
-  { step: "03", label: "Research the rules." },
-  { step: "04", label: "Build a stronger response." },
-  { step: "05", label: "Move forward with confidence." },
+  { step: "01", label: "Organize the information." },
+  { step: "02", label: "Build the timeline." },
+  { step: "03", label: "Research the regulations." },
+  { step: "04", label: "Prepare the case." },
+  { step: "05", label: "Move the case forward." },
 ];
 
 const industries = [
-  "Consumers",
-  "Small Businesses",
-  "Contractors",
-  "Property Owners",
-  "Professional Services",
+  "Consumer Law Support Companies",
+  "Case Operations Teams",
+  "Intake Teams",
+  "Documentation Specialists",
+  "Operations Managers",
+  "Investigation Teams",
   "Compliance Teams",
-  "Organizations",
-  "Operations Leaders",
+  "Organizations Managing Complex Cases",
 ];
 
 export default function Services() {
@@ -150,18 +150,18 @@ export default function Services() {
         {/* Page Header */}
         <section className="sv-hero">
           <div className="sv-hero-inner">
-            <span className="sv-badge">⚡ LEGAL TECHNOLOGY FOR COMPLEX MATTERS</span>
-            <h1 className="sv-hero-h1">From Information to Action.</h1>
+            <span className="sv-badge">⚡ AI-POWERED CASE OPERATIONS</span>
+            <h1 className="sv-hero-h1">From Scattered Information to Organized Action.</h1>
             <p className="sv-hero-sub">
-              Turbo Response helps consumers, businesses, and organizations organize documentation,
-              identify what matters, conduct research, prepare stronger claims, and respond with confidence.
+              Turbo Response helps organizations managing complex cases organize documentation,
+              build timelines, manage evidence, research regulations, and prepare stronger case files with AI.
             </p>
           </div>
         </section>
 
         {/* Services Grid */}
         <section className="sv-services-section">
-          <h2 className="sv-section-heading">Our Services</h2>
+          <h2 className="sv-section-heading">Case Operations Services</h2>
           <div className="sv-cards-grid">
             {services.map((s) => (
               <div
@@ -220,11 +220,10 @@ export default function Services() {
         <section className="sv-cta-section">
           <div className="sv-cta-inner">
             <h2 className="sv-cta-title">
-              When the Matter Is Complex,<br />Call Turbo Response.
+              When Case Operations Matter,<br />Choose Turbo Response.
             </h2>
             <p className="sv-cta-body">
-              Whether you're bringing a claim, responding to one, preparing documentation, conducting research,
-              or navigating compliance, Turbo Response helps turn complexity into clarity.
+              Turbo Response helps organizations transform scattered information into organized action through AI-powered case operations, intelligent research, documentation management, and workflow support.
             </p>
             <Link href="/turbo-intake" className="sv-cta-btn">
               Start Your Matter →
@@ -241,9 +240,7 @@ export default function Services() {
             <span>TURBO<span className="sv-logo-accent"> RESPONSE</span></span>
           </div>
           <p className="sv-footer-disclaimer">
-            Turbo Response is a legal technology and operational support platform. We provide intelligent research,
-            documentation, workflow, organization, compliance support, and matter preparation. We do not provide
-            legal advice or legal representation. No attorney-client relationship is formed by use of this platform.
+            Turbo Response is an AI-powered case operations platform that helps organizations organize documentation, manage evidence, build timelines, research regulations, and improve operational workflows. Turbo Response does not provide legal advice or legal representation.
           </p>
           <div className="sv-footer-links">
             <Link href="/privacy-policy">Privacy Policy</Link>
