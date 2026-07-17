@@ -530,3 +530,21 @@ export type WorkspaceNote = typeof workspaceNotes.$inferSelect;
 export type WorkspaceDocument = typeof workspaceDocuments.$inferSelect;
 export type WorkspaceTimelineEvent = typeof workspaceTimeline.$inferSelect;
 export type WorkspaceNextAction = typeof workspaceNextActions.$inferSelect;
+
+
+// ── AI BRIEFS ─────────────────────────────────────────────────────────────────
+export const aiBriefs = mysqlTable("ai_briefs", {
+	id: int().autoincrement().primaryKey(),
+	sourceType: varchar("sourceType", { length: 32 }).notNull(), // 'workspace' or 'signal'
+	sourceId: int("sourceId").notNull(),
+	sourceName: varchar("sourceName", { length: 255 }),
+	briefType: varchar("briefType", { length: 64 }).notNull(), // workspace type or 'signal'
+	content: json().notNull(), // Structured brief sections as JSON
+	rawData: json(), // Raw collected data used to generate the brief
+	generatedAt: timestamp("generatedAt", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+	metadata: json(), // Future: LLM model used, tokens, etc.
+	createdAt: timestamp("createdAt", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+});
+
+export type AiBrief = typeof aiBriefs.$inferSelect;
+export type InsertAiBrief = typeof aiBriefs.$inferInsert;

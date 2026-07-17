@@ -756,3 +756,18 @@
 - [x] Mobile-responsive card layout
 - [x] Dark theme consistent with existing design
 - [x] Pushed to GitHub for Render auto-deploy
+
+## AI BRIEF GENERATOR (July 2026)
+- [x] Database table: ai_briefs (id, sourceType, sourceId, briefType, content JSON, generatedAt, metadata)
+- [x] tRPC endpoint: generate brief (collect workspace/signal data, structure into report)
+- [x] tRPC endpoint: list briefs history for a workspace/signal
+- [x] tRPC endpoint: get brief by ID
+- [x] tRPC endpoint: delete brief
+- [x] Workspace detail view: "Generate AI Brief" button as dedicated tab
+- [x] Brief display panel: structured sections (Executive Summary, Progress, Risks, Opportunities, Next Actions, Missing Info)
+- [x] Copy brief to clipboard button
+- [x] Brief history panel with timestamps
+- [x] Turbo Signals: "Generate AI Brief" button per company
+- [x] Signal brief tailored sections (Why client, Buying signals, Suggested outreach, Priority)
+- [x] Architecture ready for LLM API integration (placeholder function)
+- [x] Dark theme consistent with existing design
