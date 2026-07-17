@@ -139,8 +139,6 @@ export default function Services() {
           </Link>
           <nav className="sv-nav">
             <Link href="/" className="sv-nav-link">Home</Link>
-            <Link href="/industries" className="sv-nav-link">Industries</Link>
-            <Link href="/turbo-systems" className="sv-nav-link sv-nav-systems">⚡ Turbo Systems</Link>
             <Link href="/turbo-intake" className="sv-nav-cta">Start Your Matter →</Link>
           </nav>
         </div>
