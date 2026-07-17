@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS workspaces (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  name VARCHAR(255) NOT NULL,\n  type ENUM('internal_case', 'consumer_case', 'client_project', 'business_project') NOT NULL,\n  description TEXT,\n  status ENUM('planning', 'active', 'waiting', 'completed', 'archived') NOT NULL DEFAULT 'planning',\n  priority ENUM('low', 'normal', 'high', 'urgent') NOT NULL DEFAULT 'normal',\n  assigned_to VARCHAR(255),\n  due_date VARCHAR(50),\n  notes TEXT,\n  workspace_id VARCHAR(64),\n  client_id INT,\n  signal_id INT,\n  metadata JSON,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute CREATE TABLE IF NOT EXISTS workspaces (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  name VARCHAR(255) NOT NULL,\n  type ENUM('internal_case', 'consumer_case', 'client_project', 'business_project') NOT NULL,\n  description TEXT,\n  status ENUM('planning', 'active', 'waiting', 'completed', 'archived') NOT NULL DEFAULT 'planning',\n  priority ENUM('low', 'normal', 'high', 'urgent') NOT NULL DEFAULT 'normal',\n  assigned_to VARCHAR(255),\n  due_date VARCHAR(50),\n  notes TEXT,\n  workspace_id VARCHAR(64),\n  client_id INT,\n  signal_id INT,\n  metadata JSON,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1199
+}

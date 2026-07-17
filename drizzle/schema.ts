@@ -457,3 +457,76 @@ export type InsertMissionTask = typeof missionTasks.$inferInsert;
 
 
 
+// ── WORKSPACES ─────────────────────────────────────────────────────────────────
+export const workspaces = mysqlTable("workspaces", {
+	id: int().autoincrement().primaryKey(),
+	name: varchar({ length: 255 }).notNull(),
+	type: mysqlEnum(['internal_case', 'consumer_case', 'client_project', 'business_project']).notNull(),
+	description: text(),
+	status: mysqlEnum(['planning', 'active', 'waiting', 'completed', 'archived']).default('planning').notNull(),
+	priority: mysqlEnum(['low', 'normal', 'high', 'urgent']).default('normal').notNull(),
+	assignedTo: varchar("assigned_to", { length: 255 }),
+	dueDate: varchar("due_date", { length: 50 }),
+	notes: text(),
+	// Future-ready fields
+	workspaceId: varchar("workspace_id", { length: 64 }), // unique slug for future portals
+	clientId: int("client_id"), // link to client/pipeline
+	signalId: int("signal_id"), // link to originating signal
+	metadata: json(), // extensible JSON for AI chat, research, etc.
+	createdAt: timestamp("created_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow().notNull(),
+});
+
+export const workspaceTasks = mysqlTable("workspace_tasks", {
+	id: int().autoincrement().primaryKey(),
+	workspaceId: int("workspace_id").notNull(),
+	title: varchar({ length: 500 }).notNull(),
+	status: mysqlEnum(['pending', 'in_progress', 'completed']).default('pending').notNull(),
+	priority: mysqlEnum(['low', 'normal', 'high', 'urgent']).default('normal').notNull(),
+	dueDate: varchar("due_date", { length: 50 }),
+	notes: text(),
+	createdAt: timestamp("created_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow().notNull(),
+});
+
+export const workspaceNotes = mysqlTable("workspace_notes", {
+	id: int().autoincrement().primaryKey(),
+	workspaceId: int("workspace_id").notNull(),
+	author: varchar({ length: 255 }).default('Demarcus'),
+	content: text().notNull(),
+	createdAt: timestamp("created_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+});
+
+export const workspaceDocuments = mysqlTable("workspace_documents", {
+	id: int().autoincrement().primaryKey(),
+	workspaceId: int("workspace_id").notNull(),
+	fileName: varchar("file_name", { length: 500 }).notNull(),
+	fileUrl: text("file_url").notNull(),
+	fileType: varchar("file_type", { length: 50 }),
+	fileSize: int("file_size"),
+	uploadedAt: timestamp("uploaded_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+});
+
+export const workspaceTimeline = mysqlTable("workspace_timeline", {
+	id: int().autoincrement().primaryKey(),
+	workspaceId: int("workspace_id").notNull(),
+	event: varchar({ length: 500 }).notNull(),
+	eventType: varchar("event_type", { length: 50 }),
+	createdAt: timestamp("created_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+});
+
+export const workspaceNextActions = mysqlTable("workspace_next_actions", {
+	id: int().autoincrement().primaryKey(),
+	workspaceId: int("workspace_id").notNull(),
+	action: varchar({ length: 500 }).notNull(),
+	completed: tinyint().default(0).notNull(),
+	createdAt: timestamp("created_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+});
+
+export type Workspace = typeof workspaces.$inferSelect;
+export type InsertWorkspace = typeof workspaces.$inferInsert;
+export type WorkspaceTask = typeof workspaceTasks.$inferSelect;
+export type WorkspaceNote = typeof workspaceNotes.$inferSelect;
+export type WorkspaceDocument = typeof workspaceDocuments.$inferSelect;
+export type WorkspaceTimelineEvent = typeof workspaceTimeline.$inferSelect;
+export type WorkspaceNextAction = typeof workspaceNextActions.$inferSelect;

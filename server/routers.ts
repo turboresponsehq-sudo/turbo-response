@@ -10,6 +10,7 @@ import { dashboardRouter } from "./routers/dashboardRouter";
 import { knowledgeBaseRouter } from "./routers/knowledgeBaseRouter";
 import { googleDriveRouter } from "./routers/googleDriveRouter";
 import { missionControlRouter } from "./routers/missionControlRouter";
+import { workspacesRouter } from "./routers/workspacesRouter";
 
 
 
@@ -43,6 +44,7 @@ export const appRouter = router({
   knowledgeBase: knowledgeBaseRouter,
   googleDrive: googleDriveRouter,
   missionControl: missionControlRouter,
+  workspaces: workspacesRouter,
 });
 
 export type AppRouter = typeof appRouter;
