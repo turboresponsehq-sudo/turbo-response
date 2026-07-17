@@ -548,3 +548,26 @@ export const aiBriefs = mysqlTable("ai_briefs", {
 
 export type AiBrief = typeof aiBriefs.$inferSelect;
 export type InsertAiBrief = typeof aiBriefs.$inferInsert;
+
+
+// ── WORKSPACE AI ANALYSES ─────────────────────────────────────────────────────
+export const workspaceAiAnalyses = mysqlTable("workspace_ai_analyses", {
+	id: int().autoincrement().primaryKey(),
+	workspaceId: int("workspaceId").notNull(),
+	title: varchar({ length: 500 }).notNull(),
+	aiSource: varchar("aiSource", { length: 50 }).notNull(), // chatgpt, manus, claude, gemini, grok, perplexity, notebooklm, other
+	analysisType: varchar("analysisType", { length: 50 }).notNull(), // strategy, research, case_review, etc.
+	content: text().notNull(),
+	tags: json(), // Array of string tags
+	// Future-ready fields
+	generatedBy: varchar("generatedBy", { length: 32 }).default('manual'), // manual or api
+	modelVersion: varchar("modelVersion", { length: 100 }),
+	confidenceScore: decimal("confidenceScore", { precision: 5, scale: 2 }),
+	parentAnalysisId: int("parentAnalysisId"),
+	metadata: json(),
+	createdAt: timestamp("createdAt", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+	updatedAt: timestamp("updatedAt", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow().notNull(),
+});
+
+export type WorkspaceAiAnalysis = typeof workspaceAiAnalyses.$inferSelect;
+export type InsertWorkspaceAiAnalysis = typeof workspaceAiAnalyses.$inferInsert;
