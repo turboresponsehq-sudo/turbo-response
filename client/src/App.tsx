@@ -37,7 +37,6 @@ import OffenseIntakeForm from "./pages/OffenseIntakeForm";
 import AdminCasesList from "./pages/AdminCasesList";
 import AdminCasesDetail from "./pages/AdminCaseDetail";
 
-import TurboSystemsPage from "./pages/TurboSystems";
 import Industries from "./pages/Industries";
 import ConsumerSolutions from "./pages/ConsumerSolutions";
 import BlackFuture from "./pages/BlackFuture";
@@ -51,7 +50,6 @@ function Router() {
     <Switch>
       <Route path={"/"} component={Home} />
 
-      <Route path="/turbo-systems" component={TurboSystemsPage} />
       <Route path="/industries" component={Industries} />
       <Route path="/consumer-solutions" component={ConsumerSolutions} />
       <Route path="/black-future" component={BlackFuture} />
