@@ -1,0 +1,13 @@
+{
+  "query": "INSERT INTO workspaces (name, type, status, priority, description, assigned_to, due_date, metadata)\nVALUES (\n  'Collins v. Robinhood Financial LLC — FINRA No. 25-02589',\n  'internal_case',\n  'active',\n  'high',\n  'Disputed crypto transactions on Robinhood involving alleged unauthorized account access. Robinhood denies liability based on device token matching. Forensic analysis of Robinhood''s own Exhibit B reveals anomalous IP addresses and location data inconsistent with Claimant''s historical activity, forming the basis for a Motion to Compel discovery. Arbitration No. 25-02589.',\n  'Demarcus M. Collins',\n  '2026-07-17',\n  JSON_OBJECT(\n    'caseNumber', 'FINRA No. 25-02589',\n    'respondent', 'Robinhood Financial LLC',\n    'claimant', 'Demarcus M. Collins',\n    'opposingCounsel', 'Simeon Schopf, Assistant General Counsel',\n    'opposingCounselEmail', 'Simeon.Schopf@robinhood.com',\n    'lossAmount', 1289,\n    'settlementOffer', 800,\n    'counterOffer', 5500\n  )\n);\nSELECT LAST_INSERT_ID() AS workspace_id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute INSERT INTO workspaces (name, type, status, priority, description, assigned_to, due_date, metadata)\nVALUES (\n  'Collins v. Robinhood Financial LLC — FINRA No. 25-02589',\n  'internal_case',\n  'active',\n  'high',\n  'Disputed crypto transactions on Robinhood involving alleged unauthorized account access. Robinhood denies liability based on device token matching. Forensic analysis of Robinhood''s own Exhibit B reveals anomalous IP addresses and location data inconsistent with Claimant''s historical activity, forming the basis for a Motion to Compel discovery. Arbitration No. 25-02589.',\n  'Demarcus M. Collins',\n  '2026-07-17',\n  JSON_OBJECT(\n    'caseNumber', 'FINRA No. 25-02589',\n    'respondent', 'Robinhood Financial LLC',\n    'claimant', 'Demarcus M. Collins',\n    'opposingCounsel', 'Simeon Schopf, Assistant General Counsel',\n    'opposingCounselEmail', 'Simeon.Schopf@robinhood.com',\n    'lossAmount', 1289,\n    'settlementOffer', 800,\n    'counterOffer', 5500\n  )\n);\nSELECT LAST_INSERT_ID() AS workspace_id;",
+  "rows": [
+    {
+      "workspace_id": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "workspace_id\n1\n",
+  "stderr": "",
+  "execution_time_ms": 462
+}
