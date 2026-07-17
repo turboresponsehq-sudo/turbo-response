@@ -28,8 +28,6 @@ export default function Home() {
           </button>
           <nav className={`hp-nav${menuOpen ? " open" : ""}`}>
             <Link href="/services" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Services</Link>
-            <Link href="/industries" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Industries</Link>
-            <Link href="/turbo-systems" className="hp-nav-link hp-nav-systems" onClick={() => setMenuOpen(false)}>⚡ Turbo Systems</Link>
             <Link href="/consumer-solutions" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Consumer Solutions</Link>
             <Link href="/black-future" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Black Future</Link>
             <Link href="/turbo-intake" className="hp-nav-cta" onClick={() => setMenuOpen(false)}>Start Your Matter →</Link>
@@ -285,8 +283,6 @@ export default function Home() {
           </div>
           <nav className="hp-footer-links">
             <Link href="/services" className="hp-footer-link">Services</Link>
-            <Link href="/industries" className="hp-footer-link">Industries</Link>
-            <Link href="/turbo-systems" className="hp-footer-link">⚡ Turbo Systems</Link>
             <Link href="/consumer-solutions" className="hp-footer-link">Consumer Solutions</Link>
             <Link href="/black-future" className="hp-footer-link">Black Future</Link>
             <Link href="/privacy-policy" className="hp-footer-link">Privacy Policy</Link>
