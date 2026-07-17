@@ -76,19 +76,19 @@ export default function Home() {
           <div className="hp-hero-content">
             <div className="hp-hero-eyebrow">
               <span className="hp-badge-dot" />
-              ⚡ LEGAL TECHNOLOGY FOR COMPLEX MATTERS
+              ⚡ AI-POWERED CASE OPERATIONS
             </div>
 
             <h1 className="hp-hero-h1">
-              The Rules Are Complicated.<br />
-              <span className="hp-hero-accent">Your Next Step Shouldn't Be.</span>
+              Complex Cases Need Better Operations.<br />
+              <span className="hp-hero-accent">Not More Paperwork.</span>
             </h1>
 
             <p className="hp-hero-sub">
-              Millions of laws, regulations, policies, codes, and procedures shape business and everyday decisions. Knowing which ones apply—and how to respond—can change the outcome. Turbo Response helps organize the facts, identify the governing rules, and build a stronger strategy before you take action.
+              Turbo Response helps case operations teams organize documents, build timelines, manage evidence, research regulations, and prepare stronger case files with AI. We transform scattered information into organized action so your team can process complex matters faster and with greater confidence.
             </p>
 
-            <p className="hp-hero-tagline">Research the rules. Organize the evidence. Build the right response.</p>
+            <p className="hp-hero-tagline">Organize the case. Accelerate the workflow. Strengthen every response.</p>
 
             <div className="hp-hero-btns">
               <Link href="/turbo-intake" className="hp-btn hp-btn-primary hp-btn-lg">
@@ -151,13 +151,13 @@ export default function Home() {
       <section className="hp-pillars">
         <div className="hp-pillars-bg" aria-hidden="true" />
         <div className="hp-section-inner">
-              <div className="hp-eyebrow hp-eyebrow-center">How Turbo Response Helps</div>
-              <p className="hp-pillars-tagline">Better information leads to better decisions. Better decisions lead to better outcomes.</p>
+              <div className="hp-eyebrow hp-eyebrow-center">Built for Modern Case Operations Teams</div>
+              <p className="hp-pillars-tagline">Better case operations create better outcomes.</p>
               <h2 className="hp-section-h2 hp-h2-center">
-                From Complexity to Clarity. From Information to Action.
+                From Scattered Information to Organized Action.
               </h2>
               <p className="hp-pillars-sub">
-                Three capabilities. One platform. Built for the matters that demand more than a simple answer.
+                Three capabilities. One platform. Built for organizations managing complex cases and high-volume documentation.
               </p>
 
           <div className="hp-pillars-grid">
@@ -167,12 +167,9 @@ export default function Home() {
               <div className="hp-pillar-glow" aria-hidden="true" />
               <div className="hp-pillar-number">01</div>
               <div className="hp-pillar-icon">⚡</div>
-              <h3 className="hp-pillar-title">Review Hundreds of Pages in Minutes, Not Days.</h3>
+              <h3 className="hp-pillar-title">Organize Every Document Into One Intelligent Case File.</h3>
               <p className="hp-pillar-body">
-                When documents pile up, clarity disappears.
-              </p>
-              <p className="hp-pillar-body">
-                Turbo Response helps organize records, build timelines, identify key facts, and surface the information that actually matters.
+                Turbo Response organizes records, builds timelines, extracts key facts, and connects supporting evidence so your case operations team spends less time searching and more time moving cases forward.
               </p>
               <ul className="hp-pillar-list">
                 <li>Document analysis</li>
@@ -189,12 +186,9 @@ export default function Home() {
               <div className="hp-pillar-glow hp-pillar-glow-purple" aria-hidden="true" />
               <div className="hp-pillar-number">02</div>
               <div className="hp-pillar-icon">◈</div>
-              <h3 className="hp-pillar-title">Find the Regulations, Policies, and Evidence That Actually Matter.</h3>
+              <h3 className="hp-pillar-title">AI Research That Supports Better Case Decisions.</h3>
               <p className="hp-pillar-body">
-                Real research goes beyond internet searches.
-              </p>
-              <p className="hp-pillar-body">
-                Turbo Response researches laws, regulations, agency guidance, policies, procedures, public records, and supporting documentation that directly impact your matter.
+                Research regulations, agency guidance, policies, procedures, and public records without wasting hours searching manually.
               </p>
               <ul className="hp-pillar-list">
                 <li>Regulatory research</li>
@@ -212,9 +206,9 @@ export default function Home() {
               <div className="hp-pillar-glow hp-pillar-glow-green" aria-hidden="true" />
               <div className="hp-pillar-number">03</div>
               <div className="hp-pillar-icon">◉</div>
-              <h3 className="hp-pillar-title">Build Stronger Claims. Prepare Stronger Responses.</h3>
+              <h3 className="hp-pillar-title">Move Cases Forward With Confidence.</h3>
               <p className="hp-pillar-body">
-                Whether you’re bringing a claim or responding to one, Turbo Response helps organize evidence, structure documentation, prepare supporting materials, and strengthen your overall position.
+                Prepare organized documentation, strengthen supporting evidence, and create structured case files that improve operational efficiency from intake through resolution.
               </p>
               <ul className="hp-pillar-list">
                 <li>Claim preparation</li>
@@ -239,20 +233,20 @@ export default function Home() {
         <div className="hp-strip-inner">
           <div className="hp-strip-item">
             <div className="hp-strip-icon">⚡</div>
-            <div className="hp-strip-title">Consumer Matters</div>
-            <div className="hp-strip-body">Disputes. Credit reporting. Banking. Insurance. Housing. Debt collection. IRS notices. Code enforcement. Administrative matters.</div>
+            <div className="hp-strip-title">Built for Consumer Law Support Teams</div>
+            <div className="hp-strip-body">Organizations that help consumers navigate disputes, investigations, regulatory matters, administrative complaints, and complex documentation.</div>
           </div>
           <div className="hp-strip-sep" />
           <div className="hp-strip-item">
-            <div className="hp-strip-icon">🏗️</div>
-            <div className="hp-strip-title">Business &amp; Compliance</div>
-            <div className="hp-strip-body">Compliance. Regulatory response. Merchant account disputes. Contract documentation. Internal investigations. Vendor disputes. Arbitration preparation. Operational documentation.</div>
+          <div className="hp-strip-icon">📁</div>
+          <div className="hp-strip-title">Built for Case Operations</div>
+            <div className="hp-strip-body">Case Managers, Intake Teams, Documentation Specialists, Operations Managers, Investigation Teams, and Client Success professionals managing high-volume case work.</div>
           </div>
           <div className="hp-strip-sep" />
           <div className="hp-strip-item">
-            <div className="hp-strip-icon">🌐</div>
-            <div className="hp-strip-title">High-Stakes Matters</div>
-            <div className="hp-strip-body">When documentation becomes overwhelming, regulations become complicated, and outcomes matter—Turbo Response helps organize the information, identify what matters, and prepare the strongest possible response.</div>
+          <div className="hp-strip-icon">🤖</div>
+          <div className="hp-strip-title">Powered by AI</div>
+            <div className="hp-strip-body">Transform documents, timelines, evidence, regulations, and workflows into one organized operational system that helps teams process more cases with less manual work.</div>
           </div>
 
         </div>
@@ -266,13 +260,13 @@ export default function Home() {
         <div className="hp-gateway-orb-purple" aria-hidden="true" />
         <div className="hp-gateway-horizon-top" aria-hidden="true" />
         <div className="hp-gateway-inner">
-          <div className="hp-eyebrow hp-eyebrow-center">Legal Technology for Complex Matters</div>
+          <div className="hp-eyebrow hp-eyebrow-center">AI-Powered Case Operations</div>
           <h2 className="hp-gateway-h2">
-            When the Matter Is Complex,<br />
-            <span className="hp-gateway-accent">Call Turbo Response.</span>
+            When Case Operations Matter,<br />
+            <span className="hp-gateway-accent">Choose Turbo Response.</span>
           </h2>
           <p className="hp-gateway-sub">
-            Turbo Response brings together research, documentation, evidence, compliance, and intelligent systems to help you move forward with clarity, confidence, and control.
+            Turbo Response is the AI-powered case operations platform for organizations managing complex matters. We help teams organize information, accelerate workflows, improve documentation, and prepare stronger responses.
           </p>
           <Link href="/turbo-intake" className="hp-btn hp-btn-primary hp-btn-xl">
             Start Your Matter →
@@ -299,9 +293,8 @@ export default function Home() {
             <Link href="/terms-of-service" className="hp-footer-link">Terms of Service</Link>
           </nav>
           <p className="hp-footer-copy">
-            © {new Date().getFullYear()} Turbo Response · Legal Technology for Complex Matters · turboresponsehq.ai<br />
-            Turbo Response is a legal technology and operational support platform. We provide intelligent research, documentation, workflow, organization, compliance support, and matter preparation.
-            We do not provide legal advice or legal representation.
+            © {new Date().getFullYear()} Turbo Response · AI-Powered Case Operations · turboresponsehq.ai<br />
+            Turbo Response is an AI-powered case operations platform that helps organizations organize documentation, manage evidence, build timelines, research regulations, and improve operational workflows. Turbo Response does not provide legal advice or legal representation.
           </p>
         </div>
       </footer>
