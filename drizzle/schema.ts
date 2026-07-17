@@ -392,5 +392,68 @@ export type InsertConversation = typeof conversations.$inferInsert;
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
+// ── TURBO MISSION CONTROL ────────────────────────────────────────────────────
+
+export const turboSignals = mysqlTable("turbo_signals", {
+	id: int().autoincrement().primaryKey(),
+	companyName: varchar("company_name", { length: 255 }).notNull(),
+	website: varchar({ length: 500 }),
+	industry: varchar({ length: 100 }),
+	contactName: varchar("contact_name", { length: 255 }),
+	contactRole: varchar("contact_role", { length: 255 }),
+	contactEmail: varchar("contact_email", { length: 320 }),
+	sourceType: varchar("source_type", { length: 50 }),
+	sourceLink: varchar("source_link", { length: 1000 }),
+	signalType: varchar("signal_type", { length: 50 }),
+	dateCaptured: varchar("date_captured", { length: 50 }),
+	notes: text(),
+	aiSummary: text("ai_summary"),
+	recommendedAction: text("recommended_action"),
+	opportunityScore: int("opportunity_score"),
+	fileUrl: text("file_url"),
+	fileName: varchar("file_name", { length: 255 }),
+	pipelineId: int("pipeline_id"),
+	createdAt: timestamp("created_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow().notNull(),
+});
+
+export const pipelineOpportunities = mysqlTable("pipeline_opportunities", {
+	id: int().autoincrement().primaryKey(),
+	signalId: int("signal_id"),
+	companyName: varchar("company_name", { length: 255 }).notNull(),
+	contactName: varchar("contact_name", { length: 255 }),
+	contactEmail: varchar("contact_email", { length: 320 }),
+	opportunityScore: int("opportunity_score"),
+	recommendedAction: text("recommended_action"),
+	stage: mysqlEnum(['lead', 'discovery', 'proposal', 'client', 'completed']).default('lead').notNull(),
+	value: decimal({ precision: 10, scale: 2 }),
+	nextStep: text("next_step"),
+	followUpDate: varchar("follow_up_date", { length: 50 }),
+	notes: text(),
+	createdAt: timestamp("created_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow().notNull(),
+});
+
+export const missionTasks = mysqlTable("mission_tasks", {
+	id: int().autoincrement().primaryKey(),
+	title: varchar({ length: 500 }).notNull(),
+	companyName: varchar("company_name", { length: 255 }),
+	contactName: varchar("contact_name", { length: 255 }),
+	signalId: int("signal_id"),
+	dueDate: varchar("due_date", { length: 50 }),
+	priority: mysqlEnum(['low', 'medium', 'high', 'urgent']).default('medium').notNull(),
+	notes: text(),
+	status: mysqlEnum(['pending', 'in_progress', 'completed']).default('pending').notNull(),
+	createdAt: timestamp("created_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).onUpdateNow().notNull(),
+});
+
+export type TurboSignal = typeof turboSignals.$inferSelect;
+export type InsertTurboSignal = typeof turboSignals.$inferInsert;
+export type PipelineOpportunity = typeof pipelineOpportunities.$inferSelect;
+export type InsertPipelineOpportunity = typeof pipelineOpportunities.$inferInsert;
+export type MissionTask = typeof missionTasks.$inferSelect;
+export type InsertMissionTask = typeof missionTasks.$inferInsert;
+
 
 
