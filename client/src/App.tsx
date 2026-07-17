@@ -37,7 +37,6 @@ import OffenseIntakeForm from "./pages/OffenseIntakeForm";
 import AdminCasesList from "./pages/AdminCasesList";
 import AdminCasesDetail from "./pages/AdminCaseDetail";
 
-import Industries from "./pages/Industries";
 import ConsumerSolutions from "./pages/ConsumerSolutions";
 import BlackFuture from "./pages/BlackFuture";
 import AdminKnowledgeBase from "./pages/AdminKnowledgeBase";
@@ -50,7 +49,6 @@ function Router() {
     <Switch>
       <Route path={"/"} component={Home} />
 
-      <Route path="/industries" component={Industries} />
       <Route path="/consumer-solutions" component={ConsumerSolutions} />
       <Route path="/black-future" component={BlackFuture} />
       <Route path="/services" component={Services} />
