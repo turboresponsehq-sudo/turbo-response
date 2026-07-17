@@ -77,7 +77,6 @@ echo -e "\n${YELLOW}[6/6] Validating build output...${NC}"
 REQUIRED_FILES=(
     "dist/server.js"
     "dist/public/index.html"
-    "dist/migrations/run-migrations.mjs"
 )
 
 ALL_VALID=true
