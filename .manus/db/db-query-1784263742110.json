@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS ai_briefs (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  sourceType VARCHAR(32) NOT NULL COMMENT 'workspace or signal',\n  sourceId INT NOT NULL,\n  sourceName VARCHAR(255) DEFAULT NULL,\n  briefType VARCHAR(64) NOT NULL COMMENT 'internal_case, consumer_case, client_project, business_project, signal',\n  content JSON NOT NULL COMMENT 'Structured brief sections as JSON',\n  rawData JSON DEFAULT NULL COMMENT 'Raw collected data used to generate the brief',\n  generatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  metadata JSON DEFAULT NULL COMMENT 'Future: LLM model used, tokens, etc.',\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  INDEX idx_source (sourceType, sourceId),\n  INDEX idx_generated (generatedAt)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7DorTNURquHZQZu.root --database WQoqrgvAJmZqDJX9hYJoWw --execute CREATE TABLE IF NOT EXISTS ai_briefs (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  sourceType VARCHAR(32) NOT NULL COMMENT 'workspace or signal',\n  sourceId INT NOT NULL,\n  sourceName VARCHAR(255) DEFAULT NULL,\n  briefType VARCHAR(64) NOT NULL COMMENT 'internal_case, consumer_case, client_project, business_project, signal',\n  content JSON NOT NULL COMMENT 'Structured brief sections as JSON',\n  rawData JSON DEFAULT NULL COMMENT 'Raw collected data used to generate the brief',\n  generatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  metadata JSON DEFAULT NULL COMMENT 'Future: LLM model used, tokens, etc.',\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  INDEX idx_source (sourceType, sourceId),\n  INDEX idx_generated (generatedAt)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1110
+}
