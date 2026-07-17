@@ -16,23 +16,23 @@ export default function TurboIntakeForm() {
     email: '',
     phone: '',
     businessName: '',
-    entityType: 'Individual',
+    entityType: 'Consumer Law Support Company',
     websiteUrl: '',
     instagramUrl: '',
     tiktokUrl: '',
     facebookUrl: '',
     youtubeUrl: '',
     linkInBio: '',
-    primaryGoal: 'Documents & Research',
+    primaryGoal: 'Document and Evidence Organization',
     targetAuthority: '',
-    stage: 'Just Getting Started',
+    stage: 'Building the Process',
     deadline: '',
     estimatedAmount: '',
     caseDescription: '',
   });
 
   useEffect(() => {
-    document.title = 'Turbo Response — Start Your Matter';
+    document.title = 'Turbo Response — Case Operations Discovery';
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -116,8 +116,8 @@ export default function TurboIntakeForm() {
         <div className="bi-success-wrap">
           <div className="bi-success-card">
             <div className="bi-success-icon">✓</div>
-            <h2>Matter Intake Received</h2>
-            <p>No commitment. We'll review your submission and follow up within 24–48 hours.</p>
+            <h2>Case Operations Review Requested</h2>
+            <p>No commitment. We'll review your submission and follow up within 1–2 business days.</p>
           </div>
         </div>
       </div>
@@ -146,10 +146,10 @@ export default function TurboIntakeForm() {
         <div className="bi-container">
 
           <div className="bi-page-header">
-            <span className="bi-badge">⚡ Confidential Case Review</span>
-            <h1 className="bi-title">Start Your Matter</h1>
+            <span className="bi-badge">⚡ Case Operations Discovery</span>
+            <h1 className="bi-title">Tell Us About Your Case Operations</h1>
             <p className="bi-subtitle">
-              Tell us what happened. We'll review your documentation, identify the rules and issues that matter, and determine the clearest next step.
+              Tell us how your team currently manages intake, documents, evidence, research, timelines, and case workflows. We'll review your process and identify where Turbo Response may be able to improve efficiency, organization, and case capacity.
             </p>
           </div>
 
@@ -160,30 +160,30 @@ export default function TurboIntakeForm() {
               <div className="bi-hiw-step">
                 <span className="bi-hiw-num">1</span>
                 <div>
-                  <strong>Submit Your Matter</strong>
-                  <p>Upload your documents and explain what's happening.</p>
+                  <strong>Tell Us About Your Operations</strong>
+                  <p>Share how your team manages cases, documentation, research, evidence, and follow-up.</p>
                 </div>
               </div>
               <div className="bi-hiw-arrow">↓</div>
               <div className="bi-hiw-step">
                 <span className="bi-hiw-num">2</span>
                 <div>
-                  <strong>We Review Everything</strong>
-                  <p>We organize the facts, identify issues, research the rules, and determine what matters most.</p>
+                  <strong>We Review Your Workflow</strong>
+                  <p>We identify bottlenecks, repetitive work, documentation gaps, and opportunities for AI-assisted case operations.</p>
                 </div>
               </div>
               <div className="bi-hiw-arrow">↓</div>
               <div className="bi-hiw-step">
                 <span className="bi-hiw-num">3</span>
                 <div>
-                  <strong>You Receive a Clear Next Step</strong>
-                  <p>If Turbo Response is a good fit, we'll outline how we can help.</p>
+                  <strong>Receive a Recommended Next Step</strong>
+                  <p>If there is a strong fit, we'll recommend the most practical service, workflow, or implementation approach for your team.</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <p className="bi-form-tagline">Every complex matter begins with better information.</p>
+          <p className="bi-form-tagline">Better case operations begin with understanding how the work is currently being done.</p>
 
           {error && (
             <div className="bi-error-banner">
@@ -215,25 +215,23 @@ export default function TurboIntakeForm() {
             </div>
 
             <div className="bi-card">
-              <h2 className="bi-section-title">Organization</h2>
+              <h2 className="bi-section-title">Company or Organization</h2>
               <div className="bi-field-grid">
                 <div className="bi-field">
-                  <label htmlFor="businessName">Business / Entity Name</label>
+                  <label htmlFor="businessName">Company or Organization Name</label>
                   <input type="text" id="businessName" name="businessName" value={formData.businessName}
-                    onChange={handleChange} placeholder="Your Business or Project Name" />
+                    onChange={handleChange} placeholder="Enter your company or organization name" />
                 </div>
                 <div className="bi-field">
-                  <label htmlFor="entityType">Entity Type</label>
+                  <label htmlFor="entityType">Organization Type</label>
                   <select id="entityType" name="entityType" value={formData.entityType} onChange={handleChange}>
-                    <option value="Individual / Consumer">Individual / Consumer</option>
-                    <option value="Solo Founder">Solo Founder</option>
-                    <option value="Small Business">Small Business</option>
-                    <option value="Corporation">Corporation</option>
-                    <option value="Nonprofit Organization">Nonprofit Organization</option>
-                    <option value="Property Owner / Manager">Property Owner / Manager</option>
-                    <option value="Contractor">Contractor</option>
+                    <option value="Consumer Law Support Company">Consumer Law Support Company</option>
+                    <option value="Legal Support Company">Legal Support Company</option>
+                    <option value="Claims or Dispute Support Company">Claims or Dispute Support Company</option>
+                    <option value="Advocacy Organization">Advocacy Organization</option>
                     <option value="Compliance Team">Compliance Team</option>
-                    <option value="Professional Services Firm">Professional Services Firm</option>
+                    <option value="Investigation Company">Investigation Company</option>
+                    <option value="Professional Services Company">Professional Services Company</option>
                     <option value="Other">Other</option>
                   </select>
                 </div>
@@ -272,30 +270,35 @@ export default function TurboIntakeForm() {
             </div>
 
             <div className="bi-card">
-              <h2 className="bi-section-title">Matter Overview</h2>
+              <h2 className="bi-section-title">Operations Overview</h2>
               <div className="bi-field-grid">
                 <div className="bi-field">
-                  <label htmlFor="primaryGoal">What Type of Matter Are You Dealing With? *</label>
+                  <label htmlFor="primaryGoal">What Area of Case Operations Needs the Most Support? *</label>
                   <select id="primaryGoal" name="primaryGoal" value={formData.primaryGoal} onChange={handleChange} required>
-                    <option value="Documents & Research">Documents &amp; Research</option>
-                    <option value="Claims & Disputes">Claims &amp; Disputes</option>
-                    <option value="Business & Compliance">Business &amp; Compliance</option>
-                    <option value="Government & Regulatory">Government &amp; Regulatory</option>
+                    <option value="Document and Evidence Organization">Document and Evidence Organization</option>
+                    <option value="Case Intake and Qualification">Case Intake and Qualification</option>
+                    <option value="Timeline and Chronology Creation">Timeline and Chronology Creation</option>
+                    <option value="Research and Regulatory Intelligence">Research and Regulatory Intelligence</option>
+                    <option value="Claims and Response Preparation">Claims and Response Preparation</option>
+                    <option value="Case Tracking and Follow-Up">Case Tracking and Follow-Up</option>
+                    <option value="Workflow Automation">Workflow Automation</option>
+                    <option value="Full Case Operations Support">Full Case Operations Support</option>
                     <option value="Not Sure Yet">Not Sure Yet</option>
                   </select>
                 </div>
                 <div className="bi-field">
-                  <label htmlFor="targetAuthority">Agency, Company, Platform, or Organization Involved</label>
+                  <label htmlFor="targetAuthority">What Types of Cases or Matters Does Your Team Manage?</label>
                   <input type="text" id="targetAuthority" name="targetAuthority" value={formData.targetAuthority}
-                    onChange={handleChange} placeholder="Example: city agency, bank, insurer, employer, contractor, Stripe, PayPal, Amazon…" />
+                    onChange={handleChange} placeholder="Example: consumer disputes, financial claims, regulatory complaints, investigations, housing matters, employment matters, or administrative cases" />
                 </div>
                 <div className="bi-field">
-                  <label htmlFor="stage">Current Matter Status</label>
+                  <label htmlFor="stage">Current Operations Stage</label>
                   <select id="stage" name="stage" value={formData.stage} onChange={handleChange}>
-                    <option value="Just Getting Started">Just Getting Started</option>
-                    <option value="Need Help Now">Need Help Now</option>
-                    <option value="Responding to a Notice or Claim">Responding to a Notice or Claim</option>
-                    <option value="Under Investigation">Under Investigation</option>
+                    <option value="Building the Process">Building the Process</option>
+                    <option value="Managing Cases Manually">Managing Cases Manually</option>
+                    <option value="Using Multiple Disconnected Tools">Using Multiple Disconnected Tools</option>
+                    <option value="Need Immediate Operational Support">Need Immediate Operational Support</option>
+                    <option value="Preparing to Scale">Preparing to Scale</option>
                     <option value="Not Sure">Not Sure</option>
                   </select>
                 </div>
@@ -303,35 +306,42 @@ export default function TurboIntakeForm() {
             </div>
 
             <div className="bi-card">
-              <h2 className="bi-section-title">Timeline & Urgency</h2>
+              <h2 className="bi-section-title">Implementation Timeline</h2>
               <div className="bi-field-grid bi-field-grid-2">
                 <div className="bi-field">
-                  <label htmlFor="deadline">Important Deadline</label>
+                  <label htmlFor="deadline">When Would You Like Support to Begin?</label>
                   <input type="date" id="deadline" name="deadline" value={formData.deadline}
                     onChange={handleChange} />
                 </div>
                 <div className="bi-field">
-                  <label htmlFor="estimatedAmount">Estimated Support Budget</label>
-                  <input type="number" id="estimatedAmount" name="estimatedAmount" value={formData.estimatedAmount}
-                    onChange={handleChange} placeholder="Optional" step="0.01" />
+                  <label htmlFor="estimatedAmount">Estimated Monthly Budget</label>
+                  <select id="estimatedAmount" name="estimatedAmount" value={formData.estimatedAmount} onChange={handleChange}>
+                    <option value="">Select a range</option>
+                    <option value="Under $2,500">Under $2,500</option>
+                    <option value="$2,500–$5,000">$2,500–$5,000</option>
+                    <option value="$5,000–$10,000">$5,000–$10,000</option>
+                    <option value="$10,000–$20,000">$10,000–$20,000</option>
+                    <option value="$20,000+">$20,000+</option>
+                    <option value="Not Sure Yet">Not Sure Yet</option>
+                  </select>
                 </div>
               </div>
             </div>
 
             <div className="bi-card">
-              <h2 className="bi-section-title">Matter Details</h2>
+              <h2 className="bi-section-title">Current Workflow and Challenges</h2>
               <div className="bi-field">
-                <label htmlFor="caseDescription">Tell Us What Happened *</label>
+                <label htmlFor="caseDescription">Tell Us How Your Team Currently Manages Cases *</label>
                 <textarea id="caseDescription" name="caseDescription" value={formData.caseDescription}
                   onChange={handleChange} rows={5} required
-                  placeholder="Explain what happened, who is involved, what documents you have, whether a deadline exists, and what outcome you are trying to achieve." />
+                  placeholder="Describe your current workflow, team size, case volume, tools being used, documentation challenges, repetitive tasks, bottlenecks, and the outcome you want Turbo Response to help create." />
               </div>
             </div>
 
             <div className="bi-card">
               <h2 className="bi-section-title">Supporting Files <span className="bi-optional">(Optional)</span></h2>
-              <p className="bi-field-hint">Upload relevant notices, contracts, policies, screenshots, emails, reports, letters, evidence, timelines, or other supporting records.</p>
-              <p className="bi-trust-statement">🔒 Your documents remain confidential and are never shared without your permission.</p>
+              <p className="bi-field-hint">Upload sample intake forms, workflows, SOPs, case templates, dashboards, reports, screenshots, document structures, or other materials that help us understand your current operations.</p>
+              <p className="bi-trust-statement">🔒 Your business information and uploaded materials remain confidential and are used only to evaluate your operational needs.</p>
               <MultiFileUploader
                 onUploadComplete={handleUploadComplete}
                 apiUrl={getApiUrl()}
@@ -356,7 +366,7 @@ export default function TurboIntakeForm() {
                 <input type="checkbox" checked={termsAccepted}
                   onChange={(e) => setTermsAccepted(e.target.checked)} required />
                 <span>
-                  I understand that Turbo Response provides legal technology, research, documentation, organization, compliance support, and matter preparation services. Turbo Response is not a law firm and does not provide legal advice or legal representation. This intake is for initial review and scoping only.
+                  I understand that Turbo Response provides AI-powered case operations, documentation, research, workflow, automation, and operational support. Turbo Response is not a law firm and does not provide legal advice or legal representation. This form is for business discovery, service evaluation, and project scoping only.
                 </span>
               </label>
             </div>
@@ -366,10 +376,10 @@ export default function TurboIntakeForm() {
                 {loading ? (
                   <><span className="bi-spinner" /> Submitting...</>
                 ) : (
-                  <>Submit Matter Intake <span className="bi-arrow">→</span></>
+                  <>Request a Case Operations Review <span className="bi-arrow">→</span></>
                 )}
               </button>
-              <p className="bi-submit-note">No commitment. We'll review your submission and follow up within 24–48 hours.</p>
+              <p className="bi-submit-note">No commitment. We'll review your submission and follow up within 1–2 business days.</p>
             </div>
 
           </form>
