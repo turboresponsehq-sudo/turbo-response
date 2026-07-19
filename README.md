@@ -166,6 +166,23 @@ The framework is designed for rapid deployment to other industries with configur
 
 ---
 
+## My Contributions
+
+Turbo Response was built as a production-grade AI Case Operations platform. My role spans product architecture, AI systems design, full-stack development, integrations, deployment, and operational automation. The project demonstrates my ability to design, build, deploy, and continuously improve complex AI-powered software systems.
+
+- Designed the overall system architecture and technical direction.
+- Built the React + TypeScript frontend experience.
+- Developed the Node.js + Express backend services and APIs.
+- Designed and implemented the MySQL database schema using Drizzle ORM.
+- Integrated AI capabilities using OpenAI, xAI, RAG, and document intelligence workflows.
+- Built the Knowledge Base and AI Voice Agent framework.
+- Implemented workflow automation, case management, and operational intelligence features.
+- Integrated third-party services including HubSpot CRM, Google Drive, AWS S3, and email automation.
+- Configured GitHub Actions, CI/CD pipelines, and production deployment on Render.
+- Continuously improved the platform through real-world testing, debugging, and iterative development.
+
+---
+
 ## Architecture Overview
 
 ```
