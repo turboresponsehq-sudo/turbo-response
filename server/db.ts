@@ -12,7 +12,9 @@ let _db: ReturnType<typeof drizzle> | null = null;
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
-      _db = drizzle(process.env.DATABASE_URL);
+      // Attempt to create a connection pool first to catch connection errors early
+      const connection = await import("mysql2/promise").then(m => m.createPool(process.env.DATABASE_URL!));
+      _db = drizzle(connection);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
