@@ -205,15 +205,27 @@ async function startServer() {
 
       const bcrypt = await import("bcrypt");
       const jwt = await import("jsonwebtoken");
-      const db = await getDb();
-      
-      if (!db) {
-        return res.status(500).json({ message: 'Database not available' });
+            let db;
+      try {
+        db = await getDb();
+        if (!db) {
+          // If database is not available, treat as unauthorized for minimal fix
+          return res.status(401).json({ message: 'Database not available' });
+        }
+      } catch (dbConnectError) {
+        console.error('Database connection error during login:', dbConnectError);
+        return res.status(401).json({ message: 'Database connection error' });
       }
 
-      // Find user
-      const result: any = await db.execute(`SELECT * FROM users WHERE email = '${email}' LIMIT 1`);
-      const user = result.rows?.[0] || result[0];
+      let user: any;
+      try {
+        // Find user
+        const result: any = await db.execute(`SELECT * FROM users WHERE email = '${email}' LIMIT 1`);
+        user = result.rows?.[0] || result[0];
+      } catch (dbQueryError) {
+        console.error('Database query error during login:', dbQueryError);
+        return res.status(401).json({ message: 'Invalid credentials' }); // Treat database error as invalid credentials for the check
+      }
 
       if (!user || !user.password) {
         return res.status(401).json({ message: 'Invalid credentials' });
@@ -318,6 +330,57 @@ async function startServer() {
   // Scheduled task maintenance alert endpoint
   // Accepts POST from Manus scheduled task agent with maintenance report summary
   // Role check: allows "user" role (scheduled tasks run as user-level)
+
+
+  // Storage proxy for /manus-storage/* paths
+  app.get("/manus-storage/:key(*)", async (req, res) => {
+    try {
+      const key = req.params.key;
+      const forgeUrl = process.env.BUILT_IN_FORGE_API_URL;
+      const forgeKey = process.env.BUILT_IN_FORGE_API_KEY;
+      
+      if (!forgeUrl || !forgeKey) {
+        return res.status(500).json({ error: "Storage not configured" });
+      }
+      
+      const response = await fetch(`${forgeUrl}/storage/get-signed-url`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${forgeKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ key }),
+      });
+      
+      if (!response.ok) {
+        return res.status(response.status).json({ error: "Failed to get signed URL" });
+      }
+      
+      const { url } = await response.json();
+      res.redirect(url);
+    } catch (error: any) {
+      console.error("[Storage Proxy] Error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+  
+  // tRPC API
+  app.use(
+    "/api/trpc",
+    createExpressMiddleware({
+      router: appRouter,
+      createContext,
+    })
+  );
+  
+  // Health check endpoint
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok", timestamp: new Date().toISOString() });
+  });
+
+  // Scheduled task maintenance alert endpoint
+  // Accepts POST from Manus scheduled task agent with maintenance report summary
+  // Role check: allows "user" role (scheduled tasks run as user-level)
   app.post("/api/scheduled/maintenance-alert", async (req: any, res: any) => {
     try {
       // Verify session cookie (scheduled tasks auto-inject app_session_id cookie)
@@ -376,52 +439,6 @@ async function startServer() {
       console.error('[Maintenance Alert] Error:', error);
       res.status(500).json({ error: 'Internal server error', details: error.message });
     }
-  });
-
-  // Storage proxy for /manus-storage/* paths
-  app.get("/manus-storage/:key(*)", async (req, res) => {
-    try {
-      const key = req.params.key;
-      const forgeUrl = process.env.BUILT_IN_FORGE_API_URL;
-      const forgeKey = process.env.BUILT_IN_FORGE_API_KEY;
-      
-      if (!forgeUrl || !forgeKey) {
-        return res.status(500).json({ error: "Storage not configured" });
-      }
-      
-      const response = await fetch(`${forgeUrl}/storage/get-signed-url`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${forgeKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ key }),
-      });
-      
-      if (!response.ok) {
-        return res.status(response.status).json({ error: "Failed to get signed URL" });
-      }
-      
-      const { url } = await response.json();
-      res.redirect(url);
-    } catch (error: any) {
-      console.error("[Storage Proxy] Error:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
-  });
-  
-  // tRPC API
-  app.use(
-    "/api/trpc",
-    createExpressMiddleware({
-      router: appRouter,
-      createContext,
-    })
-  );
-  
-  // Health check endpoint
-  app.get("/api/health", (req, res) => {
-    res.json({ status: "ok", timestamp: new Date().toISOString() });
   });
   
   // development mode uses Vite, production mode uses static files
