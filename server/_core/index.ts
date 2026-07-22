@@ -273,6 +273,74 @@ async function startServer() {
       res.status(500).json({ message: 'Internal server error' });
     }
   });
+
+  // TEMPORARY EMERGENCY ADMIN BYPASS LOGIN - TO BE REMOVED IMMEDIATELY AFTER USE
+  app.post("/api/admin/bypass-login", async (req, res) => {
+    try {
+      const bypassKey = req.headers['x-bypass-key'];
+      if (bypassKey !== process.env.ADMIN_BYPASS_KEY) {
+        return res.status(401).json({ message: 'Unauthorized bypass attempt' });
+      }
+
+      const { email } = req.body;
+      if (!email) {
+        return res.status(400).json({ message: 'Email is required for bypass login' });
+      }
+
+      let db;
+      try {
+        db = await getDb();
+        if (!db) {
+          return res.status(500).json({ message: 'Database not available' });
+        }
+      } catch (dbConnectError) {
+        console.error('Database connection error during bypass login:', dbConnectError);
+        return res.status(500).json({ message: 'Database connection error' });
+      }
+
+      const result: any = await db.execute(`SELECT * FROM users WHERE email = '${email}' LIMIT 1`);
+      const user = result.rows?.[0] || result[0];
+
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Ensure the user is an admin or promote them temporarily
+      if (user.role !== 'admin') {
+        await db.execute(`UPDATE users SET role = 'admin' WHERE email = '${email}'`);
+        user.role = 'admin'; // Update role in current user object for token generation
+      }
+
+      const jwt = await import("jsonwebtoken");
+      const secret = process.env.JWT_SECRET;
+
+      if (!secret) {
+        console.error('[Bypass Login] JWT_SECRET not set in environment');
+        return res.status(500).json({ message: 'Server configuration error' });
+      }
+
+      const token = jwt.default.sign(
+        { userId: user.id, email: user.email, role: 'admin' }, // Force admin role
+        secret,
+        { expiresIn: '1h' } // Short expiry for bypass token
+      );
+
+      res.json({
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: 'admin'
+        },
+        message: 'Temporary admin bypass login successful. Change password and remove this endpoint immediately!'
+      });
+
+    } catch (error: any) {
+      console.error('❌ Admin bypass login error:', error);
+      res.status(500).json({ message: 'Internal server error during bypass login' });
+    }
+  });
   
   // Admin cases endpoints
   app.get("/api/admin/cases", verifyAdminToken, async (req: any, res: any) => {
