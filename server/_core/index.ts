@@ -88,7 +88,7 @@ async function startServer() {
       }
 
       const email = 'turboresponsehq@gmail.com';
-      const password = 'Admin123!';
+      const password = 'Turbo123!';
       const hashedPassword = await bcrypt.default.hash(password, 10);
 
       // Add password column if needed
