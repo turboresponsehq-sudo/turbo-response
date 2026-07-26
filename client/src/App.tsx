@@ -42,6 +42,7 @@ import BlackFuture from "./pages/BlackFuture";
 import AdminKnowledgeBase from "./pages/AdminKnowledgeBase";
 import AdminKnowledgeBaseImport from "./pages/AdminKnowledgeBaseImport";
 import AdminCommandCenter from "./pages/AdminCommandCenter";
+import CaseBrief from "./pages/CaseBrief";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -51,6 +52,8 @@ function Router() {
 
       <Route path="/consumer-solutions" component={ConsumerSolutions} />
       <Route path="/black-future" component={BlackFuture} />
+      {/* Case Documentation Brief landing page */}
+      <Route path="/case-brief" component={CaseBrief} />
       <Route path="/services" component={Services} />
       <Route path="/contact" component={Contact} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
