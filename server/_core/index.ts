@@ -12,6 +12,7 @@ import { serveStatic, setupVite } from "./vite";
 import { brainRouter } from "./brainRouter";
 import intakeRouter from "../routes/intake";
 import businessAuditRouter from "../routes/businessAudit";
+import caseBriefRouter from "../routes/caseBrief";
 import { getDb } from "../db"; // Already imported above
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -76,6 +77,9 @@ async function startServer() {
 
   // Business Intelligence Audit route
   app.use("/api", businessAuditRouter);
+
+  // Case Documentation Brief route
+  app.use("/api", caseBriefRouter);
   
   // Setup admin user (one-time)
   app.get("/api/setup-admin", async (req, res) => {
