@@ -97,7 +97,7 @@ async function startServer() {
 
       // Add password column if needed
       try {
-        await db.execute('ALTER TABLE users ADD COLUMN password VARCHAR(255) AFTER email');
+        await db.execute('ALTER TABLE users ADD COLUMN IF NOT EXISTS password VARCHAR(255)');
         console.log('✅ Password column added');
       } catch (error: any) {
         console.log('✅ Password column exists');
@@ -111,8 +111,8 @@ async function startServer() {
         await db.execute(`UPDATE users SET password = '${hashedPassword}', role = 'admin' WHERE email = '${email}'`);
       } else {
         await db.execute(`
-          INSERT INTO users (openId, email, password, role, name, createdAt, updatedAt, lastSignedIn) 
-          VALUES ('admin-local', '${email}', '${hashedPassword}', 'admin', 'Admin', NOW(), NOW(), NOW())
+          INSERT INTO users (email, password_hash, password, role, full_name, created_at, updated_at)
+          VALUES ('${email}', '${hashedPassword}', '${hashedPassword}', 'admin', 'Admin', NOW(), NOW())
         `);
       }
 
@@ -231,12 +231,13 @@ async function startServer() {
         return res.status(401).json({ message: 'Invalid credentials' }); // Treat database error as invalid credentials for the check
       }
 
-      if (!user || !user.password) {
+      const storedHash = user?.password || user?.password_hash;
+      if (!user || !storedHash) {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
 
       // Verify password
-      const isValid = await bcrypt.default.compare(password, user.password);
+      const isValid = await bcrypt.default.compare(password, storedHash);
       if (!isValid) {
         return res.status(401).json({ message: 'Invalid credentials' });
       }

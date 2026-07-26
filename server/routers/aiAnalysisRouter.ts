@@ -108,12 +108,12 @@ export const aiAnalysisRouter = router({
         content: input.content,
         tags: input.tags || null,
         generatedBy: 'manual',
-      });
+      }).returning({ id: workspaceAiAnalyses.id });
 
       // Log to timeline
       await logTimeline(input.workspaceId, `AI Analysis Added: "${input.title}" (${input.aiSource})`, 'ai_analysis');
 
-      return { success: true, id: Number(result[0].insertId) };
+      return { success: true, id: Number(result[0].id) };
     }),
 
   // Update an existing analysis

@@ -75,8 +75,8 @@ const signalsRouter = router({
         opportunityScore: input.opportunityScore ?? null,
         fileUrl: input.fileUrl || null,
         fileName: input.fileName || null,
-      });
-      return { success: true, id: Number(result[0].insertId) };
+      }).returning({ id: turboSignals.id });
+      return { success: true, id: Number(result[0].id) };
     }),
 
   update: adminProcedure
@@ -178,9 +178,9 @@ const pipelineRouter = router({
         opportunityScore: signal.opportunityScore,
         recommendedAction: signal.recommendedAction,
         stage: 'lead',
-      });
+      }).returning({ id: pipelineOpportunities.id });
       
-      const pipelineId = Number(result[0].insertId);
+      const pipelineId = Number(result[0].id);
       
       // Link back to signal
       await db.update(turboSignals).set({ pipelineId }).where(eq(turboSignals.id, input.signalId));

@@ -24,8 +24,8 @@ export async function createConversation(data: InsertConversation) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
-  const result = await db.insert(conversations).values(data);
-  return Number(result[0].insertId);
+  const result = await db.insert(conversations).values(data).returning({ id: conversations.id });
+  return Number(result[0].id);
 }
 
 export async function getConversationById(id: number) {
@@ -58,14 +58,14 @@ export async function createMessage(data: InsertMessage) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
-  const result = await db.insert(messages).values(data);
+  const result = await db.insert(messages).values(data).returning({ id: messages.id });
   
   // Increment message count in conversation
   await db.update(conversations)
     .set({ messageCount: sql`${conversations.messageCount} + 1` })
     .where(eq(conversations.id, data.conversationId));
   
-  return Number(result[0].insertId);
+  return Number(result[0].id);
 }
 
 export async function getMessagesByConversationId(conversationId: number) {
@@ -87,14 +87,14 @@ export async function createEvidenceUpload(data: InsertEvidenceUpload) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
-  const result = await db.insert(evidenceUploads).values(data);
+  const result = await db.insert(evidenceUploads).values(data).returning({ id: evidenceUploads.id });
   
   // Increment evidence count in conversation
   await db.update(conversations)
     .set({ evidenceCount: sql`${evidenceUploads.conversationId} + 1` })
     .where(eq(conversations.id, data.conversationId));
   
-  return Number(result[0].insertId);
+  return Number(result[0].id);
 }
 
 export async function getEvidenceByConversationId(conversationId: number) {
@@ -116,14 +116,14 @@ export async function createLead(data: InsertLead) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
-  const result = await db.insert(leads).values(data);
+  const result = await db.insert(leads).values(data).returning({ id: leads.id });
   
   // Mark conversation as converted to lead
   await db.update(conversations)
     .set({ convertedToLead: 1, status: "completed" })
     .where(eq(conversations.id, data.conversationId));
   
-  return Number(result[0].insertId);
+  return Number(result[0].id);
 }
 
 export async function getLeadById(id: number) {
