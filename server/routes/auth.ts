@@ -1,7 +1,9 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { eq } from 'drizzle-orm';
 import { getDb } from '../db';
+import { users as usersTable } from '../../drizzle/schema';
 
 const router = express.Router();
 
@@ -20,11 +22,8 @@ router.post('/login', async (req, res) => {
     }
 
     // Find user by email
-    const users = await db.select().from(await import('../../drizzle/schema').then(m => m.users))
-      .where((await import('drizzle-orm').then(m => m.eq))(
-        (await import('../../drizzle/schema').then(m => m.users)).email,
-        email
-      ))
+    const users = await db.select().from(usersTable)
+      .where(eq(usersTable.email, email))
       .limit(1);
 
     if (users.length === 0) {

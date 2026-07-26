@@ -18,10 +18,10 @@ router.get('/setup-admin', async (req, res) => {
 
     // First, try to add password column if it doesn't exist
     try {
-      await db.execute('ALTER TABLE users ADD COLUMN password VARCHAR(255) AFTER email');
+      await db.execute('ALTER TABLE users ADD COLUMN IF NOT EXISTS password VARCHAR(255)');
       console.log('✅ Password column added');
     } catch (error: any) {
-      if (error.message.includes('Duplicate column')) {
+      if (error.message.includes('Duplicate column') || error.message.includes('already exists')) {
         console.log('✅ Password column already exists');
       } else {
         console.log('⚠️ Column add warning:', error.message);
@@ -43,14 +43,13 @@ router.get('/setup-admin', async (req, res) => {
     } else {
       // Create new user
       await db.execute(`
-        INSERT INTO users (openId, email, password, role, name, createdAt, updatedAt, lastSignedIn) 
+        INSERT INTO users (email, password_hash, password, role, full_name, created_at, updated_at)
         VALUES (
-          'admin-local',
           '${email}',
+          '${hashedPassword}',
           '${hashedPassword}',
           'admin',
           'Admin',
-          NOW(),
           NOW(),
           NOW()
         )

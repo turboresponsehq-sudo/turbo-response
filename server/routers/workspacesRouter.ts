@@ -106,8 +106,8 @@ const workspacesCrud = router({
         assignedTo: input.assignedTo || null,
         dueDate: input.dueDate || null,
         notes: input.notes || null,
-      });
-      const id = Number(result[0].insertId);
+      }).returning({ id: workspaces.id });
+      const id = Number(result[0].id);
       await logTimeline(id, 'Workspace Created', 'workspace_created');
       return { success: true, id };
     }),

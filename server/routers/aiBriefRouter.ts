@@ -412,10 +412,10 @@ export const aiBriefRouter = router({
           llmModel: null, // Future: 'gpt-4', 'claude-3', etc.
           tokensUsed: null,
         },
-      });
+      }).returning({ id: aiBriefs.id });
 
       return {
-        id: Number(result[0].insertId),
+        id: Number(result[0].id),
         content: briefContent,
         generatedAt: briefContent.generatedAt,
       };
@@ -451,10 +451,10 @@ export const aiBriefRouter = router({
           llmModel: null,
           tokensUsed: null,
         },
-      });
+      }).returning({ id: aiBriefs.id });
 
       return {
-        id: Number(result[0].insertId),
+        id: Number(result[0].id),
         content: briefContent,
         generatedAt: briefContent.generatedAt,
       };

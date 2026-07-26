@@ -4,24 +4,23 @@ import { intakeLeads } from "../drizzle/schema";
 import type { InsertIntakeLead, IntakeLead } from "../drizzle/schema";
 
 const CREATE_INTAKE_LEADS_TABLE = sql.raw(`
-  CREATE TABLE IF NOT EXISTS \`intake_leads\` (
-    \`id\` int AUTO_INCREMENT NOT NULL,
-    \`fullName\` varchar(255) NOT NULL,
-    \`email\` varchar(320) NOT NULL,
-    \`phone\` varchar(100),
-    \`socialHandle\` varchar(255),
-    \`situationPreview\` text,
-    \`fullSituation\` longtext,
-    \`source\` varchar(50) NOT NULL DEFAULT 'intake',
-    \`status\` enum('new_lead','reviewing','follow_up','converted') NOT NULL DEFAULT 'new_lead',
-    \`adminNotes\` longtext,
-    \`submittedAt\` timestamp NOT NULL DEFAULT (now()),
-    \`updatedAt\` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT \`intake_leads_id\` PRIMARY KEY(\`id\`)
+  CREATE TABLE IF NOT EXISTS "intake_leads" (
+    "id" serial PRIMARY KEY,
+    "fullName" varchar(255) NOT NULL,
+    "email" varchar(320) NOT NULL,
+    "phone" varchar(100),
+    "socialHandle" varchar(255),
+    "situationPreview" text,
+    "fullSituation" text,
+    "source" varchar(50) NOT NULL DEFAULT 'intake',
+    "status" varchar(50) NOT NULL DEFAULT 'new_lead',
+    "adminNotes" text,
+    "submittedAt" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
   )
 `);
 
-/** Extract the underlying MySQL error message from a wrapped drizzle error */
+/** Extract the underlying database error message from a wrapped drizzle error */
 function rootCauseMessage(error: unknown): string {
   const err = error as { message?: string; cause?: { message?: string; code?: string } };
   if (err?.cause?.message) {
@@ -38,19 +37,19 @@ export async function saveIntakeLead(data: InsertIntakeLead): Promise<number> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   try {
-    const result = await db.insert(intakeLeads).values(data);
-    return Number(result[0].insertId);
+    const result = await db.insert(intakeLeads).values(data).returning({ id: intakeLeads.id });
+    return Number(result[0].id);
   } catch (error) {
     const causeMsg = rootCauseMessage(error);
     console.error("[IntakeLeads] Insert failed:", causeMsg);
 
-    // If the table is missing (ER_NO_SUCH_TABLE), create it and retry once
-    const cause = (error as { cause?: { code?: string; errno?: number } })?.cause;
-    if (cause?.code === "ER_NO_SUCH_TABLE" || cause?.errno === 1146 || /doesn't exist/i.test(causeMsg)) {
+    // If the table is missing (Postgres error 42P01: undefined_table), create it and retry once
+    const cause = (error as { cause?: { code?: string } })?.cause;
+    if (cause?.code === "42P01" || /does not exist|doesn't exist/i.test(causeMsg)) {
       console.warn("[IntakeLeads] intake_leads table missing — creating it now");
       await db.execute(CREATE_INTAKE_LEADS_TABLE);
-      const retry = await db.insert(intakeLeads).values(data);
-      return Number(retry[0].insertId);
+      const retry = await db.insert(intakeLeads).values(data).returning({ id: intakeLeads.id });
+      return Number(retry[0].id);
     }
 
     throw new Error(`Could not save lead: ${causeMsg}`);

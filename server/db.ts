@@ -1,20 +1,35 @@
-import { eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/mysql2";
-import { users, cases, leads } from "../drizzle/schema";
+import { eq, desc } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { users, cases } from "../drizzle/schema";
 import type { InsertUser } from "../drizzle/schema";
-import { desc } from "drizzle-orm";
 
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
+/**
+ * Determine SSL settings from the connection string.
+ * Render Postgres (external hostnames) requires SSL; localhost does not.
+ */
+function sslConfig(connectionString: string) {
+  if (/localhost|127\.0\.0\.1/.test(connectionString)) return undefined;
+  return { rejectUnauthorized: false };
+}
+
 // Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
-      // Attempt to create a connection pool first to catch connection errors early
-      const connection = await import("mysql2/promise").then(m => m.createPool(process.env.DATABASE_URL!));
-      _db = drizzle(connection);
+      const pgModule = await import("pg");
+      const Pool = pgModule.Pool ?? (pgModule as any).default?.Pool;
+      const connectionString = process.env.DATABASE_URL;
+      const pool = new Pool({
+        connectionString,
+        ssl: sslConfig(connectionString),
+        max: 10,
+        connectionTimeoutMillis: 10000,
+      });
+      _db = drizzle(pool);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
@@ -73,7 +88,8 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       updateSet.lastSignedIn = new Date().toISOString();
     }
 
-    await db.insert(users).values(values).onDuplicateKeyUpdate({
+    await db.insert(users).values(values).onConflictDoUpdate({
+      target: users.openId,
       set: updateSet,
     });
   } catch (error) {
@@ -95,11 +111,8 @@ export async function getUserByOpenId(openId: string) {
 }
 
 
-
-
-
 /**
- * List all cases from leads table
+ * List all cases from cases table
  */
 export async function listCases() {
   const db = await getDb();
@@ -109,7 +122,6 @@ export async function listCases() {
   }
 
   try {
-    // Query leads table which contains the actual cases
     const result = await db.select({
       id: cases.id,
       conversationId: cases.conversationId,
@@ -130,7 +142,7 @@ export async function listCases() {
 }
 
 /**
- * Create a new case in leads table
+ * Create a new case in cases table
  */
 export async function createCase(caseData: any) {
   const db = await getDb();
