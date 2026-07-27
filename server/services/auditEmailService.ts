@@ -66,12 +66,14 @@ export async function sendBusinessAuditReport(
  * Used as a reliable fallback when the Manus notification service is unavailable
  * (e.g., on Render where the forge API is not reachable).
  *
- * @param subject  Email subject line
- * @param lines    Array of plain-text lines to include in the email body
+ * @param subject   Email subject line
+ * @param lines     Array of plain-text lines to include in the email body
+ * @param adminUrl  Optional URL to include as a "View in Admin Dashboard" button
  */
 export async function sendOwnerNotification(
   subject: string,
-  lines: string[]
+  lines: string[],
+  adminUrl?: string
 ): Promise<boolean> {
   const transport = getTransporter();
 
@@ -80,14 +82,29 @@ export async function sendOwnerNotification(
     return false;
   }
 
-  const textBody = lines.join("\n");
+  const resolvedAdminUrl = adminUrl || "https://turboresponsehq.ai/admin";
+  const textBody = lines.join("\n") + `\n\nView in Admin Dashboard: ${resolvedAdminUrl}`;
+
   const htmlBody = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background: #f9f9f9; border-radius: 8px;">
       <div style="background: #03050F; color: #00BFFF; padding: 16px 24px; border-radius: 6px 6px 0 0;">
         <h2 style="margin: 0; font-size: 18px;">${subject}</h2>
       </div>
       <div style="background: #ffffff; padding: 24px; border-radius: 0 0 6px 6px; border: 1px solid #e0e0e0; border-top: none;">
-        ${lines.map(l => `<p style="margin: 6px 0; color: #333; font-size: 15px;">${l.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>`).join("")}
+        ${lines.map(l => l
+          ? `<p style="margin: 6px 0; color: #333; font-size: 15px;">${l.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>`
+          : `<p style="margin: 6px 0;">&nbsp;</p>`
+        ).join("")}
+        <div style="margin: 24px 0 8px;">
+          <a href="${resolvedAdminUrl}"
+             style="display: inline-block; background: #00BFFF; color: #03050F; font-weight: bold;
+                    text-decoration: none; padding: 12px 24px; border-radius: 6px; font-size: 15px;">
+            View in Admin Dashboard
+          </a>
+        </div>
+        <p style="margin: 4px 0 0; color: #888; font-size: 12px;">
+          <a href="${resolvedAdminUrl}" style="color: #888;">${resolvedAdminUrl}</a>
+        </p>
         <hr style="margin: 20px 0; border: none; border-top: 1px solid #e0e0e0;">
         <p style="color: #888; font-size: 12px; margin: 0;">Turbo Response — Automated Lead Notification</p>
       </div>
