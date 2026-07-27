@@ -2,6 +2,7 @@ import { Router } from "express";
 import { notifyOwner } from "../_core/notification";
 import { saveIntakeLead } from "../intakeLeadsDb";
 import { syncContactToHubSpot } from "../hubspotSync";
+import { sendOwnerNotification } from "../services/auditEmailService";
 
 const router = Router();
 
@@ -91,7 +92,17 @@ async function handleOffenseIntake(req: any, res: any) {
       console.warn("[Intake] HubSpot sync failed (non-fatal):", hubspotErr);
     }
 
-    // Notify owner (non-blocking)
+    // Notify owner — email (reliable) + Manus push (best-effort)
+    sendOwnerNotification(
+      `🚀 New Offense Case Submitted — ${fullName}`,
+      [
+        `Name: ${fullName}`, `Email: ${email}`,
+        `Case #: ${caseNumber}`,
+        `Action: ${actionTypeVal || "N/A"}`, `Target: ${business || "N/A"}`,
+        `Goal: ${goal || "N/A"}`, `Amount: ${amount || "N/A"}`,
+      ]
+    ).catch((e: any) => console.warn("[Intake] Owner email failed:", e.message));
+
     try {
       await notifyOwner({
         title: "🚀 New Offense Case Submitted",
@@ -185,7 +196,17 @@ router.post("/intake", async (req, res) => {
       console.warn("[Intake] HubSpot sync failed (non-fatal):", hubspotErr);
     }
 
-    // Notify owner (non-blocking)
+    // Notify owner — email (reliable) + Manus push (best-effort)
+    sendOwnerNotification(
+      `🛡️ New Defense Case Submitted — ${fullName}`,
+      [
+        `Name: ${fullName}`, `Email: ${email}`,
+        `Case #: ${caseNumber}`,
+        `Category: ${category || "N/A"}`, `Deadline: ${deadline || "N/A"}`,
+        `Amount: ${amount || "N/A"}`,
+      ]
+    ).catch((e: any) => console.warn("[Intake] Owner email failed:", e.message));
+
     try {
       await notifyOwner({
         title: "🛡️ New Defense Case Submitted",
