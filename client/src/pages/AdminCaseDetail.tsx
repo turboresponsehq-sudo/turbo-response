@@ -68,7 +68,13 @@ export default function AdminCaseDetail() {
         console.log('🔍 Case Data:', res.data.case);
         console.log('🔍 Case Number:', res.data.case?.case_number);
         console.log('🔍 Full Name:', res.data.case?.full_name);
-        setCaseData({ ...res.data.case, case_type: res.data.case_type });
+        // case_type lives inside res.data.case — do NOT overwrite with undefined res.data.case_type
+        const caseObj = res.data.case;
+        // Normalise: for consumer cases the DB case_type may be null; fall back to category
+        if (!caseObj.case_type) {
+          caseObj.case_type = caseObj.category || 'consumer';
+        }
+        setCaseData(caseObj);
         setSelectedStatus(res.data.case.status);
         
         // Initialize pricing tier state from case data
@@ -408,8 +414,8 @@ export default function AdminCaseDetail() {
         </div>
       )}
 
-      {/* AI Analysis Panel - Consumer Cases Only */}
-      {caseData?.case_type === 'consumer' && (
+      {/* AI Analysis Panel - All Cases */}
+      {caseData && (
       <div style={{ 
         backgroundColor: "#f8f9fa", 
         padding: "1rem", 
@@ -582,8 +588,8 @@ export default function AdminCaseDetail() {
       </div>
       )}
 
-      {/* Client Portal Controls Card - Consumer Cases Only */}
-      {caseData?.case_type === 'consumer' && (
+      {/* Client Portal Controls Card - All Cases */}
+      {caseData && (
       <div style={{ 
         backgroundColor: "#e7f3ff", 
         padding: "1rem", 
@@ -759,8 +765,8 @@ export default function AdminCaseDetail() {
       </div>
       )}
 
-      {/* Pricing Tier Selection Card - Consumer Cases Only */}
-      {caseData?.case_type === 'consumer' && (
+      {/* Pricing Tier Selection Card - All Cases */}
+      {caseData && (
       <div style={{ 
         backgroundColor: "#e7f3ff", 
         padding: "1.5rem", 
@@ -897,8 +903,8 @@ export default function AdminCaseDetail() {
       </div>
       )}
 
-      {/* Payment Verification Card - Consumer Cases Only */}
-      {caseData?.case_type === 'consumer' && (
+      {/* Payment Verification Card - All Cases */}
+      {caseData && (
       <div style={{ 
         backgroundColor: "#fff3cd", 
         padding: "1.5rem", 
