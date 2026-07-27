@@ -3,7 +3,7 @@ import { saveIntakeLead } from "../intakeLeadsDb";
 import { scrapeWebsite } from "../services/websiteScraper";
 import { generateBusinessAudit } from "../services/businessAuditService";
 import { generateAuditReportHtml } from "../services/auditReportHtml";
-import { sendBusinessAuditReport } from "../services/auditEmailService";
+import { sendBusinessAuditReport, sendOwnerNotification } from "../services/auditEmailService";
 import { notifyOwner } from "../_core/notification";
 
 const router = Router();
@@ -125,7 +125,17 @@ router.post("/business-audit", async (req, res) => {
           console.error(`[BusinessAudit] Failed to update DB record:`, dbErr.message);
         }
 
-        // Step 6: Notify owner
+        // Step 6: Notify owner — email (reliable) + Manus push (best-effort)
+        sendOwnerNotification(
+          `📊 New Business Audit Completed — ${businessName}`,
+          [
+            `Name: ${fullName}`, `Email: ${email}`,
+            `Business: ${businessName}`,
+            `Industry: ${industry || "N/A"}`,
+            `Challenge: ${biggestChallenge?.slice(0, 150) || "N/A"}`,
+            `Report emailed to lead: ${emailSent ? "YES" : "FAILED"}`,
+          ]
+        ).catch((e: any) => console.warn("[BusinessAudit] Owner email failed:", e.message));
         await notifyOwner({
           title: "📊 New Business Audit Completed",
           content: `${fullName} (${email}) — ${businessName}\nIndustry: ${industry || "N/A"}\nChallenge: ${biggestChallenge?.slice(0, 100) || "N/A"}\nReport emailed: ${emailSent ? "YES" : "FAILED"}`,

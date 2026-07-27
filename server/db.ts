@@ -1,6 +1,6 @@
-import { eq, desc } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
-import { users, cases } from "../drizzle/schema";
+import { users } from "../drizzle/schema";
 import type { InsertUser } from "../drizzle/schema";
 
 import { ENV } from './_core/env';
@@ -110,9 +110,17 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-
 /**
- * List all cases from cases table
+ * List all cases from the cases table.
+ *
+ * Uses raw SQL to match the actual production schema (full_name, case_number,
+ * email, case_details, etc.) rather than the drizzle schema which has
+ * different column names (clientName, conversationId, etc.).
+ *
+ * Returns rows normalized to the shape both AdminDashboard and AdminCasesList
+ * expect: { id, case_number, full_name, client_name, email, client_email,
+ *           phone, category, status, title, description, case_details,
+ *           case_type, payment_status, funnel_stage, createdAt, created_at }
  */
 export async function listCases() {
   const db = await getDb();
@@ -122,19 +130,54 @@ export async function listCases() {
   }
 
   try {
-    const result = await db.select({
-      id: cases.id,
-      conversationId: cases.conversationId,
-      client_name: cases.clientName,
-      client_email: cases.clientEmail,
-      client_phone: cases.clientPhone,
-      title: cases.title,
-      category: cases.category,
-      description: cases.description,
-      status: cases.status,
-      createdAt: cases.createdAt,
-    }).from(cases).orderBy(desc(cases.createdAt));
-    return result;
+    const result = await db.execute(`
+      SELECT
+        id,
+        case_number,
+        full_name,
+        email,
+        phone,
+        category,
+        status,
+        case_details,
+        case_type,
+        title,
+        payment_status,
+        payment_amount,
+        funnel_stage,
+        portal_enabled,
+        created_at,
+        updated_at
+      FROM cases
+      ORDER BY created_at DESC
+    `);
+
+    // drizzle node-postgres execute returns a pg QueryResult: { rows: [...] }
+    const rows: any[] = (result as any).rows ?? (result as any);
+
+    // Normalize to the shape the frontend expects
+    return rows.map((r: any) => ({
+      id: r.id,
+      case_number: r.case_number,
+      // AdminDashboard uses full_name; AdminCasesList uses client_name
+      full_name: r.full_name,
+      client_name: r.full_name,
+      email: r.email,
+      client_email: r.email,
+      phone: r.phone,
+      category: r.category,
+      status: r.status,
+      case_details: r.case_details,
+      description: r.case_details,
+      title: r.title || r.case_number || `Case #${r.id}`,
+      case_type: r.case_type,
+      payment_status: r.payment_status,
+      payment_amount: r.payment_amount,
+      funnel_stage: r.funnel_stage,
+      portal_enabled: r.portal_enabled,
+      createdAt: r.created_at,
+      created_at: r.created_at,
+    }));
   } catch (error) {
     console.error('[Database] Failed to list cases:', error);
     return [];
@@ -142,7 +185,8 @@ export async function listCases() {
 }
 
 /**
- * Create a new case in cases table
+ * Create a new case in the cases table.
+ * Maps camelCase input to the snake_case columns in the real production schema.
  */
 export async function createCase(caseData: any) {
   const db = await getDb();
@@ -151,16 +195,23 @@ export async function createCase(caseData: any) {
   }
 
   try {
-    const result = await db.insert(cases).values({
-      clientName: caseData.clientName || null,
-      clientEmail: caseData.clientEmail || null,
-      clientPhone: caseData.clientPhone || null,
-      title: caseData.title || null,
-      category: caseData.category || null,
-      description: caseData.description || null,
-      status: caseData.status || 'open',
-      conversationId: caseData.conversationId || null,
-    });
+    const caseNumber = caseData.caseNumber || `TR-${Date.now()}`;
+    const fullName = caseData.clientName || caseData.full_name || caseData.client_name || 'Unknown';
+    const email = caseData.clientEmail || caseData.email || caseData.client_email || '';
+    const phone = caseData.clientPhone || caseData.phone || caseData.client_phone || null;
+    const category = caseData.category || 'general';
+    const status = caseData.status || 'open';
+    const caseDetails = caseData.description || caseData.case_details || null;
+    const title = caseData.title || null;
+    const caseType = caseData.caseType || caseData.case_type || null;
+
+    const result = await db.execute(sql`
+      INSERT INTO cases (case_number, full_name, email, phone, category, status, case_details, title, case_type)
+      VALUES (
+        ${caseNumber}, ${fullName}, ${email}, ${phone}, ${category}, ${status}, ${caseDetails}, ${title}, ${caseType}
+      )
+      RETURNING id, case_number
+    `);
     return result;
   } catch (error) {
     console.error('[Database] Failed to create case:', error);
