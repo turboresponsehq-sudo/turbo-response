@@ -219,4 +219,110 @@ export async function createCase(caseData: any) {
   }
 }
 
+/**
+ * Fetch a single case by ID — returns all columns the AdminCaseDetail page needs.
+ */
+export async function getCaseById(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error('Database not available');
+
+  const result = await db.execute(sql`
+    SELECT
+      id, case_number, full_name, email, phone, address,
+      category, status, case_details, description, case_type, title,
+      payment_status, payment_amount, payment_plan, payment_link,
+      payment_verified, payment_verified_at, payment_verified_by, payment_method,
+      funnel_stage, portal_enabled, client_status, client_notes,
+      pricing_tier, pricing_tier_amount, pricing_tier_name,
+      blueprint_generated, blueprint_content, blueprint_generated_at,
+      documents, internal_notes, priority, drive_folder_link,
+      business_name, website_url, instagram_url, tiktok_url, facebook_url, youtube_url,
+      primary_goal, target_authority, estimated_amount,
+      client_account_created, client_user_id,
+      terms_accepted_at, terms_accepted_ip,
+      unread_messages_count,
+      stage, amount, deadline, stripe_payment_id, entity_type, link_in_bio,
+      created_at, updated_at
+    FROM cases
+    WHERE id = ${id}
+    LIMIT 1
+  `);
+
+  const rows: any[] = (result as any).rows ?? (result as any);
+  if (!rows.length) return null;
+
+  const r = rows[0];
+  return {
+    ...r,
+    // Aliases so the frontend works regardless of which key it uses
+    client_name: r.full_name,
+    client_email: r.email,
+    case_details: r.case_details || r.description,
+    description: r.case_details || r.description,
+    title: r.title || r.case_number || `Case #${r.id}`,
+    createdAt: r.created_at,
+    documents: r.documents ?? [],
+  };
+}
+
+/**
+ * Update mutable fields on a case row.
+ * Accepts any subset of the updatable columns.
+ */
+export async function updateCase(id: number, updates: Record<string, any>) {
+  const db = await getDb();
+  if (!db) throw new Error('Database not available');
+
+  // Build SET clause dynamically from the updates object
+  const allowed = [
+    'status', 'case_details', 'description', 'title', 'category',
+    'client_status', 'client_notes', 'payment_link', 'portal_enabled',
+    'funnel_stage', 'payment_status', 'payment_amount', 'payment_plan',
+    'payment_verified', 'payment_verified_at', 'payment_verified_by', 'payment_method',
+    'pricing_tier', 'pricing_tier_amount', 'pricing_tier_name',
+    'blueprint_generated', 'blueprint_content', 'blueprint_generated_at',
+    'internal_notes', 'priority', 'drive_folder_link',
+    'documents', 'address', 'phone',
+  ];
+
+  const setClauses: string[] = [];
+  const values: any[] = [];
+  let paramIdx = 1;
+
+  for (const key of allowed) {
+    if (key in updates) {
+      setClauses.push(`${key} = $${paramIdx}`);
+      values.push(updates[key]);
+      paramIdx++;
+    }
+  }
+
+  if (!setClauses.length) return;
+
+  setClauses.push(`updated_at = NOW()`);
+  values.push(id);
+
+  const pgModule = await import('pg');
+  const Pool = pgModule.Pool ?? (pgModule as any).default?.Pool;
+  const connectionString = process.env.DATABASE_URL!;
+  const pool = new Pool({ connectionString, ssl: sslConfig(connectionString) });
+  try {
+    await pool.query(
+      `UPDATE cases SET ${setClauses.join(', ')} WHERE id = $${paramIdx}`,
+      values
+    );
+  } finally {
+    await pool.end();
+  }
+}
+
+/**
+ * Delete a case by ID.
+ */
+export async function deleteCase(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error('Database not available');
+  await db.execute(sql`DELETE FROM cases WHERE id = ${id}`);
+}
+
 // TODO: add feature queries here as your schema grows.

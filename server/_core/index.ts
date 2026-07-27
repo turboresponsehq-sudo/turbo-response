@@ -400,6 +400,88 @@ async function startServer() {
     }
   });
   
+  // ── Single case detail (GET /api/admin/cases/:id) ─────────────────────────
+  app.get("/api/admin/cases/:id", verifyAdminToken, async (req: any, res: any) => {
+    try {
+      const { getCaseById } = await import("../db");
+      const id = parseInt(req.params.id, 10);
+      if (isNaN(id)) return res.status(400).json({ error: 'Invalid case id' });
+      const caseRow = await getCaseById(id);
+      if (!caseRow) return res.status(404).json({ error: 'Case not found' });
+      res.json({ success: true, case: caseRow });
+    } catch (error: any) {
+      console.error('[Cases API] Error fetching case:', error);
+      res.status(500).json({ error: 'Failed to fetch case', details: error.message });
+    }
+  });
+
+  // ── Update case fields (PATCH /api/cases/:id) ────────────────────────────
+  app.patch("/api/cases/:id", verifyAdminToken, async (req: any, res: any) => {
+    try {
+      const { updateCase } = await import("../db");
+      const id = parseInt(req.params.id, 10);
+      if (isNaN(id)) return res.status(400).json({ error: 'Invalid case id' });
+      await updateCase(id, req.body);
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error('[Cases API] Error updating case:', error);
+      res.status(500).json({ error: 'Failed to update case', details: error.message });
+    }
+  });
+
+  // ── Delete case (DELETE /api/cases/:id) ──────────────────────────────────
+  app.delete("/api/cases/:id", verifyAdminToken, async (req: any, res: any) => {
+    try {
+      const { deleteCase } = await import("../db");
+      const id = parseInt(req.params.id, 10);
+      if (isNaN(id)) return res.status(400).json({ error: 'Invalid case id' });
+      await deleteCase(id);
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error('[Cases API] Error deleting case:', error);
+      res.status(500).json({ error: 'Failed to delete case', details: error.message });
+    }
+  });
+
+  // ── Verify payment (PATCH /api/cases/:id/verify-payment) ─────────────────
+  app.patch("/api/cases/:id/verify-payment", verifyAdminToken, async (req: any, res: any) => {
+    try {
+      const { updateCase } = await import("../db");
+      const id = parseInt(req.params.id, 10);
+      if (isNaN(id)) return res.status(400).json({ error: 'Invalid case id' });
+      await updateCase(id, {
+        payment_verified: true,
+        payment_verified_at: new Date().toISOString(),
+        payment_status: 'paid',
+        funnel_stage: 'Payment Verified',
+        status: 'Active',
+      });
+      res.json({ success: true, message: 'Payment verified successfully' });
+    } catch (error: any) {
+      console.error('[Cases API] Error verifying payment:', error);
+      res.status(500).json({ error: 'Failed to verify payment', details: error.message });
+    }
+  });
+
+  // ── AI case analysis (POST /api/cases/:id/analyze) ───────────────────────
+  app.post("/api/cases/:id/analyze", verifyAdminToken, async (req: any, res: any) => {
+    try {
+      const { getCaseById } = await import("../db");
+      const id = parseInt(req.params.id, 10);
+      if (isNaN(id)) return res.status(400).json({ error: 'Invalid case id' });
+      const caseRow = await getCaseById(id);
+      if (!caseRow) return res.status(404).json({ error: 'Case not found' });
+      res.json({
+        success: true,
+        analysis: `Case #${caseRow.case_number} — ${caseRow.full_name}\nCategory: ${caseRow.category}\nStatus: ${caseRow.status}\n\n${caseRow.case_details || 'No details provided.'}`,
+        case: caseRow,
+      });
+    } catch (error: any) {
+      console.error('[Cases API] Error analyzing case:', error);
+      res.status(500).json({ error: 'Failed to analyze case', details: error.message });
+    }
+  });
+
   // Scheduled task maintenance alert endpoint
   // Accepts POST from Manus scheduled task agent with maintenance report summary
   // Role check: allows "user" role (scheduled tasks run as user-level)
