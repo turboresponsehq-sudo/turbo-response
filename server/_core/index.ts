@@ -13,6 +13,9 @@ import { brainRouter } from "./brainRouter";
 import intakeRouter from "../routes/intake";
 import businessAuditRouter from "../routes/businessAudit";
 import caseBriefRouter from "../routes/caseBrief";
+import clientPortalRouter from "../routes/clientPortal";
+import caseExtrasRouter from "../routes/caseExtras";
+import uploadsRouter from "../routes/uploads";
 import { getDb } from "../db"; // Already imported above
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -80,6 +83,11 @@ async function startServer() {
 
   // Case Documentation Brief route
   app.use("/api", caseBriefRouter);
+
+  // Restored original backend functionality (client portal, messaging, contracts, payments, uploads)
+  app.use("/api/client", clientPortalRouter);
+  app.use("/api/case", caseExtrasRouter);
+  app.use("/api/upload", uploadsRouter);
   
   // Setup admin user (one-time)
   app.get("/api/setup-admin", async (req, res) => {
@@ -418,11 +426,36 @@ async function startServer() {
   // ── Update case fields (PATCH /api/cases/:id) ────────────────────────────
   app.patch("/api/cases/:id", verifyAdminToken, async (req: any, res: any) => {
     try {
-      const { updateCase } = await import("../db");
+      const { updateCase, getCaseById } = await import("../db");
       const id = parseInt(req.params.id, 10);
       if (isNaN(id)) return res.status(400).json({ error: 'Invalid case id' });
+
+      // Detect portal activation (false → true) to fire the Portal Activated email
+      let portalJustEnabled = false;
+      let caseRow: any = null;
+      if (req.body?.portal_enabled === true) {
+        caseRow = await getCaseById(id);
+        portalJustEnabled = !!caseRow && caseRow.portal_enabled !== true;
+      }
+
       await updateCase(id, req.body);
-      res.json({ success: true });
+
+      let emailSent = false;
+      if (portalJustEnabled && caseRow?.email) {
+        const { sendPortalActivatedEmail } = await import("../services/auditEmailService");
+        emailSent = await sendPortalActivatedEmail({
+          toEmail: caseRow.email,
+          caseNumber: caseRow.case_number,
+          caseId: id,
+        }).catch(() => false);
+      }
+
+      res.json({
+        success: true,
+        ...(portalJustEnabled
+          ? { message: emailSent ? 'Saved — portal activated and client notified by email' : 'Saved — portal activated', emailSent }
+          : {}),
+      });
     } catch (error: any) {
       console.error('[Cases API] Error updating case:', error);
       res.status(500).json({ error: 'Failed to update case', details: error.message });
@@ -443,23 +476,107 @@ async function startServer() {
     }
   });
 
-  // ── Verify payment (PATCH /api/cases/:id/verify-payment) ─────────────────
-  app.patch("/api/cases/:id/verify-payment", verifyAdminToken, async (req: any, res: any) => {
+  // ── Verify payment — full original flow restored:
+  //    mark paid + activate case + enable portal + timeline + Portal Activated email
+  const verifyPaymentHandler = async (req: any, res: any) => {
     try {
-      const { updateCase } = await import("../db");
-      const id = parseInt(req.params.id, 10);
+      const { getDb: getDbFn, getCaseById } = await import("../db");
+      const { sendPortalActivatedEmail } = await import("../services/auditEmailService");
+      const { sql } = await import("drizzle-orm");
+      const id = parseInt(req.params.id ?? req.params.case_id, 10);
       if (isNaN(id)) return res.status(400).json({ error: 'Invalid case id' });
-      await updateCase(id, {
-        payment_verified: true,
-        payment_verified_at: new Date().toISOString(),
-        payment_status: 'paid',
-        funnel_stage: 'Payment Verified',
-        status: 'Active',
+
+      const db = await getDbFn();
+      if (!db) throw new Error('Database not available');
+
+      const caseRow = await getCaseById(id);
+      if (!caseRow) return res.status(404).json({ error: 'Case not found' });
+
+      await db.execute(sql`
+        UPDATE cases
+        SET payment_verified = true,
+            payment_verified_at = CURRENT_TIMESTAMP,
+            payment_status = 'paid',
+            funnel_stage = 'Active Case',
+            status = 'Active',
+            portal_enabled = true,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = ${id}
+      `);
+
+      try {
+        await db.execute(sql`
+          INSERT INTO case_timeline (case_id, event_type, description, metadata)
+          VALUES (${id}, 'payment_verified', 'Admin verified payment — portal activated',
+                  ${JSON.stringify({ verified_via: 'admin_dashboard' })}::jsonb)
+        `);
+      } catch (e: any) {
+        console.warn('[Cases API] Timeline insert failed:', e?.message);
+      }
+
+      let emailSent = false;
+      if (caseRow.email) {
+        emailSent = await sendPortalActivatedEmail({
+          toEmail: caseRow.email,
+          caseNumber: caseRow.case_number,
+          caseId: id,
+        }).catch(() => false);
+      }
+
+      res.json({
+        success: true,
+        message: emailSent
+          ? 'Payment verified — portal activated and client notified by email'
+          : 'Payment verified — portal activated (client notification email not sent)',
+        emailSent,
       });
-      res.json({ success: true, message: 'Payment verified successfully' });
     } catch (error: any) {
       console.error('[Cases API] Error verifying payment:', error);
       res.status(500).json({ error: 'Failed to verify payment', details: error.message });
+    }
+  };
+  app.patch("/api/cases/:id/verify-payment", verifyAdminToken, verifyPaymentHandler);
+  // Legacy alias from the original backend (PUT /api/payment/verify/:case_id)
+  app.put("/api/payment/verify/:case_id", verifyAdminToken, verifyPaymentHandler);
+
+  // ── Portal access toggle (PATCH /api/cases/:id/portal) ──────────────────
+  app.patch("/api/cases/:id/portal", verifyAdminToken, async (req: any, res: any) => {
+    try {
+      const { getDb: getDbFn, getCaseById } = await import("../db");
+      const { sendPortalActivatedEmail } = await import("../services/auditEmailService");
+      const { sql } = await import("drizzle-orm");
+      const id = parseInt(req.params.id, 10);
+      if (isNaN(id)) return res.status(400).json({ error: 'Invalid case id' });
+      const enabled = req.body?.portal_enabled !== false;
+
+      const db = await getDbFn();
+      if (!db) throw new Error('Database not available');
+      const caseRow = await getCaseById(id);
+      if (!caseRow) return res.status(404).json({ error: 'Case not found' });
+
+      await db.execute(sql`
+        UPDATE cases SET portal_enabled = ${enabled}, updated_at = CURRENT_TIMESTAMP WHERE id = ${id}
+      `);
+
+      let emailSent = false;
+      if (enabled && caseRow.email) {
+        emailSent = await sendPortalActivatedEmail({
+          toEmail: caseRow.email,
+          caseNumber: caseRow.case_number,
+          caseId: id,
+        }).catch(() => false);
+      }
+
+      res.json({
+        success: true,
+        message: enabled
+          ? (emailSent ? 'Portal enabled — client notified by email' : 'Portal enabled')
+          : 'Portal disabled',
+        emailSent,
+      });
+    } catch (error: any) {
+      console.error('[Cases API] Error toggling portal:', error);
+      res.status(500).json({ error: 'Failed to update portal access', details: error.message });
     }
   });
 

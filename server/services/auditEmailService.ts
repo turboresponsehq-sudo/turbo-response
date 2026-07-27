@@ -79,6 +79,80 @@ function detailRow(label: string, value: string): string {
 }
 
 /**
+ * Send a raw email (generic helper for restored legacy flows).
+ */
+export async function sendRawEmail(opts: {
+  to: string;
+  subject: string;
+  html: string;
+}): Promise<boolean> {
+  const transport = getTransporter();
+  if (!transport) {
+    console.warn("[Email] Cannot send — transporter not available.");
+    return false;
+  }
+  try {
+    await transport.sendMail({
+      from: `"Turbo Response" <${process.env.EMAIL_USER}>`,
+      to: opts.to,
+      subject: opts.subject,
+      html: opts.html,
+    });
+    console.log(`[Email] Sent "${opts.subject}" to ${opts.to}`);
+    return true;
+  } catch (err: any) {
+    console.error("[Email] Send failed:", err?.message || err);
+    return false;
+  }
+}
+
+/**
+ * Portal Activated email — restored from the original backend
+ * (src/controllers/paymentVerificationController.js).
+ * Sent to the client when admin verifies payment and enables the portal.
+ */
+export async function sendPortalActivatedEmail(opts: {
+  toEmail: string;
+  caseNumber: string;
+  caseId: number;
+}): Promise<boolean> {
+  const loginUrl = `${process.env.FRONTEND_URL || "https://turboresponsehq.ai"}/client/login?caseId=${opts.caseId}&email=${encodeURIComponent(opts.toEmail)}`;
+
+  const body = `
+    <h2 style="color:#e0eaf4;margin:0 0 12px;font-size:20px;">Your Case is Now Active</h2>
+    <p style="color:#a0b4c8;line-height:1.6;margin:0 0 20px;">
+      Great news! Your payment has been verified and your client portal is now active.
+      You can now access your case details, documents, and updates.
+    </p>
+
+    <div style="background:#0a1220;border:2px solid #00BFFF;border-radius:8px;padding:20px;margin:20px 0;">
+      <p style="margin:0;color:#00BFFF;font-weight:600;font-size:13px;">Case Number:</p>
+      <p style="margin:5px 0 0;color:#e0eaf4;font-size:18px;font-weight:700;letter-spacing:0.5px;">${opts.caseNumber}</p>
+    </div>
+
+    <div style="text-align:center;margin:30px 0;">
+      <a href="${loginUrl}" style="display:inline-block;background:#00BFFF;color:#03050F;text-decoration:none;padding:15px 40px;border-radius:8px;font-weight:700;font-size:16px;">Access Your Portal &rarr;</a>
+    </div>
+
+    <div style="background:#fef3c7;border-left:4px solid #fbbf24;border-radius:0 6px 6px 0;padding:15px;margin-top:20px;">
+      <p style="margin:0;color:#78350f;font-size:14px;line-height:1.7;">
+        <strong>&#128231; How to log in:</strong><br>
+        1. Click the button above<br>
+        2. Enter your email: <strong>${opts.toEmail}</strong><br>
+        3. Enter your case ID: <strong>${opts.caseId}</strong><br>
+        4. Check your email for the 6-digit verification code
+      </p>
+    </div>
+  `;
+
+  return sendRawEmail({
+    to: opts.toEmail,
+    subject: `\u{1F389} Your Turbo Response Portal is Now Active - Case ${opts.caseNumber}`,
+    html: brandedEmail("Portal Activated!", "Your Case is Now Active", body),
+  });
+}
+
+/**
  * Send the Business Intelligence Audit report to the lead via email.
  */
 export async function sendBusinessAuditReport(
