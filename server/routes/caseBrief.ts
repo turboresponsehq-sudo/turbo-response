@@ -1,13 +1,14 @@
 import { Router } from "express";
 import { saveIntakeLead } from "../intakeLeadsDb";
 import { notifyOwner } from "../_core/notification";
+import { sendOwnerNotification } from "../services/auditEmailService";
 
 const router = Router();
 
 /**
  * POST /api/case-brief
  * Case Documentation Brief ($299) intake form submission.
- * Stores the lead in intake_leads (same pattern as business audit) and notifies owner.
+ * Stores the lead in intake_leads and notifies owner via email + Manus notification.
  */
 router.post("/case-brief", async (req, res) => {
   try {
@@ -44,11 +45,28 @@ router.post("/case-brief", async (req, res) => {
       leadId,
     });
 
-    // Notify owner in background
+    // Notify owner in background — email (reliable) + Manus push (best-effort)
+    const notifyLines = [
+      `Name: ${fullName}`,
+      `Email: ${email}`,
+      phone ? `Phone: ${phone}` : `Phone: not provided`,
+      `Case Type: ${caseType}`,
+      `Lead ID: ${leadId}`,
+      ``,
+      `Situation:`,
+      String(description).slice(0, 500),
+    ];
+
+    sendOwnerNotification(
+      `📁 New Case Documentation Brief Request ($299) — ${fullName}`,
+      notifyLines
+    ).catch((e: any) => console.error("[CaseBrief] Owner email failed:", e.message));
+
     notifyOwner({
       title: "📁 New Case Documentation Brief Request ($299)",
       content: `${fullName} (${email}${phone ? `, ${phone}` : ""})\nCase Type: ${caseType}\nSituation: ${String(description).slice(0, 300)}`,
     }).catch(() => {});
+
   } catch (error: any) {
     console.error("[CaseBrief] Error processing submission:", error);
     res.status(500).json({
