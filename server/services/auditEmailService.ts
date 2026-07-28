@@ -197,6 +197,7 @@ export async function sendCaseBriefClientConfirmation(opts: {
   fullName: string;
   caseNumber: string;
   caseType: string;
+  caseId?: number;
 }): Promise<boolean> {
   const transport = getTransporter();
   if (!transport) {
@@ -204,8 +205,10 @@ export async function sendCaseBriefClientConfirmation(opts: {
     return false;
   }
 
-  const { toEmail, fullName, caseNumber, caseType } = opts;
+  const { toEmail, fullName, caseNumber, caseType, caseId } = opts;
   const firstName = fullName.split(" ")[0];
+  const baseUrl = process.env.FRONTEND_URL || "https://turboresponsehq.ai";
+  const loginUrl = `${baseUrl}/client/login`;
 
   const bodyHtml = `
     <p style="color:#c0d4e8;font-size:16px;line-height:1.6;margin:0 0 20px;">
@@ -221,6 +224,27 @@ export async function sendCaseBriefClientConfirmation(opts: {
       <p style="margin:0 0 6px;color:#7a9ab0;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Your Case Number</p>
       <p style="margin:0;color:#00BFFF;font-size:22px;font-weight:700;letter-spacing:2px;">${caseNumber}</p>
       <p style="margin:6px 0 0;color:#4a6070;font-size:12px;">Case Type: ${caseType.replace(/</g, "&lt;")}</p>
+    </div>
+
+    <!-- Portal access button -->
+    <div style="text-align:center;margin:0 0 28px;">
+      <a href="${loginUrl}"
+         style="display:inline-block;background:#00BFFF;color:#03050F;font-weight:700;
+                text-decoration:none;padding:15px 40px;border-radius:8px;font-size:16px;
+                letter-spacing:0.3px;">
+        Access Your Portal &rarr;
+      </a>
+    </div>
+
+    <!-- Quick Login Instructions -->
+    <div style="background:#fef3c7;border-left:4px solid #fbbf24;border-radius:0 6px 6px 0;padding:15px 18px;margin:0 0 28px;">
+      <p style="margin:0 0 10px;color:#78350f;font-size:14px;font-weight:700;">&#128273; Quick Login Instructions</p>
+      <p style="margin:0;color:#78350f;font-size:14px;line-height:1.8;">
+        1. Visit <a href="${loginUrl}" style="color:#92400e;font-weight:700;">${loginUrl}</a><br>
+        2. Enter your email: <strong>${toEmail.replace(/</g, "&lt;")}</strong><br>
+        3. Enter your case number: <strong>${caseNumber}</strong><br>
+        4. Check your email for the 6-digit verification code
+      </p>
     </div>
 
     <!-- What happens next -->
