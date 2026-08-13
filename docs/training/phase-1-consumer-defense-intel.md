@@ -178,7 +178,7 @@ Daily scan completed. No regulatory, enforcement, or assistance updates requirin
 - Stop Rule enforcement (no email if nothing actionable)
 - HTML email generation
 - Priority-based subject lines
-- SendGrid integration
+- retired email delivery integration
 
 **Schedule:** 6:30am ET daily (after scanner completes)
 
@@ -291,7 +291,7 @@ Daily scan completed. No regulatory, enforcement, or assistance updates requirin
 | Service | Usage | Cost |
 |---------|-------|------|
 | GitHub Actions | ~60 min/month | $0.00 (free tier: 2,000 min) |
-| SendGrid | ~7 emails/month | $0.00 (free tier: 100/day) |
+| retired email delivery | ~7 emails/month | $0.00 (free tier: 100/day) |
 | Federal Register API | ~30 requests/month | $0.00 (free, no limits) |
 | **Total** | | **$0.00/month** |
 

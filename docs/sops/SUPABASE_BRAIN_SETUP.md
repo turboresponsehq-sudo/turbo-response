@@ -79,13 +79,7 @@ The code is ready to deploy. After adding the environment variables:
 
 ### Upload a Document
 
-```bash
-curl -X POST https://turbo-response-backend.onrender.com/api/brain/upload \
-  -H "Authorization: Bearer REDACTED_RETIRED_BEARER_TOKEN" \
-  -F "file=@/path/to/document.pdf" \
-  -F "title=IRS Audit Defense Strategy" \
-  -F "description=Complete guide for IRS audit responses"
-```
+Sign in through the supported Manus OAuth flow and use the protected `/admin/brain` interface to upload a document. The legacy bearer-token examples are retired.
 
 **Response:**
 ```json
@@ -105,10 +99,7 @@ curl -X POST https://turbo-response-backend.onrender.com/api/brain/upload \
 
 ### List All Documents
 
-```bash
-curl https://turbo-response-backend.onrender.com/api/brain/upload/list?page=1&limit=20 \
-  -H "Authorization: Bearer REDACTED_RETIRED_BEARER_TOKEN"
-```
+Use the protected Brain administration page to review documents. Compatible Brain REST routes use the authenticated OAuth session and are not intended for unauthenticated command-line access.
 
 **Response:**
 ```json

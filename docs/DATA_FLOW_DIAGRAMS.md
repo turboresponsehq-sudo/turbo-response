@@ -100,7 +100,7 @@ Return response to frontend
 ### Sequence Diagram
 
 ```
-User                Frontend              Backend              Database           SendGrid
+User                Frontend              Backend              Database           retired email delivery
  |                    |                      |                    |                  |
  |--Submit Form------>|                      |                    |                  |
  |                    |--POST /forms/submit-->|                    |                  |
@@ -163,8 +163,8 @@ Save form to DB
         ↓
 Prepare email (async)
         ↓
-Send email via SendGrid
-        ├─→ SendGrid error?
+Send email via retired email delivery
+        ├─→ retired email delivery error?
         │   ├─→ Log error
         │   ├─→ Mark email_log as "failed"
         │   └─→ Do NOT block form save
@@ -181,7 +181,7 @@ Return success to user
 ### Sequence Diagram
 
 ```
-GitHub Actions       Scanner              GitHub              SendGrid
+GitHub Actions       Scanner              GitHub              retired email delivery
  |                    |                      |                  |
  |--6:00 AM Trigger-->|                      |                  |
  |                    |--Fetch FTC---------->|                  |
@@ -261,7 +261,7 @@ IF no items found
   → Skip email
   → Report shows "No actionable updates today"
 ELSE
-  → Send email via SendGrid
+  → Send email via retired email delivery
   → Create GitHub issues for P0 items
 ```
 
@@ -274,12 +274,12 @@ Count actionable items
         ├─→ 0 items?
         │   ├─→ Add to report: "Status: No actionable updates today"
         │   ├─→ Commit report
-        │   ├─→ Skip SendGrid
+        │   ├─→ Skip retired email delivery
         │   └─→ Exit successfully
         └─→ 1+ items?
             ├─→ Add to report: "Status: [X] actionable items"
             ├─→ Commit report
-            ├─→ Send email via SendGrid
+            ├─→ Send email via retired email delivery
             ├─→ Create GitHub issues
             └─→ Exit successfully
 ```

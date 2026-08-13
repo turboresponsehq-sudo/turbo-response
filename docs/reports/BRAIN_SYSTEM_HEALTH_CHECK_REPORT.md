@@ -276,7 +276,7 @@ Based on titles, the uploaded documents cover:
 
 ## Security Status
 
-✅ **Access Control:** All endpoints require `x-access-token: REDACTED_RETIRED_ACCESS_TOKEN`  
+✅ **Access Control:** All endpoints require `OAuth session authorization: RETIRED_STATIC_TOKEN`  
 ✅ **Admin Authentication:** Frontend requires JWT login  
 ✅ **Public Storage:** Intentional for easy document sharing  
 ⚠️ **No File Scanning:** Uploaded files not scanned for malware  

@@ -26,7 +26,7 @@ These APIs give your business **raw capabilities**:
 
 - **Stripe** - Payments
 - **Twilio** - SMS/Voice
-- **SendGrid** - Email
+- **retired email delivery** - Email
 - **Plaid** - Banking
 - **DocuSign** - E-signatures
 - **Google Maps** - Location
@@ -339,7 +339,7 @@ This philosophy is what separates you from:
 ### **Power Layer (Execution)**
 - ✅ **AWS S3** - Document storage
 - ✅ **MySQL/TiDB** - Data persistence
-- ✅ **SendGrid** (planned) - Email notifications
+- ✅ **retired email delivery** (planned) - Email notifications
 
 ### **Automation Layer (Coordination)**
 - ✅ **Manus Workflows** - Intake → Analysis → Document Generation
@@ -357,7 +357,7 @@ This philosophy is what separates you from:
 **APIs Needed:**
 - OpenAI (document reading, analysis)
 - S3 (storage)
-- SendGrid (notifications)
+- retired email delivery (notifications)
 - Stripe (payments)
 
 **Result:** Automated consumer defense platform
@@ -467,11 +467,11 @@ As Manus AI, I commit to:
 - ✅ Storage API integrated (AWS S3)
 - ✅ Database integrated (MySQL/TiDB)
 - ⏳ Automation API partial (Manus workflows)
-- ⏳ Power APIs needed (SendGrid, Stripe)
+- ⏳ Power APIs needed (retired email delivery, Stripe)
 
 ### **Next 30 Days:**
 1. Connect AI analysis backend to admin UI
-2. Add email notification API (SendGrid)
+2. Add email notification API (retired email delivery)
 3. Integrate payment API (Stripe)
 4. Build analytics dashboard (data intelligence)
 

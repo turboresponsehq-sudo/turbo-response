@@ -9,7 +9,7 @@ The Brain System API endpoints are deployed and routing correctly, but failing w
 
 ## What We Fixed
 
-1. ✅ **Access Token Middleware** - Working correctly, validates `x-access-token: REDACTED_RETIRED_ACCESS_TOKEN`
+1. ✅ **Access Token Middleware** - Working correctly, validates `OAuth session authorization: RETIRED_STATIC_TOKEN`
 2. ✅ **Route Registration** - `/api/brain/*` routes properly wired into Express server
 3. ✅ **Middleware Chain** - Removed conflicting admin authentication (was causing 401 errors)
 

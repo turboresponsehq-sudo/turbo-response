@@ -33,7 +33,7 @@ async function logTimeline(workspaceId: number, event: string, eventType: string
 
 // ── WORKSPACES CRUD ───────────────────────────────────────────────────────────
 const workspacesCrud = router({
-  list: adminProcedure
+  list: protectedProcedure
     .input(z.object({
       search: z.string().optional(),
       type: z.string().optional(),

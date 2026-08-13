@@ -80,8 +80,7 @@ return jwt.sign(payload, process.env.JWT_SECRET, {
 **Finding:** `JWT_SECRET` was completely missing from turboresponsehq-staging.
 
 **Action Taken:** 
-- Generated secure JWT_SECRET: `REDACTED_JWT_SECRET`
-- Added to turboresponsehq-staging environment variables
+- Generated a secure legacy session credential and stored it in the staging environment
 - Service redeployed successfully
 
 **Result:** Server started successfully, but 403 error persisted.

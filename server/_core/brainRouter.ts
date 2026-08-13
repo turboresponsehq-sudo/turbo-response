@@ -1,7 +1,7 @@
 import { Router, Request } from "express";
 import multer from "multer";
 import { createClient } from "@supabase/supabase-js";
-import { accessTokenMiddleware } from "./middleware/accessTToken";
+import { oauthAdminMiddleware } from "./middleware/oauthAdmin";
 
 const router = Router();
 
@@ -31,7 +31,7 @@ function getSupabaseClient() {
  */
 router.post(
   "/upload",
-  accessTokenMiddleware,
+  oauthAdminMiddleware,
   upload.single("file"),
   async (req: Request & { file?: Express.Multer.File }, res) => {
     try {
@@ -119,7 +119,7 @@ router.post(
  * GET /api/brain/list
  * List all documents in the Brain System
  */
-router.get("/list", accessTokenMiddleware, async (req, res) => {
+router.get("/list", oauthAdminMiddleware, async (req, res) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = Math.min(parseInt(req.query.limit as string) || 20, 100);
@@ -179,7 +179,7 @@ router.get("/list", accessTokenMiddleware, async (req, res) => {
  * DELETE /api/brain/delete/:id
  * Delete a document from the Brain System
  */
-router.delete("/delete/:id", accessTokenMiddleware, async (req, res) => {
+router.delete("/delete/:id", oauthAdminMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
 

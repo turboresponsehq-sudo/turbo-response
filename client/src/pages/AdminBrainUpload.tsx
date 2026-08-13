@@ -7,8 +7,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "./AdminBrainUpload.css";
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turboresponsehq.ai";
-const BRAIN_ACCESS_TOKEN = "REDACTED_BRAIN_TOKEN";
+const API_URL = window.location.origin;
 
 interface BrainDocument {
   id: number;
@@ -44,13 +43,8 @@ export default function AdminBrainUpload() {
   const [indexingStatus, setIndexingStatus] = useState<IndexingStatus | null>(null);
   const [bulkIndexing, setBulkIndexing] = useState(false);
 
-  // Check admin authentication
+  // OAuthAdminGate verifies the session before this component is rendered.
   useEffect(() => {
-    const storedToken = localStorage.getItem("admin_session");
-    if (!storedToken) {
-      window.location.replace("/admin/login");
-      return;
-    }
     fetchDocuments();
     fetchIndexingStatus();
   }, []);
@@ -58,11 +52,7 @@ export default function AdminBrainUpload() {
   const fetchDocuments = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${API_URL}/api/brain/list`, {
-        headers: {
-          "x-access-token": BRAIN_ACCESS_TOKEN,
-        },
-      });
+      const res = await axios.get(`${API_URL}/api/brain/list`, { withCredentials: true });
       setDocuments(res.data.documents || []);
     } catch (err: any) {
       console.error("Failed to fetch documents:", err);
@@ -74,11 +64,7 @@ export default function AdminBrainUpload() {
 
   const fetchIndexingStatus = async () => {
     try {
-      const res = await axios.get(`${API_URL}/api/brain/index/status`, {
-        headers: {
-          "x-access-token": BRAIN_ACCESS_TOKEN,
-        },
-      });
+      const res = await axios.get(`${API_URL}/api/brain/index/status`, { withCredentials: true });
       setIndexingStatus(res.data);
     } catch (err: any) {
       console.error("Failed to fetch indexing status:", err);
@@ -94,20 +80,14 @@ export default function AdminBrainUpload() {
       setBulkIndexing(true);
       setUploadStatus("🔄 Starting bulk indexing...");
 
-      const res = await axios.post(`${API_URL}/api/brain/index/bulk`, {}, {
-        headers: {
-          "x-access-token": BRAIN_ACCESS_TOKEN,
-        },
-      });
+      const res = await axios.post(`${API_URL}/api/brain/index/bulk`, {}, { withCredentials: true });
 
       if (res.data.success) {
         setUploadStatus(`✅ Bulk indexing started! Processing ${res.data.total} documents in background.`);
         // Poll for status updates
         const interval = setInterval(async () => {
           await fetchIndexingStatus();
-          const status = await axios.get(`${API_URL}/api/brain/index/status`, {
-            headers: { "x-access-token": BRAIN_ACCESS_TOKEN }
-          });
+          const status = await axios.get(`${API_URL}/api/brain/index/status`, { withCredentials: true });
           if (status.data.indexing === 0 && status.data.pending === 0) {
             clearInterval(interval);
             setBulkIndexing(false);
@@ -149,8 +129,8 @@ export default function AdminBrainUpload() {
       if (description) formData.append("description", description);
 
       const res = await axios.post(`${API_URL}/api/brain/upload`, formData, {
+        withCredentials: true,
         headers: {
-          "x-access-token": BRAIN_ACCESS_TOKEN,
           "Content-Type": "multipart/form-data",
         },
       });
@@ -180,11 +160,7 @@ export default function AdminBrainUpload() {
     if (!confirm(`Delete "${fileName}"?`)) return;
 
     try {
-      await axios.delete(`${API_URL}/api/brain/delete/${id}`, {
-        headers: {
-          "x-access-token": BRAIN_ACCESS_TOKEN,
-        },
-      });
+      await axios.delete(`${API_URL}/api/brain/delete/${id}`, { withCredentials: true });
       setUploadStatus(`✅ Deleted "${fileName}"`);
       await fetchDocuments();
     } catch (err: any) {
@@ -210,7 +186,7 @@ export default function AdminBrainUpload() {
     <div className="admin-brain-upload">
       <div className="brain-header">
         <h1>🧠 Turbo Brain – Document Upload</h1>
-        <a href="/admin" className="back-link">← Back to Dashboard</a>
+        <a href="/admin/command-center" className="back-link">← Back to Mission Control</a>
       </div>
 
       {/* Indexing Status Section */}

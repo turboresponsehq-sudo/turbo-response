@@ -83,7 +83,7 @@ Monitor regulatory, policy, and assistance changes affecting Turbo Response's co
 - Stop Rule enforcement (no email if nothing actionable)
 - HTML email generation
 - Priority-based subject lines
-- SendGrid integration
+- retired email delivery integration
 
 **Schedule:** 6:30am ET daily (after scanner completes)
 
@@ -206,7 +206,7 @@ git push origin main
 ```
 
 ### 2. Verify GitHub Secrets
-- ✅ `SENDGRID_API_KEY` already configured
+- ✅ `RETIRED_EMAIL_DELIVERY_SECRET` already configured
 - ✅ `GITHUB_TOKEN` already configured
 
 ### 3. Test Workflow
@@ -249,7 +249,7 @@ curl -X POST \
 | Service | Usage | Cost |
 |---------|-------|------|
 | GitHub Actions | ~60 min/month | $0.00 (free tier: 2,000 min) |
-| SendGrid | ~7 emails/month | $0.00 (free tier: 100/day) |
+| retired email delivery | ~7 emails/month | $0.00 (free tier: 100/day) |
 | Federal Register API | ~30 requests/month | $0.00 (free, no limits) |
 | **Total** | | **$0.00/month** |
 

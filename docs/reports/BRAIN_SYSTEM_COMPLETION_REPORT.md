@@ -26,7 +26,7 @@ The **Turbo Brain System** is now fully operational and ready for production use
 - `POST /api/brain/fix-schema` - Schema repair utility
 
 **Security:**
-- All endpoints require `x-access-token: REDACTED_RETIRED_ACCESS_TOKEN` header
+- All endpoints require `OAuth session authorization: RETIRED_STATIC_TOKEN` header
 - Access token validation via middleware
 - JWT-based admin authentication for UI access
 
@@ -161,17 +161,17 @@ The **Turbo Brain System** is now fully operational and ready for production use
 ```bash
 # Upload
 curl -X POST https://turbo-response-backend.onrender.com/api/brain/upload \
-  -H "x-access-token: REDACTED_RETIRED_ACCESS_TOKEN" \
+  -H "OAuth session authorization: RETIRED_STATIC_TOKEN" \
   -F "file=@document.pdf" \
   -F "title=My Document"
 
 # List
 curl -X GET https://turbo-response-backend.onrender.com/api/brain/list \
-  -H "x-access-token: REDACTED_RETIRED_ACCESS_TOKEN"
+  -H "OAuth session authorization: RETIRED_STATIC_TOKEN"
 
 # Delete
 curl -X DELETE https://turbo-response-backend.onrender.com/api/brain/delete/{id} \
-  -H "x-access-token: REDACTED_RETIRED_ACCESS_TOKEN"
+  -H "OAuth session authorization: RETIRED_STATIC_TOKEN"
 ```
 
 ---
@@ -235,7 +235,7 @@ drizzle/
 **Production (Render):**
 - `SUPABASE_URL` - Supabase project URL
 - `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key
-- `ACCESS_TOKEN` - Brain API access token (REDACTED_BRAIN_TOKEN)
+- `ACCESS_TOKEN` - Brain API access token (RETIRED_STATIC_TOKEN)
 
 **Development:**
 - Same as production, set in `.env` file
@@ -259,7 +259,7 @@ drizzle/
 
 ### Security Recommendations
 
-1. **Rotate Access Token Periodically** - Change REDACTED_BRAIN_TOKEN every 90 days
+1. **Rotate Access Token Periodically** - Change RETIRED_STATIC_TOKEN every 90 days
 2. **Monitor Upload Activity** - Check logs for unauthorized upload attempts
 3. **Implement File Scanning** - Add virus/malware scanning for uploaded files
 4. **Add Rate Limiting** - Prevent abuse of upload endpoint
@@ -294,7 +294,7 @@ drizzle/
 **Solution:** Run `FIX_BRAIN_STORAGE_PERMISSIONS.sql` in Supabase SQL Editor
 
 ### Issue: "Access token required"
-**Solution:** Ensure `x-access-token: REDACTED_RETIRED_ACCESS_TOKEN` header is included in request
+**Solution:** Ensure `OAuth session authorization: RETIRED_STATIC_TOKEN` header is included in request
 
 ### Issue: Upload fails with schema error
 **Solution:** Run `FIX_BRAIN_SCHEMA.sql` in Supabase SQL Editor

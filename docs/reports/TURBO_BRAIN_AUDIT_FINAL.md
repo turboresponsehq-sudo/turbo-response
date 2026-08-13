@@ -79,7 +79,7 @@ function getBrainBucket() {
 ### Environment Variables:
 - ✅ `SUPABASE_URL` - Required
 - ✅ `SUPABASE_SERVICE_ROLE_KEY` - Required
-- ✅ `ACCESS_TOKEN` - Required for x-access-token auth
+- ✅ `ACCESS_TOKEN` - Required for OAuth session authorization auth
 
 **No 500 errors in code** - All try/catch blocks present
 
@@ -95,7 +95,7 @@ function getBrainBucket() {
 
 ### Needs Check:
 - ❓ Route registered in `App.tsx` as `/admin/brain`
-- ❓ Upload form sends correct headers (x-access-token)
+- ❓ Upload form sends correct headers (OAuth session authorization)
 - ❓ Document list displays with pagination
 - ❓ Delete button functional
 
@@ -105,12 +105,12 @@ function getBrainBucket() {
 
 ## 5. ✅ AUTHENTICATION - PASS
 
-**Status:** x-access-token middleware working correctly
+**Status:** OAuth session authorization middleware working correctly
 
 ### Implementation:
 ```javascript
 // src/middleware/accessToken.js
-- ✅ Validates x-access-token header
+- ✅ Validates OAuth session authorization header
 - ✅ Compares against ACCESS_TOKEN env var
 - ✅ Returns 401 if missing
 - ✅ Returns 403 if invalid
@@ -187,7 +187,7 @@ function getBrainBucket() {
 3. **Verify Render Environment Variables**
    - `SUPABASE_URL` = Your Supabase project URL
    - `SUPABASE_SERVICE_ROLE_KEY` = Service role key (not anon key)
-   - `ACCESS_TOKEN` = Secret token for x-access-token header
+   - `ACCESS_TOKEN` = Secret token for OAuth session authorization header
 
 ### Optional (Recommended):
 
@@ -236,19 +236,19 @@ Run these steps in order:
 ### Check Setup Status:
 ```bash
 curl -X GET https://turboresponsehq.ai/api/brain/setup \
-  -H "x-access-token: REDACTED_RETIRED_ACCESS_TOKEN"
+  -H "OAuth session authorization: YOUR_TOKEN"
 ```
 
 ### List Documents:
 ```bash
 curl -X GET https://turboresponsehq.ai/api/brain/list?page=1&limit=10 \
-  -H "x-access-token: REDACTED_RETIRED_ACCESS_TOKEN"
+  -H "OAuth session authorization: YOUR_TOKEN"
 ```
 
 ### Test Upload:
 ```bash
 curl -X POST https://turboresponsehq.ai/api/brain/upload \
-  -H "x-access-token: REDACTED_RETIRED_ACCESS_TOKEN" \
+  -H "OAuth session authorization: YOUR_TOKEN" \
   -F "file=@test.pdf" \
   -F "title=Test Document"
 ```

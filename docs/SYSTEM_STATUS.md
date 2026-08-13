@@ -109,7 +109,7 @@ Connects individuals to government benefits they qualify for based on eligibilit
 
 ### Short Term
 1. Build admin dashboard (case list, detail view, status updates)
-2. Set up email sending (SendGrid/Postmark)
+2. Set up email sending (retired email delivery/Postmark)
 3. Plan clean migration for People Matching
 
 ### Long Term

@@ -272,7 +272,7 @@ Next Report: Tomorrow at 6:30 AM ET
 1. GitHub Actions workflow ran successfully (green checkmark)
 2. Report shows actionable items (not "No actionable updates today")
 3. Check Spam folder
-4. Check SendGrid suppression list
+4. Check retired email delivery suppression list
 
 ### Report shows "No actionable updates today"
 **This is normal.** Means:
@@ -317,12 +317,12 @@ Next Report: Tomorrow at 6:30 AM ET
 **Why:**
 - Web scraping (free)
 - GitHub Actions (free tier includes 2,000 minutes/month)
-- SendGrid (free tier: 100 emails/day)
+- retired email delivery (free tier: 100 emails/day)
 - Storage (GitHub, included)
 
 **Estimated usage:**
 - GitHub Actions: ~10 minutes/day = 300 minutes/month (well under 2,000)
-- SendGrid emails: ~1 email/day = 30 emails/month (well under 100)
+- retired email delivery emails: ~1 email/day = 30 emails/month (well under 100)
 
 **Total cost:** $0
 

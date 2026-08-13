@@ -60,7 +60,7 @@
 ## 5. Authentication Audit
 
 ### Checklist:
-- [ ] x-access-token validation working
+- [ ] OAuth session authorization validation working
 - [ ] Admin JWT clean and valid
 - [ ] Middleware properly configured
 

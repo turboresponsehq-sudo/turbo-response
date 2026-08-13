@@ -48,7 +48,7 @@ node scripts/setup-brain-system.js
 
 ```bash
 curl https://turbo-response-backend.onrender.com/api/brain/list \
-  -H "x-access-token: REDACTED_RETIRED_ACCESS_TOKEN"
+  -H "OAuth session authorization: RETIRED_STATIC_TOKEN"
 ```
 
 Should return the uploaded blueprint document.

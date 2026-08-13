@@ -199,7 +199,7 @@ Before taking action, I ask:
 Execute actions in the real world:
 - **Stripe** - Payments
 - **Twilio** - SMS/Voice
-- **SendGrid** - Email
+- **retired email delivery** - Email
 - **Plaid** - Banking
 - **DocuSign** - E-signatures
 - **AWS S3** - Storage
@@ -319,7 +319,7 @@ Every client interaction is data:
 
 ### **What's Missing:**
 - ⏳ AI backend connected to frontend UI
-- ⏳ Email notification system (SendGrid)
+- ⏳ Email notification system (retired email delivery)
 - ⏳ Payment processing (Stripe)
 - ⏳ Analytics dashboard
 - ⏳ Document generation UI

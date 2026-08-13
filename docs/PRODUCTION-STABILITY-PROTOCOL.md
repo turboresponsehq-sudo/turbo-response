@@ -73,7 +73,7 @@ curl https://turboresponsehq.ai/api/admin/drift-check
 ## Rule 5: Daily Email Reliability
 
 - Always send something daily (even "No updates today")
-- Email includes Proof Block: SendGrid message ID, delivered status, source count
+- Email includes Proof Block: retired email delivery message ID, delivered status, source count
 - Failure creates GitHub issue automatically
 
 ---
@@ -84,4 +84,4 @@ If there is no proof, it is not real.
 
 - No "should be fixed"
 - No "probably caching"
-- Only: logs, curl output, DB row snapshot, SendGrid events, commit SHA
+- Only: logs, curl output, DB row snapshot, retired email delivery events, commit SHA

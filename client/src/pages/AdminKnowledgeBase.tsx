@@ -5,9 +5,8 @@
  * Uses tRPC for all data operations.
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useLocation } from "wouter";
-import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -58,7 +57,6 @@ const SOURCE_ICONS: Record<SourceSystem, string> = {
 
 export default function AdminKnowledgeBase() {
   const [, setLocation] = useLocation();
-  const { isAuthenticated, isLoading: authLoading } = useAdminAuth();
 
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("");
@@ -68,14 +66,6 @@ export default function AdminKnowledgeBase() {
   const [form, setForm] = useState<DocFormData>(EMPTY_FORM);
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<"all" | "needs_review" | "pending_sync">("all");
-
-  // Auth guard
-  useEffect(() => {
-    if (authLoading) return;
-    if (!isAuthenticated) {
-      setLocation("/admin/login");
-    }
-  }, [authLoading, isAuthenticated, setLocation]);
 
   // tRPC queries
   const { data: stats, refetch: refetchStats } = trpc.knowledgeBase.getStats.useQuery();
@@ -182,14 +172,6 @@ export default function AdminKnowledgeBase() {
       : activeTab === "pending_sync"
       ? pendingSync
       : documents;
-
-  if (authLoading) {
-    return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="text-white text-lg">Loading...</div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">

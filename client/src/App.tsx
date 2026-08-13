@@ -1,5 +1,6 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { OAuthAdminGate } from "@/components/OAuthAdminGate";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -21,7 +22,6 @@ import AdminConsumerCases from "./pages/AdminConsumerCases";
 import AdminConsumerCaseDetail from "./pages/AdminConsumerCaseDetail";
 import AdminBrainUpload from "./pages/AdminBrainUpload";
 import CaseUploadCenter from "./pages/CaseUploadCenter";
-import ScreenshotCapture from "./pages/admin/ScreenshotCapture";
 import ConsumerConfirmation from "./pages/ConsumerConfirmation";
 import TurboHQ from "./pages/TurboHQ";
 import Services from "./pages/Services";
@@ -43,6 +43,38 @@ import AdminKnowledgeBase from "./pages/AdminKnowledgeBase";
 import AdminKnowledgeBaseImport from "./pages/AdminKnowledgeBaseImport";
 import AdminCommandCenter from "./pages/AdminCommandCenter";
 import CaseBrief from "./pages/CaseBrief";
+
+function OAuthCommandCenter() {
+  return (
+    <OAuthAdminGate>
+      <AdminCommandCenter />
+    </OAuthAdminGate>
+  );
+}
+
+function OAuthKnowledgeBase() {
+  return (
+    <OAuthAdminGate>
+      <AdminKnowledgeBase />
+    </OAuthAdminGate>
+  );
+}
+
+function OAuthKnowledgeBaseImport() {
+  return (
+    <OAuthAdminGate>
+      <AdminKnowledgeBaseImport />
+    </OAuthAdminGate>
+  );
+}
+
+function OAuthBrain() {
+  return (
+    <OAuthAdminGate>
+      <AdminBrainUpload />
+    </OAuthAdminGate>
+  );
+}
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -85,12 +117,11 @@ function Router() {
       
       <Route path="/admin/login" component={AdminLogin} />
       {/* Admin workflow routes - restored to specification */}
-      <Route path="/admin/command-center" component={AdminCommandCenter} />
-      <Route path="/admin/knowledge-base/import" component={AdminKnowledgeBaseImport} />
-      <Route path="/admin/knowledge-base" component={AdminKnowledgeBase} />
-      <Route path="/admin/brain" component={AdminBrainUpload} />
+      <Route path="/admin/command-center" component={OAuthCommandCenter} />
+      <Route path="/admin/knowledge-base/import" component={OAuthKnowledgeBaseImport} />
+      <Route path="/admin/knowledge-base" component={OAuthKnowledgeBase} />
+      <Route path="/admin/brain" component={OAuthBrain} />
       <Route path="/admin/case-upload" component={CaseUploadCenter} />
-      <Route path="/admin/screenshots" component={ScreenshotCapture} />
 
       <Route path="/admin/cases/:id" component={AdminCasesDetail} />
       <Route path="/admin/cases" component={AdminCasesList} />

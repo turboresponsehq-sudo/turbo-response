@@ -7,10 +7,9 @@
  * 
  * Runs: Sunday 8:00pm ET via GitHub Actions
  * Input: Daily intel reports from past week
- * Output: /docs/weekly-reviews/review-YYYY-MM-DD.md + Email
+ * Output: /docs/weekly-reviews/review-YYYY-MM-DD.md
  */
 
-const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
@@ -20,11 +19,6 @@ const CONFIG = {
     owner: 'turboresponsehq-sudo',
     repo: 'turbo-response',
     token: process.env.GITHUB_TOKEN || '',
-  },
-  email: {
-    to: 'Turboresponsehq@gmail.com',
-    from: 'intel@turboresponsehq.ai',
-    apiKey: process.env.SENDGRID_API_KEY || '',
   },
   reportDir: './docs/intel-reports',
   outputDir: './docs/weekly-reviews',
@@ -55,26 +49,6 @@ function formatDate(dateStr) {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  });
-}
-
-// Utility: Make HTTPS request
-function httpsRequest(options, body = null) {
-  return new Promise((resolve, reject) => {
-    const req = https.request(options, (res) => {
-      let data = '';
-      res.on('data', (chunk) => data += chunk);
-      res.on('end', () => {
-        try {
-          resolve({ status: res.statusCode, body: JSON.parse(data) });
-        } catch (e) {
-          resolve({ status: res.statusCode, body: data });
-        }
-      });
-    });
-    req.on('error', reject);
-    if (body) req.write(body);
-    req.end();
   });
 }
 
@@ -445,65 +419,6 @@ function generateReview(reports, startDate, endDate, metrics, wins, issues, tren
   return review;
 }
 
-// Email: Send weekly review
-async function sendWeeklyReviewEmail(reviewMarkdown, startDate, endDate) {
-  console.log('[Email] Sending weekly review...');
-  
-  // Convert markdown to simple HTML
-  const html = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <style>
-    body { font-family: sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; }
-    h1 { color: #0066cc; border-bottom: 3px solid #0066cc; padding-bottom: 10px; }
-    h2 { color: #0066cc; margin-top: 30px; }
-    table { border-collapse: collapse; width: 100%; margin: 20px 0; }
-    th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-    th { background-color: #f2f2f2; }
-    .summary { background-color: #f0f7ff; border-left: 4px solid #0066cc; padding: 15px; margin: 20px 0; }
-  </style>
-</head>
-<body>
-  <pre>${reviewMarkdown}</pre>
-</body>
-</html>
-`;
-
-  const body = JSON.stringify({
-    personalizations: [{ to: [{ email: CONFIG.email.to }] }],
-    from: { email: CONFIG.email.from, name: 'Turbo Response Intel' },
-    subject: `Weekly Review - ${formatDate(startDate)} to ${formatDate(endDate)}`,
-    content: [{ type: 'text/html', value: html }],
-  });
-
-  const options = {
-    hostname: 'api.sendgrid.com',
-    path: '/v3/mail/send',
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${CONFIG.email.apiKey}`,
-      'Content-Type': 'application/json',
-    },
-  };
-
-  try {
-    const res = await httpsRequest(options, body);
-    
-    if (res.status === 202) {
-      console.log('✅ Weekly review email sent');
-      return { success: true };
-    } else {
-      console.error('❌ Email failed:', res.status, res.body);
-      return { success: false, error: res.body };
-    }
-  } catch (error) {
-    console.error('❌ Email error:', error.message);
-    return { success: false, error: error.message };
-  }
-}
-
 // Main execution
 async function main() {
   console.log('=== Weekly Review Generator ===');
@@ -539,9 +454,6 @@ async function main() {
   fs.writeFileSync(outputPath, review);
   console.log(`\n✅ Review saved: ${outputPath}`);
 
-  // Send email
-  const emailResult = await sendWeeklyReviewEmail(review, startDate, endDate);
-
   // Summary
   console.log('\n=== Weekly Review Summary ===');
   console.log(`Period: ${startDate} to ${endDate}`);
@@ -549,13 +461,12 @@ async function main() {
   console.log(`Total action items: ${metrics.totalActionItems}`);
   console.log(`Wins: ${wins.length}`);
   console.log(`Issues: ${issues.length}`);
-  console.log(`Email: ${emailResult.success ? '✅ Sent' : '❌ Failed'}`);
+  console.log('Delivery: report committed to the repository; outbound email delivery is retired.');
 
   return {
     review,
     outputPath,
     metrics,
-    emailResult,
   };
 }
 

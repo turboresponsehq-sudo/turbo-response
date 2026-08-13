@@ -4,9 +4,8 @@
  * Route: /admin/knowledge-base/import
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useLocation } from "wouter";
-import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { trpc } from "@/lib/trpc";
 
 interface DriveFile {
@@ -45,21 +44,12 @@ function formatDate(iso: string): string {
 
 export default function AdminKnowledgeBaseImport() {
   const [, setLocation] = useLocation();
-  const { isAuthenticated, isLoading: authLoading } = useAdminAuth();
 
   const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set());
   const [defaultCategory, setDefaultCategory] = useState("General");
   const [importResults, setImportResults] = useState<any[] | null>(null);
   const [isImporting, setIsImporting] = useState(false);
   const [folderId, setFolderId] = useState<string | undefined>(undefined);
-
-  // Auth guard
-  useEffect(() => {
-    if (authLoading) return;
-    if (!isAuthenticated) {
-      setLocation("/admin/login");
-    }
-  }, [authLoading, isAuthenticated, setLocation]);
 
   // Check Drive config
   const { data: driveConfig } = trpc.googleDrive.checkConfig.useQuery();
@@ -120,14 +110,6 @@ export default function AdminKnowledgeBaseImport() {
     setIsImporting(true);
     bulkImportMutation.mutate({ files: toImport });
   };
-
-  if (authLoading) {
-    return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="text-white">Loading...</div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">

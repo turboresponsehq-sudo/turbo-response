@@ -109,7 +109,7 @@ node scripts/setup-brain-system.js
 
 🧪 Test the API:
    curl -X GET https://turbo-response-backend.onrender.com/api/brain/list \
-     -H "x-access-token: REDACTED_RETIRED_ACCESS_TOKEN"
+     -H "OAuth session authorization: RETIRED_STATIC_TOKEN"
 
 🎯 Next Steps:
    1. Add SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to Render environment
@@ -142,7 +142,7 @@ After local setup works, add the same credentials to Render:
 
 ```bash
 curl -X GET https://turbo-response-backend.onrender.com/api/brain/list \
-  -H "x-access-token: REDACTED_RETIRED_ACCESS_TOKEN"
+  -H "OAuth session authorization: RETIRED_STATIC_TOKEN"
 ```
 
 **Expected response:**
@@ -171,7 +171,7 @@ curl -X GET https://turbo-response-backend.onrender.com/api/brain/list \
 
 ```bash
 curl -X POST https://turbo-response-backend.onrender.com/api/brain/upload \
-  -H "x-access-token: REDACTED_RETIRED_ACCESS_TOKEN" \
+  -H "OAuth session authorization: RETIRED_STATIC_TOKEN" \
   -F "file=@/path/to/document.pdf" \
   -F "title=My Document" \
   -F "description=Test upload"
@@ -181,7 +181,7 @@ curl -X POST https://turbo-response-backend.onrender.com/api/brain/upload \
 
 ```bash
 curl -X DELETE https://turbo-response-backend.onrender.com/api/brain/delete/1 \
-  -H "x-access-token: REDACTED_RETIRED_ACCESS_TOKEN"
+  -H "OAuth session authorization: RETIRED_STATIC_TOKEN"
 ```
 
 ---
@@ -272,7 +272,7 @@ The Consumer Defense Blueprint is now the **first document** in the Brain System
 
 - **Service Role Key** = Full database access - Keep it secret!
 - **Storage Bucket** = Public (files accessible via URL)
-- **API Access** = Requires `x-access-token: REDACTED_RETIRED_ACCESS_TOKEN`
+- **API Access** = Requires `OAuth session authorization: RETIRED_STATIC_TOKEN`
 - **RLS Policies** = Service role bypasses RLS (intentional)
 
 ---

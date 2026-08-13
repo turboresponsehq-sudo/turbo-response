@@ -34,7 +34,7 @@ Turbo Response is a consumer defense intelligence platform with three core syste
 | Backend API | Node.js/Express | Render | Chat API, intel scanner, webhooks |
 | Frontend | React 19 | Render static | Web UI, chat widget |
 | Database | PostgreSQL | Render managed | Single source of truth |
-| Email | SendGrid API | Cloud | Daily intel delivery |
+| Email | retired email delivery API | Cloud | Daily intel delivery |
 | GitHub Actions | Scheduler | GitHub | Daily scanner trigger |
 | OpenAI | LLM API | Cloud | Chat response generation |
 
@@ -111,7 +111,7 @@ User submits form (case details)
         ↓
 [Backend] Generate email notification
         ↓
-[SendGrid] Send email to owner
+[retired email delivery] Send email to owner
         ↓
 [Database] INSERT email_log (form_id, recipient, status)
         ↓
@@ -145,7 +145,7 @@ IF "No actionable updates today"
   → Skip email (Stop Rule)
   → Exit successfully
 ELSE
-  → [SendGrid] Send email to owner
+  → [retired email delivery] Send email to owner
   → [GitHub] Create issue for each P0 item
         ↓
 7:00 AM ET - Task creation complete
@@ -153,7 +153,7 @@ ELSE
 
 **Key Points:**
 - Runs on GitHub Actions (not Render)
-- Needs SENDGRID_API_KEY in GitHub secrets
+- Needs RETIRED_EMAIL_DELIVERY_SECRET in GitHub secrets
 - Stop Rule prevents spam emails
 - Reports stored in GitHub (backed up daily)
 - No database writes (read-only operation)
@@ -516,15 +516,15 @@ CREATE TABLE file_uploads (
 
 **Logs:** Error logged in Render logs with connection details
 
-### SendGrid Failure
+### retired email delivery Failure
 
 **Scenario:** Email delivery fails
 
 **Behavior:**
 1. Daily scanner runs successfully
 2. Report generated and committed to GitHub
-3. SendGrid API call fails
-4. Log error: "Email delivery failed - SENDGRID_ERROR"
+3. retired email delivery API call fails
+4. Log error: "Email delivery failed - retired email delivery_ERROR"
 5. Email stored in `email_log` table with status: "failed"
 6. GitHub issue still created (if P0 item)
 
@@ -596,7 +596,7 @@ SELECT COUNT(*) FROM login_audit WHERE DATE(last_visit) = CURDATE();
 
 **3. Check Email Delivery**
 ```
-[ ] Go to SendGrid Dashboard: https://app.sendgrid.com
+[ ] Go to retired email delivery Dashboard: https://app.retired email delivery.com
 [ ] Check "Delivery" tab
 [ ] Look for bounces or suppression issues
 [ ] Expected: All emails delivered or in Spam
@@ -615,8 +615,8 @@ SELECT COUNT(*) FROM login_audit WHERE DATE(last_visit) = CURDATE();
 ```
 [ ] Render: Check monthly bill
 [ ] OpenAI: Check API usage and costs
-[ ] SendGrid: Check email volume
-[ ] Expected: Render ~$7/month, OpenAI ~$30-100/month, SendGrid $0
+[ ] retired email delivery: Check email volume
+[ ] Expected: Render ~$7/month, OpenAI ~$30-100/month, retired email delivery $0
 ```
 
 **3. Performance Review**
@@ -645,10 +645,10 @@ Look for: "Status: No actionable updates today"
 If found: This is normal, no email sent
 ```
 
-**Check 3: SendGrid API key configured**
+**Check 3: retired email delivery API key configured**
 ```
 Go to: https://github.com/turboresponsehq-sudo/turbo-response/settings/secrets/actions
-Look for: SENDGRID_API_KEY secret
+Look for: RETIRED_EMAIL_DELIVERY_SECRET secret
 If missing: Add it
 ```
 
@@ -731,13 +731,13 @@ WHERE created_at < DATE_SUB(NOW(), INTERVAL 90 DAY);
 | Problem | Where to Look | What to Check |
 |---------|---------------|---------------|
 | Chat not responding | Render logs | Backend errors, OpenAI failures |
-| Email not arriving | GitHub Actions logs | SendGrid API errors, Stop Rule |
+| Email not arriving | GitHub Actions logs | retired email delivery API errors, Stop Rule |
 | Database slow | Render dashboard | CPU/memory usage, query logs |
 | Frontend 404 | Render deployment | Static files deployed correctly |
 | Session lost | chat_sessions table | UUID generation, cookie settings |
 | Messages not saved | chat_messages table | Foreign key constraints |
 | OpenAI errors | Render logs + OpenAI dashboard | Rate limits, API key, model availability |
-| SendGrid errors | SendGrid dashboard + GitHub logs | Sender verification, suppression list |
+| retired email delivery errors | retired email delivery dashboard + GitHub logs | Sender verification, suppression list |
 
 ### Test Commands
 
@@ -761,10 +761,10 @@ curl -H "Authorization: Bearer REDACTED_RETIRED_BEARER_TOKEN" \
   https://api.openai.com/v1/models
 ```
 
-**Test SendGrid:**
+**Test retired email delivery:**
 ```bash
 # From Render shell
-curl -X POST https://api.sendgrid.com/v3/mail/send \
+curl -X POST https://api.retired email delivery.com/v3/mail/send \
   -H "Authorization: Bearer REDACTED_RETIRED_BEARER_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"personalizations":[{"to":[{"email":"test@example.com"}]}],"from":{"email":"noreply@turboresponsehq.ai"},"subject":"Test","content":[{"type":"text/plain","value":"Test"}]}'
@@ -778,7 +778,7 @@ curl -X POST https://api.sendgrid.com/v3/mail/send \
 
 - [ ] All environment variables set in Render
 - [ ] Database migrations run (`pnpm db:push`)
-- [ ] GitHub secrets configured (SENDGRID_API_KEY)
+- [ ] GitHub secrets configured (RETIRED_EMAIL_DELIVERY_SECRET)
 - [ ] Render backup enabled
 - [ ] SSL certificate valid
 - [ ] CORS settings correct

@@ -19,7 +19,7 @@ Starts background processing of all unindexed documents.
 **Headers:**
 
 ```
-x-access-token: REDACTED_RETIRED_ACCESS_TOKEN
+OAuth session authorization: YOUR_ACCESS_TOKEN
 ```
 
 **Response (202 Accepted):**
@@ -37,7 +37,7 @@ x-access-token: REDACTED_RETIRED_ACCESS_TOKEN
 
 ```bash
 curl -X POST https://turboresponsehq.ai/api/brain/index/bulk \
-  -H "x-access-token: REDACTED_RETIRED_ACCESS_TOKEN"
+  -H "OAuth session authorization: YOUR_ACCESS_TOKEN"
 ```
 
 ---
@@ -51,7 +51,7 @@ Returns current indexing status for all documents.
 **Headers:**
 
 ```
-x-access-token: REDACTED_RETIRED_ACCESS_TOKEN
+OAuth session authorization: YOUR_ACCESS_TOKEN
 ```
 
 **Response (200 OK ):**
@@ -77,7 +77,7 @@ x-access-token: REDACTED_RETIRED_ACCESS_TOKEN
 
 ```bash
 curl https://turboresponsehq.ai/api/brain/index/status \
-  -H "x-access-token: REDACTED_RETIRED_ACCESS_TOKEN"
+  -H "OAuth session authorization: YOUR_ACCESS_TOKEN"
 ```
 
 ---
@@ -122,7 +122,7 @@ pending → indexing → indexed (success)
 ```bash
 # Check status every 30 seconds
 watch -n 30 'curl -s https://turboresponsehq.ai/api/brain/index/status \
-  -H "x-access-token: REDACTED_RETIRED_ACCESS_TOKEN" | jq'
+  -H "OAuth session authorization: YOUR_TOKEN" | jq'
 ```
 
 ### Option 2: Check Render Logs
@@ -155,7 +155,7 @@ If some documents fail to index, check:
 
 ```bash
 curl -X POST https://turboresponsehq.ai/api/brain/index/bulk \
-  -H "x-access-token: REDACTED_RETIRED_ACCESS_TOKEN"
+  -H "OAuth session authorization: YOUR_TOKEN"
 ```
 
 (Only processes documents with status `pending` or `failed` )

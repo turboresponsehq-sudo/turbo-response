@@ -555,7 +555,7 @@ function WorkspacesTab() {
   const [filterType, setFilterType] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
 
-  const { data: workspacesList, isLoading, refetch } = trpc.workspaces.workspaces.list.useQuery({
+  const { data: workspacesList, isLoading, isError, error, refetch } = trpc.workspaces.workspaces.list.useQuery({
     search: search || undefined,
     type: filterType !== 'all' ? filterType : undefined,
     status: filterStatus !== 'all' ? filterStatus : undefined,
@@ -695,6 +695,11 @@ function WorkspacesTab() {
       {/* Workspace List */}
       {isLoading ? (
         <p style={{ color: '#64748b' }}>Loading workspaces...</p>
+      ) : isError ? (
+        <div style={styles.card}>
+          <p style={{ color: '#fca5a5', marginBottom: '12px' }}>Unable to load workspaces: {error.message}</p>
+          <button style={styles.btn('secondary')} onClick={() => refetch()}>Retry</button>
+        </div>
       ) : !workspacesList || workspacesList.length === 0 ? (
         <div style={styles.card}><p style={{ color: '#64748b' }}>No workspaces found. Click "+ New Workspace" to get started.</p></div>
       ) : (

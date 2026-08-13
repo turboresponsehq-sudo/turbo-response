@@ -389,9 +389,8 @@ async function setup() {
     log(`   • RLS policies: Applied ✅`);
     log(`   • Blueprint uploaded: Document ID ${doc.id} ✅`);
     
-    log('\n🧪 Test the API:', 'cyan');
-    log('   curl -X GET https://turbo-response-backend.onrender.com/api/brain/list \\');
-    log('     -H "x-access-token: REDACTED_RETIRED_ACCESS_TOKEN"');
+    log('\n🧪 Verify administration access:', 'cyan');
+    log('   Sign in through Manus OAuth and open /admin/brain.');
     
     log('\n🎯 Next Steps:', 'cyan');
     log('   1. Add SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to Render environment');

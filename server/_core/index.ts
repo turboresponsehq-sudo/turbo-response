@@ -89,8 +89,9 @@ async function startServer() {
   app.use("/api/case", caseExtrasRouter);
   app.use("/api/upload", uploadsRouter);
   
-  // Setup admin user (one-time)
-  app.get("/api/setup-admin", async (req, res) => {
+  // Deprecated one-time setup route; never expose credentials in production.
+  if (process.env.NODE_ENV !== "production") {
+    app.get("/api/setup-admin", async (req, res) => {
     try {
       const bcrypt = await import("bcrypt");
       const db = await getDb();
@@ -154,7 +155,8 @@ async function startServer() {
       console.error('❌ Setup error:', error);
       res.status(500).send(`Error: ${error.message}`);
     }
-  });
+    });
+  }
 
   // JWT verification middleware
   const verifyAdminToken = async (req: any, res: any, next: any) => {
