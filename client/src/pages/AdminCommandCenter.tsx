@@ -47,7 +47,7 @@ export default function AdminCommandCenter() {
           ))}
         </nav>
       </div>
-      {tab === 'home' && <HomeTab />}
+      {tab === 'home' && <HomeTab onNavigate={setTab} />}
       {tab === 'signals' && <SignalsTab />}
       {tab === 'pipeline' && <PipelineTab />}
       {tab === 'workspaces' && <WorkspacesTab />}
@@ -57,93 +57,39 @@ export default function AdminCommandCenter() {
 }
 
 // ── HOME TAB ──────────────────────────────────────────────────────────────────
-function HomeTab() {
-  const { data: metrics, isLoading } = trpc.missionControl.metrics.summary.useQuery();
+function HomeTab({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
   const { data: tasks } = trpc.missionControl.tasks.list.useQuery();
-  const { data: wsMetrics } = trpc.workspaces.workspaces.metrics.useQuery();
-
-  return (
-    <div>
-      <div style={{ marginBottom: '24px' }}>
-        <h1 style={{ fontSize: '28px', fontWeight: 700, color: '#f1f5f9', margin: 0 }}>Good Morning, Demarcus.</h1>
-        <p style={{ color: '#64748b', marginTop: '8px' }}>Here's your operational overview.</p>
-      </div>
-
-      <div style={styles.grid4}>
-        <div style={styles.metricCard}>
-          <div style={styles.metricValue}>{isLoading ? '—' : metrics?.tasks ?? 0}</div>
-          <div style={styles.metricLabel}>Open Tasks</div>
-        </div>
-        <div style={styles.metricCard}>
-          <div style={styles.metricValue}>{isLoading ? '—' : metrics?.signals ?? 0}</div>
-          <div style={styles.metricLabel}>Turbo Signals</div>
-        </div>
-        <div style={styles.metricCard}>
-          <div style={styles.metricValue}>{isLoading ? '—' : metrics?.pipelineCount ?? 0}</div>
-          <div style={styles.metricLabel}>Pipeline</div>
-        </div>
-        <div style={styles.metricCard}>
-          <div style={styles.metricValue}>{isLoading ? '—' : metrics?.activeClients ?? 0}</div>
-          <div style={styles.metricLabel}>Active Clients</div>
-        </div>
-      </div>
-
-      {/* Workspace Metrics */}
-      <div style={{ ...styles.card, marginBottom: '24px' }}>
-        <h3 style={styles.sectionTitle}>Workspaces</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '24px', fontWeight: 700, color: '#10b981' }}>{wsMetrics?.openWorkspaces ?? 0}</div>
-            <div style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase' }}>Open</div>
-          </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '24px', fontWeight: 700, color: '#ef4444' }}>{wsMetrics?.dueToday ?? 0}</div>
-            <div style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase' }}>Due Today</div>
-          </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '24px', fontWeight: 700, color: '#f59e0b' }}>{wsMetrics?.waiting ?? 0}</div>
-            <div style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase' }}>Waiting</div>
-          </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '24px', fontWeight: 700, color: '#8b5cf6' }}>{wsMetrics?.completedThisWeek ?? 0}</div>
-            <div style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase' }}>Completed This Week</div>
-          </div>
-        </div>
-      </div>
-
-      <div style={styles.card}>
-        <h3 style={styles.sectionTitle}>Today's Tasks</h3>
-        {!tasks || tasks.length === 0 ? (
-          <p style={{ color: '#64748b' }}>No open tasks. Add tasks from the Tasks tab.</p>
-        ) : (
-          <table style={styles.table}>
-            <thead>
-              <tr>
-                <th style={styles.th}>Task</th>
-                <th style={styles.th}>Company</th>
-                <th style={styles.th}>Due</th>
-                <th style={styles.th}>Priority</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tasks.slice(0, 8).map(task => (
-                <tr key={task.id}>
-                  <td style={styles.td}>{task.title}</td>
-                  <td style={styles.td}>{task.companyName || '—'}</td>
-                  <td style={styles.td}>{task.dueDate || '—'}</td>
-                  <td style={styles.td}>
-                    <span style={styles.badge(
-                      task.priority === 'urgent' ? '#ef4444' : task.priority === 'high' ? '#f59e0b' : task.priority === 'medium' ? '#3b82f6' : '#64748b'
-                    )}>{task.priority}</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+  const { data: signals } = trpc.missionControl.signals.list.useQuery();
+  const { data: pipeline } = trpc.missionControl.pipeline.list.useQuery();
+  const { data: workspaces, isError: workspacesError } = trpc.workspaces.workspaces.list.useQuery({});
+  const { data: intakeLeads } = trpc.admin.getIntakeLeads.useQuery({ limit: 6 });
+  const { data: kbStats, isError: kbError } = trpc.knowledgeBase.getStats.useQuery();
+  const { data: pendingSync } = trpc.knowledgeBase.getPendingSync.useQuery();
+  const today = new Date().toISOString().slice(0, 10);
+  const attention = [
+    ...(tasks || []).filter((task: any) => task.priority === 'urgent' || task.priority === 'high' || (task.dueDate && task.dueDate <= today)).slice(0, 4).map((task: any) => ({ label: task.title, detail: `${task.priority} task${task.dueDate ? ` · due ${task.dueDate}` : ''}`, tab: 'tasks' as Tab, tone: '#f59e0b' })),
+    ...(pipeline || []).filter((item: any) => item.followUpDate && item.followUpDate <= today && item.stage !== 'completed').slice(0, 3).map((item: any) => ({ label: item.companyName, detail: `follow-up due ${item.followUpDate}`, tab: 'pipeline' as Tab, tone: '#ef4444' })),
+    ...(workspaces || []).filter((ws: any) => ws.priority === 'urgent' || ws.status === 'waiting').slice(0, 3).map((ws: any) => ({ label: ws.name, detail: ws.status === 'waiting' ? 'case waiting for action' : 'urgent case', tab: 'workspaces' as Tab, tone: '#f59e0b' })),
+    ...(pendingSync?.length ? [{ label: `${pendingSync.length} Knowledge Base document${pendingSync.length === 1 ? '' : 's'} pending xAI sync`, detail: 'document sync needs attention', tab: 'workspaces' as Tab, tone: '#a78bfa' }] : []),
+  ];
+  const card = (title: string, children: React.ReactNode, action?: { label: string; tab: Tab }) => <section style={{ ...styles.card, marginBottom: 0 }}><div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px' }}><h3 style={styles.sectionTitle}>{title}</h3>{action && <button style={{ ...styles.btn('secondary'), padding: '5px 9px', fontSize: '11px' }} onClick={() => onNavigate(action.tab)}>{action.label}</button>}</div>{children}</section>;
+  return <div>
+    <div style={{ marginBottom: '22px' }}><h1 style={{ fontSize: '28px', fontWeight: 700, color: '#f1f5f9', margin: 0 }}>Command Center</h1><p style={{ color: '#94a3b8', marginTop: '8px' }}>What requires your attention right now?</p></div>
+    <section style={{ ...styles.card, borderColor: attention.length ? '#f59e0b66' : '#1e293b' }}><h2 style={{ ...styles.sectionTitle, color: attention.length ? '#fbbf24' : '#e2e8f0' }}>Needs Attention</h2>{attention.length ? <div>{attention.map((item, index) => <button key={`${item.label}-${index}`} onClick={() => onNavigate(item.tab)} style={{ width: '100%', textAlign: 'left', background: 'transparent', color: '#e2e8f0', border: '0', borderTop: index ? '1px solid #1e293b' : '0', padding: '12px 0', cursor: 'pointer' }}><strong style={{ color: item.tone }}>{item.label}</strong><div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '3px' }}>{item.detail}</div></button>)}</div> : <p style={{ color: '#94a3b8', margin: 0 }}>No urgent tasks, due follow-ups, waiting cases, or pending document syncs are currently reported.</p>}</section>
+    <div style={{ ...styles.grid4, gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', marginTop: '16px' }}>
+      {card('New Leads', intakeLeads?.length ? <div>{intakeLeads.slice(0, 4).map((lead: any) => <div key={lead.id} style={{ padding: '9px 0', borderBottom: '1px solid #1e293b' }}><strong>{lead.fullName}</strong><div style={{ fontSize: '12px', color: '#94a3b8' }}>{lead.source || 'intake'} · {lead.status}</div></div>)}</div> : <p style={{ color: '#94a3b8' }}>No intake leads recorded.</p>, { label: 'Leads', tab: 'signals' })}
+      {card('Active Cases', workspacesError ? <p style={{ color: '#fca5a5' }}>Workspace data is unavailable. Open Workspaces to retry.</p> : workspaces?.length ? <div>{workspaces.filter((ws: any) => ws.status === 'active' || ws.status === 'waiting').slice(0, 4).map((ws: any) => <div key={ws.id} style={{ padding: '9px 0', borderBottom: '1px solid #1e293b' }}><strong>{ws.name}</strong><div style={{ fontSize: '12px', color: '#94a3b8' }}>{ws.priority} · {ws.status}</div></div>)}</div> : <p style={{ color: '#94a3b8' }}>No active case records found.</p>, { label: 'Cases', tab: 'workspaces' })}
+      {card('Voice Intakes', <p style={{ color: '#94a3b8', margin: 0 }}>Unavailable — no voice-intake activity feed is exposed by the current API.</p>)}
     </div>
-  );
+    <div style={{ ...styles.grid4, gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}>
+      {card('Documents & Sync', kbError ? <p style={{ color: '#fca5a5' }}>Knowledge Base status is unavailable.</p> : <div><strong>{kbStats?.total ?? 0} Knowledge Base documents</strong><p style={{ color: '#94a3b8', marginBottom: 0 }}>{pendingSync?.length ?? 0} pending xAI sync · Google Drive status is managed from Knowledge Base Import.</p></div>)}
+      {card('Follow-ups & Tasks', tasks?.length ? <div>{tasks.slice(0, 5).map((task: any) => <div key={task.id} style={{ padding: '8px 0', borderBottom: '1px solid #1e293b' }}><strong>{task.title}</strong><div style={{ fontSize: '12px', color: '#94a3b8' }}>{task.priority} · {task.dueDate || 'no due date'}</div></div>)}</div> : <p style={{ color: '#94a3b8' }}>No open follow-ups recorded.</p>, { label: 'Tasks', tab: 'tasks' })}
+    </div>
+    <div style={{ ...styles.grid4, gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}>
+      {card('System Health', <div style={{ fontSize: '13px', color: '#94a3b8' }}><div>Website/API: compact live health check available at <code>/api/health</code></div><div style={{ marginTop: '7px' }}>Database, OAuth, xAI, Google Drive, and voice service: no consolidated status endpoint is currently exposed.</div></div>)}
+      {card('Marketing & Activity', signals?.length ? <div>{signals.slice(0, 4).map((signal: any) => <div key={signal.id} style={{ padding: '8px 0', borderBottom: '1px solid #1e293b' }}><strong>{signal.companyName}</strong><div style={{ fontSize: '12px', color: '#94a3b8' }}>{signal.signalType || 'signal'} · {signal.sourceType || 'source not recorded'}</div></div>)}</div> : <p style={{ color: '#94a3b8' }}>No lead-generation signals recorded.</p>, { label: 'Signals', tab: 'signals' })}
+    </div>
+  </div>;
 }
 
 // ── SIGNALS TAB ───────────────────────────────────────────────────────────────

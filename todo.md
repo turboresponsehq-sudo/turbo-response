@@ -787,3 +787,12 @@
 - [x] Timeline integration (log "AI Analysis Added" and "AI Analysis Updated")
 - [x] Future-ready architecture (fields for API-generated, confidence scores, version history)
 - [x] Dark theme consistent with existing design
+
+## COMMAND CENTER — ONE-OPERATOR ATTENTION DASHBOARD
+- [x] Audit existing Command Center queries, reusable components, and live-data availability
+- [x] Replace the sparse metric grid with an attention-first executive operator view
+- [x] Show live attention signals, leads/intake, active cases, documents/syncs, and follow-ups when available
+- [x] Label unavailable data integrations clearly rather than inventing metrics
+- [x] Keep system health compact and surface only current problems
+- [x] Keep marketing/activity lightweight and backed by existing information only
+- [ ] Validate with TypeScript, tests, production build, GitHub main release, Render deployment, and authenticated production review
