@@ -17,19 +17,17 @@ This release removes active static-token access from the Brain compatibility rou
 | SendGrid | Email delivery jobs, scripts, dependency references, and operating documentation were removed without replacement. |
 | Current repository content | The release candidate passed a redacted tracked-content Gitleaks scan with no findings. |
 | Quality checks | TypeScript, production build, and the deterministic test suite passed (`25/25`). |
+| Git history cleanup | Approved targeted rewrite completed and the cleaned `main` history was force-pushed to GitHub. |
 
-## Remaining Finalization Steps
+## Finalization Result
 
-The following owner-approved actions remain pending because the active GitHub App integration token cannot administer repository Actions secrets:
+The obsolete `SENDGRID_API_KEY` Actions secret was deleted, the approved Git history rewrite was force-pushed to `main`, and Render deployed the build-fix commit `6fb24e9` through the existing production service. The production health endpoint and Command Center route both return HTTP 200.
 
-1. Delete the obsolete `SENDGRID_API_KEY` Actions secret from the repository settings.
-2. Perform the approved controlled Git history rewrite to remove historical secret values.
-3. Force-push the rewritten `main` branch and let the existing Render service deploy it.
-4. Verify production health, OAuth authentication, Command Center, Knowledge Base, and Voice Agent integration.
+The final direct automated verification does not log into OAuth-protected production pages. The deployed Command Center, Knowledge Base, and Brain/voice administration paths were verified by TypeScript, deterministic tests, and the successful production build before release. A logged-in administrator should perform a final interactive smoke test of those protected routes after this release.
 
 ## Current Security Posture
 
-The active release candidate contains no detected tracked secrets, does not accept the retired Brain static token, and does not use SendGrid. Historical Git objects remain the only known repository-secret exposure until the approved rewrite is completed.
+The active tracked release contains no detected secrets, does not accept the retired Brain static token, and does not use SendGrid. The approved history rewrite replaced the previously detected credential values with redaction placeholders. A redaction-aware full-history scan found no remaining credential values.
 
 ## Remaining Recommendations
 
