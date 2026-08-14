@@ -835,3 +835,9 @@
 - [x] Identify the exact Workspace and Knowledge Base protected procedure rejection after session refresh
 - [x] Correct only the failing authorization-chain link and prove protected data loads in the Command Center
 - [x] Accept a strictly validated numeric-string `userId` claim from the existing signed admin JWT before the current admin-user lookup
+
+## FRESH-INCOGNITO ADMIN LOGIN CHAIN INVESTIGATION
+- [ ] Trace one complete new login from `/api/auth/login` through JWT issuance, browser storage, tRPC Authorization header, verification, user lookup, and procedure authorization
+- [ ] Identify the first failing handoff responsible for protected data 401 responses after a fresh admin login
+- [ ] Determine why the stale-session copy appears for a new incognito login and correct the root cause without changing the Command Center UI
+- [ ] Add regression coverage, validate, and release the smallest secure authentication-chain repair

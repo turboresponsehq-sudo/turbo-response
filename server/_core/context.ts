@@ -23,10 +23,16 @@ async function authenticateLegacyAdminSession(
   req: CreateExpressContextOptions["req"],
 ): Promise<User | null> {
   const authorization = req.headers.authorization;
-  if (!authorization?.startsWith("Bearer ")) return null;
+  if (!authorization?.startsWith("Bearer ")) {
+    console.info("[AdminSession] rejected: bearer_header_missing");
+    return null;
+  }
 
   const secret = process.env.JWT_SECRET;
-  if (!secret) return null;
+  if (!secret) {
+    console.error("[AdminSession] rejected: jwt_secret_unavailable");
+    return null;
+  }
 
   try {
     const jwt = await import("jsonwebtoken");
@@ -43,23 +49,46 @@ async function authenticateLegacyAdminSession(
           ? Number(claims.userId)
           : NaN;
 
-    if (claims.role !== "admin" || !Number.isSafeInteger(userId) || userId < 1) return null;
+    if (claims.role !== "admin") {
+      console.info("[AdminSession] rejected: token_role_not_admin");
+      return null;
+    }
+
+    if (!Number.isSafeInteger(userId) || userId < 1) {
+      console.info("[AdminSession] rejected: token_user_id_invalid");
+      return null;
+    }
 
     const db = await getDb();
-    if (!db) return null;
+    if (!db) {
+      console.error("[AdminSession] rejected: database_unavailable");
+      return null;
+    }
 
     const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
-    if (!user || user.role !== "admin") return null;
+    if (!user) {
+      console.info("[AdminSession] rejected: token_user_not_found");
+      return null;
+    }
+
+    if (user.role !== "admin") {
+      console.info("[AdminSession] rejected: database_role_not_admin");
+      return null;
+    }
 
     if (
       typeof claims.email === "string" &&
       user.email?.toLowerCase() !== claims.email.toLowerCase()
     ) {
+      console.info("[AdminSession] rejected: token_email_does_not_match_user");
       return null;
     }
 
+    console.info("[AdminSession] accepted: current_admin_user_resolved");
     return user;
-  } catch {
+  } catch (error) {
+    const errorName = error instanceof Error ? error.name : "UnknownError";
+    console.info(`[AdminSession] rejected: jwt_verification_${errorName}`);
     return null;
   }
 }
