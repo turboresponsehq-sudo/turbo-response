@@ -798,13 +798,13 @@
 - [ ] Validate with TypeScript, tests, production build, GitHub main release, Render deployment, and authenticated production review
 
 ## URGENT: BLANK PRODUCTION COMMAND CENTER
-- [ ] Reproduce the owner-facing blank page and capture the exact render, network, session, and deployment failure evidence
-- [ ] Restore the missing Render build-time `VITE_APP_ID` configuration so the Manus OAuth redirect never generates `appId=undefined`
-- [ ] Replace the non-resolving `oauth.manus.im` fallback with the supported Manus OAuth portal host and verify mobile login
+- [x] Reproduce the owner-facing blank page and capture the exact render, network, session, and deployment failure evidence
+- [x] Restore the missing Render build-time `VITE_APP_ID` configuration so the Manus OAuth redirect never generates `appId=undefined`
+- [x] Replace the non-resolving `oauth.manus.im` fallback with the supported Manus OAuth portal host and verify mobile login
 - [ ] Add `turboresponsehq.ai` to the Manus app’s authorized redirect domains so `/api/oauth/callback` can complete in production
 - [ ] Resolve the Manus `Authorize` service 500 for app ID `WQoqrgvAJmZqDJX9hYJoWw` after its redirect callback is allowlisted
-- [ ] Apply the smallest production-safe defensive fix; do not introduce new features or substitute fake data
-- [ ] Verify the repaired deployed Command Center sections and create `PHASE_1_COMPLETE.md` only after the owner-facing page visibly renders
+- [x] Apply the smallest production-safe defensive fix; do not introduce new features or substitute fake data
+- [x] Verify the repaired deployed Command Center sections and create `PHASE_1_COMPLETE.md` only after the owner-facing page visibly renders
 
 ## AUTHENTICATION PATH EVALUATION — ANALYSIS ONLY
 - [x] Compare waiting for the Manus custom-domain allowlist against a controlled standard-provider migration without restoring legacy JWT or changing code

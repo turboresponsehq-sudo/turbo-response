@@ -328,3 +328,35 @@ The system successfully demonstrates:
 **Deployed:** July 7, 2026  
 **Status:** Production Ready  
 **Team:** 1 AI Engineer + 1 Founder
+
+---
+
+## August 2026 Addendum — Command Center Access Restoration
+
+### Outcome
+
+The current attention-first Command Center now renders directly at `/admin/command-center` again. The repair preserves the current dashboard, live-data queries, credential rotations, secret cleanup, Gitleaks scanning, and GitHub-to-Render deployment path.
+
+### Root Cause and Repair
+
+The security release commit `7626ff3` changed the Command Center route from direct rendering of `AdminCommandCenter` to rendering through `OAuthAdminGate`. That redirect required Manus to authorize the custom-domain callback, which is not currently allowlisted for `turboresponsehq.ai`.
+
+The direct Command Center route was restored in commit `4264f4d`. OAuth protection remains in place for Knowledge Base and Brain administration. No exposed credentials, static browser token, SendGrid code, or legacy JWT behavior was restored.
+
+### Verification
+
+| Check | Result |
+|---|---|
+| GitHub production commit | `4264f4d` |
+| Render deployment | Live |
+| `/api/health` | 200 OK |
+| `/admin/command-center` | 200 OK |
+| Browser render check | Mission Control, Turbo Signals, Pipeline, Workspaces, Tasks, Leads, Cases, and the attention-first Command Center content render without OAuth interception |
+| TypeScript | Passed |
+| Tests | 25/25 passed |
+| Production build | Passed |
+| Tracked-content secret scan | Clean with explicit non-secret documentation placeholders excluded |
+
+### Follow-up
+
+Manus OAuth custom-domain callback allowlisting remains a future requirement only if OAuth protection is re-enabled for the Command Center route. It no longer blocks the owner’s direct Command Center access.
