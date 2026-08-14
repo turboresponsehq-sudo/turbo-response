@@ -874,9 +874,9 @@
 - [x] Recommend a no-duplication legacy-cases-to-Workspaces compatibility architecture and an idempotent event-to-intelligence model
 - [x] Implement only safe, real event-triggered task, signal, pipeline, and voice activity integrations
 - [x] Apply the additive production migration and verify the idempotency/reference columns and unique indexes in production
-- [ ] Complete final authenticated production verification after releasing the unavailable-source correction
+- [x] Complete final authenticated production verification after releasing the unavailable-source correction
 
 ## PHASE 3 — VOICE/CHAT SOURCE CORRECTION
 - [x] Confirm the authenticated production `admin.getLeads` query fails because the legacy `leads` relation does not exist in Render PostgreSQL
 - [x] Remove the unavailable Voice/Chat lead query from the Command Center while retaining existing intake and operational-data sources
-- [ ] Validate, release, and confirm the Command Center has no source-query error banner
+- [x] Validate, release, and confirm the Command Center has no source-query error banner
