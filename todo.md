@@ -882,6 +882,6 @@
 - [x] Validate, release, and confirm the Command Center has no source-query error banner
 
 ## PHASE 3 — VOICE/CHAT STORAGE COMPLETION
-- [ ] Audit the existing Voice/Chat schema for the exact `conversations` and `leads` production relation requirements
-- [ ] Create only the missing Voice/Chat relations and indexes without importing, seeding, or fabricating records
-- [ ] Re-enable the existing Voice/Chat activity source and verify the Command Center remains error-free with an honest empty state
+- [x] Audit the existing Voice/Chat schema for the exact `conversations` and `leads` production relation requirements
+- [x] Create only the missing Voice/Chat relations and indexes without importing, seeding, or fabricating records
+- [x] Re-enable the existing Voice/Chat activity source and verify the Command Center remains error-free with an honest empty state
