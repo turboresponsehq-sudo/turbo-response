@@ -14,6 +14,7 @@ import {
   mimeTypeToFileType,
   type DriveFile,
 } from "../googleDriveService";
+import { beginGoogleDriveOAuth, getGoogleDriveOAuthStatus } from "../services/googleDriveOAuthService";
 import {
   createKnowledgeDocument,
   updateKnowledgeDocument,
@@ -25,6 +26,12 @@ import {
 const DEFAULT_FOLDER_ID = process.env.GOOGLE_DRIVE_FOLDER_ID || "";
 
 export const googleDriveRouter = router({
+  /** Start an administrator-initiated, read-only Google OAuth connection. */
+  beginOAuth: protectedProcedure.mutation(async ({ ctx }) => {
+    const authorizationUrl = await beginGoogleDriveOAuth(ctx.user?.id);
+    return { authorizationUrl };
+  }),
+
   /**
    * List files in a Google Drive folder (shallow, one level)
    */
@@ -202,15 +209,23 @@ export const googleDriveRouter = router({
    * Check if the Google Drive integration is configured
    */
   checkConfig: protectedProcedure.query(async () => {
-    const hasServiceAccount = !!process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
+    const oauth = await getGoogleDriveOAuthStatus();
+    let hasServiceAccount = false;
+    try {
+      hasServiceAccount = Boolean(process.env.GOOGLE_SERVICE_ACCOUNT_JSON && JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON));
+    } catch {
+      hasServiceAccount = false;
+    }
     const hasFolderId = !!process.env.GOOGLE_DRIVE_FOLDER_ID;
     const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID || null;
 
     return {
-      configured: hasServiceAccount && hasFolderId,
+      configured: hasFolderId && (oauth.connected || hasServiceAccount),
       hasServiceAccount,
       hasFolderId,
       folderId,
+      authMode: oauth.connected ? "oauth" : hasServiceAccount ? "service_account" : "not_connected",
+      oauth,
     };
   }),
 });

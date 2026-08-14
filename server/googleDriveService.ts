@@ -1,7 +1,8 @@
 /**
  * Google Drive Service
  * Provides authenticated access to Google Drive for document listing and content extraction.
- * Uses a Service Account for server-to-server auth (no user OAuth flow required).
+ * Prefers a server-side Google OAuth connection and retains the Service Account
+ * path as a backward-compatible fallback until OAuth is verified in production.
  * 
  * Required environment variables:
  *   GOOGLE_SERVICE_ACCOUNT_JSON — full JSON of the service account key file
@@ -9,6 +10,7 @@
  */
 
 import { google } from "googleapis";
+import { getGoogleDriveOAuthAuthClient } from "./services/googleDriveOAuthService";
 
 export interface DriveFile {
   id: string;
@@ -20,13 +22,21 @@ export interface DriveFile {
   parents?: string[];
 }
 
-function getAuthClient() {
+async function getAuthClient() {
+  const oauthClient = await getGoogleDriveOAuthAuthClient();
+  if (oauthClient) return oauthClient;
+
   const serviceAccountJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
   if (!serviceAccountJson) {
-    throw new Error("GOOGLE_SERVICE_ACCOUNT_JSON environment variable is not set");
+    throw new Error("Google Drive OAuth is not connected and GOOGLE_SERVICE_ACCOUNT_JSON is not configured");
   }
 
-  const credentials = JSON.parse(serviceAccountJson);
+  let credentials: Record<string, unknown>;
+  try {
+    credentials = JSON.parse(serviceAccountJson);
+  } catch {
+    throw new Error("Google Drive OAuth is not connected and GOOGLE_SERVICE_ACCOUNT_JSON is not valid JSON");
+  }
   const auth = new google.auth.GoogleAuth({
     credentials,
     scopes: [
@@ -44,7 +54,7 @@ export async function listDriveFiles(
   folderId: string,
   options: { pageToken?: string; pageSize?: number } = {}
 ): Promise<{ files: DriveFile[]; nextPageToken?: string }> {
-  const auth = getAuthClient();
+  const auth = await getAuthClient();
   const drive = google.drive({ version: "v3", auth });
 
   const response = await drive.files.list({
@@ -67,7 +77,7 @@ export async function listDriveFiles(
 export async function listDriveFilesRecursive(
   folderId: string
 ): Promise<DriveFile[]> {
-  const auth = getAuthClient();
+  const auth = await getAuthClient();
   const drive = google.drive({ version: "v3", auth });
 
   const allFiles: DriveFile[] = [];
@@ -106,7 +116,7 @@ export async function listDriveFilesRecursive(
  * Export a Google Doc/Sheet/Slide as plain text
  */
 export async function exportGoogleDocAsText(fileId: string): Promise<string> {
-  const auth = getAuthClient();
+  const auth = await getAuthClient();
   const drive = google.drive({ version: "v3", auth });
 
   const response = await drive.files.export(
@@ -121,7 +131,7 @@ export async function exportGoogleDocAsText(fileId: string): Promise<string> {
  * Download a binary file (PDF, DOCX, etc.) as a Buffer
  */
 export async function downloadDriveFile(fileId: string): Promise<Buffer> {
-  const auth = getAuthClient();
+  const auth = await getAuthClient();
   const drive = google.drive({ version: "v3", auth });
 
   const response = await drive.files.get(
@@ -136,7 +146,7 @@ export async function downloadDriveFile(fileId: string): Promise<Buffer> {
  * Get file metadata
  */
 export async function getDriveFileMetadata(fileId: string): Promise<DriveFile> {
-  const auth = getAuthClient();
+  const auth = await getAuthClient();
   const drive = google.drive({ version: "v3", auth });
 
   const response = await drive.files.get({

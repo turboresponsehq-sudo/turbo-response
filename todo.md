@@ -885,3 +885,26 @@
 - [x] Audit the existing Voice/Chat schema for the exact `conversations` and `leads` production relation requirements
 - [x] Create only the missing Voice/Chat relations and indexes without importing, seeding, or fabricating records
 - [x] Re-enable the existing Voice/Chat activity source and verify the Command Center remains error-free with an honest empty state
+
+## PHASE 4 — AI OPERATING SYSTEM + KNOWLEDGE AUTOMATION
+- [ ] Audit production Google Drive credentials, canonical-folder permissions, Knowledge Base discovery, sync, indexing, xAI, Voice/Chat, and automation configuration without exposing secrets
+- [ ] Configure the canonical main Drive folder ID, valid Google service-account JSON, and active xAI API key in Render production without committing or exposing values
+- [x] Defer xAI API configuration and xAI-backed document synchronization by owner decision; do not block Drive OAuth discovery on xAI
+- [ ] Resolve Google organization policy `iam.disableServiceAccountKeyCreation` for the Drive-reader service account or select an approved alternate authentication architecture
+- [ ] Grant or obtain `roles/orgpolicy.policyAdmin` at the Turbo Response organization before editing the project-level key-creation exception
+- [ ] Resolve the `iam.allowedPolicyMemberDomains` domain-restricted role-grant policy so an allowed Turbo Response organization identity can receive Organization Policy Administrator access
+- [x] Verify that the correct `turbo-response` Google Cloud project already has a project-level `iam.disableServiceAccountKeyCreation` policy set to Not enforced
+- [x] Reuse the existing `turbo-response-kb` Knowledge Base service account in the correct Google Cloud project rather than creating a duplicate Drive identity
+- [ ] Create one approved replacement JSON key for `turbo-response-kb` and store it only in Render after sharing the canonical Drive folder with the existing service-account email
+- [ ] Add only Viewer permission for `turbo-response-kb@turbo-response.iam.gserviceaccount.com` to the canonical main Drive folder
+- [x] Save the replacement Drive credential and canonical folder ID in Render production without exposing or committing the credential
+- [ ] Replace the incorrect filename-only `GOOGLE_SERVICE_ACCOUNT_JSON` value with the full downloaded JSON credential content in Render
+- [x] Redeploy Render after replacing the filename-only credential value with the full JSON content
+- [ ] Replace the invalid browser `blob:` URL in `GOOGLE_SERVICE_ACCOUNT_JSON` with the actual full local JSON file text
+- [ ] Evaluate and implement an alternate secure Drive access path that does not require manual local JSON copying
+- [x] Implement a read-only Google OAuth Drive connection with server-side token storage and retain the existing service-account path until OAuth verification succeeds
+- [x] Define the Google OAuth web-server flow using an exact callback URL, CSRF state, offline refresh token, encrypted server-side storage, and the required `drive.readonly` scope
+- [ ] Implement available real document intelligence, provenance, duplicate detection, Voice/Chat metadata, and idempotent event-driven next actions
+- [ ] Improve existing Command Center recommendations using real flowing data without redesigning the page
+- [ ] Create `SYSTEM_DEPENDENCY_MAP.md` and update affected handoff documentation
+- [ ] Run TypeScript, full tests, production build, secret scan, GitHub main release, Render deployment, and authenticated production verification

@@ -4,6 +4,8 @@
 **Status:** Production  
 **Version:** 1.0
 
+> **Current-reference notice (August 14, 2026):** This document preserves earlier architectural context. For the current production topology, authentication compatibility boundary, PostgreSQL relations, Command Center source map, Drive/xAI dependencies, and Phase 4 configuration status, use [`SYSTEM_DEPENDENCY_MAP.md`](../SYSTEM_DEPENDENCY_MAP.md) first. Historical descriptions of retired email delivery, static browser credentials, previous database dialects, or legacy scanner behavior must not be used as current implementation instructions.
+
 ---
 
 ## Executive Summary

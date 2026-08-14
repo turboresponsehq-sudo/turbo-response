@@ -30,6 +30,7 @@ This is the **complete documentation index** for the entire project from incepti
 | Document | Description |
 |----------|-------------|
 | [README.md](../README.md) | Main project README |
+| [SYSTEM_DEPENDENCY_MAP.md](../SYSTEM_DEPENDENCY_MAP.md) | **Current production dependency map, integration boundaries, and Phase 4 configuration status** |
 | [QUICK_START.md](../QUICK_START.md) | Quick start guide |
 | [MASTER_REFERENCE.md](../MASTER_REFERENCE.md) | Master reference document |
 | [SYSTEM_MAP.md](../SYSTEM_MAP.md) | System architecture map |
@@ -42,6 +43,7 @@ This is the **complete documentation index** for the entire project from incepti
 
 | Document | Description |
 |----------|-------------|
+| [SYSTEM_DEPENDENCY_MAP.md](../SYSTEM_DEPENDENCY_MAP.md) | **Current production source of truth for modules, data flows, auth, integration dependencies, and Command Center consumers** |
 | [ARCHITECTURE_REFERENCE.md](../ARCHITECTURE_REFERENCE.md) | Complete architecture reference |
 | [AI_ARCHITECTURE_REFERENCE.md](../AI_ARCHITECTURE_REFERENCE.md) | AI system architecture |
 | [RAG_ARCHITECTURE.md](../RAG_ARCHITECTURE.md) | RAG (Retrieval-Augmented Generation) system |
@@ -279,7 +281,7 @@ This is the **complete documentation index** for the entire project from incepti
 - Deployment procedures change
 - Documents are archived or restored
 
-**Last Major Update:** February 5, 2025 (Added fixes #001-#003, archived 12 historical docs)
+**Last Major Update:** August 14, 2026 (Added the current production system dependency map and Phase 4 configuration status)
 
 ---
 

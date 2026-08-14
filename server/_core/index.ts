@@ -17,6 +17,7 @@ import clientPortalRouter from "../routes/clientPortal";
 import caseExtrasRouter from "../routes/caseExtras";
 import uploadsRouter from "../routes/uploads";
 import { getDb } from "../db"; // Already imported above
+import { registerGoogleDriveOAuthRoutes } from "../routes/googleDriveOAuth";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -71,6 +72,7 @@ async function startServer() {
   
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
+  registerGoogleDriveOAuthRoutes(app);
   
   // Brain System routes (with access token middleware built-in)
   app.use("/api/brain", brainRouter);

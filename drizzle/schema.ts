@@ -577,3 +577,22 @@ export const workspaceAiAnalyses = pgTable("workspace_ai_analyses", {
 
 export type WorkspaceAiAnalysis = typeof workspaceAiAnalyses.$inferSelect;
 export type InsertWorkspaceAiAnalysis = typeof workspaceAiAnalyses.$inferInsert;
+
+// ── GOOGLE DRIVE OAUTH CONNECTION ─────────────────────────────────────────────
+// A single encrypted server-side refresh token authorizes read-only access to the
+// canonical Turbo Response Drive folder. It is never returned to the browser.
+export const googleDriveOauthConnections = pgTable("google_drive_oauth_connections", {
+	id: smallint().primaryKey(),
+	refreshTokenCiphertext: text("refresh_token_ciphertext").notNull(),
+	scopes: text().notNull(),
+	folderId: varchar("folder_id", { length: 255 }).notNull(),
+	authorizedAt: timestamp("authorized_at", { mode: "string" }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
+});
+
+export const googleDriveOauthStates = pgTable("google_drive_oauth_states", {
+	stateHash: varchar("state_hash", { length: 64 }).primaryKey(),
+	initiatedByUserId: integer("initiated_by_user_id"),
+	expiresAt: timestamp("expires_at", { mode: "string" }).notNull(),
+	createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
+});
