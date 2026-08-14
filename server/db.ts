@@ -205,6 +205,8 @@ export async function getOperationalCaseSummary() {
       activeCaseCount: 0,
       caseDocumentCount: 0,
       caseAnalysisCount: 0,
+      aiBriefCount: 0,
+      workspaceAiAnalysisCount: 0,
       unreadMessageCount: 0,
       businessIntakeCount: 0,
       businessSubmissionCount: 0,
@@ -219,6 +221,8 @@ export async function getOperationalCaseSummary() {
       SELECT
         (SELECT COUNT(*) FROM case_documents) AS case_document_count,
         (SELECT COUNT(*) FROM case_analyses) AS case_analysis_count,
+        (SELECT COUNT(*) FROM ai_briefs) AS ai_brief_count,
+        (SELECT COUNT(*) FROM workspace_ai_analyses) AS workspace_ai_analysis_count,
         (SELECT COALESCE(SUM(COALESCE(unread_messages_count, 0)), 0) FROM cases)
           + (SELECT COALESCE(SUM(COALESCE(unread_messages_count, 0)), 0) FROM business_intakes)
           AS unread_message_count,
@@ -236,6 +240,8 @@ export async function getOperationalCaseSummary() {
     activeCaseCount: cases.filter(isActiveOperationalCase).length,
     caseDocumentCount: asNumber(row.case_document_count),
     caseAnalysisCount: asNumber(row.case_analysis_count),
+    aiBriefCount: asNumber(row.ai_brief_count),
+    workspaceAiAnalysisCount: asNumber(row.workspace_ai_analysis_count),
     unreadMessageCount: asNumber(row.unread_message_count),
     businessIntakeCount: asNumber(row.business_intake_count),
     businessSubmissionCount: asNumber(row.business_submission_count),

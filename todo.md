@@ -859,3 +859,8 @@
 - [x] Map reusable existing APIs to current Command Center widgets and identify truthful empty or unavailable states
 - [x] Connect every available production data source to the existing Command Center without redesigning the UI or duplicating data
 - [x] Validate live widget behavior, tests, build, secret scan, GitHub main release, Render deployment, and production health
+
+## PHASE 2 — FINAL SOURCE BINDINGS
+- [x] Display existing Google Drive folder file availability when configured and safe to read
+- [x] Display stored AI Brief and AI Analysis record counts alongside existing legacy case-analysis counts
+- [x] Revalidate and release the completed live-source coverage without altering the Command Center layout
