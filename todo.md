@@ -823,3 +823,9 @@
 - [x] Prevent individual Command Center API 401 responses from redirecting the entire dashboard into Manus OAuth
 - [x] Attach the existing signed admin-session JWT to tRPC requests and verify it against the current rotated secret plus current admin database identity
 - [x] Surface contained Command Center data-access errors with an explicit admin-session recovery link
+
+## OWNER ADMIN SESSION REFRESH AFTER JWT ROTATION
+- [x] Determine whether the existing browser `admin_session` was invalidated by the Render `JWT_SECRET` rotation
+- [x] Provide a secure owner-only admin-session reissue path without OAuth, static tokens, exposed credentials, or browser-side secrets
+- [x] Verify protected Command Center tRPC procedures load with the refreshed session and retain contained errors for individual API failures
+- [x] Reuse the existing password-verified `/api/auth/login` flow to issue a new signed session and return safely to `/admin/command-center`

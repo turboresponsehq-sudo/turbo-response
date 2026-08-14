@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { api } from "@/lib/api";
+import { getSafeAdminReturnPath } from "@/lib/adminLoginRedirect";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import "./AdminLogin.css";
 
 export default function AdminLogin() {
   const [, setLocation] = useLocation();
   const { login, isAuthenticated } = useAdminAuth();
+  const returnPath = getSafeAdminReturnPath(window.location.search);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -15,9 +17,9 @@ export default function AdminLogin() {
   useEffect(() => {
     // Check if already logged in
     if (isAuthenticated) {
-      setLocation("/admin");
+      setLocation(returnPath);
     }
-  }, [isAuthenticated, setLocation]);
+  }, [isAuthenticated, returnPath, setLocation]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +36,7 @@ export default function AdminLogin() {
 
       // Use auth context to store token and user
       login(response.token, response.user);
-      setLocation("/admin");
+      setLocation(returnPath);
     } catch (error: any) {
       setError(`❌ ${error.message}`);
       setIsLoading(false);
@@ -100,6 +102,7 @@ export default function AdminLogin() {
           </button>
         </form>
 
+        <p className="login-subtitle">Sign in to refresh your secure admin session.</p>
         <div className="back-link">
           <a href="/">← Back to Homepage</a>
         </div>
