@@ -796,3 +796,10 @@
 - [x] Keep system health compact and surface only current problems
 - [x] Keep marketing/activity lightweight and backed by existing information only
 - [ ] Validate with TypeScript, tests, production build, GitHub main release, Render deployment, and authenticated production review
+
+## URGENT: BLANK PRODUCTION COMMAND CENTER
+- [ ] Reproduce the owner-facing blank page and capture the exact render, network, session, and deployment failure evidence
+- [ ] Restore the missing Render build-time `VITE_APP_ID` configuration so the Manus OAuth redirect never generates `appId=undefined`
+- [ ] Replace the non-resolving `oauth.manus.im` fallback with the supported Manus OAuth portal host and verify mobile login
+- [ ] Apply the smallest production-safe defensive fix; do not introduce new features or substitute fake data
+- [ ] Verify the repaired deployed Command Center sections and create `PHASE_1_COMPLETE.md` only after the owner-facing page visibly renders
