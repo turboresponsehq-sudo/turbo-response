@@ -845,11 +845,11 @@
 ## POST-AUTH COMMAND CENTER DATA TRACE
 - [x] Confirm fresh legacy admin JWT requests now resolve to the current database admin identity in the production tRPC context
 - [x] Identify the remaining Workspace and Knowledge Base procedure failure that occurs after successful authentication
-- [ ] Correct only a remaining authorization-adjacent procedure failure if one exists, then verify the live operator data loads
+- [x] Correct the independent missing-schema failure and verify the authenticated operator queries complete without 500 errors
 
 ## PRODUCTION DATABASE SCHEMA BLOCKER
 - [x] Confirm the legacy admin session is authenticated and the remaining failures are not 401 authorization errors
 - [x] Identify PostgreSQL error `42P01` showing the required Workspace, Knowledge Base, and Mission Control relations do not exist in production
 - [x] Audit the exact missing production relations and their safe creation order before requesting schema-migration approval
-- [ ] Apply the user-approved create-only migration for the 12 missing Command Center and Workspace relations
-- [ ] Verify all 12 relations and real authenticated operator-data query results, then stop before historical data import
+- [x] Apply the user-approved create-only migration for the 12 missing Command Center and Workspace relations
+- [x] Verify all 12 relations and real authenticated operator-data query results, then stop before historical data import
