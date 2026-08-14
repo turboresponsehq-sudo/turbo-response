@@ -31,10 +31,8 @@ describe("createContext legacy admin session compatibility", () => {
       lastSignedIn: "2026-01-01T00:00:00.000Z",
       password: null,
     };
-    const limit = vi.fn().mockResolvedValue([admin]);
-    const where = vi.fn().mockReturnValue({ limit });
-    const from = vi.fn().mockReturnValue({ where });
-    mocks.getDb.mockResolvedValue({ select: vi.fn().mockReturnValue({ from }) });
+    const execute = vi.fn().mockResolvedValue({ rows: [admin] });
+    mocks.getDb.mockResolvedValue({ execute });
     const token = jwt.sign({ userId: 42, email: "owner@example.com", role: "admin" }, process.env.JWT_SECRET!);
 
     const context = await createContext({
@@ -43,7 +41,7 @@ describe("createContext legacy admin session compatibility", () => {
     } as any);
 
     expect(context.user).toEqual(admin);
-    expect(where).toHaveBeenCalledTimes(1);
+    expect(execute).toHaveBeenCalledTimes(1);
   });
 
   it("accepts a numeric-string user ID issued by the existing database-backed admin login", async () => {
@@ -59,10 +57,7 @@ describe("createContext legacy admin session compatibility", () => {
       lastSignedIn: "2026-01-01T00:00:00.000Z",
       password: null,
     };
-    const limit = vi.fn().mockResolvedValue([admin]);
-    const where = vi.fn().mockReturnValue({ limit });
-    const from = vi.fn().mockReturnValue({ where });
-    mocks.getDb.mockResolvedValue({ select: vi.fn().mockReturnValue({ from }) });
+    mocks.getDb.mockResolvedValue({ execute: vi.fn().mockResolvedValue({ rows: [admin] }) });
     const token = jwt.sign({ userId: "1", email: "owner@example.com", role: "admin" }, process.env.JWT_SECRET!);
 
     const context = await createContext({
@@ -74,10 +69,9 @@ describe("createContext legacy admin session compatibility", () => {
   });
 
   it("rejects a token when the current database user is not an admin", async () => {
-    const limit = vi.fn().mockResolvedValue([{ id: 42, email: "owner@example.com", role: "user" }]);
-    const where = vi.fn().mockReturnValue({ limit });
-    const from = vi.fn().mockReturnValue({ where });
-    mocks.getDb.mockResolvedValue({ select: vi.fn().mockReturnValue({ from }) });
+    mocks.getDb.mockResolvedValue({
+      execute: vi.fn().mockResolvedValue({ rows: [{ id: 42, email: "owner@example.com", role: "user" }] }),
+    });
     const token = jwt.sign({ userId: 42, email: "owner@example.com", role: "admin" }, process.env.JWT_SECRET!);
 
     const context = await createContext({
