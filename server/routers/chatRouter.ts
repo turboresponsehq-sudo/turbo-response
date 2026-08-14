@@ -19,6 +19,7 @@ import {
 } from "../chatAI";
 import { storagePut } from "../storage";
 import { notifyOwner } from "../_core/notification";
+import { recordNewChatLead } from "../services/operationalIntelligenceService";
 
 /**
  * Chat router for conversational AI chatbot
@@ -256,6 +257,17 @@ export const chatRouter = router({
         category: conversation.category || null,
       });
 
+      try {
+        await recordNewChatLead({
+          leadId,
+          name,
+          email,
+          category: conversation.category || null,
+        });
+      } catch (intelligenceError) {
+        console.warn("[Chat] Operational intelligence failed (non-fatal):", intelligenceError);
+      }
+
       // Get full conversation for notification
       const fullConv = await getFullConversation(conversationId);
 
@@ -285,4 +297,3 @@ ${evidenceLinks}
       return { leadId, success: true };
     }),
 });
-

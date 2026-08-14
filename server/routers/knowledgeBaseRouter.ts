@@ -18,6 +18,7 @@ import {
   resyncDocumentIfChanged,
   getDocumentSyncStatus,
 } from "../services/xaiSyncService";
+import { recordXaiSyncFailure, resolveOperationalEvent } from "../services/operationalIntelligenceService";
 
 export const knowledgeBaseRouter = router({
   list: protectedProcedure
@@ -108,12 +109,19 @@ export const knowledgeBaseRouter = router({
   syncToXAI: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
-      return syncDocumentToXAI(input.id);
+      const result = await syncDocumentToXAI(input.id);
+      if (result.success) await resolveOperationalEvent(`xai-sync:${input.id}`);
+      else await recordXaiSyncFailure(result);
+      return result;
     }),
 
   syncPendingToXAI: protectedProcedure
     .mutation(async () => {
-      return syncPendingDocumentsToXAI();
+      const results = await syncPendingDocumentsToXAI();
+      await Promise.all(results.map((result) => result.success
+        ? resolveOperationalEvent(`xai-sync:${result.documentId}`)
+        : recordXaiSyncFailure(result)));
+      return results;
     }),
 
   resyncIfChanged: protectedProcedure

@@ -2,6 +2,7 @@ import { eq, desc, sql } from "drizzle-orm";
 import { getDb } from "./db";
 import { intakeLeads } from "../drizzle/schema";
 import type { InsertIntakeLead, IntakeLead } from "../drizzle/schema";
+import { recordNewIntakeLead } from "./services/operationalIntelligenceService";
 
 const CREATE_INTAKE_LEADS_TABLE = sql.raw(`
   CREATE TABLE IF NOT EXISTS "intake_leads" (
@@ -38,7 +39,13 @@ export async function saveIntakeLead(data: InsertIntakeLead): Promise<number> {
   if (!db) throw new Error("Database not available");
   try {
     const result = await db.insert(intakeLeads).values(data).returning({ id: intakeLeads.id });
-    return Number(result[0].id);
+    const id = Number(result[0].id);
+    try {
+      await recordNewIntakeLead({ leadId: id, fullName: data.fullName, email: data.email, source: data.source || "intake" });
+    } catch (intelligenceError) {
+      console.warn("[IntakeLeads] Operational intelligence failed (non-fatal):", rootCauseMessage(intelligenceError));
+    }
+    return id;
   } catch (error) {
     const causeMsg = rootCauseMessage(error);
     console.error("[IntakeLeads] Insert failed:", causeMsg);
@@ -49,7 +56,13 @@ export async function saveIntakeLead(data: InsertIntakeLead): Promise<number> {
       console.warn("[IntakeLeads] intake_leads table missing — creating it now");
       await db.execute(CREATE_INTAKE_LEADS_TABLE);
       const retry = await db.insert(intakeLeads).values(data).returning({ id: intakeLeads.id });
-      return Number(retry[0].id);
+      const id = Number(retry[0].id);
+      try {
+        await recordNewIntakeLead({ leadId: id, fullName: data.fullName, email: data.email, source: data.source || "intake" });
+      } catch (intelligenceError) {
+        console.warn("[IntakeLeads] Operational intelligence failed (non-fatal):", rootCauseMessage(intelligenceError));
+      }
+      return id;
     }
 
     throw new Error(`Could not save lead: ${causeMsg}`);

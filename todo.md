@@ -864,3 +864,13 @@
 - [x] Display existing Google Drive folder file availability when configured and safe to read
 - [x] Display stored AI Brief and AI Analysis record counts alongside existing legacy case-analysis counts
 - [x] Revalidate and release the completed live-source coverage without altering the Command Center layout
+
+## PHASE 3 — OPERATIONAL INTELLIGENCE + AUTOMATION
+- [x] Verify all production Drive configuration, Knowledge Base sync, Command Center bindings, and Drive-reading automations use the main folder and not the retained secondary folder
+- [x] Audit existing Voice Agent/xAI, case, lead, CRM, document, and workflow event sources for real event-driven operational data
+- [x] Inventory the supplied Google Drive folder as a read-only operational intelligence source without importing or fabricating records
+- [x] Compare the secondary supplied Google Drive folder with the main folder and prepare a non-destructive consolidation recommendation before any file changes
+- [x] Move only `Audit_Report_zakhybuilds_ai.pdf` into the main folder’s `Operations/Audit Reports/` path and verify it; retain the secondary folder unchanged
+- [x] Recommend a no-duplication legacy-cases-to-Workspaces compatibility architecture and an idempotent event-to-intelligence model
+- [x] Implement only safe, real event-triggered task, signal, pipeline, and voice activity integrations
+- [ ] Apply the additive production migration, verify real event idempotency, and release through GitHub main to Render

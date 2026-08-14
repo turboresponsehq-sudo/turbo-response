@@ -8,6 +8,7 @@ import { Router, type Request, type Response } from "express";
 import { getDb } from "../db";
 import { sql } from "drizzle-orm";
 import { sendRawEmail } from "../services/auditEmailService";
+import { recordClientMessage, resolveOperationalEvent } from "../services/operationalIntelligenceService";
 
 const router = Router();
 
@@ -111,7 +112,7 @@ router.post("/:id/messages", async (req: Request, res: Response) => {
     }
 
     // Client sent -> bump unread count for admin
-    if (sender === "client") {
+      if (sender === "client") {
       const consumer = await db.execute(sql`SELECT id FROM cases WHERE id = ${caseId}`);
       if (rowsOf(consumer).length > 0) {
         await db.execute(sql`
@@ -126,9 +127,14 @@ router.post("/:id/messages", async (req: Request, res: Response) => {
           SET unread_messages_count = COALESCE(unread_messages_count, 0) + 1,
               updated_at = CURRENT_TIMESTAMP
           WHERE id = ${caseId}
-        `);
+          `);
+        }
+        try {
+          await recordClientMessage({ caseId, messageId: Number(message.id), senderName });
+        } catch (intelligenceError) {
+          console.warn("[Messaging] Operational intelligence failed (non-fatal):", intelligenceError);
+        }
       }
-    }
 
     res.json({ success: true, message });
   } catch (error: any) {
@@ -160,6 +166,17 @@ router.post("/:id/messages/mark-read", async (req: Request, res: Response) => {
         UPDATE business_intakes SET unread_messages_count = 0, updated_at = CURRENT_TIMESTAMP
         WHERE id = ${caseId}
       `);
+    }
+    const latest = await db.execute(sql`
+      SELECT id FROM case_messages WHERE case_id = ${caseId} AND sender = 'client' ORDER BY created_at DESC LIMIT 1
+    `);
+    const latestMessage = rowsOf(latest)[0];
+    if (latestMessage?.id) {
+      try {
+        await resolveOperationalEvent(`case-message:${Number(latestMessage.id)}`);
+      } catch (intelligenceError) {
+        console.warn("[Messaging] Operational intelligence resolution failed (non-fatal):", intelligenceError);
+      }
     }
     res.json({ success: true, message: "Messages marked as read" });
   } catch (error: any) {

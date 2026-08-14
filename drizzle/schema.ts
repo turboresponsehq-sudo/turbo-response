@@ -412,6 +412,9 @@ export const turboSignals = pgTable("turbo_signals", {
 	fileUrl: text("file_url"),
 	fileName: varchar("file_name", { length: 255 }),
 	pipelineId: integer("pipeline_id"),
+	sourceEventKey: varchar("source_event_key", { length: 255 }),
+	sourceEntityType: varchar("source_entity_type", { length: 50 }),
+	sourceEntityId: integer("source_entity_id"),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
 });
@@ -443,6 +446,9 @@ export const missionTasks = pgTable("mission_tasks", {
 	priority: varchar({ length: 50 }).$type<'low' | 'medium' | 'high' | 'urgent'>().default('medium').notNull(),
 	notes: text(),
 	status: varchar({ length: 50 }).$type<'pending' | 'in_progress' | 'completed'>().default('pending').notNull(),
+	sourceEventKey: varchar("source_event_key", { length: 255 }),
+	sourceEntityType: varchar("source_entity_type", { length: 50 }),
+	sourceEntityId: integer("source_entity_id"),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
 });
@@ -471,6 +477,7 @@ export const workspaces = pgTable("workspaces", {
 	workspaceId: varchar("workspace_id", { length: 64 }), // unique slug for future portals
 	clientId: integer("client_id"), // link to client/pipeline
 	signalId: integer("signal_id"), // link to originating signal
+	legacyCaseId: integer("legacy_case_id"), // optional reference to legacy case system of record
 	metadata: jsonb(), // extensible JSON for AI chat, research, etc.
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
