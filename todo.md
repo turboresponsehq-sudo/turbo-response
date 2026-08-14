@@ -816,3 +816,10 @@
 - [x] Restore only the minimum secure compatibility behavior required for the existing Command Center session flow
 - [x] Remove only the OAuth route wrapper from `/admin/command-center` while retaining current Command Center data handling and all security cleanup
 - [x] Preserve secret cleanup, rotated credentials, Gitleaks scanning, current Command Center functionality, and GitHub → Render deployment
+
+## COMMAND CENTER T-RPC SESSION COMPATIBILITY
+- [x] Compare legacy AdminAuth session restoration with current protected and admin tRPC authorization behavior
+- [x] Restore only the safe compatibility path needed for the current owner admin session to authenticate Command Center API requests
+- [x] Prevent individual Command Center API 401 responses from redirecting the entire dashboard into Manus OAuth
+- [x] Attach the existing signed admin-session JWT to tRPC requests and verify it against the current rotated secret plus current admin database identity
+- [x] Surface contained Command Center data-access errors with an explicit admin-session recovery link

@@ -58,13 +58,16 @@ export default function AdminCommandCenter() {
 
 // ── HOME TAB ──────────────────────────────────────────────────────────────────
 function HomeTab({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
-  const { data: tasks } = trpc.missionControl.tasks.list.useQuery();
-  const { data: signals } = trpc.missionControl.signals.list.useQuery();
-  const { data: pipeline } = trpc.missionControl.pipeline.list.useQuery();
+  const { data: tasks, error: tasksError } = trpc.missionControl.tasks.list.useQuery();
+  const { data: signals, error: signalsError } = trpc.missionControl.signals.list.useQuery();
+  const { data: pipeline, error: pipelineError } = trpc.missionControl.pipeline.list.useQuery();
   const { data: workspaces, isError: workspacesError } = trpc.workspaces.workspaces.list.useQuery({});
-  const { data: intakeLeads } = trpc.admin.getIntakeLeads.useQuery({ limit: 6 });
+  const { data: intakeLeads, error: intakeLeadsError } = trpc.admin.getIntakeLeads.useQuery({ limit: 6 });
   const { data: kbStats, isError: kbError } = trpc.knowledgeBase.getStats.useQuery();
-  const { data: pendingSync } = trpc.knowledgeBase.getPendingSync.useQuery();
+  const { data: pendingSync, error: pendingSyncError } = trpc.knowledgeBase.getPendingSync.useQuery();
+  const hasDataAccessError = Boolean(
+    tasksError || signalsError || pipelineError || workspacesError || intakeLeadsError || kbError || pendingSyncError,
+  );
   const today = new Date().toISOString().slice(0, 10);
   const attention = [
     ...(tasks || []).filter((task: any) => task.priority === 'urgent' || task.priority === 'high' || (task.dueDate && task.dueDate <= today)).slice(0, 4).map((task: any) => ({ label: task.title, detail: `${task.priority} task${task.dueDate ? ` · due ${task.dueDate}` : ''}`, tab: 'tasks' as Tab, tone: '#f59e0b' })),
@@ -75,6 +78,7 @@ function HomeTab({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
   const card = (title: string, children: React.ReactNode, action?: { label: string; tab: Tab }) => <section style={{ ...styles.card, marginBottom: 0 }}><div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px' }}><h3 style={styles.sectionTitle}>{title}</h3>{action && <button style={{ ...styles.btn('secondary'), padding: '5px 9px', fontSize: '11px' }} onClick={() => onNavigate(action.tab)}>{action.label}</button>}</div>{children}</section>;
   return <div>
     <div style={{ marginBottom: '22px' }}><h1 style={{ fontSize: '28px', fontWeight: 700, color: '#f1f5f9', margin: 0 }}>Command Center</h1><p style={{ color: '#94a3b8', marginTop: '8px' }}>What requires your attention right now?</p></div>
+    {hasDataAccessError && <section style={{ ...styles.card, borderColor: '#f59e0b66' }}><h2 style={{ ...styles.sectionTitle, color: '#fbbf24' }}>Some operator data is unavailable</h2><p style={{ color: '#cbd5e1', margin: 0 }}>The Command Center remains available. An existing admin session may need to be refreshed before protected data can load. <a href="/admin/login" style={{ color: '#67e8f9' }}>Open admin login</a> to refresh the session, then return here.</p></section>}
     <section style={{ ...styles.card, borderColor: attention.length ? '#f59e0b66' : '#1e293b' }}><h2 style={{ ...styles.sectionTitle, color: attention.length ? '#fbbf24' : '#e2e8f0' }}>Needs Attention</h2>{attention.length ? <div>{attention.map((item, index) => <button key={`${item.label}-${index}`} onClick={() => onNavigate(item.tab)} style={{ width: '100%', textAlign: 'left', background: 'transparent', color: '#e2e8f0', border: '0', borderTop: index ? '1px solid #1e293b' : '0', padding: '12px 0', cursor: 'pointer' }}><strong style={{ color: item.tone }}>{item.label}</strong><div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '3px' }}>{item.detail}</div></button>)}</div> : <p style={{ color: '#94a3b8', margin: 0 }}>No urgent tasks, due follow-ups, waiting cases, or pending document syncs are currently reported.</p>}</section>
     <div style={{ ...styles.grid4, gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', marginTop: '16px' }}>
       {card('New Leads', intakeLeads?.length ? <div>{intakeLeads.slice(0, 4).map((lead: any) => <div key={lead.id} style={{ padding: '9px 0', borderBottom: '1px solid #1e293b' }}><strong>{lead.fullName}</strong><div style={{ fontSize: '12px', color: '#94a3b8' }}>{lead.source || 'intake'} · {lead.status}</div></div>)}</div> : <p style={{ color: '#94a3b8' }}>No intake leads recorded.</p>, { label: 'Leads', tab: 'signals' })}
