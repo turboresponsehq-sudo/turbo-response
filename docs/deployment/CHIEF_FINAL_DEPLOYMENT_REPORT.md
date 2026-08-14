@@ -93,7 +93,7 @@ Once deployment succeeds, test:
 ```bash
 # 1. Test DELETE endpoint directly
 curl -X DELETE https://turboresponsehq.ai/api/cases/7 \
-  -H "Authorization: Bearer REDACTED_RETIRED_BEARER_TOKEN" \
+  -H "Authorization: Bearer ${ADMIN_SESSION_TOKEN}" \
   -H "Content-Type: application/json"
 
 # Expected response: 200 or 204 (success), NOT 404

@@ -682,7 +682,7 @@ If error: Database is down, contact Render support
 Check: Render environment variables
 Look for: OPENAI_API_KEY
 If missing: Add it
-If present: Test with: curl -H "Authorization: Bearer REDACTED_RETIRED_BEARER_TOKEN" https://api.openai.com/v1/models
+If present: test only from a secure shell using `curl -H "Authorization: Bearer ${OPENAI_API_KEY}" https://api.openai.com/v1/models`.
 ```
 
 **Check 4: Frontend loading**
@@ -757,17 +757,8 @@ psql $DATABASE_URL -c "SELECT COUNT(*) FROM chat_sessions;"
 **Test OpenAI:**
 ```bash
 # From Render shell
-curl -H "Authorization: Bearer REDACTED_RETIRED_BEARER_TOKEN" \
+curl -H "Authorization: Bearer ${OPENAI_API_KEY}" \
   https://api.openai.com/v1/models
-```
-
-**Test retired email delivery:**
-```bash
-# From Render shell
-curl -X POST https://api.retired email delivery.com/v3/mail/send \
-  -H "Authorization: Bearer REDACTED_RETIRED_BEARER_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"personalizations":[{"to":[{"email":"test@example.com"}]}],"from":{"email":"noreply@turboresponsehq.ai"},"subject":"Test","content":[{"type":"text/plain","value":"Test"}]}'
 ```
 
 ---

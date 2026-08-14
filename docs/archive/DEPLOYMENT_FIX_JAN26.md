@@ -124,7 +124,7 @@
 3. Check if desktop works (isolates mobile-specific issues)
 4. Verify CORS headers in network tab
 5. Check if Authorization header is being sent
-6. Test API endpoint directly: `curl -H "Authorization: Bearer REDACTED_RETIRED_BEARER_TOKEN" https://turboresponsehq.ai/api/cases/admin/all`
+6. Test API endpoint directly with a session token supplied through the environment: `curl -H "Authorization: Bearer ${ADMIN_SESSION_TOKEN}" https://turboresponsehq.ai/api/cases/admin/all`
 
 ---
 

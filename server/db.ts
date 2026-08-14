@@ -185,6 +185,66 @@ export async function listCases() {
 }
 
 /**
+ * Treat only clearly closed states as inactive so the Command Center can surface
+ * real open legacy cases without copying them into the newer Workspace tables.
+ */
+export function isActiveOperationalCase(caseRecord: { status?: string | null }) {
+  const status = caseRecord.status?.trim().toLowerCase();
+  return !["closed", "completed", "archived", "resolved", "cancelled"].includes(status || "");
+}
+
+/**
+ * Compact, read-only summary of the established operational records that predate
+ * the Workspace subsystem. This intentionally references each source in place.
+ */
+export async function getOperationalCaseSummary() {
+  const db = await getDb();
+  if (!db) {
+    return {
+      cases: [],
+      activeCaseCount: 0,
+      caseDocumentCount: 0,
+      caseAnalysisCount: 0,
+      unreadMessageCount: 0,
+      businessIntakeCount: 0,
+      businessSubmissionCount: 0,
+      fileUploadCount: 0,
+      hubSpotConfigured: Boolean(process.env.HUBSPOT_PRIVATE_APP_TOKEN),
+    };
+  }
+
+  const [cases, summaryResult] = await Promise.all([
+    listCases(),
+    db.execute(`
+      SELECT
+        (SELECT COUNT(*) FROM case_documents) AS case_document_count,
+        (SELECT COUNT(*) FROM case_analyses) AS case_analysis_count,
+        (SELECT COALESCE(SUM(COALESCE(unread_messages_count, 0)), 0) FROM cases)
+          + (SELECT COALESCE(SUM(COALESCE(unread_messages_count, 0)), 0) FROM business_intakes)
+          AS unread_message_count,
+        (SELECT COUNT(*) FROM business_intakes) AS business_intake_count,
+        (SELECT COUNT(*) FROM business_submissions) AS business_submission_count,
+        (SELECT COUNT(*) FROM file_uploads) AS file_upload_count
+    `),
+  ]);
+
+  const row = ((summaryResult as any).rows ?? summaryResult as any)[0] ?? {};
+  const asNumber = (value: unknown) => Number(value ?? 0);
+
+  return {
+    cases,
+    activeCaseCount: cases.filter(isActiveOperationalCase).length,
+    caseDocumentCount: asNumber(row.case_document_count),
+    caseAnalysisCount: asNumber(row.case_analysis_count),
+    unreadMessageCount: asNumber(row.unread_message_count),
+    businessIntakeCount: asNumber(row.business_intake_count),
+    businessSubmissionCount: asNumber(row.business_submission_count),
+    fileUploadCount: asNumber(row.file_upload_count),
+    hubSpotConfigured: Boolean(process.env.HUBSPOT_PRIVATE_APP_TOKEN),
+  };
+}
+
+/**
  * Create a new case in the cases table.
  * Maps camelCase input to the snake_case columns in the real production schema.
  */

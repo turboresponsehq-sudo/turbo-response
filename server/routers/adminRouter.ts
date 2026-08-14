@@ -8,6 +8,7 @@ import {
   updateLeadStatus,
 } from "../chatDb";
 import { getAllIntakeLeads, updateIntakeLeadStatus } from "../intakeLeadsDb";
+import { getOperationalCaseSummary } from "../db";
 
 /**
  * Admin router for managing leads and conversations
@@ -88,6 +89,15 @@ export const adminRouter = router({
     }),
 
   /**
+   * Read-only bridge to established production case, document, communication,
+   * business-intake, and CRM configuration data. No legacy records are copied
+   * into the newer Command Center tables.
+   */
+  getOperationalCaseSummary: protectedProcedure.query(async () => {
+    return await getOperationalCaseSummary();
+  }),
+
+  /**
    * Update intake lead status and optional admin notes
    */
   updateIntakeLeadStatus: protectedProcedure
@@ -103,4 +113,3 @@ export const adminRouter = router({
       return { success: true };
     }),
 });
-
