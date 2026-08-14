@@ -644,6 +644,13 @@ async function startServer() {
     createExpressMiddleware({
       router: appRouter,
       createContext,
+      onError({ path, error }) {
+        console.error("[tRPC] request failed", {
+          path,
+          code: error.code,
+          message: error.message,
+        });
+      },
     })
   );
   

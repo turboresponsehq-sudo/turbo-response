@@ -841,3 +841,8 @@
 - [x] Identify the first failing handoff responsible for protected data 401 responses after a fresh admin login
 - [x] Determine why the stale-session copy appears for a new incognito login and correct the root cause without changing the Command Center UI
 - [ ] Add regression coverage, validate, and release the smallest secure authentication-chain repair
+
+## POST-AUTH COMMAND CENTER DATA TRACE
+- [x] Confirm fresh legacy admin JWT requests now resolve to the current database admin identity in the production tRPC context
+- [ ] Identify the remaining Workspace and Knowledge Base procedure failure that occurs after successful authentication
+- [ ] Correct only a remaining authorization-adjacent procedure failure if one exists, then verify the live operator data loads
