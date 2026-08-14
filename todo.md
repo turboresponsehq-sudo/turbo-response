@@ -829,3 +829,9 @@
 - [x] Provide a secure owner-only admin-session reissue path without OAuth, static tokens, exposed credentials, or browser-side secrets
 - [x] Verify protected Command Center tRPC procedures load with the refreshed session and retain contained errors for individual API failures
 - [x] Reuse the existing password-verified `/api/auth/login` flow to issue a new signed session and return safely to `/admin/command-center`
+
+## REFRESHED SESSION AUTHORIZATION-CHAIN TRACE
+- [x] Confirm refreshed login response, localStorage replacement, tRPC Authorization header, JWT verification, and current admin-user lookup end-to-end
+- [x] Identify the exact Workspace and Knowledge Base protected procedure rejection after session refresh
+- [x] Correct only the failing authorization-chain link and prove protected data loads in the Command Center
+- [x] Accept a strictly validated numeric-string `userId` claim from the existing signed admin JWT before the current admin-user lookup

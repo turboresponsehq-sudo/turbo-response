@@ -46,6 +46,33 @@ describe("createContext legacy admin session compatibility", () => {
     expect(where).toHaveBeenCalledTimes(1);
   });
 
+  it("accepts a numeric-string user ID issued by the existing database-backed admin login", async () => {
+    const admin = {
+      id: 1,
+      openId: "legacy-admin-1",
+      name: "Owner",
+      email: "owner@example.com",
+      loginMethod: "password",
+      role: "admin",
+      createdAt: "2026-01-01T00:00:00.000Z",
+      updatedAt: "2026-01-01T00:00:00.000Z",
+      lastSignedIn: "2026-01-01T00:00:00.000Z",
+      password: null,
+    };
+    const limit = vi.fn().mockResolvedValue([admin]);
+    const where = vi.fn().mockReturnValue({ limit });
+    const from = vi.fn().mockReturnValue({ where });
+    mocks.getDb.mockResolvedValue({ select: vi.fn().mockReturnValue({ from }) });
+    const token = jwt.sign({ userId: "1", email: "owner@example.com", role: "admin" }, process.env.JWT_SECRET!);
+
+    const context = await createContext({
+      req: { headers: { authorization: `Bearer ${token}` } },
+      res: {},
+    } as any);
+
+    expect(context.user).toEqual(admin);
+  });
+
   it("rejects a token when the current database user is not an admin", async () => {
     const limit = vi.fn().mockResolvedValue([{ id: 42, email: "owner@example.com", role: "user" }]);
     const where = vi.fn().mockReturnValue({ limit });

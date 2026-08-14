@@ -36,12 +36,19 @@ async function authenticateLegacyAdminSession(
       role?: unknown;
     };
 
-    if (claims.role !== "admin" || typeof claims.userId !== "number") return null;
+    const userId =
+      typeof claims.userId === "number"
+        ? claims.userId
+        : typeof claims.userId === "string" && /^\d+$/.test(claims.userId)
+          ? Number(claims.userId)
+          : NaN;
+
+    if (claims.role !== "admin" || !Number.isSafeInteger(userId) || userId < 1) return null;
 
     const db = await getDb();
     if (!db) return null;
 
-    const [user] = await db.select().from(users).where(eq(users.id, claims.userId)).limit(1);
+    const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
     if (!user || user.role !== "admin") return null;
 
     if (
