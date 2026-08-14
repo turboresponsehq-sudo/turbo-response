@@ -63,7 +63,6 @@ function HomeTab({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
   const { data: pipeline, error: pipelineError } = trpc.missionControl.pipeline.list.useQuery();
   const { data: workspaces, isError: workspacesError } = trpc.workspaces.workspaces.list.useQuery({});
   const { data: intakeLeads, error: intakeLeadsError } = trpc.admin.getIntakeLeads.useQuery({ limit: 6 });
-  const { data: chatLeads, error: chatLeadsError } = trpc.admin.getLeads.useQuery({ limit: 6 });
   const { data: operationalSummary, error: operationalSummaryError } = trpc.admin.getOperationalCaseSummary.useQuery();
   const { data: kbStats, isError: kbError } = trpc.knowledgeBase.getStats.useQuery();
   const { data: pendingSync, error: pendingSyncError } = trpc.knowledgeBase.getPendingSync.useQuery();
@@ -71,16 +70,11 @@ function HomeTab({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
   const { data: driveFiles, error: driveFilesError } = trpc.googleDrive.listFiles.useQuery({ pageSize: 5 }, { enabled: driveConfig?.configured === true, retry: false });
   const { data: serviceHealth, error: serviceHealthError } = trpc.system.health.useQuery({ timestamp: 0 }, { staleTime: 60_000 });
   const hasDataAccessError = Boolean(
-    tasksError || signalsError || pipelineError || workspacesError || intakeLeadsError || chatLeadsError || operationalSummaryError || kbError || pendingSyncError || driveConfigError || serviceHealthError,
+    tasksError || signalsError || pipelineError || workspacesError || intakeLeadsError || operationalSummaryError || kbError || pendingSyncError || driveConfigError || serviceHealthError,
   );
   const today = new Date().toISOString().slice(0, 10);
   const legacyCases = (operationalSummary?.cases || []).filter((caseRecord: any) => !['closed', 'completed', 'archived', 'resolved', 'cancelled'].includes((caseRecord.status || '').toLowerCase()));
   const activeCaseRecords = legacyCases.length ? legacyCases : (workspaces || []).filter((ws: any) => ws.status === 'active' || ws.status === 'waiting');
-  const intakeEmails = new Set((intakeLeads || []).map((lead: any) => lead.email?.toLowerCase()).filter(Boolean));
-  const liveLeads = [
-    ...(intakeLeads || []).map((lead: any) => ({ id: `intake-${lead.id}`, name: lead.fullName, source: lead.source || 'intake', status: lead.status })),
-    ...(chatLeads || []).filter((lead: any) => !lead.email || !intakeEmails.has(lead.email.toLowerCase())).map((lead: any) => ({ id: `chat-${lead.id}`, name: lead.name, source: 'chat intake', status: lead.status })),
-  ].slice(0, 4);
   const attention = [
     ...(tasks || []).filter((task: any) => task.priority === 'urgent' || task.priority === 'high' || (task.dueDate && task.dueDate <= today)).slice(0, 4).map((task: any) => ({ label: task.title, detail: `${task.priority} task${task.dueDate ? ` · due ${task.dueDate}` : ''}`, tab: 'tasks' as Tab, tone: '#f59e0b' })),
     ...(pipeline || []).filter((item: any) => item.followUpDate && item.followUpDate <= today && item.stage !== 'completed').slice(0, 3).map((item: any) => ({ label: item.companyName, detail: `follow-up due ${item.followUpDate}`, tab: 'pipeline' as Tab, tone: '#ef4444' })),
@@ -94,7 +88,7 @@ function HomeTab({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
     {hasDataAccessError && <section style={{ ...styles.card, borderColor: '#f59e0b66' }}><h2 style={{ ...styles.sectionTitle, color: '#fbbf24' }}>Some operator data is unavailable</h2><p style={{ color: '#cbd5e1', margin: 0 }}>The Command Center remains available. One or more live data sources could not load. Refresh this page to retry.</p></section>}
     <section style={{ ...styles.card, borderColor: attention.length ? '#f59e0b66' : '#1e293b' }}><h2 style={{ ...styles.sectionTitle, color: attention.length ? '#fbbf24' : '#e2e8f0' }}>Needs Attention</h2>{attention.length ? <div>{attention.map((item, index) => <button key={`${item.label}-${index}`} onClick={() => onNavigate(item.tab)} style={{ width: '100%', textAlign: 'left', background: 'transparent', color: '#e2e8f0', border: '0', borderTop: index ? '1px solid #1e293b' : '0', padding: '12px 0', cursor: 'pointer' }}><strong style={{ color: item.tone }}>{item.label}</strong><div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '3px' }}>{item.detail}</div></button>)}</div> : <p style={{ color: '#94a3b8', margin: 0 }}>No urgent tasks, due follow-ups, waiting cases, or pending document syncs are currently reported.</p>}</section>
     <div style={{ ...styles.grid4, gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', marginTop: '16px' }}>
-      {card('New Leads', liveLeads.length ? <div>{liveLeads.map((lead: any) => <div key={lead.id} style={{ padding: '9px 0', borderBottom: '1px solid #1e293b' }}><strong>{lead.name}</strong><div style={{ fontSize: '12px', color: '#94a3b8' }}>{lead.source} · {lead.status}</div></div>)}{operationalSummary?.businessIntakeCount ? <p style={{ fontSize: '12px', color: '#64748b', margin: '10px 0 0' }}>{operationalSummary.businessIntakeCount} business intake record{operationalSummary.businessIntakeCount === 1 ? '' : 's'} in operations.</p> : null}</div> : <p style={{ color: '#94a3b8' }}>No intake leads recorded.</p>, { label: 'Leads', tab: 'signals' })}
+      {card('New Leads', intakeLeads?.length ? <div>{intakeLeads.slice(0, 4).map((lead: any) => <div key={lead.id} style={{ padding: '9px 0', borderBottom: '1px solid #1e293b' }}><strong>{lead.fullName}</strong><div style={{ fontSize: '12px', color: '#94a3b8' }}>{lead.source || 'intake'} · {lead.status}</div></div>)}{operationalSummary?.businessIntakeCount ? <p style={{ fontSize: '12px', color: '#64748b', margin: '10px 0 0' }}>{operationalSummary.businessIntakeCount} business intake record{operationalSummary.businessIntakeCount === 1 ? '' : 's'} in operations.</p> : null}</div> : <p style={{ color: '#94a3b8' }}>No intake leads recorded.</p>, { label: 'Leads', tab: 'signals' })}
       {card('Active Cases', operationalSummaryError || workspacesError ? <p style={{ color: '#fca5a5' }}>Case data is unavailable. Refresh to retry.</p> : activeCaseRecords.length ? <div>{activeCaseRecords.slice(0, 4).map((record: any) => <div key={record.id} style={{ padding: '9px 0', borderBottom: '1px solid #1e293b' }}><strong>{record.title || record.name || record.case_number}</strong><div style={{ fontSize: '12px', color: '#94a3b8' }}>{record.priority ? `${record.priority} · ` : ''}{record.status || 'open'}{record.case_number ? ' · legacy case' : ' · workspace'}</div></div>)}</div> : <p style={{ color: '#94a3b8' }}>No active case records found.</p>, { label: 'Cases', tab: 'workspaces' })}
       {card('Voice Intakes', <p style={{ color: '#94a3b8', margin: 0 }}>Unavailable — no voice-intake activity feed is exposed by the current API.</p>)}
     </div>

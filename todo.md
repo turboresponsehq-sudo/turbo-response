@@ -873,4 +873,10 @@
 - [x] Move only `Audit_Report_zakhybuilds_ai.pdf` into the main folder’s `Operations/Audit Reports/` path and verify it; retain the secondary folder unchanged
 - [x] Recommend a no-duplication legacy-cases-to-Workspaces compatibility architecture and an idempotent event-to-intelligence model
 - [x] Implement only safe, real event-triggered task, signal, pipeline, and voice activity integrations
-- [ ] Apply the additive production migration, verify real event idempotency, and release through GitHub main to Render
+- [x] Apply the additive production migration and verify the idempotency/reference columns and unique indexes in production
+- [ ] Complete final authenticated production verification after releasing the unavailable-source correction
+
+## PHASE 3 — VOICE/CHAT SOURCE CORRECTION
+- [x] Confirm the authenticated production `admin.getLeads` query fails because the legacy `leads` relation does not exist in Render PostgreSQL
+- [x] Remove the unavailable Voice/Chat lead query from the Command Center while retaining existing intake and operational-data sources
+- [ ] Validate, release, and confirm the Command Center has no source-query error banner
