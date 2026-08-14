@@ -645,13 +645,20 @@ async function startServer() {
       router: appRouter,
       createContext,
       onError({ path, error }) {
-        const cause = error.cause as { code?: unknown; message?: unknown } | undefined;
+        const cause = error.cause as {
+          code?: unknown;
+          message?: unknown;
+          cause?: { code?: unknown; message?: unknown };
+        } | undefined;
+        const rootCause = cause?.cause;
         console.error("[tRPC] request failed", {
           path,
           code: error.code,
           message: error.message,
           causeCode: typeof cause?.code === "string" ? cause.code : undefined,
           causeMessage: typeof cause?.message === "string" ? cause.message : undefined,
+          rootCauseCode: typeof rootCause?.code === "string" ? rootCause.code : undefined,
+          rootCauseMessage: typeof rootCause?.message === "string" ? rootCause.message : undefined,
         });
       },
     })
