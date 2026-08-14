@@ -44,14 +44,6 @@ import AdminKnowledgeBaseImport from "./pages/AdminKnowledgeBaseImport";
 import AdminCommandCenter from "./pages/AdminCommandCenter";
 import CaseBrief from "./pages/CaseBrief";
 
-function OAuthCommandCenter() {
-  return (
-    <OAuthAdminGate>
-      <AdminCommandCenter />
-    </OAuthAdminGate>
-  );
-}
-
 function OAuthKnowledgeBase() {
   return (
     <OAuthAdminGate>
@@ -117,7 +109,7 @@ function Router() {
       
       <Route path="/admin/login" component={AdminLogin} />
       {/* Admin workflow routes - restored to specification */}
-      <Route path="/admin/command-center" component={OAuthCommandCenter} />
+      <Route path="/admin/command-center" component={AdminCommandCenter} />
       <Route path="/admin/knowledge-base/import" component={OAuthKnowledgeBaseImport} />
       <Route path="/admin/knowledge-base" component={OAuthKnowledgeBase} />
       <Route path="/admin/brain" component={OAuthBrain} />

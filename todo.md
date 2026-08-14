@@ -801,5 +801,18 @@
 - [ ] Reproduce the owner-facing blank page and capture the exact render, network, session, and deployment failure evidence
 - [ ] Restore the missing Render build-time `VITE_APP_ID` configuration so the Manus OAuth redirect never generates `appId=undefined`
 - [ ] Replace the non-resolving `oauth.manus.im` fallback with the supported Manus OAuth portal host and verify mobile login
+- [ ] Add `turboresponsehq.ai` to the Manus app’s authorized redirect domains so `/api/oauth/callback` can complete in production
+- [ ] Resolve the Manus `Authorize` service 500 for app ID `WQoqrgvAJmZqDJX9hYJoWw` after its redirect callback is allowlisted
 - [ ] Apply the smallest production-safe defensive fix; do not introduce new features or substitute fake data
 - [ ] Verify the repaired deployed Command Center sections and create `PHASE_1_COMPLETE.md` only after the owner-facing page visibly renders
+
+## AUTHENTICATION PATH EVALUATION — ANALYSIS ONLY
+- [x] Compare waiting for the Manus custom-domain allowlist against a controlled standard-provider migration without restoring legacy JWT or changing code
+- [x] Document the smallest migration path, reusable components, security posture, tRPC compatibility, effort, and deployment impact for a decision
+- [x] Decision: retain Manus OAuth plus tRPC; do not implement a provider migration unless explicitly reconsidered after the custom-domain allowlist path fails
+
+## SAFE AUTHENTICATION COMPATIBILITY REPAIR
+- [x] Identify the last working custom-domain Command Center authentication commit and isolate the regression from current main
+- [x] Restore only the minimum secure compatibility behavior required for the existing Command Center session flow
+- [x] Remove only the OAuth route wrapper from `/admin/command-center` while retaining current Command Center data handling and all security cleanup
+- [x] Preserve secret cleanup, rotated credentials, Gitleaks scanning, current Command Center functionality, and GitHub → Render deployment
