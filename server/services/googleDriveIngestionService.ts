@@ -50,6 +50,10 @@ export function shouldRequeueDriveItem(
   return (existing.drive_modified_at ?? null) !== (incomingModifiedAt ?? null);
 }
 
+export function shouldCompleteDriveIngestionRun(pendingFolders: number, pendingItems: number): boolean {
+  return pendingFolders === 0 && pendingItems === 0;
+}
+
 async function getLatestRun(db: any): Promise<IngestionRunRow | null> {
   const result = await db.execute(sql`
     SELECT * FROM drive_ingestion_runs
@@ -209,6 +213,14 @@ async function pendingFolderCount(db: any, runId: number): Promise<number> {
   return Number(rows(result)[0]?.count ?? 0);
 }
 
+async function pendingItemCount(db: any, runId: number): Promise<number> {
+  const result = await db.execute(sql`
+    SELECT COUNT(*)::int AS count FROM drive_ingestion_items
+    WHERE last_seen_run_id = ${runId} AND status = 'pending'
+  `);
+  return Number(rows(result)[0]?.count ?? 0);
+}
+
 async function getPendingItems(db: any, runId: number): Promise<IngestionItemRow[]> {
   const result = await db.execute(sql`
     SELECT * FROM drive_ingestion_items
@@ -299,8 +311,8 @@ async function importItem(db: any, run: IngestionRunRow, item: IngestionItemRow)
 
 async function completeRunIfSettled(db: any, run: IngestionRunRow): Promise<void> {
   const folders = await pendingFolderCount(db, run.id);
-  const pendingItems = await getPendingItems(db, run.id);
-  if (folders || pendingItems.length) return;
+  const pendingItems = await pendingItemCount(db, run.id);
+  if (!shouldCompleteDriveIngestionRun(folders, pendingItems)) return;
 
   // A file previously seen in Drive but not seen during this completed scan is
   // retained for provenance and marked unavailable; it is never deleted here.

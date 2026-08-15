@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { shouldRequeueDriveItem } from "./googleDriveIngestionService";
+import { shouldCompleteDriveIngestionRun, shouldRequeueDriveItem } from "./googleDriveIngestionService";
 
 describe("Drive ingestion change detection", () => {
   it("queues an unseen file and a file whose Drive modification timestamp changed", () => {
@@ -23,5 +23,11 @@ describe("Drive ingestion change detection", () => {
     expect(source).toContain('"fileType"');
     expect(source).toContain('"isProcessed"');
     expect(source).toContain('"updatedAt"');
+  });
+
+  it("does not leave a run active after its final pending folder and item have settled", () => {
+    expect(shouldCompleteDriveIngestionRun(1, 0)).toBe(false);
+    expect(shouldCompleteDriveIngestionRun(0, 1)).toBe(false);
+    expect(shouldCompleteDriveIngestionRun(0, 0)).toBe(true);
   });
 });
