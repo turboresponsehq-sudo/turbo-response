@@ -323,7 +323,7 @@ async function completeRunIfSettled(db: any, run: IngestionRunRow): Promise<void
   `);
   await db.execute(sql`
     UPDATE knowledge_documents
-    SET ingestion_status = 'unavailable', ingestion_error = 'File was not present in the completed Drive scan', updated_at = NOW()
+    SET ingestion_status = 'unavailable', ingestion_error = 'File was not present in the completed Drive scan', "updatedAt" = NOW()
     WHERE drive_file_id IN (
       SELECT drive_file_id FROM drive_ingestion_items
       WHERE last_seen_run_id <> ${run.id} AND status = 'unavailable'

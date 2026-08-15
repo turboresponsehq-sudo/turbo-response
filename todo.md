@@ -918,4 +918,5 @@
 - [x] Add a bounded in-process continuation worker so the real canonical Drive run can continue without repeated browser clicks or recursive browser requests
 - [x] Correct the Drive importer to use the existing camel-case Knowledge Base columns (`sourceUrl`, `fileType`, `isProcessed`, `updatedAt`) that caused contained real-file insert failures
 - [x] Mark a terminal Drive run as `completed_with_errors` after its last pending item is processed, then allow one new idempotent retry scan to requeue contained failures
+- [x] Correct the finalization query to use the legacy quoted `"updatedAt"` Knowledge Base column when marking unavailable documents after a completed scan
 - [ ] Run real canonical Drive ingestion, verify no duplicates on a repeat run, and retire the invalid legacy service-account value only after OAuth remains verified

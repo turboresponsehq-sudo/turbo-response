@@ -23,6 +23,7 @@ describe("Drive ingestion change detection", () => {
     expect(source).toContain('"fileType"');
     expect(source).toContain('"isProcessed"');
     expect(source).toContain('"updatedAt"');
+    expect(source).toContain('"updatedAt" = NOW()');
   });
 
   it("does not leave a run active after its final pending folder and item have settled", () => {
