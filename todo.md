@@ -916,4 +916,5 @@
 - [x] Implement bounded Drive discovery and idempotent Knowledge Base import with provenance, per-file error containment, and truthful run status
 - [x] Surface discovered, imported, pending, failed, and last-sync status in the existing Command Center Documents & Sync widget without redesign
 - [x] Add a bounded in-process continuation worker so the real canonical Drive run can continue without repeated browser clicks or recursive browser requests
+- [x] Correct the Drive importer to use the existing camel-case Knowledge Base columns (`sourceUrl`, `fileType`, `isProcessed`, `updatedAt`) that caused contained real-file insert failures
 - [ ] Run real canonical Drive ingestion, verify no duplicates on a repeat run, and retire the invalid legacy service-account value only after OAuth remains verified

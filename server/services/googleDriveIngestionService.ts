@@ -238,8 +238,8 @@ async function importItem(db: any, run: IngestionRunRow, item: IngestionItemRow)
           title = ${file.name},
           source = 'google_drive',
           source_system = 'google_drive',
-          source_url = ${file.webViewLink ?? item.source_url ?? null},
-          file_type = ${mimeTypeToFileType(file.mimeType)},
+          "sourceUrl" = ${file.webViewLink ?? item.source_url ?? null},
+          "fileType" = ${mimeTypeToFileType(file.mimeType)},
           content = COALESCE(${content}, content),
           content_hash = COALESCE(${contentHash}, content_hash),
           drive_mime_type = ${file.mimeType},
@@ -248,8 +248,9 @@ async function importItem(db: any, run: IngestionRunRow, item: IngestionItemRow)
           ingestion_status = 'imported',
           ingestion_error = NULL,
           ingested_at = NOW(),
+          "isProcessed" = 1,
           synced_to_xai = CASE WHEN ${content !== null} THEN 0 ELSE synced_to_xai END,
-          updated_at = NOW()
+          "updatedAt" = NOW()
         WHERE id = ${existingDocument.id}
       `);
       await db.execute(sql`
@@ -260,13 +261,13 @@ async function importItem(db: any, run: IngestionRunRow, item: IngestionItemRow)
     } else {
       const result = await db.execute(sql`
         INSERT INTO knowledge_documents (
-          title, category, source, source_system, source_url, file_type, content,
+          title, category, source, source_system, "sourceUrl", "fileType", content,
           status, content_hash, drive_file_id, drive_mime_type, drive_modified_at,
-          source_path, ingestion_status, ingested_at
+          source_path, ingestion_status, ingested_at, "isProcessed"
         ) VALUES (
           ${file.name}, 'Google Drive', 'google_drive', 'google_drive', ${file.webViewLink ?? item.source_url ?? null},
           ${mimeTypeToFileType(file.mimeType)}, ${content}, 'needs_review', ${contentHash},
-          ${file.id}, ${file.mimeType}, ${file.modifiedTime || null}, ${item.source_path}, 'imported', NOW()
+          ${file.id}, ${file.mimeType}, ${file.modifiedTime || null}, ${item.source_path}, 'imported', NOW(), 1
         ) RETURNING id
       `);
       const documentId = Number(rows(result)[0]?.id);
