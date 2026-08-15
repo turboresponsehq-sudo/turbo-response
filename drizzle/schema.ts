@@ -366,6 +366,14 @@ export const knowledgeDocuments = pgTable("knowledge_documents", {
 	content_hash: varchar({ length: 64 }),
 	/** Workspace ID for future multi-tenant support */
 	workspace_id: integer(),
+	/** Stable Drive file ID used for idempotent source reconciliation */
+	drive_file_id: varchar({ length: 255 }),
+	drive_mime_type: varchar({ length: 255 }),
+	drive_modified_at: timestamp({ mode: 'string' }),
+	source_path: text(),
+	ingestion_status: varchar({ length: 50 }),
+	ingestion_error: text(),
+	ingested_at: timestamp({ mode: 'string' }),
 	dateAdded: timestamp({ mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
 });
@@ -596,3 +604,57 @@ export const googleDriveOauthStates = pgTable("google_drive_oauth_states", {
 	expiresAt: timestamp("expires_at", { mode: "string" }).notNull(),
 	createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
 });
+
+// ── GOOGLE DRIVE KNOWLEDGE BASE INGESTION ─────────────────────────────────────
+// Persistent bounded-batch state. The Drive folder remains the system of record;
+// these tables only preserve discovery, import provenance, and retry state.
+export const driveIngestionRuns = pgTable("drive_ingestion_runs", {
+	id: serial().primaryKey(),
+	rootFolderId: varchar("root_folder_id", { length: 255 }).notNull(),
+	status: varchar({ length: 50 }).$type<"running" | "completed" | "completed_with_errors">().default("running").notNull(),
+	discoveredCount: integer("discovered_count").default(0).notNull(),
+	importedCount: integer("imported_count").default(0).notNull(),
+	updatedCount: integer("updated_count").default(0).notNull(),
+	unchangedCount: integer("unchanged_count").default(0).notNull(),
+	failedCount: integer("failed_count").default(0).notNull(),
+	unavailableCount: integer("unavailable_count").default(0).notNull(),
+	lastError: text("last_error"),
+	startedAt: timestamp("started_at", { mode: "string" }).defaultNow().notNull(),
+	completedAt: timestamp("completed_at", { mode: "string" }),
+	updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
+});
+
+export const driveIngestionFolders = pgTable("drive_ingestion_folders", {
+	id: serial().primaryKey(),
+	runId: integer("run_id").notNull(),
+	folderId: varchar("folder_id", { length: 255 }).notNull(),
+	parentFolderId: varchar("parent_folder_id", { length: 255 }),
+	sourcePath: text("source_path").notNull(),
+	nextPageToken: text("next_page_token"),
+	scanStatus: varchar("scan_status", { length: 50 }).$type<"pending" | "complete" | "failed">().default("pending").notNull(),
+	lastError: text("last_error"),
+	createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
+}, (table) => [
+	index("idx_drive_ingestion_folders_run_status").on(table.runId, table.scanStatus),
+]);
+
+export const driveIngestionItems = pgTable("drive_ingestion_items", {
+	id: serial().primaryKey(),
+	driveFileId: varchar("drive_file_id", { length: 255 }).notNull(),
+	knowledgeDocumentId: integer("knowledge_document_id"),
+	lastSeenRunId: integer("last_seen_run_id").notNull(),
+	fileName: varchar("file_name", { length: 500 }).notNull(),
+	mimeType: varchar("mime_type", { length: 255 }).notNull(),
+	sourcePath: text("source_path").notNull(),
+	sourceUrl: varchar("source_url", { length: 1000 }),
+	driveModifiedAt: timestamp("drive_modified_at", { mode: "string" }),
+	status: varchar({ length: 50 }).$type<"pending" | "imported" | "unchanged" | "failed" | "unavailable">().default("pending").notNull(),
+	lastError: text("last_error"),
+	processedAt: timestamp("processed_at", { mode: "string" }),
+	createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
+}, (table) => [
+	index("idx_drive_ingestion_items_run_status").on(table.lastSeenRunId, table.status),
+	index("idx_drive_ingestion_items_drive_file").on(table.driveFileId),
+]);

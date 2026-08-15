@@ -54,6 +54,19 @@ export async function getKnowledgeDocumentById(id: number) {
   return result.length > 0 ? result[0] : null;
 }
 
+export async function getKnowledgeDocumentByDriveFileId(driveFileId: string) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(knowledgeDocuments)
+    .where(eq(knowledgeDocuments.drive_file_id, driveFileId))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : null;
+}
+
 export async function createKnowledgeDocument(data: {
   title: string;
   category: string;
@@ -66,6 +79,13 @@ export async function createKnowledgeDocument(data: {
   status?: string;
   source_system?: 'google_drive' | 'upload' | 'xai_collection' | 'manual';
   workspace_id?: number;
+  drive_file_id?: string;
+  drive_mime_type?: string;
+  drive_modified_at?: string;
+  source_path?: string;
+  ingestion_status?: string;
+  ingestion_error?: string;
+  ingested_at?: string;
 }) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
@@ -85,6 +105,13 @@ export async function createKnowledgeDocument(data: {
     status: (data.status as any) || "active",
     content_hash: contentHash,
     workspace_id: data.workspace_id,
+    drive_file_id: data.drive_file_id,
+    drive_mime_type: data.drive_mime_type,
+    drive_modified_at: data.drive_modified_at,
+    source_path: data.source_path,
+    ingestion_status: data.ingestion_status,
+    ingestion_error: data.ingestion_error,
+    ingested_at: data.ingested_at,
   });
 
   return result;
@@ -107,6 +134,9 @@ export async function updateKnowledgeDocument(
     title?: string;
     category?: string;
     subcategory?: string;
+    source?: string;
+    sourceUrl?: string;
+    fileType?: string;
     summary?: string;
     status?: 'active' | 'archived' | 'needs_review';
     adminNotes?: string;
@@ -115,6 +145,13 @@ export async function updateKnowledgeDocument(
     synced_to_xai?: number;
     xai_collection_id?: string;
     last_synced_at?: string;
+    drive_file_id?: string;
+    drive_mime_type?: string;
+    drive_modified_at?: string;
+    source_path?: string;
+    ingestion_status?: string;
+    ingestion_error?: string;
+    ingested_at?: string;
   }
 ) {
   const db = await getDb();

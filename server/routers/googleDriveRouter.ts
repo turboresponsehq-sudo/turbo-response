@@ -21,7 +21,13 @@ import {
   calculateContentHash,
   hasContentChanged,
   getKnowledgeDocuments,
+  getKnowledgeDocumentByDriveFileId,
 } from "../knowledgeBaseDb";
+import {
+  getDriveIngestionStatus,
+  processDriveIngestionBatch,
+  startDriveIngestionRun,
+} from "../services/googleDriveIngestionService";
 
 const DEFAULT_FOLDER_ID = process.env.GOOGLE_DRIVE_FOLDER_ID || "";
 
@@ -69,6 +75,28 @@ export const googleDriveRouter = router({
     }),
 
   /**
+   * Read the last bounded Drive-to-Knowledge Base ingestion state.
+   * This is intentionally separate from xAI sync status.
+   */
+  ingestionStatus: protectedProcedure.query(async () => {
+    return getDriveIngestionStatus();
+  }),
+
+  /** Start or resume the persistent bounded ingestion run without a recursive browser request. */
+  startIngestion: protectedProcedure.mutation(async () => {
+    return startDriveIngestionRun();
+  }),
+
+  /**
+   * Process a small server-side batch: up to twelve folder pages or, after
+   * discovery completes, up to six document imports. Individual errors stay
+   * on the affected item and never abort the entire run.
+   */
+  processIngestionBatch: protectedProcedure.mutation(async () => {
+    return processDriveIngestionBatch();
+  }),
+
+  /**
    * Import a single Drive file into the Knowledge Base
    * Extracts text content and creates or updates the document record
    */
@@ -89,23 +117,38 @@ export const googleDriveRouter = router({
       const content = await extractTextFromDriveFile(file);
       const fileType = mimeTypeToFileType(file.mimeType);
 
-      if (input.existingDocId) {
+      const existingDriveDocument = input.existingDocId
+        ? null
+        : await getKnowledgeDocumentByDriveFileId(file.id);
+      const existingDocId = input.existingDocId || existingDriveDocument?.id;
+
+      if (existingDocId) {
         // Check if content has changed before updating
-        const changed = await hasContentChanged(input.existingDocId, content || "");
+        const changed = await hasContentChanged(existingDocId, content || "");
 
         if (!changed) {
           return {
             action: "skipped",
             reason: "Content unchanged",
-            docId: input.existingDocId,
+            docId: existingDocId,
             fileName: file.name,
           };
         }
 
         // Update existing document
-        await updateKnowledgeDocument(input.existingDocId, {
+        await updateKnowledgeDocument(existingDocId, {
           title: file.name,
+          source: "google_drive",
+          sourceUrl: file.webViewLink || undefined,
+          fileType,
           content: content || undefined,
+          drive_file_id: file.id,
+          drive_mime_type: file.mimeType,
+          drive_modified_at: file.modifiedTime,
+          source_path: file.name,
+          ingestion_status: "imported",
+          ingestion_error: undefined,
+          ingested_at: new Date().toISOString(),
           // Reset sync flag since content changed
           synced_to_xai: 0,
           status: "needs_review",
@@ -113,7 +156,7 @@ export const googleDriveRouter = router({
 
         return {
           action: "updated",
-          docId: input.existingDocId,
+          docId: existingDocId,
           fileName: file.name,
           contentExtracted: !!content,
         };
@@ -129,6 +172,12 @@ export const googleDriveRouter = router({
           fileType,
           content: content || undefined,
           status: "needs_review",
+          drive_file_id: file.id,
+          drive_mime_type: file.mimeType,
+          drive_modified_at: file.modifiedTime,
+          source_path: file.name,
+          ingestion_status: "imported",
+          ingested_at: new Date().toISOString(),
         });
 
         return {
@@ -169,6 +218,32 @@ export const googleDriveRouter = router({
           const file = await getDriveFileMetadata(fileInput.fileId);
           const content = await extractTextFromDriveFile(file);
           const fileType = mimeTypeToFileType(file.mimeType);
+          const existingDocument = await getKnowledgeDocumentByDriveFileId(file.id);
+
+          if (existingDocument) {
+            const changed = await hasContentChanged(existingDocument.id, content || "");
+            if (changed) {
+              await updateKnowledgeDocument(existingDocument.id, {
+                title: file.name,
+                source: "google_drive",
+                sourceUrl: file.webViewLink || undefined,
+                fileType,
+                content: content || undefined,
+                drive_file_id: file.id,
+                drive_mime_type: file.mimeType,
+                drive_modified_at: file.modifiedTime,
+                source_path: file.name,
+                ingestion_status: "imported",
+                ingested_at: new Date().toISOString(),
+                synced_to_xai: 0,
+                status: "needs_review",
+              });
+              results.push({ fileId: file.id, fileName: file.name, action: "updated", contentExtracted: !!content });
+            } else {
+              results.push({ fileId: file.id, fileName: file.name, action: "skipped", contentExtracted: !!content });
+            }
+            continue;
+          }
 
           await createKnowledgeDocument({
             title: file.name,
@@ -180,6 +255,12 @@ export const googleDriveRouter = router({
             fileType,
             content: content || undefined,
             status: "needs_review",
+            drive_file_id: file.id,
+            drive_mime_type: file.mimeType,
+            drive_modified_at: file.modifiedTime,
+            source_path: file.name,
+            ingestion_status: "imported",
+            ingested_at: new Date().toISOString(),
           });
 
           results.push({

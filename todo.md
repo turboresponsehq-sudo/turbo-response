@@ -908,3 +908,11 @@
 - [ ] Improve existing Command Center recommendations using real flowing data without redesigning the page
 - [ ] Create `SYSTEM_DEPENDENCY_MAP.md` and update affected handoff documentation
 - [ ] Run TypeScript, full tests, production build, secret scan, GitHub main release, Render deployment, and authenticated production verification
+
+## PHASE 4 — DRIVE TO KNOWLEDGE BASE INGESTION
+- [x] Audit existing Drive listing, Knowledge Base schema, import procedures, and job patterns for the smallest idempotent production ingestion path
+- [x] Choose a bounded manual batch design: persistent run, folder, and file state; one folder page plus a limited number of pending files per protected request; no new scheduler or Drive integration
+- [x] Add the minimum create-only ingestion queue and run-state relations to preserve Drive provenance, progress, errors, and idempotency across bounded batches
+- [x] Implement bounded Drive discovery and idempotent Knowledge Base import with provenance, per-file error containment, and truthful run status
+- [x] Surface discovered, imported, pending, failed, and last-sync status in the existing Command Center Documents & Sync widget without redesign
+- [ ] Run real canonical Drive ingestion, verify no duplicates on a repeat run, and retire the invalid legacy service-account value only after OAuth remains verified

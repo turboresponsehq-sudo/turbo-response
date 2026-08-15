@@ -53,6 +53,7 @@ export default function AdminKnowledgeBaseImport() {
 
   // Check Drive config
   const { data: driveConfig } = trpc.googleDrive.checkConfig.useQuery();
+  const { data: ingestionStatus, refetch: refetchIngestionStatus } = trpc.googleDrive.ingestionStatus.useQuery(undefined, { enabled: !!driveConfig?.configured });
 
   // List Drive files
   const {
@@ -74,6 +75,12 @@ export default function AdminKnowledgeBaseImport() {
     onError: () => {
       setIsImporting(false);
     },
+  });
+  const startIngestionMutation = trpc.googleDrive.startIngestion.useMutation({
+    onSuccess: () => refetchIngestionStatus(),
+  });
+  const processIngestionMutation = trpc.googleDrive.processIngestionBatch.useMutation({
+    onSuccess: () => refetchIngestionStatus(),
   });
 
   const toggleFile = (fileId: string) => {
@@ -160,6 +167,32 @@ export default function AdminKnowledgeBaseImport() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {driveConfig?.configured && (
+          <div className="mb-5 p-4 rounded-lg border border-gray-800 bg-gray-900 text-sm">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <div className="font-semibold text-white">Bounded Drive ingestion</div>
+                <p className="mt-1 text-xs text-gray-400">
+                  {ingestionStatus?.run
+                    ? `${ingestionStatus.discovered} discovered · ${ingestionStatus.imported} imported · ${ingestionStatus.pending} pending · ${ingestionStatus.failed + ingestionStatus.unavailable} failed · last sync ${ingestionStatus.lastSync ? formatDate(ingestionStatus.lastSync) : "not recorded"}`
+                    : "Not started. Each batch discovers a limited Drive page or imports a limited set of documents."}
+                </p>
+              </div>
+              <button
+                onClick={() => ingestionStatus?.run ? processIngestionMutation.mutate() : startIngestionMutation.mutate()}
+                disabled={startIngestionMutation.isPending || processIngestionMutation.isPending}
+                className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {startIngestionMutation.isPending || processIngestionMutation.isPending
+                  ? "Processing…"
+                  : ingestionStatus?.run
+                    ? "Process Next Batch"
+                    : "Start Ingestion"}
+              </button>
+            </div>
           </div>
         )}
 
