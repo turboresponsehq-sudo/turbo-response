@@ -140,7 +140,7 @@ The canonical folder is the owner-provided main Turbo Response Google Drive fold
 | `GOOGLE_DRIVE_OAUTH_CLIENT_ID` and `GOOGLE_DRIVE_OAUTH_CLIENT_SECRET` | `googleDriveOAuthService.ts` authorization and token exchange | Present only in Render; client uses the registered custom-domain callback and `drive.readonly` scope |
 | `APP_BASE_URL` | OAuth callback construction | Set to `https://turboresponsehq.ai` so Render's internal public URL is not used as the callback |
 | Encrypted OAuth refresh token | `google_drive_oauth_tokens` | Stored server-side after owner authorization; production reports `authMode=oauth` and `connected=true` |
-| `GOOGLE_SERVICE_ACCOUNT_JSON` | `googleDriveService.ts` fallback authentication | Retained as a fallback path only; OAuth is the verified production path and the invalid legacy value should be retired after a stability observation period |
+| `GOOGLE_SERVICE_ACCOUNT_JSON` | `googleDriveService.ts` fallback authentication | Removed from Render after OAuth-only verification; the production Drive integration now uses the verified OAuth path |
 | `XAI_MANAGEMENT_API_KEY` | `xaiCollectionsService.ts` collection/document management | Intentionally deferred by the owner; no xAI document sync should be represented as active |
 
 ### Current operating state
