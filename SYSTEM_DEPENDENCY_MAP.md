@@ -130,21 +130,22 @@ Canonical Google Drive folder
   → Command Center shows real sync/configuration state
 ```
 
-### Canonical folder and production configuration
+### Canonical folder and verified production configuration
 
-The intended canonical folder is the owner-provided main Turbo Response Google Drive folder. The retained secondary folder is not a current code default, Command Center default, or known production environment reference. The one unique audit report was moved into the main folder and the secondary folder was retained.
+The canonical folder is the owner-provided main Turbo Response Google Drive folder. The retained secondary folder is not a current code default, Command Center default, or known production environment reference. The one unique audit report was moved into the main folder and the secondary folder was retained.
 
-| Required configuration | Used by | Status at Phase 4 start |
+| Required configuration | Used by | Verified production status |
 |---|---|---|
-| `GOOGLE_DRIVE_FOLDER_ID` | `googleDriveRouter.ts` default folder | Missing in Render when audited; owner began configuration |
-| `GOOGLE_SERVICE_ACCOUNT_JSON` | `googleDriveService.ts` authentication | Missing in Render; organization policy currently prevents creating the required JSON key |
-| Folder share to service-account email | Google Drive permissions | Pending after key creation |
-| `XAI_MANAGEMENT_API_KEY` | `xaiCollectionsService.ts` collection/document management | Missing in Render when audited |
-| `XAI_COLLECTION_ID` | `xaiSyncService.ts` collection target | Optional explicit configuration; code currently includes a legacy fallback that should be replaced by an explicit production setting before live sync |
+| `GOOGLE_DRIVE_FOLDER_ID` | `googleDriveRouter.ts` default folder | Configured to the canonical folder and successfully listed through OAuth |
+| `GOOGLE_DRIVE_OAUTH_CLIENT_ID` and `GOOGLE_DRIVE_OAUTH_CLIENT_SECRET` | `googleDriveOAuthService.ts` authorization and token exchange | Present only in Render; client uses the registered custom-domain callback and `drive.readonly` scope |
+| `APP_BASE_URL` | OAuth callback construction | Set to `https://turboresponsehq.ai` so Render's internal public URL is not used as the callback |
+| Encrypted OAuth refresh token | `google_drive_oauth_tokens` | Stored server-side after owner authorization; production reports `authMode=oauth` and `connected=true` |
+| `GOOGLE_SERVICE_ACCOUNT_JSON` | `googleDriveService.ts` fallback authentication | Retained as a fallback path only; OAuth is the verified production path and the invalid legacy value should be retired after a stability observation period |
+| `XAI_MANAGEMENT_API_KEY` | `xaiCollectionsService.ts` collection/document management | Intentionally deferred by the owner; no xAI document sync should be represented as active |
 
-### Current blocker
+### Current operating state
 
-Google organization policy `iam.disableServiceAccountKeyCreation` blocks creation of the service-account JSON key. A project-only exception or an explicitly approved keyless Drive authentication redesign is required before production server-side Drive discovery can be enabled.
+Production authenticated Drive status and direct canonical-folder listing return successfully through OAuth. The Command Center shows Drive configured and recent canonical-folder items. No Knowledge Base documents have been imported yet. A full recursive folder inventory exceeded the browser's 30-second verification window, so recursive discovery should be profiled before being used as a synchronous operator-facing request.
 
 ---
 
