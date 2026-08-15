@@ -13,11 +13,16 @@ const ROOT_LABEL = "Turbo Response Drive";
 const FOLDER_MIME_TYPE = "application/vnd.google-apps.folder";
 const DISCOVERY_PAGES_PER_BATCH = 12;
 const IMPORTS_PER_BATCH = 6;
+const MAX_CONTINUATION_BATCHES = 160;
+const CONTINUATION_DELAY_MS = 150;
 
 type SqlRow = Record<string, any>;
 type IngestionRunRow = SqlRow & { id: number; status: string; root_folder_id: string };
 type IngestionFolderRow = SqlRow & { id: number; folder_id: string; source_path: string; next_page_token?: string | null };
 type IngestionItemRow = SqlRow & { id: number; drive_file_id: string; status: string; drive_modified_at?: string | null };
+
+let activeBatch: Promise<Awaited<ReturnType<typeof processDriveIngestionBatchInternal>>> | null = null;
+let activeContinuation: Promise<void> | null = null;
 
 function rows(result: unknown): SqlRow[] {
   return ((result as any)?.rows ?? result ?? []) as SqlRow[];
@@ -339,10 +344,11 @@ export async function startDriveIngestionRun() {
   if (!db) throw new Error("Database not available");
   const run = await startRun(db, rootFolderId);
   await refreshRunCounts(db, run.id);
+  ensureDriveIngestionContinuation();
   return getDriveIngestionStatus();
 }
 
-export async function processDriveIngestionBatch() {
+async function processDriveIngestionBatchInternal() {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   const rootFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
@@ -364,6 +370,56 @@ export async function processDriveIngestionBatch() {
   await completeRunIfSettled(db, run);
   const status = await getDriveIngestionStatus();
   return { ...status, pagesScanned, filesAttempted };
+}
+
+export async function processDriveIngestionBatch() {
+  if (activeBatch) return activeBatch;
+  activeBatch = processDriveIngestionBatchInternal().finally(() => {
+    activeBatch = null;
+  });
+  return activeBatch;
+}
+
+function wait(milliseconds: number) {
+  return new Promise<void>((resolve) => setTimeout(resolve, milliseconds));
+}
+
+/**
+ * Continue the active, persisted run server-side in small batches. Every batch
+ * commits independently, so a restart leaves a truthful resumable checkpoint.
+ */
+export function ensureDriveIngestionContinuation() {
+  if (activeContinuation) return activeContinuation;
+
+  activeContinuation = (async () => {
+    try {
+      for (let batch = 0; batch < MAX_CONTINUATION_BATCHES; batch += 1) {
+        const status = await getDriveIngestionStatus();
+        if (!status.run || status.run.status !== "running" || status.pending === 0) break;
+        await processDriveIngestionBatch();
+        await wait(CONTINUATION_DELAY_MS);
+      }
+    } catch (error) {
+      console.error("[DriveIngestion] Continuation worker stopped:", error);
+    } finally {
+      activeContinuation = null;
+    }
+  })();
+
+  return activeContinuation;
+}
+
+/** Resume only a previously-started run; never starts a new ingestion on boot. */
+export function resumePersistedDriveIngestion() {
+  void getDriveIngestionStatus()
+    .then((status) => {
+      if (status.run?.status === "running" && status.pending > 0) {
+        ensureDriveIngestionContinuation();
+      }
+    })
+    .catch((error) => {
+      console.warn("[DriveIngestion] Could not inspect a persisted run on startup:", error);
+    });
 }
 
 export async function getDriveIngestionStatus() {

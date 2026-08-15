@@ -18,6 +18,7 @@ import caseExtrasRouter from "../routes/caseExtras";
 import uploadsRouter from "../routes/uploads";
 import { getDb } from "../db"; // Already imported above
 import { registerGoogleDriveOAuthRoutes } from "../routes/googleDriveOAuth";
+import { resumePersistedDriveIngestion } from "../services/googleDriveIngestionService";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -750,6 +751,7 @@ async function startServer() {
 
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
+    resumePersistedDriveIngestion();
   });
 }
 
