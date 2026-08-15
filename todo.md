@@ -919,4 +919,6 @@
 - [x] Correct the Drive importer to use the existing camel-case Knowledge Base columns (`sourceUrl`, `fileType`, `isProcessed`, `updatedAt`) that caused contained real-file insert failures
 - [x] Mark a terminal Drive run as `completed_with_errors` after its last pending item is processed, then allow one new idempotent retry scan to requeue contained failures
 - [x] Correct the finalization query to use the legacy quoted `"updatedAt"` Knowledge Base column when marking unavailable documents after a completed scan
-- [ ] Run real canonical Drive ingestion, verify no duplicates on a repeat run, and retire the invalid legacy service-account value only after OAuth remains verified
+- [x] Verify the active raw insert uses the quoted legacy Knowledge Base columns; the displayed snake-case error belongs to the prior completed run and predates the deployed correction
+- [x] Confirm the displayed snake-case insertion error belongs to the prior completed run rather than a new active retry run
+- [x] Run real canonical Drive ingestion: 547 documents imported with zero failed, pending, or unavailable records; complete a repeat scan without duplicate Knowledge Base records; remove the invalid legacy service-account value after OAuth-only health verification

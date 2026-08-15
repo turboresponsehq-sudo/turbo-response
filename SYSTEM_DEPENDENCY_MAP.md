@@ -16,7 +16,7 @@
 | Application server | Express 4 + tRPC 11 | API routing, legacy REST compatibility, admin login, Drive/Knowledge Base processing, operational events | PostgreSQL, JWT secret, external credentials |
 | Data layer | PostgreSQL on Render | Canonical operational records, Knowledge Base metadata, Workspaces, automation artifacts | Drizzle ORM and parameterized SQL |
 | Object storage | S3-backed application storage | Uploaded file bytes; database holds file metadata and URLs | `server/storage.ts` |
-| External document source | Canonical Turbo Response Google Drive folder | Future Drive document discovery and Knowledge Base import source | Drive API, service-account folder permission |
+| External document source | Canonical Turbo Response Google Drive folder | OAuth-backed bounded discovery and Knowledge Base import source | Google Drive OAuth `drive.readonly`, encrypted refresh token, canonical-folder access |
 | AI knowledge service | xAI Collections management API | Knowledge Base document upload, collection membership, sync status | `XAI_MANAGEMENT_API_KEY`, collection ID |
 | Delivery | Render web service | Builds and runs the Node bundle from GitHub `main` | Render environment, `node dist/server.js` |
 | Repository automation | GitHub Actions | Secret scanning and legacy scheduled intelligence workflow | GitHub Actions permissions and secrets |
@@ -88,7 +88,7 @@ All tRPC traffic is served under `/api/trpc`. The application router is declared
 | `messaging` | `server/routers/messagingRouter.ts` | Client/admin communication operations |
 | `dashboard` | `server/routers/dashboardRouter.ts` | Legacy CEO/dashboard data |
 | `knowledgeBase` | `server/routers/knowledgeBaseRouter.ts` | Knowledge document management and xAI sync actions |
-| `googleDrive` | `server/routers/googleDriveRouter.ts` | Drive listing, recursive discovery, import, and configuration status |
+| `googleDrive` | `server/routers/googleDriveRouter.ts`, `server/services/googleDriveIngestionService.ts` | Drive listing, bounded persisted discovery/import, and configuration status |
 | `missionControl` | `server/routers/missionControlRouter.ts` | Signals, pipeline opportunities, and mission tasks |
 | `workspaces` | `server/routers/workspacesRouter.ts` | Workspace CRUD and related operational records |
 | `aiBrief` | `server/routers/aiBriefRouter.ts` | Structured AI brief repository |
@@ -121,13 +121,13 @@ Legacy `cases` are the source of truth for existing case records. A Workspace ma
 
 ```text
 Canonical Google Drive folder
-  → Google Drive API listing / recursive discovery
-  → extract text and metadata
+  → OAuth-backed paginated folder discovery
+  → persisted bounded folder/file queue with per-item status
+  → extract real text and metadata with contained item failures
   → knowledge_documents with source_system=google_drive and source URL
-  → content hash detects a real change
-  → xAI Collections upload
-  → synced_to_xai, xai_collection_id, last_synced_at updated
-  → Command Center shows real sync/configuration state
+  → stable Drive file identifier prevents duplicate records
+  → optional future xAI Collections upload when its key is configured
+  → Command Center shows real discovery, import, pending, and failure state
 ```
 
 ### Canonical folder and verified production configuration
@@ -145,7 +145,7 @@ The canonical folder is the owner-provided main Turbo Response Google Drive fold
 
 ### Current operating state
 
-Production authenticated Drive status and direct canonical-folder listing return successfully through OAuth. The Command Center shows Drive configured and recent canonical-folder items. No Knowledge Base documents have been imported yet. A full recursive folder inventory exceeded the browser's 30-second verification window, so recursive discovery should be profiled before being used as a synchronous operator-facing request.
+Production authenticated Drive status and direct canonical-folder listing return successfully through OAuth. A persisted, bounded server-side ingestion run completed with **547 real canonical Drive documents imported**, zero failed items, zero pending items, and zero unavailable items. A repeat source scan also completed without creating new Knowledge Base records; existing records were safely updated by their stable Drive file identifier. The Command Center now reports real ingestion progress rather than requiring a browser-recursive request. xAI sync remains intentionally inactive because no xAI key has been configured.
 
 ---
 
@@ -201,11 +201,12 @@ No historical backfill is performed. A retry of the same real source event must 
 | Workload | Current location | Trigger | Notes |
 |---|---|---|---|
 | Operational intelligence | Express request path | Real intake, chat lead, message, or sync-failure event | Event-driven; no polling or schedule required |
-| Knowledge Base sync | Admin-triggered tRPC flow | Manual admin action or future explicit event integration | Requires Drive/xAI configuration first |
+| Drive-to-Knowledge Base ingestion | Protected tRPC flow with bounded in-process continuation | Admin starts a persisted run; the server resumes small committed batches | No polling schedule; restarts resume only an already-running run |
+| xAI Knowledge Base sync | Admin-triggered tRPC flow | Explicit admin action when xAI is configured | Intentionally inactive while the xAI key is deferred |
 | Legacy intelligence scanner | `.github/workflows/bi-ops-automation.yml` | GitHub Actions cron and manual dispatch | Repository workflow; not a Render background worker |
 | Secret scanning | GitHub Actions workflow | Push/pull-request workflow | Must remain enabled |
 
-No high-frequency polling process is currently required. A future Drive change detector should use a verified provider webhook where available; otherwise it needs an explicitly approved background design rather than a credit-consuming agent schedule.
+No high-frequency polling process is currently required. The ingestion worker is bounded, persists checkpoints, and is initiated by an authenticated administrator; it is not a standing Drive poller. A future Drive change detector should use a verified provider webhook where available; otherwise it needs an explicitly approved background design rather than a credit-consuming agent schedule.
 
 ---
 
@@ -226,13 +227,12 @@ No high-frequency polling process is currently required. A future Drive change d
 
 ## 11. Phase 4 Handoff Order
 
-1. Resolve the Google project-only service-account key policy exception, or explicitly approve a different Drive authentication architecture.
-2. Set Render `GOOGLE_DRIVE_FOLDER_ID`, `GOOGLE_SERVICE_ACCOUNT_JSON`, `XAI_MANAGEMENT_API_KEY`, and the intended explicit `XAI_COLLECTION_ID` securely.
-3. Share only the canonical Drive folder with the service-account email as Viewer.
-4. Verify Drive listing and recursive discovery against the canonical folder without importing documents.
-5. Import selected real documents, inspect provenance and text extraction, and use content hashes to avoid duplicates.
-6. Verify xAI collection upload and sync status on a real document.
-7. Extend document-derived tasks/signals only after actual document processing is confirmed.
+1. Observe the verified OAuth-backed ingestion for stability, then remove the invalid legacy `GOOGLE_SERVICE_ACCOUNT_JSON` value from Render.
+2. Preserve `GOOGLE_DRIVE_FOLDER_ID`, the OAuth client credentials, `APP_BASE_URL`, and the encrypted refresh token configuration; do not expose credentials in source control.
+3. Use the authenticated ingestion control to start a bounded source scan only when the operator wants Drive changes reflected in the Knowledge Base.
+4. Keep xAI sync explicitly unavailable until the owner provides and configures the xAI key.
+5. Profile or approve a future Drive change detector only if automatic change detection becomes necessary.
+6. Extend document-derived tasks or signals only after actual document-processing requirements are separately approved.
 
 ---
 
@@ -246,7 +246,7 @@ No high-frequency polling process is currently required. A future Drive change d
 | Mission Control | `server/routers/missionControlRouter.ts`, `server/services/operationalIntelligenceService.ts` |
 | Legacy cases and documents | `server/db.ts`, `server/routes/caseExtras.ts` |
 | Voice/Chat | `server/routers/chatRouter.ts`, `server/chatDb.ts` |
-| Drive import | `server/googleDriveService.ts`, `server/routers/googleDriveRouter.ts` |
+| Drive import | `server/googleDriveService.ts`, `server/services/googleDriveIngestionService.ts`, `server/routers/googleDriveRouter.ts` |
 | Knowledge Base and xAI sync | `server/knowledgeBaseDb.ts`, `server/routers/knowledgeBaseRouter.ts`, `server/services/xaiSyncService.ts`, `server/services/xaiCollectionsService.ts` |
 | Schema and migrations | `drizzle/schema.ts`, `drizzle/migrations/` |
 | CI/security/scheduled workflows | `.github/workflows/` |
