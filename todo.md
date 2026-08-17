@@ -933,3 +933,8 @@
 - [x] Remove the discovered hardcoded non-production administrator bootstrap email and password from the development-only setup route
 - [x] Apply only non-destructive safe fixes for confirmed current-tree issues; stop for approval before history rewriting, credential rotation, data deletion, authentication changes, or uncertain integration removal
 - [x] Run TypeScript, tests, production build, final secret scan, GitHub main release, Render deployment, production health verification, and retired-bypass `404` verification for the safe remediation
+
+## APPROVED CURRENT-TREE `.manus/db` CLEANUP
+- [x] Verify the 82 tracked `.manus/db` files are unreferenced generated query artifacts and are distinct from production migrations
+- [x] Remove only the approved tracked `.manus/db` artifacts from the current Git tree; preserve `.manus/db/` ignore coverage and do not alter production data or history
+- [x] Run TypeScript, full tests, production build, and redacted exposure scan; complete GitHub main push and production health verification next
