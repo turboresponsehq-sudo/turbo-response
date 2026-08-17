@@ -932,4 +932,4 @@
 - [x] Add prevention-only ignore rules for untracked environment variants, private-key formats, and new `.manus/db` query artifacts; do not delete the 82 already tracked query artifacts without owner approval
 - [x] Remove the discovered hardcoded non-production administrator bootstrap email and password from the development-only setup route
 - [x] Apply only non-destructive safe fixes for confirmed current-tree issues; stop for approval before history rewriting, credential rotation, data deletion, authentication changes, or uncertain integration removal
-- [ ] Run TypeScript, tests, production build, final secret scan, GitHub main release, Render deployment, and production health verification for any safe remediation
+- [x] Run TypeScript, tests, production build, final secret scan, GitHub main release, Render deployment, production health verification, and retired-bypass `404` verification for the safe remediation
