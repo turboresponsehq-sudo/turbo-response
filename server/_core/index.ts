@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { createServer } from "http";
 import net from "net";
+import { eq } from "drizzle-orm";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
@@ -17,6 +18,7 @@ import clientPortalRouter from "../routes/clientPortal";
 import caseExtrasRouter from "../routes/caseExtras";
 import uploadsRouter from "../routes/uploads";
 import { getDb } from "../db"; // Already imported above
+import { users as usersTable } from "../../drizzle/schema";
 import { registerGoogleDriveOAuthRoutes } from "../routes/googleDriveOAuth";
 import { resumePersistedDriveIngestion } from "../services/googleDriveIngestionService";
 
@@ -57,7 +59,6 @@ async function startServer() {
     })
   );
 
-  app.options("*", cors());
   // -------------------------
   // END CORS CONFIGURATION
   // -------------------------
@@ -92,7 +93,8 @@ async function startServer() {
   app.use("/api/case", caseExtrasRouter);
   app.use("/api/upload", uploadsRouter);
   
-  // Deprecated one-time setup route; never expose credentials in production.
+	  // Deprecated one-time setup route. It is unavailable in production and
+	  // requires explicit local-only configuration in development.
   if (process.env.NODE_ENV !== "production") {
     app.get("/api/setup-admin", async (req, res) => {
     try {
@@ -103,9 +105,12 @@ async function startServer() {
         return res.status(500).send('Database not available');
       }
 
-      const email = 'turboresponsehq@gmail.com';
-      const password = 'Turbo123!';
-      const hashedPassword = await bcrypt.default.hash(password, 10);
+	      const email = process.env.DEV_BOOTSTRAP_ADMIN_EMAIL?.trim();
+	      const password = process.env.DEV_BOOTSTRAP_ADMIN_PASSWORD;
+	      if (!email || !password) {
+	        return res.status(404).send('Not found');
+	      }
+	      const hashedPassword = await bcrypt.default.hash(password, 10);
 
       // Add password column if needed
       try {
@@ -145,10 +150,7 @@ async function startServer() {
         <body>
           <div class="container">
             <h1>✅ Admin Setup Complete!</h1>
-            <div class="credentials">
-              <p>Email: <span class="value">turboresponsehq@gmail.com</span></p>
-              <p>Password: <span class="value">Admin123!</span></p>
-            </div>
+	            <p>Administrator bootstrap completed using local development configuration.</p>
             <a href="/admin/login">Go to Admin Login →</a>
           </div>
         </body>
@@ -236,9 +238,14 @@ async function startServer() {
 
       let user: any;
       try {
-        // Find user
-        const result: any = await db.execute(`SELECT * FROM users WHERE email = '${email}' LIMIT 1`);
-        user = result.rows?.[0] || result[0];
+        // Keep the legacy administrator login compatible while ensuring the
+        // user-provided email is always bound as a query value.
+        const result = await db
+          .select()
+          .from(usersTable)
+          .where(eq(usersTable.email, email))
+          .limit(1);
+        user = result[0];
       } catch (dbQueryError) {
         console.error('Database query error during login:', dbQueryError);
         return res.status(401).json({ message: 'Invalid credentials' }); // Treat database error as invalid credentials for the check
@@ -268,14 +275,11 @@ async function startServer() {
         return res.status(500).json({ message: 'Server configuration error' });
       }
       
-      console.log('[Login] Generating token with secret length:', secret.length);
       const token = jwt.default.sign(
         { userId: user.id, email: user.email, role: user.role },
         secret,
         { expiresIn: '365d' }
       );
-      console.log('[Login] Token generated successfully for:', user.email);
-
       res.json({
         token,
         user: {
@@ -291,73 +295,10 @@ async function startServer() {
       res.status(500).json({ message: 'Internal server error' });
     }
   });
-
-  // TEMPORARY EMERGENCY ADMIN BYPASS LOGIN - TO BE REMOVED IMMEDIATELY AFTER USE
-  app.post("/api/admin/bypass-login", async (req, res) => {
-    try {
-      const bypassKey = req.headers['x-bypass-key'];
-      if (bypassKey !== process.env.ADMIN_BYPASS_KEY) {
-        return res.status(401).json({ message: 'Unauthorized bypass attempt' });
-      }
-
-      const { email } = req.body;
-      if (!email) {
-        return res.status(400).json({ message: 'Email is required for bypass login' });
-      }
-
-      let db;
-      try {
-        db = await getDb();
-        if (!db) {
-          return res.status(500).json({ message: 'Database not available' });
-        }
-      } catch (dbConnectError) {
-        console.error('Database connection error during bypass login:', dbConnectError);
-        return res.status(500).json({ message: 'Database connection error' });
-      }
-
-      const result: any = await db.execute(`SELECT * FROM users WHERE email = '${email}' LIMIT 1`);
-      const user = result.rows?.[0] || result[0];
-
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-
-      // Ensure the user is an admin or promote them temporarily
-      if (user.role !== 'admin') {
-        await db.execute(`UPDATE users SET role = 'admin' WHERE email = '${email}'`);
-        user.role = 'admin'; // Update role in current user object for token generation
-      }
-
-      const jwt = await import("jsonwebtoken");
-      const secret = process.env.JWT_SECRET;
-
-      if (!secret) {
-        console.error('[Bypass Login] JWT_SECRET not set in environment');
-        return res.status(500).json({ message: 'Server configuration error' });
-      }
-
-      const token = jwt.default.sign(
-        { userId: user.id, email: user.email, role: 'admin' }, // Force admin role
-        secret,
-        { expiresIn: '1h' } // Short expiry for bypass token
-      );
-
-      res.json({
-        token,
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: 'admin'
-        },
-        message: 'Temporary admin bypass login successful. Change password and remove this endpoint immediately!'
-      });
-
-    } catch (error: any) {
-      console.error('❌ Admin bypass login error:', error);
-      res.status(500).json({ message: 'Internal server error during bypass login' });
-    }
+  // The one-time emergency bypass has been retired. Keep an explicit 404 so
+  // this path cannot become a privileged fallback through route ordering.
+  app.all("/api/admin/bypass-login", (_req, res) => {
+    res.status(404).json({ message: "Not found" });
   });
   
   // Admin cases endpoints

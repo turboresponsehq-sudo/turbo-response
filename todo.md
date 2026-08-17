@@ -922,3 +922,14 @@
 - [x] Verify the active raw insert uses the quoted legacy Knowledge Base columns; the displayed snake-case error belongs to the prior completed run and predates the deployed correction
 - [x] Confirm the displayed snake-case insertion error belongs to the prior completed run rather than a new active retry run
 - [x] Run real canonical Drive ingestion: 547 documents imported with zero failed, pending, or unavailable records; complete a repeat scan without duplicate Knowledge Base records; remove the invalid legacy service-account value after OAuth-only health verification
+
+## PHASE 5 — REPOSITORY-WIDE SECURITY AUDIT
+- [x] Inventory the current production branch, reachable history, tracked configuration, and existing security controls without printing credential values
+- [x] Run automated current-tree and reachable-history secret scans, followed by manual checks for security patterns scanners can miss
+- [x] Classify every finding as active, retired, example/test, sensitive information, or false positive; assess current use and required rotation
+- [x] Disable the confirmed unauthenticated `/api/admin/bypass-login` route in production; the safe non-existent-address probe reached the route without a bypass key
+- [x] Remove the redundant permissive default CORS preflight handler and unnecessary administrator-session diagnostic logging confirmed by the active code audit
+- [x] Add prevention-only ignore rules for untracked environment variants, private-key formats, and new `.manus/db` query artifacts; do not delete the 82 already tracked query artifacts without owner approval
+- [x] Remove the discovered hardcoded non-production administrator bootstrap email and password from the development-only setup route
+- [x] Apply only non-destructive safe fixes for confirmed current-tree issues; stop for approval before history rewriting, credential rotation, data deletion, authentication changes, or uncertain integration removal
+- [ ] Run TypeScript, tests, production build, final secret scan, GitHub main release, Render deployment, and production health verification for any safe remediation
