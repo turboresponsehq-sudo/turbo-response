@@ -6,7 +6,7 @@ import "../styles/creator.css";
 type Status = "new" | "reviewing" | "follow_up" | "converted" | "closed";
 type Lead = {
   id: number; fullName: string; brandName: string | null; email: string; creatorType: string;
-  packageInterest: string | null; budgetRange: string | null; status: Status; submittedAt: string; nextAction: string | null; openTaskDueAt: string | null;
+  packageInterest: string | null; budgetRange: string | null; status: Status; isInternalTest: boolean; submittedAt: string; nextAction: string | null; openTaskDueAt: string | null;
 };
 type LeadDetail = Lead & { goals?: string; challenges?: string; project_priority?: string; final_question?: string; notes: Array<{ id: number; note: string; created_at: string }>; tasks: Array<{ id: number; task_type: string; task_detail: string | null; due_at: string | null; status: string }>; events: Array<{ id: number; event_type: string; actor: string; created_at: string }> };
 
@@ -22,6 +22,7 @@ export default function CreatorLeadsAdmin() {
   const [note, setNote] = useState("");
   const [task, setTask] = useState("");
   const [saving, setSaving] = useState(false);
+  const [includeInternalTests, setIncludeInternalTests] = useState(false);
 
   const request = (path: string, init?: RequestInit) => fetch(path, {
     ...init,
@@ -31,7 +32,7 @@ export default function CreatorLeadsAdmin() {
   async function loadLeads() {
     setLoading(true); setError("");
     try {
-      const response = await request("/api/creator/admin/leads");
+      const response = await request(`/api/creator/admin/leads${includeInternalTests ? "?includeInternalTests=true" : ""}`);
       if (response.status === 401 || response.status === 403) { setLocation("/admin/login"); return; }
       const body = await response.json();
       if (!response.ok) throw new Error(body.error || "Unable to load Creator Leads.");
@@ -86,14 +87,14 @@ export default function CreatorLeadsAdmin() {
     finally { setSaving(false); }
   }
 
-  useEffect(() => { loadLeads(); }, []);
+  useEffect(() => { loadLeads(); }, [includeInternalTests]);
 
   return <main className="creator-admin-shell"><header className="creator-admin-header"><div><p className="creator-eyebrow">ZAKHY BUILDS AI · INTERNAL</p><h1>Creator Leads</h1></div><Link href="/admin" className="creator-back">← Admin home</Link></header>
     {error && <p className="creator-form-error">{error}</p>}
     <section className="creator-admin-layout">
-      <div className="creator-admin-list"><div className="creator-admin-list-head"><span>{loading ? "Loading" : `${leads.length} lead${leads.length === 1 ? "" : "s"}`}</span><button onClick={loadLeads}>Refresh</button></div>
+      <div className="creator-admin-list"><div className="creator-admin-list-head"><span>{loading ? "Loading" : `${leads.length} lead${leads.length === 1 ? "" : "s"}`}</span><div><label><input type="checkbox" checked={includeInternalTests} onChange={(event) => setIncludeInternalTests(event.target.checked)} /> Show internal tests</label><button onClick={loadLeads}>Refresh</button></div></div>
       {loading ? <p className="creator-empty">Loading Creator Leads…</p> : leads.length === 0 ? <p className="creator-empty">No Creator Leads yet. Public requests will appear here after the migration is approved and applied.</p> : leads.map((lead) => <button className={`creator-lead-row ${selected?.id === lead.id ? "is-selected" : ""}`} onClick={() => selectLead(lead.id)} key={lead.id}>
-        <div><strong>{lead.brandName || lead.fullName}</strong><span>{lead.fullName} · {lead.creatorType}</span></div><span className={`creator-status ${lead.status}`}>{label(lead.status)}</span>
+        <div><strong>{lead.brandName || lead.fullName}{lead.isInternalTest ? " · TEST / INTERNAL" : ""}</strong><span>{lead.fullName} · {lead.creatorType}</span></div><span className={`creator-status ${lead.status}`}>{label(lead.status)}</span>
       </button>)}</div>
       <aside className="creator-lead-detail">{selected ? <>
         <div className="creator-detail-head"><div><p className="creator-eyebrow">LEAD #{selected.id}</p><h2>{selected.brandName || selected.fullName}</h2><p>{selected.fullName} · {selected.email}</p></div><select aria-label="Lead status" value={selected.status} disabled={saving} onChange={(event) => updateStatus(event.target.value as Status)}>{statuses.map((status) => <option value={status} key={status}>{label(status)}</option>)}</select></div>

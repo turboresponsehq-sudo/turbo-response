@@ -16,6 +16,7 @@ export type CreatorLeadListItem = {
   packageInterest: string | null;
   budgetRange: string | null;
   status: CreatorLeadStatus;
+  isInternalTest: boolean;
   submittedAt: string;
   nextAction: string | null;
   openTaskDueAt: string | null;
@@ -105,7 +106,7 @@ export async function appendCreatorLeadEvent(event: {
   `);
 }
 
-export async function listCreatorLeads(limit = 100): Promise<CreatorLeadListItem[]> {
+export async function listCreatorLeads(limit = 100, includeInternalTests = false): Promise<CreatorLeadListItem[]> {
   const db = await getDb();
   if (!db) throw new Error("Creator lead storage is unavailable");
   const safeLimit = Math.min(Math.max(Math.floor(limit), 1), 100);
@@ -113,7 +114,7 @@ export async function listCreatorLeads(limit = 100): Promise<CreatorLeadListItem
   const result = await db.execute(sql`
     SELECT
       l.id, l.full_name, l.brand_name, l.email, l.creator_type, l.package_interest,
-      l.budget_range, l.status, l.submitted_at,
+      l.budget_range, l.status, l.is_internal_test, l.submitted_at,
       task.task_detail AS next_action,
       task.due_at AS open_task_due_at
     FROM creator_leads l
@@ -124,6 +125,7 @@ export async function listCreatorLeads(limit = 100): Promise<CreatorLeadListItem
       ORDER BY due_at ASC NULLS LAST, id ASC
       LIMIT 1
     ) task ON TRUE
+    WHERE ${includeInternalTests ? sql`TRUE` : sql`l.is_internal_test = FALSE`}
     ORDER BY l.submitted_at DESC
     LIMIT ${safeLimit}
   `);
@@ -248,6 +250,7 @@ function normalizeLead(lead: any): CreatorLeadListItem {
     packageInterest: lead.package_interest ?? null,
     budgetRange: lead.budget_range ?? null,
     status: lead.status,
+    isInternalTest: Boolean(lead.is_internal_test),
     submittedAt: lead.submitted_at,
     nextAction: lead.next_action ?? null,
     openTaskDueAt: lead.open_task_due_at ?? null,
