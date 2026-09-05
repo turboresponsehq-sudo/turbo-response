@@ -160,7 +160,11 @@ creatorRouter.post("/creator/leads", async (req: any, res) => {
 creatorRouter.get("/creator/admin/leads", requireCreatorAdmin, async (req, res) => {
   try {
     const requestedLimit = Number(req.query.limit ?? 100);
-    const leads = await listCreatorLeads(Number.isFinite(requestedLimit) ? requestedLimit : 100);
+    const includeInternalTests = req.query.includeInternalTests === "true";
+    const leads = await listCreatorLeads(
+      Number.isFinite(requestedLimit) ? requestedLimit : 100,
+      includeInternalTests,
+    );
     return res.json({ success: true, leads });
   } catch (error) {
     console.error("[Creator] Lead list failed", error);
