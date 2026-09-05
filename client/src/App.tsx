@@ -1,5 +1,6 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AdminSessionGate } from "@/components/AdminSessionGate";
 import { OAuthAdminGate } from "@/components/OAuthAdminGate";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
@@ -46,11 +47,11 @@ import CaseBrief from "./pages/CaseBrief";
 import CreatorIntake from "./features/creator/pages/CreatorIntake";
 import CreatorLeadsAdmin from "./features/creator/pages/CreatorLeadsAdmin";
 
-function OAuthCreatorLeads() {
+function ProtectedCreatorLeads() {
   return (
-    <OAuthAdminGate>
+    <AdminSessionGate>
       <CreatorLeadsAdmin />
-    </OAuthAdminGate>
+    </AdminSessionGate>
   );
 }
 
@@ -123,7 +124,7 @@ function Router() {
       <Route path="/admin/login" component={AdminLogin} />
       {/* Admin workflow routes - restored to specification */}
       <Route path="/admin/command-center" component={AdminCommandCenter} />
-      <Route path="/admin/creator/leads" component={OAuthCreatorLeads} />
+      <Route path="/admin/creator/leads" component={ProtectedCreatorLeads} />
       <Route path="/admin/knowledge-base/import" component={OAuthKnowledgeBaseImport} />
       <Route path="/admin/knowledge-base" component={OAuthKnowledgeBase} />
       <Route path="/admin/brain" component={OAuthBrain} />
