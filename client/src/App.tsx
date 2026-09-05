@@ -46,7 +46,7 @@ import AdminCommandCenter from "./pages/AdminCommandCenter";
 import CaseBrief from "./pages/CaseBrief";
 import CreatorIntake from "./features/creator/pages/CreatorIntake";
 import CreatorLeadsAdmin from "./features/creator/pages/CreatorLeadsAdmin";
-import ZakhyBuildsAIHub from "./pages/ZakhyBuildsAIHub";
+import ZakhyBuildsAIHub, { ZakhyAboutRoute, ZakhyAutomationServicesRoute, ZakhyPortfolioRoute } from "./pages/ZakhyBuildsAIHub";
 
 function ProtectedCreatorLeads() {
   return (
@@ -111,6 +111,9 @@ function Router() {
 
       {/* Isolated Zakhy Builds AI homepage hub; the approved demo remains the visual source of truth. */}
       <Route path="/zakhybuildsai" component={ZakhyBuildsAIHub} />
+      <Route path="/zakhybuildsai/automation-services" component={ZakhyAutomationServicesRoute} />
+      <Route path="/zakhybuildsai/portfolio" component={ZakhyPortfolioRoute} />
+      <Route path="/zakhybuildsai/about" component={ZakhyAboutRoute} />
 
       {/* Isolated Creator Business V1 routes */}
       <Route path="/creator/start" component={CreatorIntake} />

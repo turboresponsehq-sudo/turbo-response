@@ -1,19 +1,41 @@
-const ZAKHY_DEMO_HOMEPAGE = "https://zakhydemo-mpd8k29q.manus.space/";
+const ZAKHY_DEMO_BASE = "https://zakhydemo-mpd8k29q.manus.space";
+
+type ZakhyBuildsAIHubProps = {
+  sourcePath?: string;
+};
 
 /**
- * The approved Zakhy Builds AI homepage remains the source of truth on its
- * standalone demo host. This isolated production route intentionally embeds
- * that exact page instead of duplicating or redesigning it.
+ * The approved Zakhy pages remain the visual source of truth on their
+ * standalone host. These isolated production routes intentionally embed the
+ * exact pages so visitors can stay on turboresponsehq.ai.
  */
-export default function ZakhyBuildsAIHub() {
+function ZakhyBuildsAIFrame({ sourcePath = "/" }: ZakhyBuildsAIHubProps) {
+  const normalizedPath = sourcePath === "/" ? "/" : `/${sourcePath.replace(/^\/+/, "")}`;
+
   return (
     <main style={{ minHeight: "100vh", width: "100%", background: "#fff" }}>
       <iframe
         title="Zakhy Builds AI"
-        src={ZAKHY_DEMO_HOMEPAGE}
+        src={`${ZAKHY_DEMO_BASE}${normalizedPath}`}
         style={{ border: 0, display: "block", height: "100vh", minHeight: "760px", width: "100%" }}
         referrerPolicy="strict-origin-when-cross-origin"
       />
     </main>
   );
+}
+
+export default function ZakhyBuildsAIHub() {
+  return <ZakhyBuildsAIFrame />;
+}
+
+export function ZakhyAutomationServicesRoute() {
+  return <ZakhyBuildsAIFrame sourcePath="/automation-services" />;
+}
+
+export function ZakhyPortfolioRoute() {
+  return <ZakhyBuildsAIFrame sourcePath="/portfolio" />;
+}
+
+export function ZakhyAboutRoute() {
+  return <ZakhyBuildsAIFrame sourcePath="/about" />;
 }
