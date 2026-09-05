@@ -4,7 +4,6 @@ import { sql } from "drizzle-orm";
 import { getDb } from "../../db";
 import {
   addCreatorLeadNote,
-  appendCreatorLeadEvent,
   createCreatorFollowUpTask,
   createCreatorLead,
   getCreatorLeadById,
@@ -17,11 +16,7 @@ import {
   creatorLeadStatusSchema,
   creatorLeadTaskSchema,
 } from "./types";
-import {
-  buildCreatorLeadConfirmationEmail,
-  buildCreatorLeadOwnerEmail,
-  creatorEmailSendingEnabled,
-} from "./emailTemplates";
+import { processCreatorLeadEmailWorkflow } from "./emailWorkflow";
 import { creatorLeadCaptureEnabled } from "./featureGate";
 
 export const creatorRouter = Router();
@@ -61,11 +56,6 @@ function allowIntakeAttempt(key: string): boolean {
 function safeLeadId(value: string): number | null {
   const id = Number(value);
   return Number.isSafeInteger(id) && id > 0 ? id : null;
-}
-
-function safeAdminUrl(leadId: number): string {
-  const base = process.env.ZAKHY_FRONTEND_URL || "https://turboresponsehq.ai";
-  return `${base.replace(/\/$/, "")}/admin/creator/leads?lead=${leadId}`;
 }
 
 const requireCreatorAdmin: RequestHandler = async (req: any, res, next) => {
@@ -132,39 +122,31 @@ creatorRouter.post("/creator/leads", async (req: any, res) => {
   }
 
   try {
-    const lead = await createCreatorLead(parsed.data, {
-      referrer: typeof req.get === "function" ? req.get("referer") : undefined,
-      ip: key,
-    });
-
-    const emailData = {
-      fullName: parsed.data.fullName,
-      brandName: parsed.data.brandName || null,
-      creatorType: parsed.data.creatorType,
-      projectPriority: parsed.data.projectPriority,
-      budgetRange: parsed.data.budgetRange || null,
-      packageInterest: parsed.data.packageInterest || null,
-      leadId: lead.id,
-    };
-
-    // Templates are intentionally rendered but never delivered during V1 prep.
-    const confirmation = buildCreatorLeadConfirmationEmail(emailData);
-    const ownerNotification = buildCreatorLeadOwnerEmail(emailData, safeAdminUrl(lead.id));
-    if (!creatorEmailSendingEnabled()) {
-      await appendCreatorLeadEvent({
-        creatorLeadId: lead.id,
-        eventType: "email_suppressed",
-        actor: "creator_v1_safety_gate",
-        idempotencyKey: `creator-lead:${lead.id}:email-suppressed`,
-        payload: {
-          confirmationSubject: confirmation.subject,
-          ownerSubject: ownerNotification.subject,
-          reason: "Creator email delivery is disabled until approved configuration is supplied.",
-        },
+      const lead = await createCreatorLead(parsed.data, {
+        referrer: typeof req.get === "function" ? req.get("referer") : undefined,
+        ip: key,
       });
-    }
 
-    return res.status(201).json({
+      // The database write is complete before email workflow processing starts.
+      // Email errors are isolated and never roll back or reject this lead.
+      try {
+        await processCreatorLeadEmailWorkflow({
+          fullName: parsed.data.fullName,
+          brandName: parsed.data.brandName || null,
+          email: parsed.data.email,
+          phone: parsed.data.phone || null,
+          creatorType: parsed.data.creatorType,
+          projectPriority: parsed.data.projectPriority,
+          budgetRange: parsed.data.budgetRange || null,
+          packageInterest: parsed.data.packageInterest || null,
+          submittedAt: lead.submittedAt,
+          leadId: lead.id,
+        });
+      } catch (emailError) {
+        console.error("[Creator] Email workflow failed after lead was stored", emailError);
+      }
+
+      return res.status(201).json({
       success: true,
       message: "Your Creator Project request is in. We will review it and follow up with the clearest next step.",
       leadId: lead.id,
