@@ -43,6 +43,16 @@ import AdminKnowledgeBase from "./pages/AdminKnowledgeBase";
 import AdminKnowledgeBaseImport from "./pages/AdminKnowledgeBaseImport";
 import AdminCommandCenter from "./pages/AdminCommandCenter";
 import CaseBrief from "./pages/CaseBrief";
+import CreatorIntake from "./features/creator/pages/CreatorIntake";
+import CreatorLeadsAdmin from "./features/creator/pages/CreatorLeadsAdmin";
+
+function OAuthCreatorLeads() {
+  return (
+    <OAuthAdminGate>
+      <CreatorLeadsAdmin />
+    </OAuthAdminGate>
+  );
+}
 
 function OAuthKnowledgeBase() {
   return (
@@ -96,6 +106,9 @@ function Router() {
       
       {/* Business Build Intake */}
       <Route path="/turbo-intake" component={TurboIntakeForm} />
+
+      {/* Isolated Creator Business V1 routes */}
+      <Route path="/creator/start" component={CreatorIntake} />
       
       {/* Client Portal Routes */}
       <Route path="/client/login" component={ClientLogin} />
@@ -110,6 +123,7 @@ function Router() {
       <Route path="/admin/login" component={AdminLogin} />
       {/* Admin workflow routes - restored to specification */}
       <Route path="/admin/command-center" component={AdminCommandCenter} />
+      <Route path="/admin/creator/leads" component={OAuthCreatorLeads} />
       <Route path="/admin/knowledge-base/import" component={OAuthKnowledgeBaseImport} />
       <Route path="/admin/knowledge-base" component={OAuthKnowledgeBase} />
       <Route path="/admin/brain" component={OAuthBrain} />
