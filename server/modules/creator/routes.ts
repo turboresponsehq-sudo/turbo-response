@@ -22,8 +22,19 @@ import {
   buildCreatorLeadOwnerEmail,
   creatorEmailSendingEnabled,
 } from "./emailTemplates";
+import { creatorLeadCaptureEnabled } from "./featureGate";
 
 export const creatorRouter = Router();
+
+// Creator V1 remains closed until the additive PostgreSQL migration is applied
+// and a release is explicitly approved. This prevents traffic from reaching
+// the module while it is only prepared in source control.
+creatorRouter.use("/creator", (_req, res, next) => {
+  if (!creatorLeadCaptureEnabled()) {
+    return res.status(404).json({ error: "Not found" });
+  }
+  return next();
+});
 
 const intakeAttempts = new Map<string, number[]>();
 const MAX_ATTEMPTS_PER_WINDOW = 5;
