@@ -83,11 +83,11 @@ export default function CreatorIntake() {
   if (success) return <main className="creator-intake-shell"><section className="creator-success">
     <p className="creator-eyebrow">ZAKHY BUILDS AI</p><h1>Your project request is in.</h1>
     <p>Thank you for sharing your goals. We will review the opportunity and follow up with the clearest next step.</p>
-    <button className="creator-button" onClick={() => setLocation("/")}>Back to home</button>
+    <button className="creator-button" onClick={() => setLocation("/zakhybuildsai")}>Back to home</button>
   </section></main>;
 
   return <main className="creator-intake-shell">
-    <header className="creator-intake-header"><Link href="/" className="creator-brand">ZAKHY <span>BUILDS AI</span></Link><Link href="/" className="creator-back">← Back</Link></header>
+    <header className="creator-intake-header"><Link href="/zakhybuildsai" className="creator-brand">ZAKHY <span>BUILDS AI</span></Link><Link href="/zakhybuildsai" className="creator-back">← Back</Link></header>
     <section className="creator-intake-heading"><p className="creator-eyebrow">CREATOR PROJECT INTAKE</p><h1>Build the business behind your brand.</h1><p>Tell us about your brand, audience, problems, revenue, opportunities, and current systems. Keep it real—we will use it to understand the most useful next step.</p></section>
     <form className="creator-form" onSubmit={submit}>
       <input className="creator-honeypot" name="website" value={form.website} onChange={(event) => update("website", event.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true" />
