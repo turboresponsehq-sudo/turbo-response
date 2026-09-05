@@ -1,4 +1,4 @@
-import { pgTable, index, bigserial, serial, integer, text, jsonb, varchar, timestamp, numeric, smallint } from "drizzle-orm/pg-core"
+import { pgTable, index, bigint, bigserial, serial, integer, text, jsonb, varchar, timestamp, numeric, smallint } from "drizzle-orm/pg-core"
 
 export const brainEmbeddings = pgTable("brain_embeddings", {
 	id: bigserial({ mode: "number" }).notNull(),
@@ -658,3 +658,88 @@ export const driveIngestionItems = pgTable("drive_ingestion_items", {
 	index("idx_drive_ingestion_items_run_status").on(table.lastSeenRunId, table.status),
 	index("idx_drive_ingestion_items_drive_file").on(table.driveFileId),
 ]);
+
+// ── CREATOR BUSINESS V1 ─────────────────────────────────────────────────────
+// Isolated Creator Business records. These never reference consumer cases,
+// business_intakes, payment data, or client portal records.
+export const creatorLeads = pgTable("creator_leads", {
+	id: bigserial({ mode: "number" }).primaryKey(),
+	fullName: varchar("full_name", { length: 255 }).notNull(),
+	brandName: varchar("brand_name", { length: 255 }),
+	email: varchar({ length: 320 }).notNull(),
+	phone: varchar({ length: 50 }),
+	creatorType: varchar("creator_type", { length: 50 }).notNull(),
+	socialLinks: jsonb("social_links").notNull(),
+	websiteUrl: varchar("website_url", { length: 500 }),
+	goals: text(),
+	challenges: text(),
+	automationWish: text("automation_wish"),
+	revenueStreams: jsonb("revenue_streams").notNull(),
+	additionalMonetization: text("additional_monetization"),
+	audienceLocation: text("audience_location"),
+	priorityPlatforms: jsonb("priority_platforms").notNull(),
+	audienceSize: varchar("audience_size", { length: 100 }),
+	collectsFanContacts: varchar("collects_fan_contacts", { length: 50 }),
+	brandAssets: jsonb("brand_assets").notNull(),
+	brandStyle: text("brand_style"),
+	businessSystems: jsonb("business_systems").notNull(),
+	opportunityFocus: jsonb("opportunity_focus").notNull(),
+	projectPriority: text("project_priority").notNull(),
+	budgetRange: varchar("budget_range", { length: 50 }),
+	packageInterest: varchar("package_interest", { length: 100 }),
+	finalQuestion: text("final_question"),
+	source: varchar({ length: 100 }).default("website").notNull(),
+	sourcePath: varchar("source_path", { length: 500 }),
+	referrer: varchar({ length: 1000 }),
+	utmSource: varchar("utm_source", { length: 255 }),
+	utmMedium: varchar("utm_medium", { length: 255 }),
+	utmCampaign: varchar("utm_campaign", { length: 255 }),
+	status: varchar({ length: 30 }).$type<"new" | "reviewing" | "follow_up" | "converted" | "closed">().default("new").notNull(),
+	consentAt: timestamp("consent_at", { mode: "string", withTimezone: true }).notNull(),
+	submittedAt: timestamp("submitted_at", { mode: "string", withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { mode: "string", withTimezone: true }).defaultNow().notNull(),
+}, (table) => [
+	index("idx_creator_leads_status_submitted").on(table.status, table.submittedAt),
+	index("idx_creator_leads_email").on(table.email),
+]);
+
+export const creatorLeadEvents = pgTable("creator_lead_events", {
+	id: bigserial({ mode: "number" }).primaryKey(),
+	creatorLeadId: bigint("creator_lead_id", { mode: "number" }).notNull(),
+	eventType: varchar("event_type", { length: 100 }).notNull(),
+	actor: varchar({ length: 255 }).default("system").notNull(),
+	payload: jsonb().notNull(),
+	idempotencyKey: varchar("idempotency_key", { length: 255 }).notNull(),
+	createdAt: timestamp("created_at", { mode: "string", withTimezone: true }).defaultNow().notNull(),
+}, (table) => [
+	index("idx_creator_lead_events_lead_created").on(table.creatorLeadId, table.createdAt),
+	index("creator_lead_events_idempotency_key_unique").on(table.idempotencyKey),
+]);
+
+export const creatorLeadNotes = pgTable("creator_lead_notes", {
+	id: bigserial({ mode: "number" }).primaryKey(),
+	creatorLeadId: bigint("creator_lead_id", { mode: "number" }).notNull(),
+	note: text().notNull(),
+	authorUserId: bigint("author_user_id", { mode: "number" }),
+	createdAt: timestamp("created_at", { mode: "string", withTimezone: true }).defaultNow().notNull(),
+}, (table) => [
+	index("idx_creator_lead_notes_lead_created").on(table.creatorLeadId, table.createdAt),
+]);
+
+export const creatorFollowUpTasks = pgTable("creator_follow_up_tasks", {
+	id: bigserial({ mode: "number" }).primaryKey(),
+	creatorLeadId: bigint("creator_lead_id", { mode: "number" }).notNull(),
+	dueAt: timestamp("due_at", { mode: "string", withTimezone: true }),
+	ownerUserId: bigint("owner_user_id", { mode: "number" }),
+	status: varchar({ length: 30 }).$type<"open" | "completed" | "cancelled">().default("open").notNull(),
+	taskType: varchar("task_type", { length: 100 }).default("follow_up").notNull(),
+	taskDetail: text("task_detail"),
+	completedAt: timestamp("completed_at", { mode: "string", withTimezone: true }),
+	createdAt: timestamp("created_at", { mode: "string", withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { mode: "string", withTimezone: true }).defaultNow().notNull(),
+}, (table) => [
+	index("idx_creator_follow_up_tasks_open_due").on(table.status, table.dueAt),
+]);
+
+export type CreatorLead = typeof creatorLeads.$inferSelect;
+export type InsertCreatorLead = typeof creatorLeads.$inferInsert;
