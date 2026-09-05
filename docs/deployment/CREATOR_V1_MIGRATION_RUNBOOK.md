@@ -1,6 +1,6 @@
 # Creator Lead Capture V1 — Migration Runbook
 
-**Status:** Prepared only. This runbook must not be executed until the Creator V1 deployment and database migration are explicitly approved.
+**Status:** Executed in production on 2026-09-05. Preserve this runbook for repeatable verification and rollback guidance; do not run the migration again.
 
 ## Source of truth
 
@@ -62,6 +62,10 @@ psql "$DATABASE_URL" \
 The file has one PostgreSQL transaction. `ON_ERROR_STOP=1` prevents a partial continuation after an error. The migration itself acquires a transaction-scoped advisory lock, uses `CREATE ... IF NOT EXISTS`, and records `0017_create_creator_lead_capture` into the production ledger only after all new tables, indexes, and constraints succeed.
 
 **Do not run `pnpm run db:push`.** Its Drizzle migration journal is incompatible with the production migration history.
+
+### Production execution record
+
+The approved migration was executed exactly once on **2026-09-05 at 02:39:43 UTC**, after a fresh Render logical export and the documented clean preflight. The Render browser Web Shell did not establish an interactive terminal session, so the same approved SQL file was executed through an authenticated, one-time PostgreSQL client bridge using the Render External Database URL. The bridge used the same `psql` semantics as the command above: the unchanged file, `ON_ERROR_STOP=1`, and the file's single transaction. The postflight confirmed one `0017_create_creator_lead_capture` ledger record and all four `creator_*` tables. No Drizzle push command was used.
 
 ## Post-apply verification — read only
 
