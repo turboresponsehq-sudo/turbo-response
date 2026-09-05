@@ -3,3 +3,8 @@ export function getSafeAdminReturnPath(search: string): string {
 
   return requestedPath?.startsWith("/admin/") ? requestedPath : "/admin";
 }
+
+export function getAdminLoginUrl(returnPath: string): string {
+  const safePath = returnPath.startsWith("/admin/") ? returnPath : "/admin";
+  return `/admin/login?next=${encodeURIComponent(safePath)}`;
+}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
+import { getAdminLoginUrl } from "@/lib/adminLoginRedirect";
 import { getAdminSessionAuthorizationHeader } from "@/lib/adminSession";
 import "../styles/creator.css";
 
@@ -33,7 +34,7 @@ export default function CreatorLeadsAdmin() {
     setLoading(true); setError("");
     try {
       const response = await request(`/api/creator/admin/leads${includeInternalTests ? "?includeInternalTests=true" : ""}`);
-      if (response.status === 401 || response.status === 403) { setLocation("/admin/login"); return; }
+      if (response.status === 401 || response.status === 403) { setLocation(getAdminLoginUrl("/admin/creator/leads")); return; }
       const body = await response.json();
       if (!response.ok) throw new Error(body.error || "Unable to load Creator Leads.");
       setLeads(body.leads || []);
