@@ -106,6 +106,19 @@ COMMIT;
 
 Do not use `DROP` after real Creator data has been accepted. In that case, preserve the data and use the Render logical export or Point-in-Time Recovery only under an explicit recovery decision, because database recovery affects the entire PostgreSQL database—not just Creator V1.
 
-## Email safety
+## Phase 2 — Creator email delivery
 
-The Creator V1 code renders Zakhy Builds AI email templates for test coverage only. `creatorEmailSendingEnabled()` is hard-coded to `false`, so no email can be sent in this phase. A later approved email phase should add separate Creator branding variables, not reuse Turbo Response customer-facing language.
+Creator email delivery is isolated in `server/modules/creator`. It uses the existing SMTP credentials (`EMAIL_USER` and `EMAIL_PASSWORD`) only as a transport mechanism. It never reuses Turbo Response customer-facing sender, recipient, or link configuration.
+
+Set the following Creator-specific variables in Render before any future email-enable approval:
+
+```text
+ZAKHY_EMAIL_FROM=
+ZAKHY_ADMIN_EMAIL=
+ZAKHY_FRONTEND_URL=
+CREATOR_EMAIL_SENDING_ENABLED=false
+```
+
+Keep `CREATOR_EMAIL_SENDING_ENABLED=false` during development, deployment, and suppression testing. With the gate closed, a Creator inquiry is saved normally and only an `email_suppressed` event is written to `creator_lead_events`; no SMTP connection or message delivery occurs. When a separately approved release sets the gate to `true`, the module validates all five delivery variables (including the two transport credentials), sends the Zakhy-branded admin notification and creator confirmation independently, and records delivery or failure events only in `creator_lead_events`.
+
+Email errors are non-transactional and never undo an already saved Creator lead. Do not enable the gate until sender, admin recipient, and Creator frontend URL have been reviewed and approved.

@@ -1,10 +1,13 @@
-type CreatorLeadEmailData = {
+export type CreatorLeadEmailData = {
   fullName: string;
   brandName?: string | null;
+  email: string;
+  phone?: string | null;
   creatorType: string;
   projectPriority: string;
   budgetRange?: string | null;
   packageInterest?: string | null;
+  submittedAt?: string;
   leadId: number;
 };
 
@@ -50,38 +53,33 @@ export function buildCreatorLeadConfirmationEmail(lead: CreatorLeadEmailData) {
     subject: "We received your Creator Project request | Zakhy Builds AI",
     html: layout("Your project request is in", `
       <p style="font-size:16px;line-height:1.65;margin:0 0 16px;">Hi ${name},</p>
-      <p style="font-size:16px;line-height:1.65;margin:0 0 16px;">Thanks for telling us about your creator business. We received your project request and will review your goals, opportunities, and current systems.</p>
-      <p style="font-size:16px;line-height:1.65;margin:0;">If there is a strong fit, a member of the Zakhy Builds AI team will follow up with the clearest next step.</p>
+      <p style="font-size:16px;line-height:1.65;margin:0 0 16px;">Thanks for reaching out to Zakhy Builds AI. We received your project inquiry and will review the details.</p>
+      <p style="font-size:16px;line-height:1.65;margin:0;">If the project looks like a fit, we’ll follow up with next steps.</p>
     `),
   };
 }
 
 export function buildCreatorLeadOwnerEmail(lead: CreatorLeadEmailData, adminUrl: string) {
   const details: Array<[string, string]> = [
-    ["Creator", lead.fullName],
-    ["Brand", lead.brandName || "Not provided"],
-    ["Type", lead.creatorType],
-    ["Package", lead.packageInterest || "Not sure yet"],
+    ["Name", lead.fullName],
+    ["Email", lead.email],
+    ["Phone", lead.phone || "Not provided"],
+    ["Creator / business", lead.brandName || "Not provided"],
+    ["Creator type", lead.creatorType],
+    ["Requested service", lead.packageInterest || "Not sure yet"],
     ["Budget", lead.budgetRange || "Not provided"],
-    ["Priority", lead.projectPriority],
+    ["Project details", lead.projectPriority],
+    ["Submitted", lead.submittedAt || "Just now"],
   ];
   const rows = details.map(([label, value]) => `
-    <tr><td style="padding:9px 0;color:#62718c;font-size:13px;font-weight:700;width:105px;vertical-align:top;">${escapeHtml(label)}</td>
+    <tr><td style="padding:9px 0;color:#62718c;font-size:13px;font-weight:700;width:130px;vertical-align:top;">${escapeHtml(label)}</td>
     <td style="padding:9px 0;color:#101522;font-size:14px;line-height:1.45;">${escapeHtml(value)}</td></tr>`).join("");
 
   return {
-    subject: `New Creator Lead — ${lead.brandName || lead.fullName}`,
-    html: layout("New creator lead", `
+    subject: `New Creator Inquiry — ${lead.brandName || lead.fullName}`,
+    html: layout("New creator inquiry", `
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">${rows}</table>
       <div style="margin-top:24px;"><a href="${escapeHtml(adminUrl)}" style="display:inline-block;background:#1155d9;color:#fff;padding:13px 18px;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;">Review Creator Lead →</a></div>
     `),
   };
-}
-
-/**
- * Explicit V1 safety gate. Templates are built and covered by tests, but the
- * creator module cannot send mail until a future approved configuration phase.
- */
-export function creatorEmailSendingEnabled(): false {
-  return false;
 }
