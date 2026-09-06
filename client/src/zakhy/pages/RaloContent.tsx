@@ -24,7 +24,7 @@ export default function RaloContentPage() {
   return (
     <main className="ralo-content-page">
       <header className="ralo-content-header">
-        <a className="ralo-content-logo" href="/zakhybuildsai/portfolio/ralo" aria-label="Ralo home"><img src="/zakhy-assets/famgoon-header-logo-tight_138459fd.png" alt="FAMGOON" /></a>
+        <a className="ralo-content-logo" href="/zakhybuildsai/portfolio/ralo" aria-label="Ralo home"><img src="/manus-storage/famgoon-header-logo-tight_138459fd.png" alt="FAMGOON" /></a>
         <nav className={`ralo-content-nav ${menuOpen ? "ralo-content-nav--open" : ""}`} aria-label="Ralo navigation">
           <a href="/zakhybuildsai/portfolio/ralo" onClick={closeMenu}>Home</a>
           <a className="is-active" href="/zakhybuildsai/portfolio/ralo/content" onClick={closeMenu}>Content &amp; Monetization</a>
@@ -85,7 +85,7 @@ export default function RaloContentPage() {
         <div className="ralo-content-wrap ralo-events-copy"><p>EVENTS &amp; APPEARANCES / 05</p><h2 id="events-title">OUTSIDE.<br /><em>ON PURPOSE.</em></h2><div>{eventTypes.map((event) => <span key={event}>{event}</span>)}</div></div>
       </section>
 
-      <footer className="ralo-content-footer"><a href="/zakhybuildsai/portfolio/ralo"><img src="/zakhy-assets/famgoon-header-logo-tight_138459fd.png" alt="FAMGOON" /></a><p>MUSIC + CONTENT + MERCH + FEATURES + EVENTS</p><span>RALO / ATLANTA</span></footer>
+      <footer className="ralo-content-footer"><a href="/zakhybuildsai/portfolio/ralo"><img src="/manus-storage/famgoon-header-logo-tight_138459fd.png" alt="FAMGOON" /></a><p>MUSIC + CONTENT + MERCH + FEATURES + EVENTS</p><span>RALO / ATLANTA</span></footer>
     </main>
   );
 }

@@ -4,14 +4,14 @@ import ShareProjectButton from "../components/ShareProjectButton";
 import LazyBackground from "../components/LazyBackground";
 
 const spilloAssets = {
-  hero: "/zakhy-assets/spillo-hero-artist_a25123a3.jpg",
-  music: "/zakhy-assets/spillo-music-hq_0dde61f6.png",
-  podcast: "/zakhy-assets/spillo-podcast-hq_7b01aa85.png",
-  merch: "/zakhy-assets/spillo-merch-hq_50bfb3bf.png",
-  booking: "/zakhy-assets/spillo-booking-hq_871020a2.png",
+  hero: "/manus-storage/spillo-hero-artist_a25123a3.jpg",
+  music: "/manus-storage/spillo-music-hq_0dde61f6.png",
+  podcast: "/manus-storage/spillo-podcast-hq_7b01aa85.png",
+  merch: "/manus-storage/spillo-merch-hq_50bfb3bf.png",
+  booking: "/manus-storage/spillo-booking-hq_871020a2.png",
 };
-const spilloContentDesktop = "/zakhy-assets/spillo-content-approved_37e00a75_15151553.webp";
-const spilloContentMobile = "/zakhy-assets/spillo-content-approved_37e00a75-mobile_50f2fe3c.webp";
+const spilloContentDesktop = "/manus-storage/spillo-content-approved_37e00a75_15151553.webp";
+const spilloContentMobile = "/manus-storage/spillo-content-approved_37e00a75-mobile_50f2fe3c.webp";
 
 type Page = "home" | "content" | "inquiries";
 
@@ -46,7 +46,7 @@ export function SpilloHome() {
     <section className="spillo-exact-desktop" aria-label="Spillo homepage">
       <SpilloHeader active="home" />
       <div className="spillo-exact-reference-frame">
-        <img src="/zakhy-assets/spillo-home-approved-clear_88592015.png" alt="Spillo Spill Season homepage" />
+        <img src="/manus-storage/spillo-home-approved-clear_88592015.png" alt="Spillo Spill Season homepage" />
         <a className="spillo-reference-link spillo-reference-link--logo" href="/zakhybuildsai/portfolio/spillo" aria-label="Spillo Home" />
         <a className="spillo-reference-link spillo-reference-link--content" href="/zakhybuildsai/portfolio/spillo/content" aria-label="Content and Monetization" />
         <a className="spillo-reference-link spillo-reference-link--inquiries" href="/zakhybuildsai/portfolio/spillo/inquiries" aria-label="Spillo Inquiries" />
@@ -93,7 +93,7 @@ export function SpilloInquiries() {
   const [submitted, setSubmitted] = useState(false);
   const submit = (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); setSubmitted(true); };
   return <main className="spillo-page spillo-inquiries-page"><SpilloHeader active="inquiries" />
-    <section className="spillo-inquiry-hero"><div><p>SPILLO / INQUIRIES</p><h1>Let’s do<br /><em>business.</em></h1><span>Bookings. Features. Podcast. Partnerships.</span></div><div className="spillo-inquiry-hero-art" style={{ backgroundImage: "url(/zakhy-assets/spillo-inquiries-approved_5eb89afb.png)" }} /></section>
+    <section className="spillo-inquiry-hero"><div><p>SPILLO / INQUIRIES</p><h1>Let’s do<br /><em>business.</em></h1><span>Bookings. Features. Podcast. Partnerships.</span></div><div className="spillo-inquiry-hero-art" style={{ backgroundImage: "url(/manus-storage/spillo-inquiries-approved_5eb89afb.png)" }} /></section>
     <section className="spillo-inquiry-main"><aside><p>THE NEXT MOVE</p><h2>Bring the right opportunity to the table.</h2><div><span>01</span><b>Bookings & appearances</b></div><div><span>02</span><b>Features & collaborations</b></div><div><span>03</span><b>Podcast & brand work</b></div><small>Portfolio demo only. No information is sent or stored.</small></aside><div className="spillo-form-wrap">{submitted ? <div className="spillo-form-success"><p>SPILLO / DEMO INQUIRY</p><h2>We got you.</h2><span>Your request has not been sent or stored.</span><button type="button" onClick={() => setSubmitted(false)}>Return to form</button></div> : <form onSubmit={submit}><p>MAKE AN INQUIRY</p><label>Name<input required placeholder="Your name" /></label><label>Email<input required type="email" placeholder="you@email.com" /></label><label>Request type<select required defaultValue=""><option value="" disabled>Select request type</option><option>Booking</option><option>Feature</option><option>Collaboration</option><option>Podcast</option><option>Brand Partnership</option><option>Event</option><option>General Inquiry</option></select></label><label>Budget range<select required defaultValue=""><option value="" disabled>Select budget range</option><option>Under $500</option><option>$500–$1,500</option><option>$1,500–$5,000</option><option>$5,000+</option></select></label><label className="spillo-form-full">Details<textarea required rows={5} placeholder="Tell us about the opportunity" /></label><button className="spillo-button spillo-button--yellow" type="submit">Send demo inquiry <b>→</b></button></form>}</div></section>
   </main>;
 }

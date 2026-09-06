@@ -60,7 +60,7 @@ h1, h2, h3, p { margin: 0; }
 .mobile-book-link { display: none; }
 
 .hero { min-height: 738px; position: relative; overflow: hidden; background: #ededeb; display: flex; align-items: center; }
-.hero-image { position: absolute; inset: 0 0 0 37%; background-image: url("/zakhy-assets/zakhy-reference-hero_2bb583c8.png"); background-size: cover; background-position: center center; transform: none; }
+.hero-image { position: absolute; inset: 0 0 0 37%; background-image: url("/manus-storage/zakhy-reference-hero_2bb583c8.png"); background-size: cover; background-position: center center; transform: none; }
 .hero-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255,255,255,.98) 0%, rgba(255,255,255,.98) 27%, rgba(255,255,255,.78) 40%, rgba(255,255,255,.12) 62%, rgba(255,255,255,0) 78%); }
 .hero__content { position: relative; z-index: 1; padding-top: 66px; }
 .hero-copy { max-width: 545px; animation: lift-in 720ms var(--ease) both; }
@@ -121,7 +121,7 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
 .portfolio-grid { display: grid; grid-template-columns: .84fr 1.16fr; align-items: center; gap: 70px; }
 .portfolio-copy h2 { font-size: clamp(52px, 5.5vw, 85px); margin: 14px 0 20px; }
 .portfolio-copy > p:not(.eyebrow) { max-width: 385px; font-size: 15px; line-height: 1.52; letter-spacing: -.025em; margin-bottom: 28px; }
-.portfolio-card { min-height: 348px; padding: 28px; background: #101010; color: white; position: relative; overflow: hidden; border-radius: 3px; background-image: linear-gradient(130deg, rgba(0,0,0,.08), rgba(0,0,0,0)), url("/zakhy-assets/zakhy-creator-os-dashboard-dark_c67764b8.png"); background-size: cover; background-position: center center; }
+.portfolio-card { min-height: 348px; padding: 28px; background: #101010; color: white; position: relative; overflow: hidden; border-radius: 3px; background-image: linear-gradient(130deg, rgba(0,0,0,.08), rgba(0,0,0,0)), url("/manus-storage/zakhy-creator-os-dashboard-dark_c67764b8.png"); background-size: cover; background-position: center center; }
 .portfolio-card::before { content: ""; position: absolute; left: 0; bottom: 0; height: 7px; width: 100%; background: var(--electric); }
 .portfolio-card__index { display: block; position: relative; z-index: 1; font-size: 11px; font-weight: 800; letter-spacing: .07em; }
 .portfolio-card__text { position: absolute; left: 28px; bottom: 29px; display: flex; flex-direction: column; font-family: var(--display); line-height: .81; }
@@ -244,13 +244,13 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
    type, buttons, and responsive behavior remain real HTML/CSS. */
 .hero-image {
   inset: 0 0 0 37%;
-  background-image: url("/zakhy-assets/zakhy-reference-hero_2bb583c8.png");
+  background-image: url("/manus-storage/zakhy-reference-hero_2bb583c8.png");
   background-position: center;
   transform: none;
 }
 
 .portfolio-card {
-  background-image: linear-gradient(130deg, rgba(0,0,0,.08), rgba(0,0,0,0)), url("/zakhy-assets/zakhy-creator-os-dashboard-dark_c67764b8.png");
+  background-image: linear-gradient(130deg, rgba(0,0,0,.08), rgba(0,0,0,0)), url("/manus-storage/zakhy-creator-os-dashboard-dark_c67764b8.png");
   background-position: center center;
 }
 
@@ -439,7 +439,7 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
 .ralo-socials { display: flex; gap: 22px; color: #fff; font-weight: 700; font-size: 22px; }
 .ralo-menu { display: none; }
 .ralo-hero { position: relative; min-height: 680px; height: min(74vw, 790px); max-height: 850px; border-bottom: 1px solid #262626; background: #050505; isolation: isolate; }
-.ralo-hero-image { position: absolute; inset: 0; z-index: -3; background: url("/zakhy-assets/ralo-hero-artist-clean_fb8a4439.png") 68% 38% / auto 110% no-repeat; filter: saturate(1.05) contrast(1.03); }
+.ralo-hero-image { position: absolute; inset: 0; z-index: -3; background: url("/manus-storage/ralo-hero-artist-clean_fb8a4439.png") 68% 38% / auto 110% no-repeat; filter: saturate(1.05) contrast(1.03); }
 .ralo-hero-shade { position: absolute; inset: 0; z-index: -2; background: linear-gradient(90deg, rgba(0,0,0,.84) 0%, rgba(0,0,0,.66) 27%, rgba(0,0,0,.1) 57%, rgba(0,0,0,.18) 100%), linear-gradient(0deg, #050505 0%, rgba(0,0,0,0) 24%); }
 .ralo-hero-copy { position: absolute; z-index: 1; top: 170px; left: 5.7vw; width: min(43%, 610px); }
 .ralo-kicker { display: flex; align-items: center; gap: 18px; font-family: "Arial Narrow", Arial, sans-serif; font-size: 14px; font-weight: 800; letter-spacing: .55em; white-space: nowrap; }
@@ -463,10 +463,10 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
 .ralo-cards { width: min(95vw, 1375px); position: relative; z-index: 3; display: grid; grid-template-columns: repeat(4, 1fr); gap: 11px; margin: -60px auto 0; }
 .ralo-card { min-height: 310px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,.48); border-radius: 9px; background: #111; isolation: isolate; transition: transform 200ms var(--ease), border-color 200ms var(--ease), box-shadow 200ms var(--ease); }
 .ralo-card::before { content: ""; position: absolute; z-index: -2; inset: 0; background-position: center; background-size: cover; background-repeat: no-repeat; transition: transform 420ms var(--ease), filter 420ms var(--ease); }
-.ralo-card--music::before { background-image: url("/zakhy-assets/ralo-music_ddc16841.png"); }
-.ralo-card--videos::before { background-image: url("/zakhy-assets/ralo-videos_581821be.png"); }
-.ralo-card--merch::before { background-image: url("/zakhy-assets/ralo-merch_dc4b6f3f.png"); }
-.ralo-card--book::before { background-image: url("/zakhy-assets/ralo-book_2725ff8d.png"); }
+.ralo-card--music::before { background-image: url("/manus-storage/ralo-music_ddc16841.png"); }
+.ralo-card--videos::before { background-image: url("/manus-storage/ralo-videos_581821be.png"); }
+.ralo-card--merch::before { background-image: url("/manus-storage/ralo-merch_dc4b6f3f.png"); }
+.ralo-card--book::before { background-image: url("/manus-storage/ralo-book_2725ff8d.png"); }
 .ralo-card:hover { transform: translateY(-7px); border-color: var(--ralo-red); box-shadow: 0 20px 35px rgba(0,0,0,.45); }
 .ralo-card:hover::before { transform: scale(1.08); filter: saturate(1.25); }
 .ralo-card-shade { position: absolute; z-index: -1; inset: 0; background: linear-gradient(0deg, rgba(0,0,0,.98) 3%, rgba(0,0,0,.34) 70%, rgba(0,0,0,.25) 100%); }
@@ -529,21 +529,21 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
 
 
 /* Full-head asset positioning: the hero image begins beneath the live header on every screen. */
-.ralo-hero-image { inset: 105px 0 0; background-image: url("/zakhy-assets/ralo-hero-full-head-clean_93403945.png"); background-position: 70% top; background-size: auto 112%; }
+.ralo-hero-image { inset: 105px 0 0; background-image: url("/manus-storage/ralo-hero-full-head-clean_93403945.png"); background-position: 70% top; background-size: auto 112%; }
 @media (max-width: 720px) {
   .ralo-hero-image { inset: 76px 0 0; background-position: 71% top; background-size: auto 106%; }
 }
 
 
 /* Approved Ralo/FAMGOON artwork only: clean artist crop, positioned around the existing live copy. */
-.ralo-hero-image { background-image: url("/zakhy-assets/ralo-approved-artist-only_73bf552c.png"); background-position: right top; background-size: auto 106%; }
+.ralo-hero-image { background-image: url("/manus-storage/ralo-approved-artist-only_73bf552c.png"); background-position: right top; background-size: auto 106%; }
 @media (max-width: 720px) {
   .ralo-hero-image { background-position: 55px top; background-size: auto 107%; }
 }
 
 
 /* Final approved artwork crop: excludes embedded dashboard text and keeps Ralo’s full face clear. */
-.ralo-hero-image { background-image: url("/zakhy-assets/ralo-approved-artist-final_381fabec.png"); background-position: right 11vw top; background-size: auto 106%; }
+.ralo-hero-image { background-image: url("/manus-storage/ralo-approved-artist-final_381fabec.png"); background-position: right 11vw top; background-size: auto 106%; }
 @media (max-width: 720px) {
   .ralo-hero-image { background-position: 10px top; background-size: auto 107%; }
 }
@@ -560,7 +560,7 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
 /* Final Ralo responsive correction: header occupies its own row above the hero. */
 @font-face {
   font-family: "Ralo Display";
-  src: url("/zakhy-assets/ralo-display-extra-condensed-black_dc26d731.ttf") format("truetype");
+  src: url("/manus-storage/ralo-display-extra-condensed-black_dc26d731.ttf") format("truetype");
   font-style: normal;
   font-weight: 900;
   font-display: swap;
@@ -605,7 +605,7 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
 /* Exact RALO logo artwork and full portrait from the approved reference. */
 .ralo-logo { width: 142px; height: 66px; display: flex; align-items: center; text-shadow: none; }
 .ralo-logo img { display: block; width: 100%; height: auto; object-fit: contain; }
-.ralo-hero-image { background-image: url("/zakhy-assets/ralo-portrait-full_c58aedf8.png"); background-position: right 19vw center; background-size: auto 100%; background-repeat: no-repeat; }
+.ralo-hero-image { background-image: url("/manus-storage/ralo-portrait-full_c58aedf8.png"); background-position: right 19vw center; background-size: auto 100%; background-repeat: no-repeat; }
 @media (max-width: 1040px) and (min-width: 721px) {
   .ralo-hero-image { background-position: right 10vw center; background-size: auto 96%; }
 }
@@ -616,7 +616,7 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
 
 
 /* Final cleaned portrait from the approved image; no embedded FAMGOON text behind the artist. */
-.ralo-hero-image { background-image: url("/zakhy-assets/ralo-portrait-final_d08d13e0.png"); }
+.ralo-hero-image { background-image: url("/manus-storage/ralo-portrait-final_d08d13e0.png"); }
 
 
 /* Mobile picture correction: no text or button may cover Ralo's hat or face. */
@@ -643,7 +643,7 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
 
 /* Restoration checkpoint: full prior Ralo composition, no artifact cleanup applied. */
 .ralo-hero { min-height: 660px; height: min(48vw, 700px); max-height: 700px; }
-.ralo-hero-image { inset: 0; background-image: url("/zakhy-assets/ralo-portrait-full_c58aedf8.png"); background-position: right 19vw center; background-size: auto 100%; background-repeat: no-repeat; }
+.ralo-hero-image { inset: 0; background-image: url("/manus-storage/ralo-portrait-full_c58aedf8.png"); background-position: right 19vw center; background-size: auto 100%; background-repeat: no-repeat; }
 .ralo-wordmark { width: min(100%, 650px); margin: 6px 0 0; }
 .ralo-wordmark img { mix-blend-mode: normal; }
 @media (max-width: 1040px) and (min-width: 721px) {
@@ -655,7 +655,7 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
 }
 
 /* Artifact source fix: same Ralo portrait scale and position, with only the embedded left-edge wordmark fragment removed. */
-.ralo-hero-image { background-image: url("/zakhy-assets/ralo-portrait-full-clean_51f30711.png"); }
+.ralo-hero-image { background-image: url("/manus-storage/ralo-portrait-full-clean_51f30711.png"); }
 
 /* Approved desktop composition: preserve the current portrait scale and framing while restoring a clean FAMGOON-to-Ralo gap. */
 @media (min-width: 1041px) {
@@ -810,7 +810,7 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
 @media (max-width: 767px) { .miami-shell { width: calc(100% - 40px); } .miami-home-hero { min-height: 0; height: auto; display: flex; flex-direction: column; } .miami-header { width: 100%; height: 71px; flex: 0 0 71px; margin: 0; padding: 0 20px; border-bottom-color: rgba(200,154,69,.24); } .miami-wordmark strong { font-size: 29px; } .miami-wordmark small { font-size: 6px; } .miami-nav { position: fixed; z-index: 20; inset: 71px 0 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 22px; padding: 38px 20px; background: #05070B; transform: translateX(100%); transition: transform 220ms ease-out; } .miami-nav--open { transform: translateX(0); } .miami-nav a { padding: 0; font-family: "Bodoni Moda", Georgia, serif; font-size: 30px; } .miami-nav a::after { display: none; } .miami-socials { display: none; } .miami-menu { display: grid; place-items: center; margin-left: auto; color: var(--miami-gold); } .miami-menu svg { width: 28px; height: 28px; } .miami-home-photo { display: none; } .miami-home-scrim { background: #05070B; } .miami-home-copy { width: 100%; padding: 40px 20px 0; } .miami-mic { width: 76px; transform: scale(.8); transform-origin: left; } .miami-home-copy h1 { margin-top: 7px; font-size: clamp(60px, 16vw, 68px); line-height: .88; } .miami-subbrand { margin: 8px 0 0 4px; font-size: clamp(18px, 5vw, 20px); letter-spacing: .12em; } .miami-script { margin: 20px 0 7px 24px; font-size: clamp(34px, 9.6vw, 38px); line-height: 1.05; } .miami-intro { max-width: 330px; margin: 0 0 20px 4px; font-size: 12px; letter-spacing: .1em; line-height: 1.5; } .miami-listen-rule { width: 100%; margin-left: 0; font-size: 12px; } .miami-platforms { gap: 6px; margin: 14px 0 0; } .miami-platforms a { min-height: 33px; padding: 0 8px; font-size: 9px; } .miami-platforms a svg { width: 12px; height: 12px; } .miami-mobile-creator { display: block; width: 100%; height: 430px; margin-top: 28px; overflow: hidden; } .miami-mobile-creator img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 30%; } .miami-partnership-band { grid-template-columns: 1fr; gap: 0; margin-top: 0; padding: 20px; } .miami-frame { min-height: 170px; } .miami-frame--plane, .miami-frame--coast { background-size: cover; background-position: center; } .miami-partnership-copy { min-height: 245px; border-right: 1px solid rgba(200,154,69,.4); border-left: 1px solid rgba(200,154,69,.4); } .miami-gold-rule p { font-size: 17px; } .miami-sub-header { min-height: 70px; padding: 0 20px; } .miami-sub-header nav { display: none; } .miami-header-cta { margin-left: auto; } .miami-experiences-hero { min-height: 385px; } .miami-experience-hero-photo { background-position: right center; background-size: auto 108%; } .miami-experiences-hero .miami-shell { padding: 65px 0; } .miami-experiences-hero h1, .miami-inquiry-hero h1 { font-size: clamp(46px, 14vw, 58px); } .miami-section { padding: 65px 0; } .miami-section-heading { grid-template-columns: 1fr; gap: 18px; margin-bottom: 30px; } .miami-section h2, .miami-revenue-strip h2 { font-size: clamp(38px, 12vw, 47px); } .miami-episode-grid, .miami-route-grid, .miami-restaurant-layout, .miami-inquiry-layout { grid-template-columns: 1fr; } .miami-episode-card { min-height: 225px; } .miami-episode-card > svg { margin: 20px 0 12px; } .miami-route-card { min-height: 260px; } .miami-restaurant-photo { min-height: 420px; background-size: auto 100%; background-position: right top; } .miami-restaurant-list { padding: 30px 20px; } .miami-restaurant-row strong { font-size: 19px; } .miami-revenue-strip { padding: 66px 0; text-align: left; } .miami-revenue-strip .miami-shell > div { grid-template-columns: 1fr 1fr; } .miami-revenue-strip span { min-height: 78px; align-items: flex-start; padding: 14px; border-bottom: 1px solid rgba(200,154,69,.33); } .miami-revenue-strip span:nth-child(2n) { border-right: 0; } .miami-inquiry-hero { padding: 65px 0; } .miami-inquiry-main { padding: 60px 0; } .miami-inquiry-layout { gap: 43px; } .miami-inquiry-form, .miami-form-success { padding: 25px 20px; } .miami-form-row { grid-template-columns: 1fr; } .miami-inquiry-form h2, .miami-form-success h2 { font-size: 45px; } }
 .popit-page { --pop-black: #050303; --pop-burgundy: #190305; --pop-red-dark: #490307; --pop-red: #c8101e; --pop-red-bright: #ed1c2e; --pop-muted: #b7b7b7; min-height: 100vh; overflow-x: hidden; background: var(--pop-black); color: #fff; font-family: "Manrope", Arial, sans-serif; }
 .popit-hero { min-height: clamp(760px, 52vw, 840px); position: relative; isolation: isolate; overflow: hidden; background: linear-gradient(90deg, #050303 0%, #1a0305 38%, #5b0508 100%); }
-.popit-portrait { position: absolute; z-index: -2; inset: 0; background: url("/zakhy-assets/ms-pop-it-hero-clean_63bafcfa.png") center right / cover no-repeat; }
+.popit-portrait { position: absolute; z-index: -2; inset: 0; background: url("/manus-storage/ms-pop-it-hero-clean_63bafcfa.png") center right / cover no-repeat; }
 .popit-mobile-portrait { display: none; }
 .popit-hero-shade { position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg, rgba(5,3,3,.98) 0%, rgba(25,3,5,.91) 34%, rgba(25,3,5,.22) 61%, rgba(5,3,3,.05) 100%), repeating-linear-gradient(0deg, transparent 0 59px, rgba(255,255,255,.025) 60px 61px); }
 .popit-header { width: min(1600px, 92%); height: 88px; position: relative; z-index: 4; display: grid; grid-template-columns: 155px 1fr auto; align-items: center; gap: 38px; margin: 0 auto; }
@@ -872,7 +872,7 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
 .popit-content-card button b, .popit-content-card a b { color: #f01b2d; }
 .popit-merch-section { background: #0d0d0d; }
 .popit-merch-layout { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid rgba(215,25,32,.40); }
-.popit-merch-art { min-height: 520px; aspect-ratio: 4 / 5; display: flex; align-items: flex-end; padding: 28px; background: linear-gradient(0deg, rgba(5,5,5,.72), transparent 72%), url("/zakhy-assets/ms-pop-it-merch-drop-approved_8a0b6255.png") center 18% / cover no-repeat; }
+.popit-merch-art { min-height: 520px; aspect-ratio: 4 / 5; display: flex; align-items: flex-end; padding: 28px; background: linear-gradient(0deg, rgba(5,5,5,.72), transparent 72%), url("/manus-storage/ms-pop-it-merch-drop-approved_8a0b6255.png") center 18% / cover no-repeat; }
 .popit-merch-art div { display: grid; gap: 10px; }
 .popit-merch-art span { color: #fff; font-size: 10px; font-weight: 800; letter-spacing: .2em; }
 .popit-merch-art strong { color: #fff; font-family: "Bodoni Moda", Georgia, serif; font-size: clamp(55px, 6vw, 86px); letter-spacing: -.06em; line-height: .78; }
@@ -1033,7 +1033,7 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
 .ralo-content-label { margin: 0; color: #aaa; font-family: "Arial Narrow", Arial, sans-serif; font-size: 9px; font-weight: 900; letter-spacing: .23em; }
 .ralo-content-menu { display: none; }
 .ralo-content-hero { min-height: 545px; position: relative; isolation: isolate; display: flex; align-items: flex-end; padding: 78px 0; border-bottom: 1px solid #252525; }
-.ralo-content-hero-art { position: absolute; z-index: -2; inset: 0; background: url("/zakhy-assets/ralo-portrait-full-clean_51f30711.png") right 8vw center / auto 108% no-repeat; filter: saturate(1.05) contrast(1.04); }
+.ralo-content-hero-art { position: absolute; z-index: -2; inset: 0; background: url("/manus-storage/ralo-portrait-full-clean_51f30711.png") right 8vw center / auto 108% no-repeat; filter: saturate(1.05) contrast(1.04); }
 .ralo-content-hero-shade { position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg, #030303 2%, rgba(3,3,3,.82) 34%, rgba(3,3,3,.14) 67%, rgba(3,3,3,.52)), linear-gradient(0deg, #030303, transparent 38%); }
 .ralo-content-hero-copy { position: relative; }
 .ralo-content-kicker, .ralo-section-heading > p, .ralo-events-copy > p { margin: 0; color: var(--ralo-red); font-family: "Arial Narrow", Arial, sans-serif; font-size: 10px; font-weight: 900; letter-spacing: .26em; text-transform: uppercase; }
@@ -1047,7 +1047,7 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
 .ralo-section-heading > span { max-width: 190px; margin-bottom: 2px; padding-left: 18px; border-left: 1px solid var(--ralo-red); color: #c9c9c9; font-family: "Arial Narrow", Arial, sans-serif; font-size: 10px; font-weight: 800; letter-spacing: .13em; line-height: 1.45; }
 .ralo-music-section { background: linear-gradient(135deg, #0b0b0b 0%, #030303 69%); }
 .ralo-music-layout { display: grid; grid-template-columns: .9fr 1.1fr; gap: 18px; }
-.ralo-music-feature { min-height: 485px; position: relative; overflow: hidden; isolation: isolate; display: flex; align-items: flex-end; padding: 28px; border: 1px solid rgba(255,255,255,.3); background: url("/zakhy-assets/ralo-music_ddc16841.png") center / cover no-repeat; }
+.ralo-music-feature { min-height: 485px; position: relative; overflow: hidden; isolation: isolate; display: flex; align-items: flex-end; padding: 28px; border: 1px solid rgba(255,255,255,.3); background: url("/manus-storage/ralo-music_ddc16841.png") center / cover no-repeat; }
 .ralo-music-feature::after { content: ""; position: absolute; z-index: -1; inset: 0; background: linear-gradient(0deg, rgba(0,0,0,.94), transparent 68%); }
 .ralo-music-feature div { display: flex; flex-direction: column; gap: 10px; }
 .ralo-music-feature p, .ralo-music-feature span { margin: 0; font-family: "Arial Narrow", Arial, sans-serif; font-size: 10px; font-weight: 900; letter-spacing: .17em; }
@@ -1087,7 +1087,7 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
 .ralo-merch-card::before { content: ""; position: absolute; z-index: -2; inset: 0; background: center / cover no-repeat; transition: transform 350ms var(--ease); }
 .ralo-merch-card::after { content: ""; position: absolute; z-index: -1; inset: 0; background: linear-gradient(0deg, #050505 1%, rgba(5,5,5,.15) 72%); }
 .ralo-merch-card:hover::before { transform: scale(1.06); }
-.ralo-merch-card--tee::before { background-image: url("/zakhy-assets/ralo-merch_dc4b6f3f.png"); }
+.ralo-merch-card--tee::before { background-image: url("/manus-storage/ralo-merch_dc4b6f3f.png"); }
 .ralo-merch-card--hoodie::before { background-image: linear-gradient(145deg, #2c2c2c 0%, #090909 44%, #9f0714 45%, #270307 100%); }
 .ralo-merch-card--drop::before { background-image: repeating-linear-gradient(135deg, transparent 0 18px, rgba(225,25,42,.32) 19px 20px), linear-gradient(135deg, #161616, #040404); }
 .ralo-merch-card div { width: 100%; }
@@ -1105,7 +1105,7 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
 .ralo-inquiry-future { width: 100%; min-height: 55px; margin-top: 22px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; color: #fff; border: 1px solid #080808; background: #080808; font-family: "Arial Narrow", Arial, sans-serif; font-size: 12px; font-weight: 900; letter-spacing: .13em; opacity: 1; cursor: pointer; text-decoration: none; }
 .ralo-inquiry-future small { color: var(--ralo-red); font-size: 8px; font-weight: 900; letter-spacing: .11em; }
 .ralo-events-section { min-height: 535px; position: relative; isolation: isolate; display: flex; align-items: flex-end; padding: 78px 0; background: #050505; }
-.ralo-events-image { position: absolute; z-index: -2; inset: 0; background: url("/zakhy-assets/ralo-book_2725ff8d.png") right center / cover no-repeat; filter: saturate(.93) contrast(1.05); }
+.ralo-events-image { position: absolute; z-index: -2; inset: 0; background: url("/manus-storage/ralo-book_2725ff8d.png") right center / cover no-repeat; filter: saturate(.93) contrast(1.05); }
 .ralo-events-shade { position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg, #030303 4%, rgba(3,3,3,.78) 43%, rgba(3,3,3,.11) 78%), linear-gradient(0deg, #030303, transparent 36%); }
 .ralo-events-copy h2 { margin: 16px 0 28px; font-family: "Ralo Display", Impact, sans-serif; font-size: clamp(67px, 8vw, 118px); font-weight: 900; line-height: .75; letter-spacing: -.04em; }
 .ralo-events-copy > div { display: flex; flex-wrap: wrap; gap: 8px; max-width: 560px; }
