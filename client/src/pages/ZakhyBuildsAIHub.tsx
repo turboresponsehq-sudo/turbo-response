@@ -1,51 +1,64 @@
-import TurboChatbot, { turboChatbotStyles } from "../components/TurboChatbot";
+import "../zakhy/styles.css";
+import { HomePage, SimpleRoutePage } from "../zakhy/StandaloneApp";
+import AutomationServicesPage from "../zakhy/pages/AutomationServices";
+import ZakhyServicesPage from "../zakhy/pages/ZakhyServices";
+import PortfolioPage from "../zakhy/pages/Portfolio";
+import { SpilloHome, SpilloContent, SpilloInquiries } from "../zakhy/pages/Spillo";
+import RaloDemoPage from "../zakhy/pages/RaloDemo";
+import RaloContentPage from "../zakhy/pages/RaloContent";
+import RaloInquiriesPage from "../zakhy/pages/RaloInquiries";
+import MsPopItPage from "../zakhy/pages/MsPopIt";
+import MsPopItContentPage from "../zakhy/pages/MsPopItContent";
+import MsPopItInquiriesPage from "../zakhy/pages/MsPopItInquiries";
+import MiamiHome from "../zakhy/pages/MiamiHome";
+import MiamiExperiences from "../zakhy/pages/MiamiExperiences";
+import MiamiInquiries from "../zakhy/pages/MiamiInquiries";
+import { AtlantaHome, AtlantaMedia, AtlantaNeighborhoods } from "../zakhy/pages/Atlanta";
+import { CrunkFitHome, CrunkFitContent, CrunkFitInquiries } from "../zakhy/pages/CrunkFit";
+import { zakhyDemoSite } from "../zakhy/config";
 
-const ZAKHY_DEMO_BASE = "https://zakhydemo-mpd8k29q.manus.space";
-
-type ZakhyBuildsAIHubProps = {
-  sourcePath?: string;
-};
-
-/**
- * The approved Zakhy pages remain the visual source of truth on their
- * standalone host. These isolated production routes intentionally embed the
- * exact pages so visitors can stay on turboresponsehq.ai.
- */
-function ZakhyBuildsAIFrame({ sourcePath = "/" }: ZakhyBuildsAIHubProps) {
-  const normalizedPath = sourcePath === "/" ? "/" : `/${sourcePath.replace(/^\/+/, "")}`;
-  return (
-    <main style={{ minHeight: "100vh", width: "100%", background: "#fff" }}>
-      <iframe
-        title="Zakhy Builds AI"
-        src={`${ZAKHY_DEMO_BASE}${normalizedPath}`}
-        style={{ border: 0, display: "block", height: "100vh", minHeight: "760px", width: "100%" }}
-        referrerPolicy="strict-origin-when-cross-origin"
-      />
-      {sourcePath === "/" && <><style dangerouslySetInnerHTML={{ __html: turboChatbotStyles }} /><TurboChatbot /></>}
-    </main>
-  );
+export function ZakhyBuildsAIHub() {
+  return <HomePage />;
 }
 
-export default function ZakhyBuildsAIHub() {
-  return <ZakhyBuildsAIFrame />;
-}
+export default ZakhyBuildsAIHub;
 
 export function ZakhyAutomationServicesRoute() {
-  return <ZakhyBuildsAIFrame sourcePath="/automation-services" />;
+  return <AutomationServicesPage />;
 }
 
 export function ZakhyServicesRoute() {
-  return <ZakhyBuildsAIFrame sourcePath="/services" />;
+  return <ZakhyServicesPage />;
 }
 
 export function ZakhyPortfolioRoute() {
-  return <ZakhyBuildsAIFrame sourcePath="/portfolio" />;
+  return <PortfolioPage />;
 }
 
 export function ZakhyAboutRoute() {
-  return <ZakhyBuildsAIFrame sourcePath="/about" />;
+  return <SimpleRoutePage eyebrow="THE ZAKHY BUILDS AI APPROACH" title={<>CULTURE FIRST.<br /><em>BUSINESS SECOND.</em></>} body="We build practical AI systems that help creators organize the business behind their creativity and grow with confidence." button="MAKE AN INQUIRY" onBooking={() => window.location.assign(zakhyDemoSite.creatorIntakeUrl)} />;
 }
 
 export function ZakhyProjectRoute({ sourcePath }: { sourcePath: string }) {
-  return <ZakhyBuildsAIFrame sourcePath={sourcePath} />;
+  switch (sourcePath) {
+    case "/spillo": return <SpilloHome />;
+    case "/spillo/content": return <SpilloContent />;
+    case "/spillo/inquiries": return <SpilloInquiries />;
+    case "/ralo": return <RaloDemoPage />;
+    case "/ralo/content": return <RaloContentPage />;
+    case "/ralo/inquiries": return <RaloInquiriesPage />;
+    case "/ms-pop-it": return <MsPopItPage />;
+    case "/ms-pop-it/content": return <MsPopItContentPage />;
+    case "/ms-pop-it/inquiries": return <MsPopItInquiriesPage />;
+    case "/miami": return <MiamiHome />;
+    case "/miami/experiences": return <MiamiExperiences />;
+    case "/miami/inquiries": return <MiamiInquiries />;
+    case "/atlanta": return <AtlantaHome />;
+    case "/atlanta/neighborhoods": return <AtlantaNeighborhoods />;
+    case "/atlanta/media": return <AtlantaMedia />;
+    case "/crunk-fit": return <CrunkFitHome />;
+    case "/crunk-fit/content": return <CrunkFitContent />;
+    case "/crunk-fit/inquiries": return <CrunkFitInquiries />;
+    default: return <PortfolioPage />;
+  }
 }

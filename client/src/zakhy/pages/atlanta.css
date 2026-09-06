@@ -1,0 +1,157 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600;6..96,700;6..96,800&family=DM+Mono:wght@400;500&display=swap');
+
+.atlanta-page { --at-black: #050606; --at-black-2: #0B0C0C; --at-red: #C71920; --at-red-deep: #6F0B10; --at-cream: #F2ECE2; --at-white: #fff; --at-gray: #A7A7A7; --at-gold: #B78A4A; min-height: 100vh; overflow-x: hidden; background: var(--at-black); color: var(--at-cream); font-family: Manrope, Arial, sans-serif; }
+.atlanta-page *, .atlanta-page *::before, .atlanta-page *::after { box-sizing: border-box; }
+.atlanta-page a, .atlanta-page button { cursor: pointer; }
+.atlanta-container { width: min(1600px, 92%); margin: 0 auto; }
+.atlanta-header { height: 82px; position: absolute; z-index: 20; inset: 0 0 auto; padding: 0 56px; display: flex; align-items: center; border-bottom: 1px solid rgba(242,236,226,.18); background: rgba(5,6,6,.78); backdrop-filter: blur(12px); }
+.atlanta-brand { width: 70px; display: grid; place-items: center; color: var(--at-white); text-decoration: none; }
+.atlanta-brand span { color: var(--at-white); font-family: Georgia, serif; font-size: 64px; line-height: .6; font-style: italic; font-weight: 800; text-shadow: 3px 3px 0 var(--at-red); transform: rotate(-9deg); }
+.atlanta-header .atlanta-brand img { width: 64px; height: 58px; display: block; object-fit: contain; object-position: center; }
+.atlanta-nav { display: flex; align-items: center; justify-content: center; flex: 1; gap: clamp(24px, 3.2vw, 55px); }
+.atlanta-nav a { position: relative; padding: 32px 0 28px; color: var(--at-cream); text-decoration: none; font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 15px; letter-spacing: .09em; text-transform: uppercase; }
+.atlanta-nav a::after { content: ""; position: absolute; right: 0; bottom: 19px; left: 0; height: 2px; transform: scaleX(0); background: var(--at-red); transition: transform 180ms ease-out; }
+.atlanta-nav a:hover::after, .atlanta-nav a.is-active::after { transform: scaleX(1); }
+.atlanta-nav a.is-active { color: var(--at-red); }
+.atlanta-header-actions { display: flex; align-items: center; gap: 22px; }
+.atlanta-search { width: 25px; height: 34px; position: relative; display: block; background: transparent; }
+.atlanta-search span { display: block; width: 14px; height: 14px; border: 2px solid var(--at-white); border-radius: 50%; position: absolute; top: 7px; left: 2px; }
+.atlanta-search span::after { content: ""; width: 7px; height: 2px; position: absolute; right: -5px; bottom: -3px; background: var(--at-white); transform: rotate(45deg); }
+.atlanta-shop, .atlanta-mobile-shop { min-width: 108px; min-height: 40px; display: inline-grid; place-items: center; border: 1px solid #ea3140; border-radius: 2px; background: linear-gradient(135deg, #D31526, #9E0814); color: var(--at-white) !important; font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 17px !important; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; }
+.atlanta-shop:hover { background: #e51b2b; }
+.atlanta-shop::after, .atlanta-mobile-shop::after { display: none; }
+.atlanta-menu, .atlanta-mobile-shop { display: none; }
+.atlanta-home-hero { min-height: 820px; height: min(74vw, 1000px); position: relative; overflow: hidden; isolation: isolate; background: var(--at-black); }
+.atlanta-home-bg { position: absolute; z-index: -3; inset: 0; background-repeat: no-repeat; background-size: cover; background-position: right center; filter: saturate(1.08) contrast(1.06); }
+.atlanta-home-shade { position: absolute; z-index: -2; inset: 0; background: linear-gradient(90deg, rgba(5,6,6,.96) 0%, rgba(5,6,6,.88) 29%, rgba(5,6,6,.22) 49%, rgba(5,6,6,.03) 100%), linear-gradient(0deg, rgba(5,6,6,.35), transparent 35%); }
+.atlanta-home-copy { position: relative; z-index: 2; width: min(40%, 570px); padding: 164px 0 0 max(56px, 4vw); }
+.atlanta-overline, .atlanta-section-label { color: var(--at-cream); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 14px; letter-spacing: .28em; text-transform: uppercase; }
+.atlanta-home-copy h1 { margin: 12px 0 6px -8px; color: var(--at-cream); font-family: "Bodoni Moda", Georgia, serif; font-size: clamp(120px, 10vw, 145px); font-weight: 600; line-height: .74; letter-spacing: -.08em; text-transform: uppercase; }
+.atlanta-red-rule { display: block; width: 70px; height: 3px; margin: 25px 0 25px; background: var(--at-red); }
+.atlanta-hero-lines { font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 18px; line-height: 1.42; letter-spacing: .19em; text-transform: uppercase; }
+.atlanta-home-actions { display: flex; align-items: center; gap: 28px; margin-top: 27px; }
+.atlanta-red-button { min-height: 48px; padding: 0 22px; display: inline-flex; align-items: center; justify-content: space-between; gap: 35px; border: 1px solid #e84a55; border-radius: 2px; background: linear-gradient(135deg, #d51a28, #930811); color: var(--at-white); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 17px; letter-spacing: .12em; text-decoration: none; text-transform: uppercase; transition: transform 160ms ease-out, background 160ms ease-out; }
+.atlanta-red-button:hover { background: #dc1d2c; transform: translateY(-2px); }
+.atlanta-red-button:active { transform: scale(.97); }
+.atlanta-red-button b, .atlanta-neighborhood-card b { font-size: 25px; font-weight: 400; line-height: 1; }
+.atlanta-trailer { display: inline-flex; align-items: center; gap: 16px; color: var(--at-cream); background: transparent; text-align: left; text-decoration: none; }
+.atlanta-trailer > span { width: 49px; height: 49px; display: grid; place-items: center; border: 1px solid var(--at-white); border-radius: 50%; padding-left: 3px; font-size: 19px; }
+.atlanta-trailer em { font-family: "DM Mono", monospace; font-size: 13px; font-style: normal; line-height: 1.5; letter-spacing: .24em; text-transform: uppercase; }
+.atlanta-trailer small { color: var(--at-gray); font-size: 10px; letter-spacing: .28em; }
+.atlanta-hero-note { position: absolute; right: 4%; bottom: 83px; width: 160px; color: var(--at-cream); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 38px; line-height: .83; letter-spacing: -.02em; text-transform: uppercase; transform: rotate(-8deg); opacity: .72; }
+.atlanta-mobile-hero { display: none; }
+.atlanta-zone-rail { padding: 28px 56px 27px; display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; border-top: 1px solid rgba(242,236,226,.15); border-bottom: 1px solid rgba(242,236,226,.16); background: #08090a; }
+.atlanta-zone-rail p, .atlanta-section-heading p { margin: 0 0 13px; color: var(--at-red); font-family: "DM Mono", monospace; font-size: 12px; letter-spacing: .35em; text-transform: uppercase; }
+.atlanta-zone-rail nav { display: flex; gap: 11px; }
+.atlanta-zone-rail button, .atlanta-zone-rail a { width: clamp(76px, 8vw, 105px); height: 35px; display: grid; place-items: center; border: 1px solid rgba(183,138,74,.7); background: transparent; color: var(--at-cream); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 15px; letter-spacing: .1em; text-decoration: none; text-transform: uppercase; }
+.atlanta-zone-rail button.is-selected, .atlanta-zone-rail button:hover, .atlanta-zone-rail a.is-selected, .atlanta-zone-rail a:hover { border-color: var(--at-red); background: var(--at-red); color: white; }
+.atlanta-zone-rail > span { color: var(--at-gray); font-family: "DM Mono", monospace; font-size: 11px; line-height: 1.55; letter-spacing: .22em; text-align: right; text-transform: uppercase; }
+.atlanta-neighborhood-preview { width: min(1600px, 92%); margin: 0 auto; padding: 54px 0 68px; }
+.atlanta-section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 22px; }
+.atlanta-section-heading a, .atlanta-section-heading > span { color: var(--at-red); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 17px; letter-spacing: .13em; text-decoration: none; text-transform: uppercase; }
+.atlanta-section-heading a b { margin-left: 8px; font-size: 23px; font-weight: 400; }
+.atlanta-neighborhood-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+.atlanta-neighborhood-card { min-height: 240px; position: relative; isolation: isolate; display: flex; flex-direction: column; justify-content: flex-end; padding: 13px; overflow: hidden; border: 1px solid rgba(242,236,226,.22); background-color: #151719; background-repeat: no-repeat; background-size: cover; color: white; text-decoration: none; transition: transform 180ms ease-out, border-color 180ms ease-out; }
+.atlanta-neighborhood-card:nth-child(n+7) { grid-column: span 1; }
+.atlanta-neighborhood-card:hover { z-index: 2; border-color: var(--at-red); transform: translateY(-5px); }
+.atlanta-neighborhood-card span { position: absolute; top: 11px; left: 12px; color: rgba(242,236,226,.72); font-family: "DM Mono", monospace; font-size: 9px; letter-spacing: .1em; }
+.atlanta-neighborhood-card strong { color: var(--at-cream); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 22px; line-height: .92; letter-spacing: .04em; text-transform: uppercase; }
+.atlanta-neighborhood-card b { position: absolute; right: 12px; bottom: 10px; color: var(--at-red); }
+.atlanta-story-slab { min-height: 420px; display: grid; grid-template-columns: .8fr 1.3fr .7fr; border-top: 1px solid rgba(242,236,226,.15); background: var(--at-black-2); }
+.atlanta-slab-image, .atlanta-slab-wall { background-position: center; background-size: cover; background-repeat: no-repeat; }
+.atlanta-story-slab > div:nth-child(2) { padding: 55px 7%; }
+.atlanta-story-slab > div:nth-child(2) > p:first-child { color: var(--at-red); font-family: "DM Mono", monospace; font-size: 10px; letter-spacing: .32em; text-transform: uppercase; }
+.atlanta-story-slab h2, .atlanta-culture-intro h2, .atlanta-artists h2, .atlanta-merch h2, .atlanta-partnership-content h2 { margin-top: 13px; color: var(--at-cream); font-family: "Bodoni Moda", Georgia, serif; font-size: clamp(39px, 4vw, 64px); font-weight: 500; line-height: .89; letter-spacing: -.05em; text-transform: uppercase; }
+.atlanta-story-slab h2 em, .atlanta-culture-intro h2 em, .atlanta-artists h2 em, .atlanta-merch h2 em, .atlanta-partnership-content h2 em { color: var(--at-red); font-style: normal; }
+.atlanta-story-slab h2 + span { display: block; width: 2px; height: 65px; margin: 18px 0 -60px; background: var(--at-red); }
+.atlanta-slab-copy { max-width: 365px; margin: 20px 0 22px 24px; color: #d2d0ca; font-family: Georgia, serif; font-size: 14px; line-height: 1.25; }
+.atlanta-footer { min-height: 104px; padding: 0 56px; display: flex; align-items: center; gap: 17px; border-top: 1px solid rgba(242,236,226,.16); background: #070808; }
+.atlanta-footer .atlanta-brand { width: 42px; }
+.atlanta-footer .atlanta-brand span { font-size: 48px; }
+.atlanta-footer p { margin: 0; color: var(--at-gray); font-family: "DM Mono", monospace; font-size: 9px; line-height: 1.7; letter-spacing: .24em; }
+.atlanta-footer p b { color: var(--at-cream); letter-spacing: .36em; }
+.atlanta-footer > div { margin-left: auto; display: flex; gap: 25px; }
+.atlanta-footer > div a { color: var(--at-cream); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 13px; letter-spacing: .12em; text-decoration: none; text-transform: uppercase; }
+
+.atlanta-subpage { background: var(--at-black); }
+.atlanta-subhero { min-height: 590px; position: relative; isolation: isolate; display: flex; align-items: flex-end; overflow: hidden; padding: 150px 0 74px; }
+.atlanta-subhero-image, .atlanta-subhero-shade { position: absolute; z-index: -2; inset: 0; background-size: cover; background-position: center 43%; }
+.atlanta-subhero-shade { z-index: -1; background: linear-gradient(90deg, rgba(5,6,6,.95), rgba(5,6,6,.68) 46%, rgba(5,6,6,.08)); }
+.atlanta-subhero h1, .atlanta-media-hero h1 { margin: 15px 0 17px; color: var(--at-cream); font-family: "Bodoni Moda", Georgia, serif; font-size: clamp(77px, 9vw, 138px); font-weight: 500; line-height: .78; letter-spacing: -.075em; text-transform: uppercase; }
+.atlanta-subhero h1 em, .atlanta-media-hero h1 em { color: var(--at-red); font-style: normal; }
+.atlanta-subhero .atlanta-container > p:last-child, .atlanta-media-hero .atlanta-container > p:last-child { max-width: 480px; color: #e3dfd7; font-size: 16px; line-height: 1.55; }
+.atlanta-culture-intro { padding: 80px 0; background: #0a0b0d; }
+.atlanta-culture-intro h2 { max-width: 690px; }
+.atlanta-culture-intro h2 + p { max-width: 560px; margin-top: 24px; color: #d2d0ca; font-size: 16px; line-height: 1.6; }
+.atlanta-culture-tags { display: grid; grid-template-columns: repeat(6, 1fr); margin-top: 47px; border-top: 1px solid rgba(242,236,226,.18); border-left: 1px solid rgba(242,236,226,.18); }
+.atlanta-culture-tags span { min-height: 105px; padding: 17px; display: flex; flex-direction: column; gap: 16px; border-right: 1px solid rgba(242,236,226,.18); border-bottom: 1px solid rgba(242,236,226,.18); color: var(--at-cream); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 22px; letter-spacing: .06em; text-transform: uppercase; }
+.atlanta-culture-tags b { color: var(--at-red); font-family: "DM Mono", monospace; font-size: 9px; font-weight: 400; letter-spacing: .13em; }
+.atlanta-zones-page { padding: 80px 0; background: #050606; }
+.atlanta-zone-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.atlanta-zone-card { min-height: 440px; position: relative; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; border: 1px solid rgba(242,236,226,.21); background: #0a0b0d; }
+.atlanta-zone-card-image { position: absolute; inset: 0; z-index: 0; background-size: cover; background-repeat: no-repeat; filter: saturate(.85); transition: transform 350ms ease-out; }
+.atlanta-zone-card:hover .atlanta-zone-card-image { transform: scale(1.06); }
+.atlanta-zone-card > div:last-child { position: relative; z-index: 1; min-height: 190px; padding: 25px; background: linear-gradient(0deg, rgba(5,6,6,.97), rgba(5,6,6,.82), transparent); }
+.atlanta-zone-card span { color: var(--at-red); font-family: "DM Mono", monospace; font-size: 10px; letter-spacing: .15em; text-transform: uppercase; }
+.atlanta-zone-card h3 { margin: 10px 0 8px; font-family: "Bodoni Moda", Georgia, serif; font-size: 42px; font-weight: 500; line-height: .85; letter-spacing: -.05em; text-transform: uppercase; }
+.atlanta-zone-card p { max-width: 330px; color: #d4d1ca; font-size: 13px; line-height: 1.45; }
+.atlanta-zone-card a { display: inline-block; margin-top: 16px; color: var(--at-cream); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 16px; letter-spacing: .12em; text-decoration: none; text-transform: uppercase; }
+.atlanta-zone-card a b { margin-left: 8px; color: var(--at-red); font-size: 22px; font-weight: 400; }
+.atlanta-artists { padding: 90px 0; border-top: 1px solid rgba(242,236,226,.16); background: radial-gradient(circle at 85% 45%, rgba(199,25,32,.17), transparent 24%), #0b0c0c; }
+.atlanta-artists h2 { max-width: 810px; }
+.atlanta-artists h2 + p { max-width: 620px; margin-top: 24px; color: #d4d1ca; font-size: 16px; line-height: 1.6; }
+.atlanta-artist-names { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 38px; }
+.atlanta-artist-names span { padding: 10px 16px; border: 1px solid rgba(183,138,74,.65); color: var(--at-gold); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 19px; letter-spacing: .09em; text-transform: uppercase; }
+
+.atlanta-media-hero { min-height: 500px; position: relative; isolation: isolate; display: flex; align-items: flex-end; padding: 150px 0 70px; overflow: hidden; }
+.atlanta-media-hero-image { position: absolute; z-index: -2; inset: 0; background-repeat: no-repeat; background-size: cover; background-position: center 58%; filter: saturate(.85) contrast(1.08); }
+.atlanta-media-hero::after { content: ""; position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg, rgba(5,6,6,.96), rgba(5,6,6,.74) 45%, rgba(5,6,6,.11)); }
+.atlanta-archive { padding: 77px 0; }
+.atlanta-archive-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+.atlanta-archive-card { min-height: 280px; position: relative; display: flex; flex-direction: column; justify-content: flex-end; padding: 23px; overflow: hidden; border: 1px solid rgba(242,236,226,.24); background-color: #151719; background-repeat: no-repeat; background-size: cover; transition: transform 180ms ease-out, border-color 180ms ease-out; }
+.atlanta-archive-card:hover { border-color: var(--at-red); transform: translateY(-5px); }
+.atlanta-archive-card span { color: var(--at-red); font-family: "DM Mono", monospace; font-size: 10px; letter-spacing: .16em; }
+.atlanta-archive-card h2 { margin: 9px 0 13px; color: var(--at-cream); font-family: "Bodoni Moda", Georgia, serif; font-size: 44px; font-weight: 500; line-height: .84; letter-spacing: -.05em; text-transform: uppercase; }
+.atlanta-archive-card b { color: var(--at-cream); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 14px; font-weight: 400; letter-spacing: .12em; text-transform: uppercase; }
+.atlanta-merch { padding: 86px 0; border-top: 1px solid rgba(242,236,226,.15); background: #0a0b0d; }
+.atlanta-merch-heading { display: grid; grid-template-columns: .8fr 1.2fr; gap: 55px; align-items: end; }
+.atlanta-merch-heading h2 { margin-top: 10px; }
+.atlanta-merch-heading > p:last-child { max-width: 390px; margin-bottom: 4px; color: #d2d0ca; font-size: 14px; line-height: 1.55; }
+.atlanta-product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 46px; }
+.atlanta-product { padding: 13px; border: 1px solid rgba(242,236,226,.2); background: #060707; }
+.atlanta-product-visual { min-height: 255px; display: grid; place-items: center; position: relative; overflow: hidden; background: radial-gradient(circle at 50% 22%, rgba(199,25,32,.42), transparent 32%), linear-gradient(145deg, #292929, #070707 58%); }
+.atlanta-product-visual::before { content: ""; width: 124px; height: 168px; border: 1px solid rgba(242,236,226,.36); background: linear-gradient(120deg, rgba(255,255,255,.14), transparent 28%), #16181a; box-shadow: 20px 15px 0 rgba(5,6,6,.42); }
+.atlanta-product-visual--2::before { width: 150px; height: 96px; border-radius: 50% 50% 6px 6px; }
+.atlanta-product-visual--3::before { width: 138px; height: 76px; border-radius: 60% 60% 12px 12px; }
+.atlanta-product-visual--4::before { width: 142px; height: 170px; background: linear-gradient(160deg, #3b060a, #120406); }
+.atlanta-product-visual span { position: absolute; z-index: 1; color: var(--at-cream); font-family: Georgia, serif; font-size: 53px; font-style: italic; font-weight: 800; text-shadow: 2px 2px 0 var(--at-red); transform: rotate(-12deg); }
+.atlanta-product-script-mark { position: absolute; z-index: 2; display: block; width: min(48%, 118px); height: auto; max-height: 70%; object-fit: contain; filter: drop-shadow(0 7px 8px rgba(0,0,0,.48)); }
+.atlanta-product p { margin-top: 17px; color: var(--at-red); font-family: "DM Mono", monospace; font-size: 9px; letter-spacing: .14em; text-transform: uppercase; }
+.atlanta-product h3 { margin-top: 8px; color: var(--at-cream); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 27px; font-weight: 400; letter-spacing: .07em; text-transform: uppercase; }
+.atlanta-product button, .atlanta-product-link { width: 100%; display: flex; justify-content: space-between; margin-top: 16px; padding: 12px 0 3px; border-top: 1px solid rgba(242,236,226,.24); background: transparent; color: var(--at-cream); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 14px; letter-spacing: .1em; text-decoration: none; text-transform: uppercase; }
+.atlanta-product button b, .atlanta-product-link b { color: var(--at-red); font-size: 21px; font-weight: 400; }
+.atlanta-partnerships { display: grid; grid-template-columns: .85fr 1.15fr; min-height: 700px; border-top: 1px solid rgba(242,236,226,.15); background: #08090a; }
+.atlanta-partnership-side { background-repeat: no-repeat; background-size: cover; background-position: center; filter: saturate(.8); }
+.atlanta-partnership-content { max-width: 660px; padding: 85px 8%; }
+.atlanta-partnership-content h2 { margin-top: 13px; }
+.atlanta-partnership-content h2 + p { max-width: 500px; margin: 23px 0 30px; color: #d2d0ca; font-size: 15px; line-height: 1.55; }
+.atlanta-inquiry-form { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+.atlanta-inquiry-form input, .atlanta-inquiry-form select, .atlanta-inquiry-form textarea { width: 100%; min-height: 49px; padding: 0 14px; border: 1px solid rgba(242,236,226,.3); border-radius: 0; outline: none; background: #101113; color: var(--at-cream); font-family: Manrope, Arial, sans-serif; font-size: 12px; }
+.atlanta-inquiry-form input::placeholder, .atlanta-inquiry-form textarea::placeholder { color: #a7a7a7; }
+.atlanta-inquiry-form textarea { grid-column: span 2; padding-top: 13px; resize: vertical; }
+.atlanta-inquiry-form > button { grid-column: span 2; justify-self: start; margin-top: 5px; }
+.atlanta-form-confirm { padding: 28px; border: 1px solid rgba(183,138,74,.55); background: rgba(183,138,74,.08); }
+.atlanta-form-confirm b { color: var(--at-gold); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 28px; letter-spacing: .1em; text-transform: uppercase; }
+.atlanta-form-confirm p { margin: 9px 0 16px; color: #d2d0ca; font-size: 13px; line-height: 1.5; }
+.atlanta-form-confirm button { padding: 0; background: transparent; color: var(--at-cream); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 16px; letter-spacing: .1em; text-transform: uppercase; }
+
+@media (max-width: 1199px) { .atlanta-header { padding: 0 32px; } .atlanta-nav { gap: 24px; } .atlanta-zone-rail { padding-left: 32px; padding-right: 32px; } .atlanta-zone-rail nav { overflow-x: auto; max-width: 74vw; padding-bottom: 2px; } .atlanta-neighborhood-grid { grid-template-columns: repeat(3, 1fr); } .atlanta-neighborhood-card { min-height: 255px; } .atlanta-culture-tags { grid-template-columns: repeat(3, 1fr); } .atlanta-product-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 767px) { .atlanta-container, .atlanta-neighborhood-preview { width: calc(100% - 40px); } .atlanta-header { height: 72px; padding: 0 20px; } .atlanta-brand { width: 46px; } .atlanta-brand span { font-size: 48px; } .atlanta-header-actions { gap: 10px; margin-left: auto; } .atlanta-search, .atlanta-shop { display: none; } .atlanta-menu { width: 42px; height: 42px; display: grid; place-content: center; gap: 7px; background: transparent; } .atlanta-menu i { display: block; width: 23px; height: 2px; background: var(--at-gold); } .atlanta-nav { position: fixed; z-index: 30; inset: 72px 0 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 19px; padding: 28px 20px; background: #050606; transform: translateX(100%); transition: transform 220ms ease-out; } .atlanta-nav--open { transform: translateX(0); } .atlanta-nav a { padding: 0; font-family: "Bodoni Moda", Georgia, serif; font-size: 31px; letter-spacing: -.04em; } .atlanta-nav a::after { display: none; } .atlanta-mobile-shop { display: grid !important; margin-top: 14px; } .atlanta-home-hero { height: auto; min-height: 0; padding-top: 72px; } .atlanta-home-bg, .atlanta-home-shade { display: none; } .atlanta-home-copy { width: 100%; padding: 58px 20px 0; background: #050606; } .atlanta-overline, .atlanta-section-label { font-size: 10px; letter-spacing: .38em; } .atlanta-home-copy h1 { margin: 10px 0 2px -3px; font-size: clamp(66px, 19vw, 76px); line-height: .8; } .atlanta-red-rule { width: 47px; margin: 17px 0 18px; } .atlanta-hero-lines { font-size: 11px; line-height: 1.6; letter-spacing: .22em; } .atlanta-home-actions { flex-direction: column; align-items: flex-start; gap: 20px; margin-top: 23px; } .atlanta-red-button { min-height: 48px; font-size: 16px; } .atlanta-trailer > span { width: 42px; height: 42px; font-size: 15px; } .atlanta-trailer em { font-size: 11px; } .atlanta-mobile-hero { width: 100%; height: 315px; display: block; margin-top: 28px; background-repeat: no-repeat; background-position: center center; background-size: cover; background-color: #050606; } .atlanta-hero-note { right: 24px; bottom: 27px; font-size: 29px; } .atlanta-zone-rail { padding: 27px 20px; display: block; } .atlanta-zone-rail nav { width: 100%; max-width: none; gap: 8px; overflow-x: auto; scrollbar-width: none; } .atlanta-zone-rail nav::-webkit-scrollbar { display: none; } .atlanta-zone-rail button, .atlanta-zone-rail a { flex: 0 0 94px; height: 48px; } .atlanta-zone-rail > span { display: none; } .atlanta-neighborhood-preview { padding: 47px 0; } .atlanta-section-heading { align-items: flex-start; } .atlanta-section-heading p { max-width: 220px; line-height: 1.45; } .atlanta-neighborhood-grid { grid-template-columns: repeat(2, 1fr); gap: 9px; } .atlanta-neighborhood-card { min-height: 205px; padding: 12px; } .atlanta-neighborhood-card strong { font-size: 21px; } .atlanta-story-slab { grid-template-columns: 1fr; } .atlanta-slab-image { min-height: 220px; } .atlanta-story-slab > div:nth-child(2) { padding: 48px 20px 52px; } .atlanta-story-slab h2 { font-size: 46px; } .atlanta-slab-wall { display: none; } .atlanta-footer { min-height: 122px; padding: 20px; flex-wrap: wrap; } .atlanta-footer > div { width: 100%; margin-left: 0; padding-top: 11px; border-top: 1px solid rgba(242,236,226,.15); gap: 18px; } .atlanta-subhero { min-height: 535px; padding: 130px 0 46px; } .atlanta-subhero-image { background-position: 58% center; } .atlanta-subhero-shade { background: linear-gradient(90deg, rgba(5,6,6,.94), rgba(5,6,6,.63) 66%, rgba(5,6,6,.15)); } .atlanta-subhero h1, .atlanta-media-hero h1 { font-size: clamp(61px, 17vw, 71px); line-height: .8; } .atlanta-subhero .atlanta-container > p:last-child, .atlanta-media-hero .atlanta-container > p:last-child { font-size: 14px; } .atlanta-culture-intro, .atlanta-zones-page, .atlanta-merch { padding: 48px 0; } .atlanta-culture-intro h2, .atlanta-artists h2, .atlanta-merch h2, .atlanta-partnership-content h2 { font-size: 43px; } .atlanta-culture-tags { grid-template-columns: repeat(2, 1fr); margin-top: 32px; } .atlanta-culture-tags span { min-height: 91px; font-size: 20px; } .atlanta-zone-grid, .atlanta-archive-grid { grid-template-columns: 1fr; } .atlanta-zone-card { min-height: 365px; } .atlanta-artists { padding: 57px 0; } .atlanta-media-hero { min-height: 450px; padding: 130px 0 48px; } .atlanta-media-hero::after { background: linear-gradient(90deg, rgba(5,6,6,.94), rgba(5,6,6,.55) 72%, rgba(5,6,6,.12)); } .atlanta-archive { padding: 50px 0; } .atlanta-archive-card { min-height: 230px; } .atlanta-merch-heading { grid-template-columns: 1fr; gap: 18px; } .atlanta-product-grid { grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 29px; } .atlanta-product { padding: 9px; } .atlanta-product-visual { min-height: 175px; } .atlanta-product-visual::before { transform: scale(.72); } .atlanta-product p { font-size: 7px; } .atlanta-product h3 { font-size: 21px; } .atlanta-partnerships { grid-template-columns: 1fr; } .atlanta-partnership-side { min-height: 235px; background-position: center; } .atlanta-partnership-content { padding: 50px 20px; } .atlanta-inquiry-form { grid-template-columns: 1fr; } .atlanta-inquiry-form textarea, .atlanta-inquiry-form > button { grid-column: auto; } }
+
+.share-project-button { border: 1px solid currentColor; cursor: pointer; font: inherit; letter-spacing: .12em; text-transform: uppercase; transition: transform 180ms ease-out, background-color 180ms ease-out, color 180ms ease-out; }
+.share-project-button:hover { transform: translateY(-2px); }
+.share-project-button:active { transform: scale(.97); }
+.share-project-button span { margin-right: 8px; }
+.atlanta-share-button { min-height: 48px; padding: 0 16px; background: transparent; color: var(--at-cream); border-color: var(--at-cream); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 13px; }
+.atlanta-share-button:hover { background: var(--at-cream); color: var(--at-black); }
+@media (max-width: 767px) { .atlanta-share-button { width: 100%; } }

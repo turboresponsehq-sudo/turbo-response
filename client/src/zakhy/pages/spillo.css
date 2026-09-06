@@ -1,0 +1,203 @@
+.spillo-page { --spillo-yellow: #F4C400; --spillo-bright: #FFD500; --spillo-gold: #C99A00; --spillo-black: #050505; --spillo-black-2: #111111; --spillo-white: #FFFFFF; --spillo-muted: #B8B8B8; min-height: 100vh; overflow-x: hidden; background: var(--spillo-black); color: var(--spillo-white); font-family: Manrope, Arial, sans-serif; }
+.spillo-page * { box-sizing: border-box; }
+.spillo-page a, .spillo-page button { cursor: pointer; }
+.spillo-exact-desktop { display: none; position: relative; overflow: hidden; background: #050505; }
+.spillo-exact-reference-frame { position: relative; overflow: hidden; line-height: 0; }
+.spillo-exact-reference-frame img { width: 100%; height: auto; display: block; }
+.spillo-reference-link { position: absolute; z-index: 2; display: block; background: transparent; }
+.spillo-reference-link:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.spillo-reference-link--logo { top: 4%; left: 2%; width: 15%; height: 9%; }
+.spillo-reference-link--content { top: 4%; left: 30%; width: 28%; height: 9%; }
+.spillo-reference-link--inquiries { top: 4%; left: 58%; width: 22%; height: 9%; }
+.spillo-reference-link--book { top: 52%; left: 3%; width: 15%; height: 8%; }
+.spillo-reference-link--merch { top: 52%; left: 18%; width: 16%; height: 8%; }
+.spillo-reference-link--music { top: 63%; left: 3%; width: 21%; height: 25%; }
+.spillo-reference-link--podcast { top: 63%; left: 26%; width: 21%; height: 25%; }
+.spillo-reference-link--tile-merch { top: 63%; left: 50%; width: 21%; height: 25%; }
+.spillo-reference-link--tile-book { top: 63%; left: 73%; width: 24%; height: 25%; }
+.spillo-header { height: 78px; position: relative; z-index: 20; display: flex; align-items: center; gap: 42px; padding: 0 56px; border-bottom: 1px solid rgba(5,5,5,.22); background: rgba(244,196,0,.96); color: var(--spillo-black); }
+.spillo-logo { color: var(--spillo-black); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 34px; font-weight: 400; letter-spacing: .06em; line-height: 1; text-decoration: none; transform: none; }
+.spillo-logo sup { position: relative; top: -12px; margin-left: 2px; font-family: Georgia, serif; font-size: 14px; }
+.spillo-nav { display: flex; align-items: stretch; gap: clamp(24px, 3.5vw, 55px); flex: 1; }
+.spillo-nav a { position: relative; padding: 30px 0 25px; color: var(--spillo-black); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 16px; font-weight: 700; letter-spacing: .1em; text-decoration: none; text-transform: uppercase; }
+.spillo-nav a::after { content: ""; position: absolute; right: 0; bottom: 16px; left: 0; height: 3px; background: var(--spillo-black); transform: scaleX(0); transition: transform 180ms ease-out; }
+.spillo-nav a:hover::after, .spillo-nav a.is-active::after { transform: scaleX(1); }
+.spillo-header-actions { display: flex; align-items: center; gap: 18px; }
+.spillo-socials { display: flex; gap: 9px; }
+.spillo-socials span { width: 29px; height: 29px; display: grid; place-items: center; border: 1px solid var(--spillo-black); border-radius: 50%; color: var(--spillo-black); font-size: 15px; font-weight: 800; }
+.spillo-header-shop { min-width: 101px; min-height: 41px; display: grid; place-items: center; border: 1px solid #9a7600; background: var(--spillo-black); color: var(--spillo-bright); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 18px; letter-spacing: .12em; text-decoration: none; text-transform: uppercase; }
+.spillo-menu { display: none; width: 39px; height: 39px; border: 0; background: transparent; }
+.spillo-menu i { width: 23px; height: 2px; display: block; margin: 5px auto; background: var(--spillo-black); }
+.spillo-home-hero { min-height: 745px; position: relative; overflow: hidden; background: radial-gradient(circle at 72% 38%, rgba(255,255,255,.46), transparent 20%), linear-gradient(102deg, #f5c400 0%, #f9d520 46%, #dba900 100%); }
+.spillo-home-hero .spillo-header { background: rgba(244,196,0,.78); }
+.spillo-home-grid { min-height: 510px; position: relative; display: grid; grid-template-columns: 42% 58%; padding: 72px 56px 0; }
+.spillo-home-copy { position: relative; z-index: 3; max-width: 560px; align-self: center; padding-bottom: 24px; color: var(--spillo-black); }
+.spillo-home-overline { font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+.spillo-home-copy h1 { margin: 14px 0 0 -7px; font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: clamp(110px, 11.7vw, 170px); font-weight: 900; line-height: .77; letter-spacing: -.055em; text-transform: uppercase; text-shadow: 2px 2px 0 #fff7bb, 4px 4px 0 rgba(114,78,0,.5); }
+.spillo-season { margin: 9px 0 25px 60px; font-family: Allura, cursive; font-size: clamp(50px, 5vw, 76px); font-weight: 700; line-height: .8; text-shadow: 2px 2px 0 rgba(255,255,255,.7); }
+.spillo-home-intro { max-width: 310px; font-size: 13px; font-weight: 700; line-height: 1.45; letter-spacing: .07em; text-transform: uppercase; }
+.spillo-home-actions { display: flex; flex-wrap: wrap; gap: 13px; margin-top: 20px; }
+.spillo-button { min-height: 47px; padding: 0 19px; display: inline-flex; align-items: center; justify-content: space-between; gap: 24px; border: 1px solid var(--spillo-black); background: transparent; color: var(--spillo-black); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 17px; letter-spacing: .1em; text-decoration: none; text-transform: uppercase; transition: transform 160ms ease-out, background 160ms ease-out; }
+.spillo-button:hover { transform: translateY(-2px); background: rgba(255,255,255,.28); }
+.spillo-button--dark { background: var(--spillo-black); color: var(--spillo-bright); }
+.spillo-button--dark:hover { background: #202020; }
+.spillo-button--yellow { border-color: var(--spillo-yellow); background: var(--spillo-yellow); color: var(--spillo-black); }
+.spillo-home-artist { position: absolute; z-index: 1; right: 13%; bottom: -32px; width: min(50vw, 680px); height: 620px; background-repeat: no-repeat; background-position: center top; background-size: cover; filter: drop-shadow(-18px 7px 24px rgba(61,36,0,.3)); }
+.spillo-stats { position: absolute; z-index: 4; top: 92px; right: 56px; width: 145px; padding: 17px; border: 1px solid rgba(5,5,5,.25); background: rgba(255,219,43,.56); color: var(--spillo-black); }
+.spillo-stats > b { display: block; margin-bottom: 8px; font-size: 22px; }
+.spillo-stats div { padding: 10px 0; border-top: 1px solid rgba(5,5,5,.25); }
+.spillo-stats strong, .spillo-stats span { display: block; }
+.spillo-stats strong { font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 22px; letter-spacing: .06em; text-transform: uppercase; }
+.spillo-stats span, .spillo-stats small { font-size: 8px; font-weight: 800; letter-spacing: .09em; line-height: 1.3; text-transform: uppercase; }
+.spillo-mobile-artist { display: none; }
+.spillo-tile-section { position: relative; z-index: 5; margin: -130px 56px 0; }
+.spillo-tile-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.spillo-tile { min-height: 220px; position: relative; overflow: hidden; border: 1px solid rgba(244,196,0,.9); background: var(--spillo-black); }
+.spillo-tile-image { position: absolute; inset: 0; background-position: center; background-repeat: no-repeat; background-size: cover; filter: contrast(1.05) saturate(1.06); transition: transform 250ms ease-out; }
+.spillo-tile:hover .spillo-tile-image { transform: scale(1.04); }
+.spillo-tile-content { position: relative; z-index: 1; min-height: 220px; display: flex; flex-direction: column; align-items: flex-start; padding: 18px; }
+.spillo-tile h2 { font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 34px; letter-spacing: .06em; text-transform: uppercase; }
+.spillo-tile p { max-width: 130px; margin-top: 3px; color: #e6e6e6; font-size: 10px; font-weight: 700; line-height: 1.3; text-transform: uppercase; }
+.spillo-tile a { width: 100%; min-height: 34px; display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding: 0 12px; background: var(--spillo-bright); color: var(--spillo-black); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 15px; letter-spacing: .09em; text-decoration: none; text-transform: uppercase; }
+.spillo-tile a b { font-size: 20px; font-weight: 400; }
+.spillo-featured { min-height: 84px; display: flex; align-items: center; gap: clamp(16px, 2vw, 38px); padding: 20px 56px; background: #080808; color: var(--spillo-bright); }
+.spillo-featured p { color: var(--spillo-muted); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 16px; letter-spacing: .1em; text-transform: uppercase; }
+.spillo-featured b { font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 21px; letter-spacing: .04em; white-space: nowrap; }
+.spillo-featured span { margin-left: auto; color: var(--spillo-white); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 16px; letter-spacing: .1em; text-transform: uppercase; }
+.spillo-featured small { display: block; color: var(--spillo-muted); font-family: Manrope, Arial, sans-serif; font-size: 9px; letter-spacing: 0; text-transform: none; }
+.spillo-featured a { color: var(--spillo-bright); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 15px; letter-spacing: .1em; text-decoration: none; text-transform: uppercase; }
+
+.spillo-content-page, .spillo-inquiries-page { background: #090909; }
+.spillo-content-page .spillo-header, .spillo-inquiries-page .spillo-header { background: var(--spillo-black); border-bottom-color: rgba(244,196,0,.32); }
+.spillo-content-page .spillo-logo, .spillo-inquiries-page .spillo-logo, .spillo-content-page .spillo-nav a, .spillo-inquiries-page .spillo-nav a { color: var(--spillo-bright); }
+.spillo-content-page .spillo-nav a::after, .spillo-inquiries-page .spillo-nav a::after { background: var(--spillo-bright); }
+.spillo-content-page .spillo-socials span, .spillo-inquiries-page .spillo-socials span { border-color: var(--spillo-bright); color: var(--spillo-bright); }
+.spillo-content-hero { min-height: 490px; display: grid; grid-template-columns: 52% 48%; overflow: hidden; background: linear-gradient(115deg, #050505 0%, #171002 52%, #f4c400 100%); }
+.spillo-content-hero-copy { position: relative; z-index: 1; align-self: end; padding: 86px 9vw 84px; }
+.spillo-content-hero-copy > p, .spillo-inquiry-hero p { color: var(--spillo-bright); font-size: 11px; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; }
+.spillo-content-hero h1, .spillo-inquiry-hero h1 { margin: 14px 0 22px; color: white; font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: clamp(70px, 8vw, 128px); line-height: .79; letter-spacing: -.04em; text-transform: uppercase; }
+.spillo-content-hero h1 em, .spillo-inquiry-hero h1 em { color: var(--spillo-bright); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: .82em; font-weight: 400; letter-spacing: -.04em; text-transform: uppercase; }
+.spillo-content-hero-copy > span { color: var(--spillo-muted); font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
+.spillo-content-hero-art { background-image: var(--spillo-content-desktop); background-repeat: no-repeat; background-position: center 25%; background-size: cover; filter: saturate(1.18) contrast(1.04); }
+.spillo-content-grid-section { padding: 84px 0 100px; background: #0b0b0b; }
+.spillo-content-grid { width: min(1600px, 92%); margin: 0 auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.spillo-content-card { min-height: 430px; position: relative; overflow: hidden; border: 1px solid rgba(244,196,0,.42); background: #111; }
+.spillo-content-card--5 { grid-column: span 2; min-height: 350px; }
+.spillo-content-card-image { position: absolute; inset: 0; background-position: center; background-repeat: no-repeat; background-size: cover; filter: contrast(1.05) saturate(1.06); }
+.spillo-content-card-copy { position: relative; z-index: 1; min-height: inherit; display: flex; flex-direction: column; align-items: flex-start; padding: 31px; }
+.spillo-content-card-copy > p { color: var(--spillo-bright); font-size: 10px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
+.spillo-content-card h2 { max-width: 470px; margin: 14px 0 5px; font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: clamp(43px, 4.2vw, 67px); line-height: .84; letter-spacing: -.02em; text-transform: uppercase; }
+.spillo-content-card-copy > span { color: #e0e0e0; font-size: 13px; }
+.spillo-content-card ul { display: grid; grid-template-columns: repeat(3, auto); gap: 8px; margin: 25px 0; padding: 0; list-style: none; }
+.spillo-content-card li { padding: 7px 9px; border: 1px solid rgba(244,196,0,.45); color: var(--spillo-bright); font-size: 10px; font-weight: 700; }
+.spillo-content-card a { margin-top: auto; color: var(--spillo-bright); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 17px; letter-spacing: .12em; text-decoration: none; text-transform: uppercase; }
+.spillo-content-card a b { margin-left: 8px; font-size: 24px; font-weight: 400; }
+.spillo-work-band { min-height: 190px; display: flex; align-items: center; justify-content: center; gap: 38px; padding: 30px 20px; border-top: 1px solid rgba(244,196,0,.55); border-bottom: 1px solid rgba(244,196,0,.55); background: #080808; color: var(--spillo-bright); }
+.spillo-work-band p { font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: clamp(32px, 4vw, 58px); letter-spacing: .03em; text-transform: uppercase; }
+
+.spillo-inquiry-hero { min-height: 370px; position: relative; overflow: hidden; display: grid; grid-template-columns: 57% 43%; background: #0b0b0b; }
+.spillo-inquiry-hero > div:first-child { z-index: 1; align-self: center; padding: 75px 0 42px 9vw; }
+.spillo-inquiry-hero > div:first-child span { color: var(--spillo-muted); font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.spillo-inquiry-hero-art { background-repeat: no-repeat; background-position: center 23%; background-size: cover; filter: saturate(1.14); }
+.spillo-inquiry-main { width: min(1600px, 92%); display: grid; grid-template-columns: .85fr 1.15fr; gap: 8vw; margin: 0 auto; padding: 95px 0; }
+.spillo-inquiry-main aside > p, .spillo-form-wrap form > p, .spillo-form-success > p { color: var(--spillo-bright); font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
+.spillo-inquiry-main aside h2 { max-width: 440px; margin: 13px 0 32px; font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: clamp(52px, 5vw, 75px); font-weight: 400; line-height: .84; letter-spacing: .01em; text-transform: uppercase; }
+.spillo-inquiry-main aside > div { display: flex; gap: 16px; align-items: center; padding: 14px 0; border-top: 1px solid rgba(244,196,0,.35); }
+.spillo-inquiry-main aside div span { color: var(--spillo-gold); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 18px; }
+.spillo-inquiry-main aside div b { font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 23px; font-weight: 400; letter-spacing: .06em; text-transform: uppercase; }
+.spillo-inquiry-main aside small { display: block; max-width: 320px; margin-top: 28px; color: var(--spillo-muted); font-size: 11px; line-height: 1.5; }
+.spillo-form-wrap { padding: 34px; border: 1px solid rgba(244,196,0,.45); background: #111; }
+.spillo-form-wrap form { display: grid; grid-template-columns: 1fr 1fr; gap: 17px; }
+.spillo-form-wrap form > p { grid-column: span 2; margin-bottom: 3px; }
+.spillo-form-wrap label { display: grid; gap: 7px; color: var(--spillo-muted); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 15px; letter-spacing: .1em; text-transform: uppercase; }
+.spillo-form-wrap input, .spillo-form-wrap select, .spillo-form-wrap textarea { width: 100%; min-height: 47px; padding: 0 13px; border: 1px solid #4a4a4a; border-radius: 0; outline: 0; background: #080808; color: white; font-family: Manrope, Arial, sans-serif; font-size: 12px; }
+.spillo-form-wrap textarea { padding-top: 12px; resize: vertical; }
+.spillo-form-full { grid-column: span 2; }
+.spillo-form-wrap form button { justify-self: start; }
+.spillo-form-success { min-height: 330px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
+.spillo-form-success h2 { margin: 14px 0 10px; font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 65px; letter-spacing: .03em; text-transform: uppercase; }
+.spillo-form-success span { color: var(--spillo-muted); }
+.spillo-form-success button { margin-top: 28px; padding: 12px 17px; border: 1px solid var(--spillo-yellow); background: var(--spillo-yellow); color: var(--spillo-black); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 16px; letter-spacing: .1em; text-transform: uppercase; }
+
+@media (min-width: 768px) { .spillo-exact-desktop { display: block; } .spillo-home-hero--responsive, .spillo-home .spillo-tile-section, .spillo-home .spillo-featured { display: none; } }
+@media (max-width: 900px) { .spillo-header { padding: 0 32px; gap: 20px; } .spillo-nav { gap: 22px; } .spillo-socials { display: none; } .spillo-home-grid { padding-left: 32px; padding-right: 32px; } .spillo-tile-section { margin-right: 32px; margin-left: 32px; } .spillo-featured { padding-right: 32px; padding-left: 32px; } .spillo-featured span, .spillo-featured a { display: none; } .spillo-tile-grid { grid-template-columns: repeat(2, 1fr); } .spillo-tile-section { margin-top: -55px; } .spillo-home-hero { min-height: 835px; } .spillo-home-artist { right: 4%; width: 59vw; } }
+@media (max-width: 767px) { .spillo-header { height: 69px; padding: 0 20px; background: var(--spillo-bright) !important; } .spillo-logo { font-size: 30px; } .spillo-nav { position: absolute; z-index: 30; top: 69px; right: 0; left: 0; display: none; padding: 12px 20px 20px; flex-direction: column; gap: 0; border-bottom: 1px solid var(--spillo-black); background: var(--spillo-bright); } .spillo-nav--open { display: flex; } .spillo-nav a { padding: 14px 0; font-size: 19px; } .spillo-nav a::after { bottom: 5px; } .spillo-header-shop { display: none; } .spillo-menu { display: block; } .spillo-home-hero { min-height: 0; padding-bottom: 0; background: #070707; } .spillo-home-grid { min-height: 502px; display: block; padding: 0; background-image: linear-gradient(90deg, rgba(5,5,5,.97) 0%, rgba(5,5,5,.91) 43%, rgba(5,5,5,.2) 100%), linear-gradient(0deg, rgba(5,5,5,.72), transparent 48%), url('/manus-storage/spillo-hero-artist_a25123a3.jpg'); background-repeat: no-repeat; background-position: center, center, 62% 20%; background-size: cover, cover, auto 108%; } .spillo-home-copy { max-width: 294px; padding: 54px 20px 0; color: white; } .spillo-home-overline { color: var(--spillo-bright); font-size: 9px; letter-spacing: .14em; } .spillo-home-copy h1 { margin: 12px 0 0 -3px; color: var(--spillo-bright); font-size: clamp(61px, 19vw, 71px); line-height: .82; text-shadow: 1px 1px 0 #fff8c6, 3px 3px 0 rgba(114,78,0,.7); } .spillo-season { margin: 6px 0 18px 20px; color: white; font-family: Allura, cursive; font-size: 51px; font-weight: 700; line-height: .76; text-shadow: 2px 2px 0 rgba(0,0,0,.6); } .spillo-home-intro { max-width: 262px; color: #f3f0de; font-size: 10px; line-height: 1.5; letter-spacing: .075em; } .spillo-home-actions { margin-top: 18px; gap: 10px; } .spillo-button { min-height: 42px; padding: 0 14px; border-color: var(--spillo-bright); color: var(--spillo-bright); font-size: 15px; } .spillo-button--dark { background: var(--spillo-bright); color: var(--spillo-black); } .spillo-home-artist, .spillo-stats, .spillo-mobile-artist { display: none; } .spillo-tile-section { position: relative; z-index: 5; margin: -34px 20px 0; padding: 0; background: transparent; } .spillo-tile-grid { grid-template-columns: 1fr; gap: 12px; } .spillo-tile { min-height: 185px; } .spillo-tile-content { min-height: 185px; } .spillo-featured { min-height: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 17px; padding: 27px 20px; } .spillo-featured p { grid-column: span 2; } .spillo-featured b { font-size: 18px; } .spillo-content-hero { min-height: 0; grid-template-columns: 1fr; } .spillo-content-hero-copy { padding: 64px 20px 30px; } .spillo-content-hero h1, .spillo-inquiry-hero h1 { font-size: clamp(58px, 17vw, 72px); } .spillo-content-hero-art { height: 320px; background-position: center 21%; } .spillo-content-grid-section { padding: 48px 0 58px; } .spillo-content-grid { width: calc(100% - 40px); grid-template-columns: 1fr; gap: 13px; } .spillo-content-card, .spillo-content-card--5 { min-height: 390px; grid-column: auto; } .spillo-content-card-copy { padding: 23px; } .spillo-content-card h2 { font-size: 47px; } .spillo-content-card ul { grid-template-columns: 1fr; margin: 17px 0; } .spillo-work-band { min-height: 150px; flex-direction: column; gap: 15px; text-align: center; } .spillo-inquiry-hero { min-height: 0; grid-template-columns: 1fr; } .spillo-inquiry-hero > div:first-child { padding: 62px 20px 27px; } .spillo-inquiry-hero-art { height: 280px; background-position: center 20%; } .spillo-inquiry-main { width: calc(100% - 40px); grid-template-columns: 1fr; gap: 42px; padding: 55px 0; } .spillo-form-wrap { padding: 20px; } .spillo-form-wrap form { grid-template-columns: 1fr; } .spillo-form-wrap form > p, .spillo-form-full { grid-column: auto; } }
+
+.share-project-button { border: 1px solid currentColor; cursor: pointer; font: inherit; letter-spacing: .04em; text-transform: uppercase; transition: transform 180ms ease-out, background-color 180ms ease-out, color 180ms ease-out; }
+.share-project-button:hover { transform: translateY(-2px); }
+.share-project-button:active { transform: scale(.97); }
+.share-project-button span { margin-right: 8px; }
+.spillo-home-actions .share-project-button { min-height: 42px; padding: 0 14px; background: transparent; color: var(--spillo-bright); border-color: var(--spillo-bright); font-size: 15px; }
+.spillo-home-actions .share-project-button:hover { background: var(--spillo-bright); color: var(--spillo-black); }
+.spillo-exact-reference-frame { position: relative; }
+.spillo-reference-share { position: absolute; right: 3.5%; bottom: 4%; z-index: 4; min-height: 36px; padding: 0 12px; background: rgba(5,5,5,.84); color: var(--spillo-bright); border-color: var(--spillo-bright); font-size: 11px; }
+.spillo-reference-share:hover { background: var(--spillo-bright); color: var(--spillo-black); }
+@media (max-width: 767px) {
+  .spillo-reference-share { display: none; }
+  .spillo-home-actions .share-project-button { width: 100%; }
+  .spillo-home-actions .spillo-button,
+  .spillo-home-actions .share-project-button {
+    background: #050505;
+    color: #fff;
+    border-color: #fff;
+  }
+  .spillo-home-actions .spillo-button:hover,
+  .spillo-home-actions .share-project-button:hover {
+    background: #050505;
+    color: #fff;
+  }
+}
+
+
+@media (max-width: 767px) {
+  .spillo-content-hero-art { background-image: var(--spillo-content-mobile); }
+}
+
+/* Supplied mobile reference: two-row yellow header and no floating chat obstruction. */
+@media (max-width: 767px) {
+  .spillo-header {
+    height: 112px;
+    padding: 0 20px;
+    flex-wrap: wrap;
+    align-content: center;
+    gap: 0;
+    background: var(--spillo-bright) !important;
+  }
+  .spillo-header-actions { margin-left: auto; }
+  .spillo-nav {
+    position: static;
+    order: 3;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    gap: 7px;
+    padding: 5px 0 0;
+    border: 0;
+    background: transparent;
+  }
+  .spillo-nav a {
+    padding: 3px 0 0;
+    color: var(--spillo-black);
+    font-size: 10px;
+    letter-spacing: .03em;
+    white-space: nowrap;
+  }
+  .spillo-nav a::after { bottom: -2px; height: 2px; }
+  .spillo-home-copy { padding-top: 38px; }
+  .spillo-home-actions .spillo-button,
+  .spillo-home-actions .share-project-button,
+  .spillo-tile a {
+    background: #050505;
+    border-color: #fff;
+    color: #fff;
+  }
+}
+
+.spillo-page .turbo-chatbot { display: none !important; }
+
+@media (max-width: 380px) {
+  .spillo-nav { gap: 4px; }
+  .spillo-nav a { font-size: 9px; }
+}
