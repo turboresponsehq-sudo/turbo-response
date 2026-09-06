@@ -13,16 +13,8 @@ type ZakhyBuildsAIHubProps = {
  */
 function ZakhyBuildsAIFrame({ sourcePath = "/" }: ZakhyBuildsAIHubProps) {
   const normalizedPath = sourcePath === "/" ? "/" : `/${sourcePath.replace(/^\/+/, "")}`;
-  const isProject = normalizedPath !== "/" && !["/services", "/automation-services", "/portfolio", "/about"].includes(normalizedPath);
-
   return (
     <main style={{ minHeight: "100vh", width: "100%", background: "#fff" }}>
-      {isProject && (
-        <nav className="zakhy-project-navigation" aria-label="Project navigation">
-          <a href="/zakhybuildsai/portfolio">Back to Portfolio</a>
-          <a href="/zakhybuildsai">Back to Home</a>
-        </nav>
-      )}
       <iframe
         title="Zakhy Builds AI"
         src={`${ZAKHY_DEMO_BASE}${normalizedPath}`}
