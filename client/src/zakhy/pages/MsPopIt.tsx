@@ -39,7 +39,7 @@ export default function MsPopItPage() {
           <div className="popit-actions"><a className="popit-primary" href="/zakhybuildsai/portfolio/ms-pop-it/content#music-heading">LISTEN NOW <Play size={16} fill="currentColor" /></a><a className="popit-secondary" href="/zakhybuildsai/portfolio/ms-pop-it/content#merch-heading">SHOP MERCH <span>→</span></a></div>
           <div className="popit-featured"><span>FEATURED</span><div><b>● Spotify</b><b>● Apple Music</b><b>▶ YouTube</b></div></div>
         </div>
-        <div className="popit-mobile-portrait"><img src="/manus-storage/ms-pop-it-hero-clean_63bafcfa.png" alt="Ms Pop It in a red luxury editorial portrait" /></div>
+        <div className="popit-mobile-portrait"><img src="/zakhy-assets/ms-pop-it-hero-clean_63bafcfa.png" alt="Ms Pop It in a red luxury editorial portrait" /></div>
       </section>
 
       <section className="popit-services" aria-label="Ms Pop It music and monetization paths">
