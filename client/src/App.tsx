@@ -174,7 +174,7 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <Router />
-            {window.location.pathname !== "/zakhybuildsai" && <FloatingChatWidget />}
+            {!window.location.pathname.startsWith("/zakhybuildsai") && <FloatingChatWidget />}
           </TooltipProvider>
         </ThemeProvider>
       </AdminAuthProvider>
