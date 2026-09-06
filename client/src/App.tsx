@@ -46,7 +46,7 @@ import AdminCommandCenter from "./pages/AdminCommandCenter";
 import CaseBrief from "./pages/CaseBrief";
 import CreatorIntake from "./features/creator/pages/CreatorIntake";
 import CreatorLeadsAdmin from "./features/creator/pages/CreatorLeadsAdmin";
-import ZakhyBuildsAIHub, { ZakhyAboutRoute, ZakhyAutomationServicesRoute, ZakhyPortfolioRoute, ZakhyServicesRoute } from "./pages/ZakhyBuildsAIHub";
+import ZakhyBuildsAIHub, { ZakhyAboutRoute, ZakhyAutomationServicesRoute, ZakhyPortfolioRoute, ZakhyServicesRoute, ZakhyProjectRoute } from "./pages/ZakhyBuildsAIHub";
 
 function ProtectedCreatorLeads() {
   return (
@@ -114,6 +114,12 @@ function Router() {
       <Route path="/zakhybuildsai/services" component={ZakhyServicesRoute} />
       <Route path="/zakhybuildsai/automation-services" component={ZakhyAutomationServicesRoute} />
       <Route path="/zakhybuildsai/portfolio" component={ZakhyPortfolioRoute} />
+      <Route path="/zakhybuildsai/portfolio/ralo" component={() => <ZakhyProjectRoute sourcePath="/ralo" />} />
+      <Route path="/zakhybuildsai/portfolio/ms-pop-it" component={() => <ZakhyProjectRoute sourcePath="/ms-pop-it" />} />
+      <Route path="/zakhybuildsai/portfolio/miami-trips-restaurants" component={() => <ZakhyProjectRoute sourcePath="/miami" />} />
+      <Route path="/zakhybuildsai/portfolio/story-of-atlanta" component={() => <ZakhyProjectRoute sourcePath="/atlanta" />} />
+      <Route path="/zakhybuildsai/portfolio/spillo" component={() => <ZakhyProjectRoute sourcePath="/spillo" />} />
+      <Route path="/zakhybuildsai/portfolio/crunk-fit" component={() => <ZakhyProjectRoute sourcePath="/crunk-fit" />} />
       <Route path="/zakhybuildsai/about" component={ZakhyAboutRoute} />
 
       {/* Isolated Creator Business V1 routes */}
