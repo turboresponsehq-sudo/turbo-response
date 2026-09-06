@@ -35,6 +35,10 @@ export function ZakhyAutomationServicesRoute() {
   return <ZakhyBuildsAIFrame sourcePath="/automation-services" />;
 }
 
+export function ZakhyServicesRoute() {
+  return <ZakhyBuildsAIFrame sourcePath="/services" />;
+}
+
 export function ZakhyPortfolioRoute() {
   return <ZakhyBuildsAIFrame sourcePath="/portfolio" />;
 }
