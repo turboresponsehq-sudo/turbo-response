@@ -70,7 +70,7 @@ export default function RaloDemoPage() {
   return (
     <main className="ralo-page">
       <header className="ralo-header" id="home">
-        <a className="ralo-logo" href="/zakhybuildsai/portfolio/ralo" aria-label="Famgoon website home"><img src="/manus-storage/famgoon-header-logo-tight_138459fd.png" alt="FAMGOON" /></a>
+        <a className="ralo-logo" href="/zakhybuildsai/portfolio/ralo" aria-label="Famgoon website home"><img src="/zakhy-assets/famgoon-header-logo-tight_138459fd.png" alt="FAMGOON" /></a>
         <nav className={`ralo-nav ${menuOpen ? "ralo-nav--open" : ""}`} aria-label="Ralo navigation">
           {navItems.map(([label, href]) => <a key={href} href={href} className={href === "/ralo" ? "is-active" : ""} onClick={() => setMenuOpen(false)}>{label}</a>)}
         </nav>
@@ -80,7 +80,7 @@ export default function RaloDemoPage() {
 
       <section className="ralo-hero" aria-labelledby="ralo-hero-title">
         <div className="ralo-hero-image" role="img" aria-label="Ralo FAMGOON artist visual in Atlanta" /><div className="ralo-hero-shade" />
-        <div className="ralo-hero-copy"><p className="ralo-kicker">THE HUSTLE CONTINUES</p><h1 id="ralo-hero-title" className="ralo-wordmark"><span>RALO</span><img src="/manus-storage/ralo-hero-wordmark-tight_e85867bd.png" alt="RALO" /></h1><p className="ralo-location">ATLANTA. HUSTLE. LUXURY. CULTURE.</p><p className="ralo-intro">Welcome to the official home of <b>Ralo.</b><br />From the streets of Atlanta to the world stage, this is more than music—this is a movement.</p><div className="ralo-actions"><a href="/zakhybuildsai/portfolio/ralo/inquiries" className="ralo-button ralo-button--red">BOOK NOW <span>→</span></a><a href="/zakhybuildsai/portfolio/ralo/content#merch-title" className="ralo-button">SHOP MERCH <span>→</span></a></div></div>
+        <div className="ralo-hero-copy"><p className="ralo-kicker">THE HUSTLE CONTINUES</p><h1 id="ralo-hero-title" className="ralo-wordmark"><span>RALO</span><img src="/zakhy-assets/ralo-hero-wordmark-tight_e85867bd.png" alt="RALO" /></h1><p className="ralo-location">ATLANTA. HUSTLE. LUXURY. CULTURE.</p><p className="ralo-intro">Welcome to the official home of <b>Ralo.</b><br />From the streets of Atlanta to the world stage, this is more than music—this is a movement.</p><div className="ralo-actions"><a href="/zakhybuildsai/portfolio/ralo/inquiries" className="ralo-button ralo-button--red">BOOK NOW <span>→</span></a><a href="/zakhybuildsai/portfolio/ralo/content#merch-title" className="ralo-button">SHOP MERCH <span>→</span></a></div></div>
         <aside className="ralo-stats" aria-label="Ralo highlights"><div><strong>ATLANTA</strong><span>THE A MADE ME</span></div><div><strong>100+</strong><span>LIVE SHOWS</span></div><div><strong>25+</strong><span>NEW RELEASES</span></div><div><strong>★</strong><span>FEATURED ARTIST</span></div></aside>
       </section>
 
