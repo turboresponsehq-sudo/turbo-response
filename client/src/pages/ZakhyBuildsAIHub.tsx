@@ -1,3 +1,5 @@
+import TurboChatbot, { turboChatbotStyles } from "../components/TurboChatbot";
+
 const ZAKHY_DEMO_BASE = "https://zakhydemo-mpd8k29q.manus.space";
 
 type ZakhyBuildsAIHubProps = {
@@ -20,6 +22,7 @@ function ZakhyBuildsAIFrame({ sourcePath = "/" }: ZakhyBuildsAIHubProps) {
         style={{ border: 0, display: "block", height: "100vh", minHeight: "760px", width: "100%" }}
         referrerPolicy="strict-origin-when-cross-origin"
       />
+      {sourcePath === "/" && <><style dangerouslySetInnerHTML={{ __html: turboChatbotStyles }} /><TurboChatbot /></>}
     </main>
   );
 }
