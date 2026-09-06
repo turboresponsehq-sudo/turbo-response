@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
+.zakhy-services-page { --services-ink: #101522; --services-blue: #1e5bff; --services-paper: #f7f8fb; --services-line: #dfe4ee; min-height: 100vh; overflow: hidden; background: var(--services-paper); color: var(--services-ink); font-family: Manrope, Arial, sans-serif; }
+.zakhy-services-page * { box-sizing: border-box; }
+.zakhy-services-page a { color: inherit; text-decoration: none; }
+.services-shell { width: min(1280px, calc(100% - 112px)); margin: 0 auto; }
+.zakhy-services-header { position: relative; background: rgba(247,248,251,.94); }
+.zakhy-services-header .nav-shell { width: min(1280px, calc(100% - 112px)); }
+.services-brand { display: inline-flex; flex-direction: column; color: var(--services-ink); font-size: 24px; font-weight: 800; letter-spacing: -.04em; line-height: .85; }
+.services-brand small { margin-top: 5px; font-size: 7px; font-weight: 800; letter-spacing: .3em; }
+.zakhy-services-header .desktop-nav { gap: clamp(16px, 2.2vw, 34px); }
+.zakhy-services-header .desktop-nav a { font-size: 11px; }
+.services-nav-cta { min-height: 44px; display: inline-flex; align-items: center; gap: 14px; padding: 0 17px; background: var(--services-blue); color: white !important; font-size: 10px; font-weight: 800; letter-spacing: .05em; }
+.services-nav-cta svg, .services-primary svg, .services-secondary svg, .services-deeper-link svg { width: 15px; }
+.services-hero { padding: 105px 0 112px; background: linear-gradient(116deg, #f7f8fb 0%, #eef3fd 100%); border-bottom: 1px solid var(--services-line); }
+.services-eyebrow { margin: 0; color: var(--services-blue); font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; }
+.services-hero h1 { max-width: 920px; margin: 22px 0 25px; font-size: clamp(54px, 7vw, 86px); font-weight: 700; letter-spacing: -.075em; line-height: .92; }
+.services-hero h1 em, .services-ownership h2 em, .services-section-heading h2 em, .services-ecosystem h2 em, .services-final h2 em { color: var(--services-blue); font-style: normal; }
+.services-lead { max-width: 720px; margin: 0; font-size: clamp(18px, 2vw, 21px); line-height: 1.5; }
+.services-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 33px; }
+.services-primary, .services-secondary { min-height: 54px; display: inline-flex; align-items: center; gap: 25px; padding: 0 20px; font-size: 11px; font-weight: 800; letter-spacing: .06em; }
+.services-primary { background: var(--services-blue); color: white !important; }
+.services-secondary { border: 1px solid var(--services-ink); }
+.services-ownership { padding: 105px 0; background: white; }
+.services-ownership-grid, .services-final-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 10%; }
+.services-ownership h2, .services-section-heading h2, .services-ecosystem h2, .services-final h2 { max-width: 700px; margin: 17px 0 0; font-size: clamp(42px, 5vw, 68px); letter-spacing: -.075em; line-height: .92; }
+.services-ownership-grid > div:last-child { max-width: 590px; font-size: 17px; line-height: 1.65; }
+.services-ownership-grid p { margin: 0 0 20px; }
+.services-ownership-close { font-weight: 700; }
+.services-builds { padding: 105px 0 115px; }
+.services-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 30px; margin-bottom: 45px; }
+.services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.services-card { min-height: 530px; display: flex; flex-direction: column; padding: 26px; border: 1px solid var(--services-line); border-radius: 20px; background: white; }
+.services-card-number { color: var(--services-blue); font-size: 11px; font-weight: 800; letter-spacing: .15em; }
+.services-card h3 { margin: 42px 0 12px; font-size: clamp(29px, 3vw, 42px); letter-spacing: -.07em; line-height: .95; }
+.services-card-intro { min-height: 72px; margin: 0; font-size: 17px; line-height: 1.45; }
+.services-card ul { display: grid; gap: 9px; margin: 25px 0 27px; padding: 19px 0 0; border-top: 1px solid var(--services-line); list-style: none; }
+.services-card li { font-size: 13px; line-height: 1.35; }
+.services-card li::before { content: "→"; margin-right: 8px; color: var(--services-blue); font-weight: 800; }
+.services-card-close { margin-top: auto; font-size: 14px; font-weight: 700; line-height: 1.45; }
+.services-deeper-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; color: var(--services-blue); font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+.services-ecosystem { padding: 105px 0; background: var(--services-ink); color: white; }
+.services-ecosystem h2 { margin-bottom: 45px; }
+.services-ecosystem-list { display: flex; flex-wrap: wrap; gap: 10px; max-width: 950px; }
+.services-ecosystem-list span { padding: 12px 15px; border: 1px solid rgba(255,255,255,.3); border-radius: 999px; font-size: 14px; }
+.services-ecosystem-copy { max-width: 700px; margin: 52px 0 0; font-size: 22px; line-height: 1.45; }
+.services-ecosystem-copy strong { color: #8eb5ff; }
+.services-final { padding: 105px 0; background: #dfeaff; }
+.services-final-inner { align-items: end; }
+.services-final-inner > div:last-child { max-width: 390px; }
+.services-final-inner > div:last-child p { margin: 0 0 25px; font-size: 19px; line-height: 1.5; }
+.services-share { position: fixed; right: 24px; bottom: 24px; z-index: 50; min-height: 44px; padding: 0 15px; border: 1px solid var(--services-ink); background: var(--services-ink); color: white; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.services-share:hover { background: var(--services-blue); border-color: var(--services-blue); }
+@media (max-width: 767px) {
+  .services-shell, .zakhy-services-header .nav-shell { width: calc(100% - 40px); }
+  .services-nav-cta { display: none; }
+  .services-header-actions { display: flex; align-items: center; margin-left: auto; }
+  .services-hero, .services-ownership, .services-builds, .services-ecosystem, .services-final { padding: 68px 0 72px; }
+  .services-hero h1 { font-size: clamp(43px, 12vw, 52px); }
+  .services-lead { font-size: 17px; }
+  .services-ownership-grid, .services-final-inner { grid-template-columns: 1fr; gap: 35px; }
+  .services-ownership-grid > div:last-child { font-size: 15px; }
+  .services-section-heading { display: block; margin-bottom: 28px; }
+  .services-grid { grid-template-columns: 1fr; gap: 12px; }
+  .services-card { min-height: 0; padding: 22px; }
+  .services-card h3 { margin-top: 30px; }
+  .services-card-intro { min-height: 0; }
+  .services-card ul { margin-bottom: 25px; }
+  .services-ecosystem-copy { margin-top: 35px; font-size: 18px; }
+  .services-share { right: 18px; bottom: 18px; }
+}

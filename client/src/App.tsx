@@ -115,11 +115,23 @@ function Router() {
       <Route path="/zakhybuildsai/automation-services" component={ZakhyAutomationServicesRoute} />
       <Route path="/zakhybuildsai/portfolio" component={ZakhyPortfolioRoute} />
       <Route path="/zakhybuildsai/portfolio/ralo" component={() => <ZakhyProjectRoute sourcePath="/ralo" />} />
+      <Route path="/zakhybuildsai/portfolio/ralo/content" component={() => <ZakhyProjectRoute sourcePath="/ralo/content" />} />
+      <Route path="/zakhybuildsai/portfolio/ralo/inquiries" component={() => <ZakhyProjectRoute sourcePath="/ralo/inquiries" />} />
       <Route path="/zakhybuildsai/portfolio/ms-pop-it" component={() => <ZakhyProjectRoute sourcePath="/ms-pop-it" />} />
+      <Route path="/zakhybuildsai/portfolio/ms-pop-it/content" component={() => <ZakhyProjectRoute sourcePath="/ms-pop-it/content" />} />
+      <Route path="/zakhybuildsai/portfolio/ms-pop-it/inquiries" component={() => <ZakhyProjectRoute sourcePath="/ms-pop-it/inquiries" />} />
       <Route path="/zakhybuildsai/portfolio/miami-trips-restaurants" component={() => <ZakhyProjectRoute sourcePath="/miami" />} />
+      <Route path="/zakhybuildsai/portfolio/miami-trips-restaurants/experiences" component={() => <ZakhyProjectRoute sourcePath="/miami/experiences" />} />
+      <Route path="/zakhybuildsai/portfolio/miami-trips-restaurants/inquiries" component={() => <ZakhyProjectRoute sourcePath="/miami/inquiries" />} />
       <Route path="/zakhybuildsai/portfolio/story-of-atlanta" component={() => <ZakhyProjectRoute sourcePath="/atlanta" />} />
+      <Route path="/zakhybuildsai/portfolio/story-of-atlanta/neighborhoods" component={() => <ZakhyProjectRoute sourcePath="/atlanta/neighborhoods" />} />
+      <Route path="/zakhybuildsai/portfolio/story-of-atlanta/media" component={() => <ZakhyProjectRoute sourcePath="/atlanta/media" />} />
       <Route path="/zakhybuildsai/portfolio/spillo" component={() => <ZakhyProjectRoute sourcePath="/spillo" />} />
+      <Route path="/zakhybuildsai/portfolio/spillo/content" component={() => <ZakhyProjectRoute sourcePath="/spillo/content" />} />
+      <Route path="/zakhybuildsai/portfolio/spillo/inquiries" component={() => <ZakhyProjectRoute sourcePath="/spillo/inquiries" />} />
       <Route path="/zakhybuildsai/portfolio/crunk-fit" component={() => <ZakhyProjectRoute sourcePath="/crunk-fit" />} />
+      <Route path="/zakhybuildsai/portfolio/crunk-fit/content" component={() => <ZakhyProjectRoute sourcePath="/crunk-fit/content" />} />
+      <Route path="/zakhybuildsai/portfolio/crunk-fit/inquiries" component={() => <ZakhyProjectRoute sourcePath="/crunk-fit/inquiries" />} />
       <Route path="/zakhybuildsai/about" component={ZakhyAboutRoute} />
 
       {/* Isolated Creator Business V1 routes */}
