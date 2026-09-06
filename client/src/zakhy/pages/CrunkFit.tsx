@@ -2,15 +2,15 @@ import { FormEvent, useState, type CSSProperties } from "react";
 import "./crunkfit.css";
 
 const visual = {
-  hero: "/manus-storage/crunk-fit-hero_2df060d3.jpg",
-  portrait: "/manus-storage/crunk-fit-portrait-hq_02bcec84_22410c3a.webp",
-  contentHero: "/manus-storage/crunk-fit-content-new_be3cbe61.jpg",
-  inquiriesHero: "/manus-storage/crunk-fit-inquiries-approved-laptop_0144780e.png",
-  movement: "/manus-storage/crunk-fit-movement-hq_6625caf9.png",
-  community: "/manus-storage/crunk-fit-community-hq_d6959275.png",
-  training: "/manus-storage/crunk-fit-training-hq_da6f2c42.png",
+  hero: "/zakhy-assets/crunk-fit-hero_2df060d3.jpg",
+  portrait: "/zakhy-assets/crunk-fit-portrait-hq_02bcec84_22410c3a.webp",
+  contentHero: "/zakhy-assets/crunk-fit-content-new_be3cbe61.jpg",
+  inquiriesHero: "/zakhy-assets/crunk-fit-inquiries-approved-laptop_0144780e.png",
+  movement: "/zakhy-assets/crunk-fit-movement-hq_6625caf9.png",
+  community: "/zakhy-assets/crunk-fit-community-hq_d6959275.png",
+  training: "/zakhy-assets/crunk-fit-training-hq_da6f2c42.png",
 };
-const portraitMobile = "/manus-storage/crunk-fit-portrait-hq_02bcec84-mobile_c1438ae7.webp";
+const portraitMobile = "/zakhy-assets/crunk-fit-portrait-hq_02bcec84-mobile_c1438ae7.webp";
 
 function wayImageStyle(asset: keyof typeof visual): CSSProperties {
   return {
@@ -45,7 +45,7 @@ const pathways = [
 export function CrunkFitHome() {
   return <main className="cf-page cf-home">
     <section className="cf-exact-desktop" aria-label="CRUNK FIT homepage">
-      <img src="/manus-storage/crunk-fit-home-approved-crisp_533f9b21.png" alt="CRUNK FIT Fit Fun Atlanta homepage" />
+      <img src="/zakhy-assets/crunk-fit-home-approved-crisp_533f9b21.png" alt="CRUNK FIT Fit Fun Atlanta homepage" />
       <a className="cf-reference-link cf-reference-link--logo" href="/zakhybuildsai/portfolio/crunk-fit" aria-label="CRUNK FIT Home" />
       <a className="cf-reference-link cf-reference-link--home" href="/zakhybuildsai/portfolio/crunk-fit" aria-label="Home" />
       <a className="cf-reference-link cf-reference-link--programs" href="/zakhybuildsai/portfolio/crunk-fit/content" aria-label="Programs" />
