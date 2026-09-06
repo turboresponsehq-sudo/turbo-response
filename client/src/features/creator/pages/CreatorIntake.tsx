@@ -67,6 +67,7 @@ export default function CreatorIntake() {
         source: "zakhy-creator-intake",
         sourcePath: window.location.pathname,
         utm,
+        visitorSessionToken: window.sessionStorage.getItem("zakhy_session_token") || undefined,
       };
       const response = await fetch("/api/creator/leads", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       const body = await response.json().catch(() => ({}));

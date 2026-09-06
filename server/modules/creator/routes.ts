@@ -18,6 +18,7 @@ import {
 } from "./types";
 import { processCreatorLeadEmailWorkflow } from "./emailWorkflow";
 import { creatorLeadCaptureEnabled } from "./featureGate";
+import { connectVisitorToLead } from "../visitor/repository";
 
 export const creatorRouter = Router();
 
@@ -144,6 +145,14 @@ creatorRouter.post("/creator/leads", async (req: any, res) => {
         });
       } catch (emailError) {
         console.error("[Creator] Email workflow failed after lead was stored", emailError);
+      }
+
+      if (parsed.data.visitorSessionToken) {
+        try {
+          await connectVisitorToLead(parsed.data.visitorSessionToken, lead.id);
+        } catch (visitorError) {
+          console.warn("[Creator] Visitor session connection failed (non-fatal)", visitorError);
+        }
       }
 
       return res.status(201).json({

@@ -1,4 +1,4 @@
-import { pgTable, index, bigint, bigserial, serial, integer, text, jsonb, varchar, timestamp, numeric, smallint } from "drizzle-orm/pg-core"
+import { pgTable, index, uniqueIndex, bigint, bigserial, serial, integer, text, jsonb, varchar, timestamp, numeric, smallint, boolean } from "drizzle-orm/pg-core"
 
 export const brainEmbeddings = pgTable("brain_embeddings", {
 	id: bigserial({ mode: "number" }).notNull(),
@@ -743,3 +743,42 @@ export const creatorFollowUpTasks = pgTable("creator_follow_up_tasks", {
 
 export type CreatorLead = typeof creatorLeads.$inferSelect;
 export type InsertCreatorLead = typeof creatorLeads.$inferInsert;
+
+
+// ── ZAKHY LIVE VISITOR V1 ────────────────────────────────────────────────────
+// Anonymous, first-party visitor visibility. These tables never replace or
+// modify consumer records and only connect to a Creator lead after submission.
+export const zakhyVisitorSessions = pgTable("zakhy_visitor_sessions", {
+	id: bigserial({ mode: "number" }).primaryKey(),
+	visitorToken: varchar("visitor_token", { length: 128 }).notNull(),
+	sessionToken: varchar("session_token", { length: 128 }).notNull(),
+	entryRoute: varchar("entry_route", { length: 500 }).notNull(),
+	currentRoute: varchar("current_route", { length: 500 }).notNull(),
+	referrer: varchar({ length: 1000 }),
+	source: varchar({ length: 100 }),
+	utmSource: varchar("utm_source", { length: 255 }),
+	utmMedium: varchar("utm_medium", { length: 255 }),
+	utmCampaign: varchar("utm_campaign", { length: 255 }),
+	deviceType: varchar("device_type", { length: 20 }).$type<"mobile" | "tablet" | "desktop">().notNull(),
+	returning: boolean("returning").default(false).notNull(),
+	creatorLeadId: bigint("creator_lead_id", { mode: "number" }),
+	startedAt: timestamp("started_at", { mode: "string", withTimezone: true }).defaultNow().notNull(),
+	lastSeenAt: timestamp("last_seen_at", { mode: "string", withTimezone: true }).defaultNow().notNull(),
+}, (table) => [
+	uniqueIndex("zakhy_visitor_sessions_visitor_token_unique").on(table.visitorToken),
+	uniqueIndex("zakhy_visitor_sessions_session_token_unique").on(table.sessionToken),
+	index("idx_zakhy_visitor_sessions_last_seen").on(table.lastSeenAt),
+	index("idx_zakhy_visitor_sessions_creator_lead").on(table.creatorLeadId),
+]);
+
+export const zakhyVisitorEvents = pgTable("zakhy_visitor_events", {
+	id: bigserial({ mode: "number" }).primaryKey(),
+	sessionId: bigint("session_id", { mode: "number" }).notNull(),
+	eventType: varchar("event_type", { length: 50 }).notNull(),
+	route: varchar({ length: 500 }).notNull(),
+	metadata: jsonb().notNull().default({}),
+	createdAt: timestamp("created_at", { mode: "string", withTimezone: true }).defaultNow().notNull(),
+}, (table) => [
+	index("idx_zakhy_visitor_events_session_created").on(table.sessionId, table.createdAt),
+	index("idx_zakhy_visitor_events_type_created").on(table.eventType, table.createdAt),
+]);

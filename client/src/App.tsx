@@ -46,12 +46,22 @@ import AdminCommandCenter from "./pages/AdminCommandCenter";
 import CaseBrief from "./pages/CaseBrief";
 import CreatorIntake from "./features/creator/pages/CreatorIntake";
 import CreatorLeadsAdmin from "./features/creator/pages/CreatorLeadsAdmin";
+import LiveVisitorsAdmin from "./features/visitor/LiveVisitorsAdmin";
+import ZakhyVisitorTracker from "./components/ZakhyVisitorTracker";
 import ZakhyBuildsAIHub, { ZakhyAboutRoute, ZakhyAutomationServicesRoute, ZakhyPortfolioRoute, ZakhyServicesRoute, ZakhyProjectRoute } from "./pages/ZakhyBuildsAIHub";
 
 function ProtectedCreatorLeads() {
   return (
     <AdminSessionGate>
       <CreatorLeadsAdmin />
+    </AdminSessionGate>
+  );
+}
+
+function ProtectedLiveVisitors() {
+  return (
+    <AdminSessionGate>
+      <LiveVisitorsAdmin />
     </AdminSessionGate>
   );
 }
@@ -139,6 +149,7 @@ function Router() {
       {/* Admin workflow routes - restored to specification */}
       <Route path="/admin/command-center" component={AdminCommandCenter} />
       <Route path="/admin/creator/leads" component={ProtectedCreatorLeads} />
+      <Route path="/admin/zakhy/live-visitors" component={ProtectedLiveVisitors} />
       <Route path="/admin/knowledge-base/import" component={OAuthKnowledgeBaseImport} />
       <Route path="/admin/knowledge-base" component={OAuthKnowledgeBase} />
       <Route path="/admin/brain" component={OAuthBrain} />
@@ -181,6 +192,7 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <Router />
+            {(window.location.pathname.startsWith("/zakhybuildsai") || window.location.pathname === "/creator/start") && <ZakhyVisitorTracker />}
             {!window.location.pathname.startsWith("/zakhybuildsai") && <FloatingChatWidget />}
           </TooltipProvider>
         </ThemeProvider>

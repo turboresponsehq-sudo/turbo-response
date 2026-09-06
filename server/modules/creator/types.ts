@@ -114,6 +114,7 @@ export const creatorLeadInputSchema = z.object({
     medium: shortText(255).optional(),
     campaign: shortText(255).optional(),
   }).optional(),
+  visitorSessionToken: z.string().regex(/^[A-Za-z0-9_-]{16,128}$/).optional(),
   website: z.string().max(0).optional(),
 });
 
