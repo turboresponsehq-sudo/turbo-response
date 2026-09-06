@@ -4,7 +4,7 @@ import ShareProjectButton from "../components/ShareProjectButton";
 import LazyBackground from "../components/LazyBackground";
 
 const spilloAssets = {
-  hero: "/manus-storage/spillo-hero-artist_a25123a3.jpg",
+  hero: "/zakhy-assets/spillo-hero-artist_a25123a3.jpg",
   music: "/manus-storage/spillo-music-hq_0dde61f6.png",
   podcast: "/manus-storage/spillo-podcast-hq_7b01aa85.png",
   merch: "/manus-storage/spillo-merch-hq_50bfb3bf.png",
