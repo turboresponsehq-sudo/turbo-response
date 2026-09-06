@@ -17,18 +17,18 @@ function ZakhyBuildsAIFrame({ sourcePath = "/" }: ZakhyBuildsAIHubProps) {
 
   return (
     <main style={{ minHeight: "100vh", width: "100%", background: "#fff" }}>
+      {isProject && (
+        <nav className="zakhy-project-navigation" aria-label="Project navigation">
+          <a href="/zakhybuildsai/portfolio">Back to Portfolio</a>
+          <a href="/zakhybuildsai">Back to Home</a>
+        </nav>
+      )}
       <iframe
         title="Zakhy Builds AI"
         src={`${ZAKHY_DEMO_BASE}${normalizedPath}`}
         style={{ border: 0, display: "block", height: "100vh", minHeight: "760px", width: "100%" }}
         referrerPolicy="strict-origin-when-cross-origin"
       />
-      {isProject && (
-        <nav aria-label="Project navigation" style={{ position: "fixed", bottom: 20, left: 20, zIndex: 10, display: "flex", gap: 8, padding: 8, borderRadius: 6, background: "rgba(15, 23, 42, .94)", boxShadow: "0 10px 28px rgba(15, 23, 42, .18)" }}>
-          <a href="/zakhybuildsai/portfolio" style={{ color: "#fff", fontSize: 12, fontWeight: 800, padding: "10px 12px", textDecoration: "none" }}>Back to Portfolio</a>
-          <a href="/zakhybuildsai" style={{ color: "#fff", fontSize: 12, fontWeight: 800, padding: "10px 12px", textDecoration: "none" }}>Back to Home</a>
-        </nav>
-      )}
       {sourcePath === "/" && <><style dangerouslySetInnerHTML={{ __html: turboChatbotStyles }} /><TurboChatbot /></>}
     </main>
   );
