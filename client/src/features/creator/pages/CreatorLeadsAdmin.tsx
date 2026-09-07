@@ -15,6 +15,40 @@ type LeadDetail = Lead & { goals?: string; challenges?: string; automation_wish?
 const statuses: Status[] = ["new", "reviewing", "follow_up", "converted", "closed"];
 const label = (status: string) => status.replace("_", " ");
 
+type TaskTemplate = {
+  id: string;
+  label: string;
+  taskType: string;
+  businessDays: number;
+  detail: string;
+};
+
+const taskTemplates: TaskTemplate[] = [
+  { id: "review_lead", label: "Review Lead", taskType: "review_lead", businessDays: 0, detail: "Review goals, offer fit, budget, timing, links, assets, and decision-maker. Record the qualification decision in an internal note." },
+  { id: "initial_contact", label: "Initial Contact", taskType: "initial_contact", businessDays: 1, detail: "Prepare a personal, manual-send response. Confirm the primary goal, current links, launch timing, budget range, available assets, and decision-maker." },
+  { id: "discovery_call", label: "Discovery Call", taskType: "discovery_call", businessDays: 0, detail: "Prepare discovery questions: 6–12 month goal, manual work, revenue, audience channels, assets, launch requirements, and approval process." },
+  { id: "send_offer", label: "Send Offer", taskType: "send_offer", businessDays: 0, detail: "Prepare the selected offer, deliverables, timeline, review rounds, exclusions, client responsibilities, and payment terms for human approval." },
+  { id: "first_follow_up", label: "First Follow-Up", taskType: "first_follow_up", businessDays: 2, detail: "Draft a concise manual check-in referencing the original goal and asking whether the project is still active. Do not send automatically." },
+  { id: "final_follow_up", label: "Final Follow-Up", taskType: "final_follow_up", businessDays: 5, detail: "Draft a respectful final manual check-in with an easy reply path. Do not close the lead automatically." },
+  { id: "onboarding_handoff", label: "Onboarding Handoff", taskType: "onboarding_handoff", businessDays: 0, detail: "Prepare the onboarding checklist: brand assets, links, domain, offers, CTA, access requirements, approval contact, and project scope." },
+];
+
+function addBusinessDays(date: Date, businessDays: number) {
+  const next = new Date(date);
+  let remaining = businessDays;
+  while (remaining > 0) {
+    next.setDate(next.getDate() + 1);
+    if (next.getDay() !== 0 && next.getDay() !== 6) remaining -= 1;
+  }
+  return next;
+}
+
+function dateTimeLocalValue(date: Date) {
+  const offset = date.getTimezoneOffset();
+  const local = new Date(date.getTime() - offset * 60_000);
+  return local.toISOString().slice(0, 16);
+}
+
 export default function CreatorLeadsAdmin() {
   const [, setLocation] = useLocation();
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -23,6 +57,9 @@ export default function CreatorLeadsAdmin() {
   const [error, setError] = useState("");
   const [note, setNote] = useState("");
   const [task, setTask] = useState("");
+  const [taskType, setTaskType] = useState("follow_up");
+  const [taskDueAt, setTaskDueAt] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState("");
   const [saving, setSaving] = useState(false);
   const [includeInternalTests, setIncludeInternalTests] = useState(false);
 
@@ -81,12 +118,22 @@ export default function CreatorLeadsAdmin() {
     event.preventDefault(); if (!selected || !task.trim()) return;
     setSaving(true);
     try {
-      const response = await request(`/api/creator/admin/leads/${selected.id}/tasks`, { method: "POST", body: JSON.stringify({ taskType: "follow_up", taskDetail: task }) });
+      const dueAt = taskDueAt ? new Date(taskDueAt).toISOString() : undefined;
+      const response = await request(`/api/creator/admin/leads/${selected.id}/tasks`, { method: "POST", body: JSON.stringify({ taskType, taskDetail: task, dueAt }) });
       const body = await response.json();
       if (!response.ok) throw new Error(body.error || "Follow-up save failed.");
-      setSelected((current) => current ? { ...current, tasks: [body.task, ...current.tasks] } : current); setTask(""); await loadLeads();
+      setSelected((current) => current ? { ...current, tasks: [body.task, ...current.tasks] } : current); setTask(""); setTaskType("follow_up"); setTaskDueAt(""); setSelectedTemplate(""); await loadLeads();
     } catch (saveError) { setError(saveError instanceof Error ? saveError.message : "Follow-up save failed."); }
     finally { setSaving(false); }
+  }
+
+  function applyTaskTemplate(templateId: string) {
+    setSelectedTemplate(templateId);
+    const template = taskTemplates.find((item) => item.id === templateId);
+    if (!template) return;
+    setTaskType(template.taskType);
+    setTask(template.detail);
+    setTaskDueAt(dateTimeLocalValue(addBusinessDays(new Date(), template.businessDays)));
   }
 
   useEffect(() => { loadLeads(); }, [includeInternalTests]);
@@ -103,7 +150,7 @@ export default function CreatorLeadsAdmin() {
         <div className="creator-detail-grid"><article><span>Package</span><strong>{selected.packageInterest || "Not sure yet"}</strong></article><article><span>Budget</span><strong>{selected.budgetRange || "Not provided"}</strong></article></div>
         <CreatorBusinessAssessment lead={selected} />
         <section className="creator-detail-section"><h3>Project priority</h3><p>{selected.project_priority || "Not provided"}</p><h3>Goals</h3><p>{selected.goals || "Not provided"}</p><h3>Challenges</h3><p>{selected.challenges || "Not provided"}</p></section>
-        <section className="creator-detail-section"><h3>Next actions</h3><div className="creator-mini-list">{selected.tasks.length ? selected.tasks.map((item) => <p key={item.id}><b>{label(item.status)}</b> · {item.task_detail || item.task_type}</p>) : <p>No follow-up scheduled.</p>}</div><form className="creator-inline-form" onSubmit={addTask}><input value={task} onChange={(event) => setTask(event.target.value)} placeholder="Add a manual follow-up action" /><button disabled={saving}>Add</button></form></section>
+        <section className="creator-detail-section"><h3>Next actions</h3><div className="creator-mini-list">{selected.tasks.length ? selected.tasks.map((item) => <p key={item.id}><b>{label(item.status)}</b> · {item.task_detail || item.task_type}</p>) : <p>No follow-up scheduled.</p>}</div><form className="creator-task-template-form" onSubmit={addTask}><label className="creator-template-label">Task template<select aria-label="Task template" value={selectedTemplate} onChange={(event) => applyTaskTemplate(event.target.value)}><option value="">Manual task</option>{taskTemplates.map((template) => <option value={template.id} key={template.id}>{template.label}</option>)}</select></label><div className="creator-task-fields"><label>Task type<input value={taskType} onChange={(event) => setTaskType(event.target.value)} placeholder="Task type" /></label><label>Suggested due date<input type="datetime-local" value={taskDueAt} onChange={(event) => setTaskDueAt(event.target.value)} /></label></div><label>Task detail<textarea value={task} onChange={(event) => setTask(event.target.value)} placeholder="Add a manual follow-up action" /></label><p className="creator-task-safety">Templates only pre-fill a manual internal task. No customer message is sent automatically.</p><button type="submit" disabled={saving}>Create manual task</button></form></section>
         <section className="creator-detail-section"><h3>Internal notes</h3><div className="creator-mini-list">{selected.notes.length ? selected.notes.map((item) => <p key={item.id}>{item.note}</p>) : <p>No notes yet.</p>}</div><form className="creator-inline-form" onSubmit={addNote}><input value={note} onChange={(event) => setNote(event.target.value)} placeholder="Add an internal note" /><button disabled={saving}>Save</button></form></section>
       </> : <div className="creator-empty"><p>Select a lead to review its project context, add notes, and schedule manual follow-up.</p></div>}</aside>
     </section>
