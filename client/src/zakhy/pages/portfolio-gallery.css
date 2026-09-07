@@ -24,6 +24,7 @@ html:has(.portfolio-gallery-page), body:has(.portfolio-gallery-page), #root:has(
 .portfolio-gallery-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px; }
 .portfolio-project-card { display: block; color: inherit; text-decoration: none; }
 .portfolio-project-thumb { aspect-ratio: 16 / 10; min-height: 230px; position: relative; overflow: hidden; border: 1px solid #cbd5e1; background-color: #e5e7eb; background-repeat: no-repeat; background-size: cover; transition: border-color 180ms var(--ease), transform 180ms var(--ease), background-size 240ms var(--ease); }
+.portfolio-project-thumb > img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; }
 .portfolio-project-thumb::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(0,0,0,.62), rgba(0,0,0,.02) 58%); }
 .portfolio-project-thumb span, .portfolio-project-thumb b { position: absolute; z-index: 1; font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 .portfolio-project-thumb span { top: 14px; left: 15px; color: #fff; }
