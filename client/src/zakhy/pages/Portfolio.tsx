@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { ArrowUpRight, Brand, MenuIcon } from "../components/Brand";
 import { zakhyDemoSite } from "../config";
-import LazyBackground from "../components/LazyBackground";
 import "./portfolio-gallery.css";
 
 const projects = [
@@ -55,6 +54,6 @@ export default function PortfolioPage() {
       <div className="nav-shell"><a href={zakhyDemoSite.productionHomeUrl} target="_top" rel="noreferrer"><Brand light /></a><nav id="portfolio-navigation" className={`desktop-nav portfolio-gallery-nav ${menuOpen ? "desktop-nav--open" : ""}`} aria-label="Main navigation">{zakhyDemoSite.navigation.map((item) => <a key={item.href} href={item.href} target="_top" rel="noreferrer" onClick={() => setMenuOpen(false)}>{item.label}</a>)}<button className="mobile-book-link" type="button" onClick={openBooking}>Inquiries <ArrowUpRight /></button></nav><div className="nav-actions"><button className="nav-book portfolio-gallery-book" type="button" onClick={openBooking}>Inquiries <ArrowUpRight /></button><button className="menu-toggle" type="button" onClick={() => setMenuOpen((value) => !value)} aria-expanded={menuOpen} aria-controls="portfolio-navigation" aria-label="Toggle navigation"><MenuIcon open={menuOpen} /></button></div></div>
     </header>
     <section className="portfolio-gallery-hero"><div className="page-shell"><p className="portfolio-gallery-kicker">Zakhy Builds AI / Portfolio</p><h1>Selected <em>builds.</em></h1><p>Websites and creator-business concepts built by Zakhy Builds AI.</p></div></section>
-    <section className="portfolio-gallery-grid-section"><div className="page-shell"><div className="portfolio-gallery-grid">{projects.map((project, index) => <a className="portfolio-project-card" href={project.href} target="_top" rel="noreferrer" key={project.name}><LazyBackground className="portfolio-project-thumb" eager={index < 3} backgroundImage={`url(${project.image})`} style={{ backgroundPosition: project.position }}><span>0{index + 1}</span><b>View project <ArrowUpRight /></b></LazyBackground><div className="portfolio-project-meta"><h2>{project.name}</h2><p>{project.type}</p><span>View project <ArrowUpRight /></span></div></a>)}</div></div></section>
+    <section className="portfolio-gallery-grid-section"><div className="page-shell"><div className="portfolio-gallery-grid">{projects.map((project, index) => <a className="portfolio-project-card" href={project.href} target="_top" rel="noreferrer" key={project.name}><div className="portfolio-project-thumb"><img src={project.image} alt={`${project.name} project preview`} width={1600} height={1000} loading={index < 3 ? "eager" : "lazy"} decoding="async" fetchPriority={index < 3 ? "high" : "low"} style={{ objectPosition: project.position }} /><span>0{index + 1}</span><b>View project <ArrowUpRight /></b></div><div className="portfolio-project-meta"><h2>{project.name}</h2><p>{project.type}</p><span>View project <ArrowUpRight /></span></div></a>)}</div></div></section>
   </main>;
 }
