@@ -132,6 +132,25 @@ function Router() {
       <Route path="/zakhybuildsai/portfolio/crunk-fit" component={() => <ZakhyProjectRoute sourcePath="/crunk-fit" />} />
       <Route path="/zakhybuildsai/portfolio/crunk-fit/content" component={() => <ZakhyProjectRoute sourcePath="/crunk-fit/content" />} />
       <Route path="/zakhybuildsai/portfolio/crunk-fit/inquiries" component={() => <ZakhyProjectRoute sourcePath="/crunk-fit/inquiries" />} />
+      {/* Direct shareable aliases for approved creator project links. */}
+      <Route path="/ralo" component={() => <ZakhyProjectRoute sourcePath="/ralo" />} />
+      <Route path="/ralo/content" component={() => <ZakhyProjectRoute sourcePath="/ralo/content" />} />
+      <Route path="/ralo/inquiries" component={() => <ZakhyProjectRoute sourcePath="/ralo/inquiries" />} />
+      <Route path="/ms-pop-it" component={() => <ZakhyProjectRoute sourcePath="/ms-pop-it" />} />
+      <Route path="/ms-pop-it/content" component={() => <ZakhyProjectRoute sourcePath="/ms-pop-it/content" />} />
+      <Route path="/ms-pop-it/inquiries" component={() => <ZakhyProjectRoute sourcePath="/ms-pop-it/inquiries" />} />
+      <Route path="/spillo" component={() => <ZakhyProjectRoute sourcePath="/spillo" />} />
+      <Route path="/spillo/content" component={() => <ZakhyProjectRoute sourcePath="/spillo/content" />} />
+      <Route path="/spillo/inquiries" component={() => <ZakhyProjectRoute sourcePath="/spillo/inquiries" />} />
+      <Route path="/miami" component={() => <ZakhyProjectRoute sourcePath="/miami" />} />
+      <Route path="/miami/experiences" component={() => <ZakhyProjectRoute sourcePath="/miami/experiences" />} />
+      <Route path="/miami/inquiries" component={() => <ZakhyProjectRoute sourcePath="/miami/inquiries" />} />
+      <Route path="/atlanta" component={() => <ZakhyProjectRoute sourcePath="/atlanta" />} />
+      <Route path="/atlanta/neighborhoods" component={() => <ZakhyProjectRoute sourcePath="/atlanta/neighborhoods" />} />
+      <Route path="/atlanta/media" component={() => <ZakhyProjectRoute sourcePath="/atlanta/media" />} />
+      <Route path="/crunk-fit" component={() => <ZakhyProjectRoute sourcePath="/crunk-fit" />} />
+      <Route path="/crunk-fit/content" component={() => <ZakhyProjectRoute sourcePath="/crunk-fit/content" />} />
+      <Route path="/crunk-fit/inquiries" component={() => <ZakhyProjectRoute sourcePath="/crunk-fit/inquiries" />} />
       <Route path="/zakhybuildsai/about" component={ZakhyAboutRoute} />
 
       {/* Isolated Creator Business V1 routes */}
