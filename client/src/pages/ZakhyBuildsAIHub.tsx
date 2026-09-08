@@ -1,5 +1,5 @@
 import "../zakhy/styles.css";
-import { HomePage, SimpleRoutePage } from "../zakhy/StandaloneApp";
+import { SimpleRoutePage } from "../zakhy/StandaloneApp";
 import AutomationServicesPage from "../zakhy/pages/AutomationServices";
 import ZakhyServicesPage from "../zakhy/pages/ZakhyServices";
 import PortfolioPage from "../zakhy/pages/Portfolio";
@@ -16,9 +16,10 @@ import MiamiInquiries from "../zakhy/pages/MiamiInquiries";
 import { AtlantaHome, AtlantaMedia, AtlantaNeighborhoods } from "../zakhy/pages/Atlanta";
 import { CrunkFitHome, CrunkFitContent, CrunkFitInquiries } from "../zakhy/pages/CrunkFit";
 import { zakhyDemoSite } from "../zakhy/config";
+import CreatorsAutomationHomepage from "../zakhy/CreatorsAutomationHomepage";
 
 export function ZakhyBuildsAIHub() {
-  return <HomePage />;
+  return <CreatorsAutomationHomepage />;
 }
 
 export default ZakhyBuildsAIHub;

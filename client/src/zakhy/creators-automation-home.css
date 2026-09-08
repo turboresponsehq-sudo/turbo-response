@@ -1,0 +1,130 @@
+.creators-automation-home {
+  min-height: 100vh;
+  background: #050505;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+.creators-reference-canvas {
+  position: relative;
+  width: 100%;
+  line-height: 0;
+  background: #050505;
+}
+
+.creators-reference-canvas picture,
+.creators-reference-canvas img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.creators-hotspot {
+  position: absolute;
+  display: block;
+  color: transparent;
+  background: transparent;
+  line-height: normal;
+  text-indent: -9999px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.creators-hotspot:focus-visible,
+.creators-menu-trigger:focus-visible,
+.creators-drawer-close:focus-visible {
+  outline: 3px solid #ffdc42;
+  outline-offset: 4px;
+}
+
+.creators-desktop-hotspots,
+.creators-mobile-hotspots,
+.creators-cta-hotspots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.creators-desktop-hotspots .creators-hotspot,
+.creators-cta-hotspots .creators-hotspot,
+.creators-mobile-hotspots > * {
+  pointer-events: auto;
+}
+
+.hotspot-home { left: 27.7%; top: 3.8%; width: 5%; height: 4.5%; }
+.hotspot-services { left: 33.4%; top: 3.8%; width: 6.8%; height: 4.5%; }
+.hotspot-about { left: 41.6%; top: 3.8%; width: 5%; height: 4.5%; }
+.hotspot-portfolio { left: 47.6%; top: 3.8%; width: 7%; height: 4.5%; }
+.hotspot-pricing { left: 56.1%; top: 3.8%; width: 5.5%; height: 4.5%; }
+.hotspot-contact { left: 63%; top: 3.8%; width: 5.5%; height: 4.5%; }
+.hotspot-desktop-book { right: 2.8%; top: 2%; width: 11.5%; height: 7.5%; }
+.hotspot-book-cta { left: 5.2%; top: 56%; width: 16%; height: 6.7%; }
+.hotspot-services-cta { left: 22.1%; top: 56%; width: 15.5%; height: 6.7%; }
+
+.creators-mobile-hotspots { display: none; }
+.creators-mobile-drawer { display: none; }
+
+@media (max-width: 700px) {
+  .creators-desktop-hotspots { display: none; }
+  .creators-mobile-hotspots { display: block; }
+  .creators-cta-hotspots { display: block; }
+
+  .hotspot-mobile-services { left: 57%; top: 2.1%; width: 15%; height: 4%; }
+  .hotspot-mobile-portfolio { left: 73%; top: 2.1%; width: 16%; height: 4%; }
+  .hotspot-mobile-about { left: 88%; top: 2.1%; width: 10%; height: 4%; }
+
+  .creators-menu-trigger {
+    position: absolute;
+    right: 3.5%;
+    top: 1.8%;
+    width: 8.5%;
+    height: 5.5%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+
+  .hotspot-book-cta { left: 6%; top: 69%; width: 43%; height: 5.8%; }
+  .hotspot-services-cta { left: 52%; top: 69%; width: 42%; height: 5.8%; }
+
+  .creators-mobile-drawer {
+    position: fixed;
+    z-index: 20;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 24px;
+    padding: 36px;
+    background: rgba(5, 5, 5, .97);
+    color: #fff;
+  }
+
+  .creators-mobile-drawer .creators-hotspot {
+    position: static;
+    width: auto;
+    height: auto;
+    color: #fff;
+    text-indent: 0;
+    overflow: visible;
+    font: 800 28px/1 Arial, sans-serif;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .creators-drawer-close {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    font-size: 42px;
+    line-height: 1;
+    cursor: pointer;
+  }
+}
