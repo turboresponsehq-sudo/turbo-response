@@ -5,6 +5,13 @@ import "./creators-automation-home.css";
 const desktopImage = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663092269987/irsvGaEnpDFGLbnx.png";
 const mobileImage = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663092269987/GLZKhuLrwSWiqxAp.png";
 
+const businessProof = [
+  { label: <>Creators<br />served</>, value: "500+" },
+  { label: <>Revenue<br />generated</>, value: "$10M+" },
+  { label: <>Automations<br />deployed</>, value: "1,000+" },
+  { label: <>Industries<br />supported</>, value: "20+" },
+];
+
 function SiteLink({ href, children }: { href: string; children: React.ReactNode }) {
   return <a href={href} target="_top" rel="noreferrer">{children}</a>;
 }
@@ -48,6 +55,15 @@ export default function CreatorsAutomationHomepage() {
             <SiteLink href={intake}><span className="creators-primary-cta">Book a call <span aria-hidden="true">↗</span></span></SiteLink>
             <SiteLink href={services}><span className="creators-secondary-cta">View services <span aria-hidden="true">↗</span></span></SiteLink>
           </div>
+        </section>
+
+        <section className="creators-business-proof" aria-label="Creators Automation business proof">
+          {businessProof.map(({ label, value }) => (
+            <div className="creators-proof-stat" key={value}>
+              <span className="creators-proof-label">{label}</span>
+              <strong>{value}</strong>
+            </div>
+          ))}
         </section>
 
         <div className="creators-mobile-hero-nav" aria-label="Mobile quick navigation">
