@@ -37,6 +37,64 @@
 .creators-mobile-drawer a { color: #fff; font: 800 28px/1 Arial, sans-serif; letter-spacing: .08em; text-decoration: none; text-transform: uppercase; }
 .creators-drawer-close { position: absolute; top: 18px; right: 22px; width: 44px; height: 44px; border: 0; background: transparent; color: #fff; font-size: 42px; cursor: pointer; }
 .creators-site-header a:focus-visible, .creators-hero-actions a:focus-visible, .creators-mobile-hero-nav a:focus-visible, .creators-menu-trigger:focus-visible, .creators-drawer-close:focus-visible { outline: 3px solid #ffdb3b; outline-offset: 4px; }
+
+.zakhy-intro-section, .zakhy-services-section, .zakhy-revenue-section, .zakhy-final-cta {
+  position: relative;
+  font-family: Arial, sans-serif;
+  line-height: normal;
+}
+.zakhy-section-kicker {
+  display: inline-block;
+  color: #ef1526;
+  font: 800 12px/1 Arial, sans-serif;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+.zakhy-intro-section {
+  padding: clamp(68px, 9vw, 150px) max(5.5vw, 24px);
+  color: #fff;
+  background: radial-gradient(circle at 80% 10%, rgba(239,21,38,.2), transparent 31%), #070707;
+  border-top: 1px solid rgba(255,255,255,.09);
+}
+.zakhy-intro-grid { display: grid; grid-template-columns: minmax(0, 1.22fr) minmax(280px, .78fr); gap: clamp(36px, 8vw, 150px); align-items: end; max-width: 1400px; margin: 25px auto 0; }
+.zakhy-intro-grid h2, .zakhy-section-heading h2, .zakhy-revenue-copy h2, .zakhy-final-cta h2 { margin: 0; font: 900 clamp(38px, 5vw, 80px)/.93 Arial Black, Arial, sans-serif; letter-spacing: -.065em; text-transform: uppercase; }
+.zakhy-intro-grid h2 span, .zakhy-revenue-copy h2 span { color: #ef1526; }
+.zakhy-intro-grid p { max-width: 490px; margin: 0 0 5px; color: #d8d8d8; font: 400 clamp(17px, 1.45vw, 23px)/1.42 Arial, sans-serif; }
+
+.zakhy-services-section { padding: clamp(68px, 9vw, 150px) max(5.5vw, 24px); color: #0a0a0a; background: #f7f7f7; }
+.zakhy-section-heading { display: flex; justify-content: space-between; gap: 40px; align-items: end; max-width: 1400px; margin: 0 auto clamp(38px, 5vw, 76px); }
+.zakhy-section-heading h2 { margin-top: 17px; color: #0a0a0a; }
+.zakhy-section-heading p { max-width: 290px; margin: 0; color: #555; font: 600 17px/1.35 Arial, sans-serif; text-align: right; }
+.zakhy-service-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; max-width: 1400px; margin: 0 auto; }
+.zakhy-service-card { position: relative; min-height: 380px; padding: 32px; overflow: hidden; color: #fff; background: #090909; border: 1px solid #63101a; box-shadow: inset 0 -100px 120px rgba(239,21,38,.12); }
+.zakhy-service-card::after { position: absolute; right: -75px; bottom: -95px; width: 220px; height: 220px; border: 1px solid rgba(239,21,38,.7); border-radius: 50%; content: ""; }
+.zakhy-service-number { display: block; color: #ef1526; font: 800 13px/1 Arial, sans-serif; letter-spacing: .16em; }
+.zakhy-service-card h3 { position: relative; z-index: 1; max-width: 360px; margin: 78px 0 17px; font: 900 clamp(28px, 2.7vw, 44px)/.9 Arial Black, Arial, sans-serif; letter-spacing: -.06em; text-transform: uppercase; }
+.zakhy-service-card p { position: relative; z-index: 1; max-width: 390px; margin: 0; color: #d9d9d9; font: 400 17px/1.42 Arial, sans-serif; }
+.zakhy-service-card a { position: absolute; z-index: 2; bottom: 32px; left: 32px; color: #fff; font: 800 13px/1 Arial, sans-serif; letter-spacing: .08em; text-decoration: none; text-transform: uppercase; }
+.zakhy-service-card a b, .zakhy-revenue-cta b, .zakhy-final-cta a b { margin-left: 10px; color: #ef1526; font-size: 1.35em; }
+.zakhy-service-card a:hover { color: #ff7882; }
+
+.zakhy-revenue-section { display: grid; grid-template-columns: minmax(300px, .92fr) minmax(0, 1.08fr); gap: clamp(40px, 8vw, 130px); align-items: center; padding: clamp(74px, 11vw, 174px) max(5.5vw, 24px); color: #fff; background: #090909; }
+.zakhy-revenue-visual { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; padding: 24px 0; color: #fff; font: 900 clamp(22px, 2.5vw, 42px)/1 Arial Black, Arial, sans-serif; letter-spacing: -.04em; text-transform: uppercase; }
+.zakhy-revenue-visual span, .zakhy-revenue-visual strong { display: inline-flex; align-items: center; min-height: 57px; padding: 0 20px; border: 1px solid rgba(255,255,255,.25); background: rgba(0,0,0,.18); }
+.zakhy-revenue-visual i { width: 3px; height: 25px; margin-left: 32px; background: #ef1526; }
+.zakhy-revenue-visual strong { color: #fff; border-color: #ef1526; background: #ef1526; }
+.zakhy-revenue-copy { max-width: 700px; }
+.zakhy-revenue-copy h2 { margin-top: 18px; }
+.zakhy-revenue-copy p { margin: 29px 0 36px; color: #dedede; font: 400 clamp(17px, 1.45vw, 22px)/1.45 Arial, sans-serif; }
+.zakhy-revenue-copy a, .zakhy-final-cta a { display: inline-flex; color: #fff; text-decoration: none; }
+.zakhy-revenue-cta { display: inline-flex; align-items: center; min-height: 54px; padding: 0 24px; background: #ef1526; font: 800 14px/1 Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; transition: transform .16s ease-out, background .16s ease-out; }
+.zakhy-revenue-cta b { color: #fff; }
+.zakhy-revenue-cta:hover, .zakhy-final-cta a:hover { transform: translateY(-2px); background: #ff3546; }
+
+.zakhy-final-cta { padding: clamp(78px, 11vw, 170px) 24px; color: #fff; text-align: center; background: radial-gradient(circle at 50% 100%, rgba(239,21,38,.38), transparent 46%), #050505; }
+.zakhy-final-cta h2 { margin: 24px 0 18px; }
+.zakhy-final-cta p { margin: 0 0 34px; color: #d0d5df; font: 400 clamp(17px, 1.45vw, 22px)/1.4 Arial, sans-serif; }
+.zakhy-final-cta a { align-items: center; justify-content: center; min-height: 57px; padding: 0 27px; background: #ef1526; font: 800 14px/1 Arial, sans-serif; letter-spacing: .09em; text-transform: uppercase; }
+.zakhy-final-cta a b { color: #fff; }
+.zakhy-revenue-copy a:focus-visible, .zakhy-final-cta a:focus-visible, .zakhy-service-card a:focus-visible { outline: 3px solid #fff; outline-offset: 5px; }
+
 @media (max-width: 700px) {
   /* The approved mobile artwork already contains the complete visual hierarchy. */
   .creators-copy-mask { display: none; }
@@ -56,4 +114,22 @@
   .creators-business-proof { display: none; }
   .creators-mobile-hero-nav { position: absolute; z-index: 3; top: 2.25%; right: 15.2%; display: flex; width: 45%; height: 4.5%; gap: 0; font-size: 0; }
   .creators-mobile-hero-nav a { display: block; flex: 1; color: transparent; text-decoration: none; }
+  .zakhy-intro-section, .zakhy-services-section { padding: 70px 24px; }
+  .zakhy-intro-grid { grid-template-columns: 1fr; gap: 27px; margin-top: 22px; }
+  .zakhy-intro-grid h2, .zakhy-section-heading h2, .zakhy-revenue-copy h2, .zakhy-final-cta h2 { font-size: clamp(35px, 10.5vw, 47px); }
+  .zakhy-intro-grid p { font-size: 17px; }
+  .zakhy-section-heading { display: block; margin-bottom: 35px; }
+  .zakhy-section-heading h2 { margin-top: 14px; }
+  .zakhy-section-heading p { margin-top: 20px; text-align: left; }
+  .zakhy-service-grid { grid-template-columns: 1fr; gap: 14px; }
+  .zakhy-service-card { min-height: 335px; padding: 26px; }
+  .zakhy-service-card h3 { margin-top: 61px; font-size: 34px; }
+  .zakhy-service-card p { font-size: 16px; }
+  .zakhy-service-card a { bottom: 27px; left: 26px; }
+  .zakhy-revenue-section { grid-template-columns: 1fr; gap: 35px; padding: 70px 24px; }
+  .zakhy-revenue-visual { gap: 10px; padding: 0; font-size: 24px; }
+  .zakhy-revenue-visual span, .zakhy-revenue-visual strong { min-height: 47px; padding: 0 15px; }
+  .zakhy-revenue-visual i { height: 17px; margin-left: 25px; }
+  .zakhy-revenue-copy p { margin: 24px 0 30px; font-size: 17px; }
+  .zakhy-final-cta { padding: 78px 24px; }
 }
