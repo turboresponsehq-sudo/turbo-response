@@ -17,6 +17,7 @@ import { AtlantaHome, AtlantaMedia, AtlantaNeighborhoods } from "../zakhy/pages/
 import { CrunkFitHome, CrunkFitContent, CrunkFitInquiries } from "../zakhy/pages/CrunkFit";
 import { zakhyDemoSite } from "../zakhy/config";
 import CreatorsAutomationHomepage from "../zakhy/CreatorsAutomationHomepage";
+import LearnAiPage from "../zakhy/pages/LearnAi";
 
 export function ZakhyBuildsAIHub() {
   return <CreatorsAutomationHomepage />;
@@ -38,6 +39,10 @@ export function ZakhyPortfolioRoute() {
 
 export function ZakhyAboutRoute() {
   return <SimpleRoutePage eyebrow="THE ZAKHY BUILDS AI APPROACH" title={<>CULTURE FIRST.<br /><em>BUSINESS SECOND.</em></>} body="We build practical AI systems that help creators organize the business behind their creativity and grow with confidence." button="MAKE AN INQUIRY" onBooking={() => window.location.assign(zakhyDemoSite.creatorIntakeUrl)} />;
+}
+
+export function ZakhyLearnAiRoute() {
+  return <LearnAiPage />;
 }
 
 export function ZakhyProjectRoute({ sourcePath }: { sourcePath: string }) {

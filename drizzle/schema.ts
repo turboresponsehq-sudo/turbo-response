@@ -743,3 +743,21 @@ export const creatorFollowUpTasks = pgTable("creator_follow_up_tasks", {
 
 export type CreatorLead = typeof creatorLeads.$inferSelect;
 export type InsertCreatorLead = typeof creatorLeads.$inferInsert;
+
+export const aiLearningIntakes = pgTable("ai_learning_intakes", {
+	 id: bigserial({ mode: "number" }).primaryKey(),
+	 name: varchar({ length: 255 }).notNull(),
+	 email: varchar({ length: 320 }).notNull(),
+	 phone: varchar({ length: 100 }),
+	 experience: varchar({ length: 80 }).notNull(),
+	 learningInterests: jsonb("learning_interests").notNull(),
+	 goal: text().notNull(),
+	 learningStyle: varchar("learning_style", { length: 80 }).notNull(),
+	 anythingElse: text("anything_else"),
+	 submittedAt: timestamp("submitted_at", { mode: "string", withTimezone: true }).defaultNow().notNull(),
+}, (table) => [
+	 index("idx_ai_learning_intakes_submitted").on(table.submittedAt),
+	 index("idx_ai_learning_intakes_email").on(table.email),
+]);
+
+export type AiLearningIntake = typeof aiLearningIntakes.$inferSelect;
