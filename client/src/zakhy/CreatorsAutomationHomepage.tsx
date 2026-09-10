@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { zakhyDemoSite } from "./config";
 import "./creators-automation-home.css";
 
-const desktopImage = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663092269987/irsvGaEnpDFGLbnx.png";
-const mobileImage = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663092269987/GLZKhuLrwSWiqxAp.png";
+const desktopImage = "/zakhy-assets/creators-automation-desktop.png";
+const mobileImage = "/zakhy-assets/creators-automation-mobile.png";
 
 const businessProof = [
   { label: <>Creators<br />served</>, value: "500+" },
