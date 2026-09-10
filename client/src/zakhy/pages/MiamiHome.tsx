@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { ChevronRight, Instagram, Mail, Menu, Music2, Plane, Podcast, UtensilsCrossed, X, Youtube } from "lucide-react";
 
-const hostImage = "https://zakhydemo-mpd8k29q.manus.space/manus-storage/miami-host-portrait-clean_e0c6533e.png";
-const airplaneImage = "https://zakhydemo-mpd8k29q.manus.space/manus-storage/miami-airplane-window_30bbc552.png";
-const coastImage = "https://zakhydemo-mpd8k29q.manus.space/manus-storage/miami-miami-coast_ed05df91.png";
-const approvedDesktopReference = "https://zakhydemo-mpd8k29q.manus.space/manus-storage/miami-home-approved-exact-reference_8b1ed63e.png";
+const hostImage = "/zakhy-assets/miami-host-portrait-clean_e0c6533e.png";
+const airplaneImage = "/zakhy-assets/miami-airplane-window_30bbc552.png";
+const coastImage = "/zakhy-assets/miami-miami-coast_ed05df91.png";
+const approvedDesktopReference = "/zakhy-assets/miami-home-approved-exact-reference_8b1ed63e.png";
 
 function MiamiWordmark() {
   return <a className="miami-wordmark" href="/zakhybuildsai/portfolio/miami-trips-restaurants" aria-label="Miami Trips and Restaurants home"><strong>MIAMI<span>✦</span></strong><small>TRIPS AND RESTAURANTS</small></a>;

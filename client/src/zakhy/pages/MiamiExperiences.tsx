@@ -1,8 +1,8 @@
 import { ArrowUpRight, ChevronRight, MapPin, Mic2, Play, UtensilsCrossed } from "lucide-react";
 import type { CSSProperties } from "react";
 
-const experienceImage = "https://zakhydemo-mpd8k29q.manus.space/manus-storage/miami-experiences-approved_cf1a739f_49cc20d6.webp";
-const experienceImageMobile = "https://zakhydemo-mpd8k29q.manus.space/manus-storage/miami-experiences-approved_cf1a739f-mobile_1e868e43.webp";
+const experienceImage = "/zakhy-assets/miami-experiences-approved_cf1a739f_49cc20d6.webp";
+const experienceImageMobile = "/zakhy-assets/miami-experiences-approved_cf1a739f-mobile_1e868e43.webp";
 
 const episodes = [
   ["01", "TABLE TALK", "The places worth dressing up for—and the plates worth crossing town for."],
