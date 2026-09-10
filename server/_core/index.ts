@@ -22,6 +22,7 @@ import { users as usersTable } from "../../drizzle/schema";
 import { registerGoogleDriveOAuthRoutes } from "../routes/googleDriveOAuth";
 import { resumePersistedDriveIngestion } from "../services/googleDriveIngestionService";
 import { creatorRouter } from "../modules/creator/routes";
+import { aiLearningRouter } from "../modules/aiLearning";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -86,6 +87,10 @@ async function startServer() {
   // Creator Business V1 routes. This feature owns creator_* tables only and
   // never delegates to consumer case, portal, or payment workflow code.
   app.use("/api", creatorRouter);
+
+  // AI learning intake owns ai_learning_intakes only and remains separate
+  // from Creator Leads and Creator Intake records.
+  app.use("/api", aiLearningRouter);
 
   // Business Intelligence Audit route
   app.use("/api", businessAuditRouter);
