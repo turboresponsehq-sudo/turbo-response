@@ -2,8 +2,30 @@ import { Router } from "express";
 import { sql } from "drizzle-orm";
 import { getDb } from "../db";
 import { sendOwnerNotification } from "../services/auditEmailService";
+import { requireCreatorAdmin } from "./creator/routes";
 
 export const aiLearningRouter = Router();
+
+aiLearningRouter.get("/ai-learning/admin/intakes", requireCreatorAdmin, async (req, res) => {
+  try {
+    const requestedLimit = Number(req.query.limit ?? 100);
+    const limit = Math.min(Math.max(Number.isFinite(requestedLimit) ? requestedLimit : 100, 1), 200);
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Intake storage is unavailable" });
+    const result = await db.execute(sql`
+      SELECT id, name, email, phone, experience, learning_interests, goal,
+             learning_style, anything_else, submitted_at
+      FROM ai_learning_intakes
+      ORDER BY submitted_at DESC
+      LIMIT ${limit}
+    `);
+    const rows = Array.isArray(result) ? result : ((result as { rows?: unknown[] }).rows ?? []);
+    return res.json({ success: true, intakes: rows });
+  } catch (error) {
+    console.error("[AI Learning] Admin list failed", error);
+    return res.status(500).json({ error: "Unable to load AI-learning intakes." });
+  }
+});
 
 const attempts = new Map<string, number[]>();
 const windowMs = 15 * 60 * 1000;

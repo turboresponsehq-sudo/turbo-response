@@ -58,7 +58,7 @@ function safeLeadId(value: string): number | null {
   return Number.isSafeInteger(id) && id > 0 ? id : null;
 }
 
-const requireCreatorAdmin: RequestHandler = async (req: any, res, next) => {
+export const requireCreatorAdmin: RequestHandler = async (req: any, res, next) => {
   const authorization = req.headers.authorization;
   if (!authorization?.startsWith("Bearer ")) {
     return res.status(401).json({ error: "Admin authentication required" });

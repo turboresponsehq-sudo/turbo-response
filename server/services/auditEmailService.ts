@@ -347,7 +347,7 @@ export async function sendOwnerNotification(
   try {
     const info = await transport.sendMail({
       from: `"Turbo Response" <${process.env.EMAIL_USER}>`,
-      to: OWNER_EMAIL,
+      to: process.env.ZAKHY_ADMIN_EMAIL || OWNER_EMAIL,
       subject,
       text: textBody,
       html,
