@@ -64,6 +64,18 @@ export default function LearnAiPage() {
         <p>Tell me where you are with AI, what you want to learn, and what you want to accomplish. I’ll review it and determine the best way I can help.</p>
       </section>
 
+      <section className="learn-ai-coaching" aria-labelledby="one-on-one-title">
+        <div>
+          <div className="learn-ai-kicker">ONE-ON-ONE</div>
+          <h2 id="one-on-one-title">Paid AI coaching<br /><em>built around you.</em></h2>
+          <p>For people who want direct guidance, I offer private one-on-one AI coaching focused on your goals, your tools, and the work you are trying to accomplish.</p>
+        </div>
+        <div className="learn-ai-coaching-note">
+          <strong>PRIVATE SESSIONS</strong>
+          <span>Pricing and format are discussed after I review your intake.</span>
+        </div>
+      </section>
+
       <section className="learn-ai-form-shell" aria-label="AI learning intake form">
         {submitted ? (
           <div className="learn-ai-success" role="status">
