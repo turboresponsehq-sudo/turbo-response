@@ -181,6 +181,36 @@ export default function AdminDashboard() {
             🎛️ Command Center
           </button>
           <button
+            onClick={() => setLocation('/admin/creator/leads')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#7c3aed',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            Creator Leads
+          </button>
+          <button
+            onClick={() => setLocation('/admin/ai-learning-intakes')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#ef4444',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            AI Learning Intakes
+          </button>
+          <button
             onClick={() => setLocation('/admin/brain')}
             style={{
               padding: '8px 16px',
