@@ -69,3 +69,65 @@
   .services-ecosystem-copy { margin-top: 35px; font-size: 18px; }
   .services-share { right: 18px; bottom: 18px; }
 }
+
+/* Creator Automations homepage system applied to the existing Services route only. */
+.zakhy-services-page {
+  --services-ink: #fff;
+  --services-red: #ef1526;
+  --services-gold: #ffdb3b;
+  --services-paper: #050505;
+  --services-line: rgba(255,255,255,.16);
+  color: #fff;
+  background: #050505;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.zakhy-services-header { background: rgba(5,5,5,.93); border-bottom: 1px solid var(--services-line); backdrop-filter: blur(16px); }
+.zakhy-services-header .desktop-nav a,
+.services-brand { color: #fff; }
+.zakhy-services-header .desktop-nav a:hover { color: var(--services-gold); }
+.services-brand small,
+.services-eyebrow { color: var(--services-gold); }
+.services-nav-cta,
+.services-primary { background: var(--services-red); color: #fff !important; }
+.services-nav-cta:hover,
+.services-primary:hover { background: #ff3546; }
+.services-hero {
+  background: radial-gradient(circle at 78% 12%, rgba(239,21,38,.24), transparent 31%), #050505;
+  border-color: var(--services-line);
+}
+.services-hero h1,
+.services-ownership h2,
+.services-section-heading h2,
+.services-ecosystem h2,
+.services-final h2 {
+  color: #fff;
+  font-family: "Arial Black", Impact, Arial, sans-serif;
+  font-weight: 900;
+}
+.services-hero h1 em,
+.services-ownership h2 em,
+.services-section-heading h2 em,
+.services-ecosystem h2 em,
+.services-final h2 em { color: var(--services-gold); }
+.services-lead,
+.services-ownership-grid > div:last-child,
+.services-card-intro,
+.services-card-close { color: #d7d7d2; }
+.services-secondary { border-color: var(--services-gold); color: #fff; background: rgba(0,0,0,.25); }
+.services-secondary:hover { background: rgba(255,219,59,.12); }
+.services-ownership,
+.services-builds { background: #0a0a0a; }
+.services-card { color: #fff; background: linear-gradient(145deg, #1a090b, #090909); border-color: rgba(239,21,38,.5); border-radius: 10px; box-shadow: inset 0 -100px 130px rgba(239,21,38,.08); }
+.services-card-number,
+.services-card li::before,
+.services-deeper-link { color: var(--services-gold); }
+.services-card ul { border-color: rgba(255,255,255,.17); }
+.services-ecosystem { background: radial-gradient(circle at 75% 50%, rgba(239,21,38,.24), transparent 34%), #050505; }
+.services-ecosystem-list span { border-color: rgba(255,219,59,.48); }
+.services-ecosystem-copy strong { color: var(--services-gold); }
+.services-final { background: #101010; border-top: 1px solid var(--services-line); }
+.services-share { border-color: var(--services-gold); background: #050505; color: #fff; }
+.services-share:hover { background: var(--services-red); border-color: var(--services-red); }
+@media (max-width: 767px) {
+  .zakhy-services-header .desktop-nav { background: #080808; }
+}

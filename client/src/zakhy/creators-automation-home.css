@@ -28,11 +28,11 @@
 .creators-primary-cta { background: #f31227; color: #fff; box-shadow: 0 0 24px rgba(243,18,39,.55); }
 .creators-secondary-cta { border: 2px solid #ffdb3b; color: #fff; background: rgba(0,0,0,.45); }
 .creators-menu-trigger, .creators-mobile-hero-nav { display: none; }
-.creators-business-proof { position: absolute; z-index: 2; top: 66.2%; left: 5.3%; display: grid; grid-template-columns: repeat(4, minmax(74px, 1fr)); width: 33%; min-height: 78px; line-height: normal; background: linear-gradient(90deg, rgba(0,0,0,.94), rgba(0,0,0,.7)); }
+.creators-business-proof { position: absolute; z-index: 2; top: 66.2%; left: 5.3%; display: grid; grid-template-columns: repeat(4, minmax(74px, 1fr)); width: 33%; min-height: 78px; line-height: normal; background: #080808; }
 .creators-proof-stat { display: flex; flex-direction: column; justify-content: center; min-width: 0; padding: 7px 14px 8px 0; }
 .creators-proof-stat + .creators-proof-stat { padding-left: 14px; border-left: 1px solid rgba(255,255,255,.35); }
 .creators-proof-label { display: block; min-height: 28px; color: #fff; font: 700 clamp(8px, .63vw, 11px)/1.12 Arial, sans-serif; letter-spacing: .035em; text-transform: uppercase; }
-.creators-proof-stat strong { display: block; margin-top: 4px; color: #ffdc42; font: 900 clamp(18px, 1.65vw, 29px)/1 Arial, sans-serif; white-space: nowrap; }
+.creators-proof-stat strong { display: block; margin-top: 4px; color: #ffdc42; -webkit-text-fill-color: #ffdc42; text-shadow: none; filter: none; font: 900 clamp(18px, 1.65vw, 29px)/1 Arial, sans-serif; white-space: nowrap; }
 .creators-mobile-drawer { position: fixed; z-index: 20; inset: 0; display: flex; flex-direction: column; justify-content: center; gap: 24px; padding: 36px; background: rgba(5,5,5,.97); color: #fff; }
 .creators-mobile-drawer a { color: #fff; font: 800 28px/1 Arial, sans-serif; letter-spacing: .08em; text-decoration: none; text-transform: uppercase; }
 .creators-drawer-close { position: absolute; top: 18px; right: 22px; width: 44px; height: 44px; border: 0; background: transparent; color: #fff; font-size: 42px; cursor: pointer; }
