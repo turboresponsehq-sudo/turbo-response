@@ -940,8 +940,8 @@
 - [x] Run TypeScript, full tests, production build, redacted exposure scan, GitHub main push, and production health verification for the approved cleanup
 
 ## CREATOR AUTOMATIONS VISUAL SYSTEM REFRESH
-- [ ] Limit all Creator Automations visual changes to the `/zakhybuildsai` microsite; do not modify the original blue Turbo Response site.
-- [ ] Apply the existing homepage black, white, red, and gold system to `/services`, `/automation-services`, `/portfolio`, `/about`, and `/inquiries` without changing their content, structure, routes, forms, or links.
-- [ ] Apply the same visual-only Creator Automations system to the existing linked Creator Intake form at `/creator/start`; retain all current questions, fields, validation, and submission behavior.
-- [ ] Remove only the duplicate/ghosted yellow layer from the homepage metrics for Creators Served, Revenue Generated, Automations Deployed, and Industries Supported.
-- [ ] Verify the refreshed pages and homepage statistics at desktop and mobile sizes, then publish the authorized Turbo Response update.
+- [x] Limit all Creator Automations visual changes to the `/zakhybuildsai` microsite; do not modify the original blue Turbo Response site.
+- [x] Apply the existing homepage black, white, red, and gold system to `/services`, `/automation-services`, `/portfolio`, `/about`, and `/inquiries` without changing their content, structure, routes, forms, or links.
+- [x] Apply the same visual-only Creator Automations system to the existing linked Creator Intake form at `/creator/start`; retain all current questions, fields, validation, and submission behavior.
+- [x] Remove only the duplicate/ghosted yellow layer from the homepage metrics for Creators Served, Revenue Generated, Automations Deployed, and Industries Supported.
+- [x] Verify the refreshed pages and homepage statistics at desktop and mobile sizes, then publish the authorized Turbo Response update.
