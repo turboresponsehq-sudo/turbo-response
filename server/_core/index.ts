@@ -245,7 +245,7 @@ async function startServer() {
         return res.status(503).json({ message: 'Admin storage is unavailable' });
       }
       const result = await db
-        .select({ id: usersTable.id, email: usersTable.email, role: usersTable.role, name: usersTable.name })
+        .select({ id: usersTable.id, email: usersTable.email, role: usersTable.role })
         .from(usersTable)
         .where(eq(usersTable.email, adminEmail))
         .limit(1);
@@ -268,7 +268,7 @@ async function startServer() {
       );
       res.json({
         token,
-        user: { id: adminUser.id, email: adminUser.email, name: adminUser.name, role: adminUser.role }
+        user: { id: adminUser.id, email: adminUser.email, name: 'Admin', role: adminUser.role }
       });
     } catch (error: any) {
       console.error('❌ Login error:', error);
