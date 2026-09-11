@@ -238,6 +238,22 @@ async function startServer() {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
 
+      // Resolve the existing production admin identity so downstream admin
+      // guards and Creator Leads use the same user id and role.
+      const db = await getDb();
+      if (!db) {
+        return res.status(503).json({ message: 'Admin storage is unavailable' });
+      }
+      const result = await db
+        .select({ id: usersTable.id, email: usersTable.email, role: usersTable.role, name: usersTable.name })
+        .from(usersTable)
+        .where(eq(usersTable.email, adminEmail))
+        .limit(1);
+      const adminUser = result[0];
+      if (!adminUser || adminUser.role !== 'admin') {
+        return res.status(401).json({ message: 'Invalid credentials' });
+      }
+
       const jwt = await import("jsonwebtoken");
       const secret = process.env.JWT_SECRET;
       if (!secret) {
@@ -246,13 +262,13 @@ async function startServer() {
       }
 
       const token = jwt.default.sign(
-        { userId: 1, email: adminEmail, role: 'admin' },
+        { userId: adminUser.id, email: adminUser.email, role: adminUser.role },
         secret,
         { expiresIn: '365d' }
       );
       res.json({
         token,
-        user: { id: 1, email: adminEmail, name: 'Admin', role: 'admin' }
+        user: { id: adminUser.id, email: adminUser.email, name: adminUser.name, role: adminUser.role }
       });
     } catch (error: any) {
       console.error('❌ Login error:', error);
