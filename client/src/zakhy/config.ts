@@ -28,6 +28,7 @@ export const zakhyDemoSite = {
     { label: "Automation Services", href: "https://turboresponsehq.ai/zakhybuildsai/automation-services" },
     { label: "Portfolio", href: "https://turboresponsehq.ai/zakhybuildsai/portfolio" },
     { label: "About", href: "https://turboresponsehq.ai/zakhybuildsai/about" },
+    { label: "One-on-One AI", href: "https://turboresponsehq.ai/zakhybuildsai/learn-ai" },
     { label: "Inquiries", href: "https://turboresponsehq.ai/creator/start" },
   ] satisfies NavigationItem[],
   services: [
