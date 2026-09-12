@@ -18,6 +18,7 @@ import {
 } from "./types";
 import { processCreatorLeadEmailWorkflow } from "./emailWorkflow";
 import { creatorLeadCaptureEnabled } from "./featureGate";
+import { syncContactToHubSpot } from "../../hubspotSync";
 
 export const creatorRouter = Router();
 
@@ -126,6 +127,52 @@ creatorRouter.post("/creator/leads", async (req: any, res) => {
         referrer: typeof req.get === "function" ? req.get("referer") : undefined,
         ip: key,
       });
+
+      // Reuse the existing Turbo Response HubSpot contact upsert. The full
+      // Creator Intake context is kept in the standard contact description so
+      // no new HubSpot objects or custom CRM architecture are required.
+      try {
+        const nameParts = parsed.data.fullName.trim().split(/\s+/);
+        const firstname = nameParts.shift() || parsed.data.fullName.trim();
+        const lastname = nameParts.join(" ");
+        const submittedAt = lead.submittedAt || new Date().toISOString();
+        const context = [
+          "ZAKHY CREATOR INTAKE",
+          `Submitted: ${submittedAt}`,
+          `Creator type: ${parsed.data.creatorType}`,
+          `Package/service interest: ${parsed.data.packageInterest || "Not specified"}`,
+          `Budget: ${parsed.data.budgetRange || "Not specified"}`,
+          `Main goal: ${parsed.data.goals}`,
+          `Challenges: ${parsed.data.challenges}`,
+          `Automation needs: ${parsed.data.automationWish || "Not specified"}`,
+          `Revenue streams: ${parsed.data.revenueStreams.join(", ") || "Not specified"}`,
+          `Revenue/opportunity focus: ${parsed.data.opportunityFocus.join(", ") || "Not specified"}`,
+          `Audience: ${parsed.data.audienceSize || "Not specified"} · ${parsed.data.audienceLocation || "Location not specified"}`,
+          `Business systems: ${parsed.data.businessSystems.join(", ") || "Not specified"}`,
+          `Social links: ${parsed.data.socialLinks.join(", ") || "Not provided"}`,
+          `Source: ${parsed.data.source || "zakhy-creator-intake"}`,
+          `Source path: ${parsed.data.sourcePath || "Not specified"}`,
+          `UTM: ${parsed.data.utm?.source || ""} / ${parsed.data.utm?.medium || ""} / ${parsed.data.utm?.campaign || ""}`,
+          `Referrer: ${typeof req.get === "function" ? req.get("referer") || "Not provided" : "Not provided"}`,
+          `Project priority: ${parsed.data.projectPriority}`,
+          `Final question: ${parsed.data.finalQuestion || "Not specified"}`,
+        ].join("\n");
+
+        await syncContactToHubSpot({
+          firstname,
+          lastname,
+          email: parsed.data.email,
+          phone: parsed.data.phone || undefined,
+          company: parsed.data.brandName || undefined,
+          website: parsed.data.websiteUrl || parsed.data.socialLinks[0] || undefined,
+          description: context,
+          lead_source: "ZAKHY CREATOR INTAKE",
+          hs_lead_status: "NEW",
+          lifecyclestage: "lead",
+        });
+      } catch (hubspotError) {
+        console.error("[Creator] HubSpot sync failed after lead was stored", hubspotError);
+      }
 
       // The database write is complete before email workflow processing starts.
       // Email errors are isolated and never roll back or reject this lead.

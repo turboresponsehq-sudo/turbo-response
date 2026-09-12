@@ -21,6 +21,9 @@ interface ContactData {
   description?: string;
   hs_lead_status?: string;
   lifecyclestage?: string;
+  company?: string;
+  lead_source?: string;
+  [key: string]: string | undefined;
 }
 
 /**
