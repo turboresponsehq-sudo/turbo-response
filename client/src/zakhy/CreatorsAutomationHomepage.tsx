@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { zakhyDemoSite } from "./config";
+import TurboChatbot, { turboChatbotStyles } from "./components/TurboChatbot";
 import "./creators-automation-home.css";
 
 const desktopImage = "/zakhy-assets/creators-automation-desktop.png";
@@ -55,7 +56,9 @@ export default function CreatorsAutomationHomepage() {
   }, []);
 
   return (
-    <main className="creators-automation-home">
+    <>
+      <style>{turboChatbotStyles}</style>
+      <main className="creators-automation-home">
       <div className="creators-reference-canvas">
         <picture className="creators-artwork" aria-hidden="true">
           <source media="(max-width: 700px)" srcSet={mobileImage} />
@@ -163,7 +166,9 @@ export default function CreatorsAutomationHomepage() {
           <SiteLink href={intake}>Start your project</SiteLink>
         </div>
       )}
-    </main>
+      </main>
+      <TurboChatbot source="zakhy_home" />
+    </>
   );
 }
 
