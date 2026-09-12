@@ -220,7 +220,7 @@ function App() {
     if (path === "/ralo" || path === "/ralo-demo") return <TurboDemoPage source="portfolio_ralo"><RaloDemoPage /></TurboDemoPage>;
     if (path === "/about") return <TurboDemoPage source="zakhy_about"><SimpleRoutePage eyebrow="THE ZAKHY BUILDS AI APPROACH" title={<>CULTURE FIRST.<br /><em>BUSINESS SECOND.</em></>} body="We build practical AI systems that help creators organize the business behind their creativity and grow with confidence." button="MAKE AN INQUIRY" onBooking={() => window.top?.location.assign(zakhyDemoSite.creatorIntakeUrl)} /></TurboDemoPage>;
     if (path === "/inquiries") return <InquiryPage />;
-    return <HomePage />;
+    return <TurboDemoPage source="zakhy_home"><HomePage /></TurboDemoPage>;
   })();
   return <><HideHostWatermark /><Suspense fallback={<main className="route-loading" aria-live="polite">Loading project…</main>}>{page}</Suspense></>;
 }
