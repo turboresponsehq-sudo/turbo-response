@@ -165,8 +165,8 @@ creatorRouter.post("/creator/leads", async (req: any, res) => {
           phone: parsed.data.phone || undefined,
           company: parsed.data.brandName || undefined,
           website: parsed.data.websiteUrl || parsed.data.socialLinks[0] || undefined,
-          description: context,
-          lead_source: "ZAKHY CREATOR INTAKE",
+          contextNote: context,
+          lead_source: "Website Intake",
           hs_lead_status: "NEW",
           lifecyclestage: "lead",
         });
