@@ -18,7 +18,7 @@ interface ContactData {
   email: string;
   phone?: string;
   website?: string;
-  description?: string;
+  contextNote?: string;
   hs_lead_status?: string;
   lifecyclestage?: string;
   company?: string;
@@ -69,10 +69,11 @@ export async function findContactByEmail(email: string): Promise<string | null> 
  */
 export async function createContact(data: ContactData): Promise<string | null> {
   try {
+    const { contextNote: _contextNote, ...properties } = data;
     const response = await axios.post(
       `${HUBSPOT_BASE}/crm/v3/objects/contacts`,
       {
-        properties: data,
+        properties,
       },
       {
         headers: {
@@ -94,10 +95,11 @@ export async function createContact(data: ContactData): Promise<string | null> {
  */
 export async function updateContact(contactId: string, data: ContactData): Promise<boolean> {
   try {
+    const { contextNote: _contextNote, ...properties } = data;
     await axios.patch(
       `${HUBSPOT_BASE}/crm/v3/objects/contacts/${contactId}`,
       {
-        properties: data,
+        properties,
       },
       {
         headers: {
@@ -112,6 +114,37 @@ export async function updateContact(contactId: string, data: ContactData): Promi
     console.error('[HubSpot] Error updating contact:', error);
     return false;
   }
+}
+
+
+
+async function createContactNote(contactId: string, body: string): Promise<void> {
+  await axios.post(
+    `${HUBSPOT_BASE}/crm/v3/objects/notes`,
+    {
+      properties: {
+        hs_note_body: body,
+        hs_timestamp: new Date().toISOString(),
+      },
+      associations: [
+        {
+          to: { id: contactId },
+          types: [
+            {
+              associationCategory: 'HUBSPOT_DEFINED',
+              associationTypeId: 202,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${HUBSPOT_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+    },
+  );
 }
 
 /**
