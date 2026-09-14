@@ -22,7 +22,7 @@
 .atlanta-shop::after, .atlanta-mobile-shop::after { display: none; }
 .atlanta-menu, .atlanta-mobile-shop { display: none; }
 .atlanta-home-hero { min-height: 820px; height: min(74vw, 1000px); position: relative; overflow: hidden; isolation: isolate; background: var(--at-black); }
-.atlanta-home-bg { position: absolute; z-index: -3; inset: 0; background-repeat: no-repeat; background-size: cover; background-position: right center; filter: saturate(1.08) contrast(1.06); }
+.atlanta-home-bg { position: absolute; z-index: -3; inset: 0; background-image: var(--atlanta-home-desktop); background-repeat: no-repeat; background-size: cover; background-position: right center; filter: saturate(1.08) contrast(1.06); }
 .atlanta-home-shade { position: absolute; z-index: -2; inset: 0; background: linear-gradient(90deg, rgba(5,6,6,.96) 0%, rgba(5,6,6,.88) 29%, rgba(5,6,6,.22) 49%, rgba(5,6,6,.03) 100%), linear-gradient(0deg, rgba(5,6,6,.35), transparent 35%); }
 .atlanta-home-copy { position: relative; z-index: 2; width: min(40%, 570px); padding: 164px 0 0 max(56px, 4vw); }
 .atlanta-overline, .atlanta-section-label { color: var(--at-cream); font-family: "Bebas Neue", Arial Narrow, sans-serif; font-size: 14px; letter-spacing: .28em; text-transform: uppercase; }
