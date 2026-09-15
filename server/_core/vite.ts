@@ -67,7 +67,30 @@ export function serveStatic(app: Express) {
   app.use(express.static(distPath));
 
   // fall through to index.html if the file doesn't exist
-  app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+  app.use("*", (req, res) => {
+    const indexPath = path.resolve(distPath, "index.html");
+    const requestPath = req.path || "/";
+    const isZakhyRoute = requestPath === "/zakhybuildsai" || requestPath.startsWith("/zakhybuildsai/");
+
+    if (!isZakhyRoute) {
+      res.sendFile(indexPath);
+      return;
+    }
+
+    const zakhyTitle = "Zakhy Builds AI — Creator Automations & Automation Systems for Creators";
+    const zakhyDescription = "Creator websites, business automations, lead capture, AI systems, and digital growth infrastructure built for artists, influencers, podcasters, and modern creators.";
+    const zakhyUrl = `https://turboresponsehq.ai${requestPath}`;
+    const page = fs
+      .readFileSync(indexPath, "utf8")
+      .replace(/<title>.*?<\/title>/i, `<title>${zakhyTitle}</title>`)
+      .replace(/<meta name="description" content="[^"]*"\s*\/>/i, `<meta name="description" content="${zakhyDescription}" />`)
+      .replace(/<meta property="og:url" content="[^"]*"\s*\/>/i, `<meta property="og:url" content="${zakhyUrl}" />`)
+      .replace(/<meta property="og:title" content="[^"]*"\s*\/>/i, `<meta property="og:title" content="${zakhyTitle}" />`)
+      .replace(/<meta property="og:description" content="[^"]*"\s*\/>/i, `<meta property="og:description" content="${zakhyDescription}" />`)
+      .replace(/<meta name="twitter:title" content="[^"]*"\s*\/>/i, `<meta name="twitter:title" content="${zakhyTitle}" />`)
+      .replace(/<meta name="twitter:description" content="[^"]*"\s*\/>/i, `<meta name="twitter:description" content="${zakhyDescription}" />`)
+      .replace(/<link rel="canonical" href="[^"]*"\s*\/>/i, `<link rel="canonical" href="${zakhyUrl}" />`);
+
+    res.status(200).set({ "Content-Type": "text/html" }).send(page);
   });
 }

@@ -7,6 +7,7 @@ html.portfolio-gallery-document *::-webkit-scrollbar, body.portfolio-gallery-bod
 html.portfolio-gallery-document::-webkit-scrollbar-track, body.portfolio-gallery-body::-webkit-scrollbar-track, .portfolio-gallery-page::-webkit-scrollbar-track { background: #050505; }
 html.portfolio-gallery-document::-webkit-scrollbar-thumb, body.portfolio-gallery-body::-webkit-scrollbar-thumb, .portfolio-gallery-page::-webkit-scrollbar-thumb { background: #050505; }
 html:has(.portfolio-gallery-page), body:has(.portfolio-gallery-page), #root:has(.portfolio-gallery-page) { background-color: #050505 !important; }
+#root:has(.portfolio-gallery-page) { width: 100%; min-width: 0; max-width: 100%; overflow-x: clip; }
 .portfolio-gallery-page { position: relative; width: 100%; min-width: 0; max-width: 100%; min-height: 100vh; min-height: 100dvh; overflow-x: hidden; overflow-x: clip; overscroll-behavior-x: none; touch-action: pan-y; contain: paint; scrollbar-width: none; background: #050505; color: #fff; }
 .portfolio-gallery-page::-webkit-scrollbar { width: 0; height: 0; display: none; }
 .portfolio-gallery-page .site-header { left: 0; right: 0; width: 100%; max-width: 100%; }
