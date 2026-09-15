@@ -69,7 +69,10 @@ export function serveStatic(app: Express) {
   // fall through to index.html if the file doesn't exist
   app.use("*", (req, res) => {
     const indexPath = path.resolve(distPath, "index.html");
-    const requestPath = req.path || "/";
+    // Express wildcard middleware can expose the mount-relative path as "/".
+    // Use the original URL so social crawlers receive Zakhy metadata for the
+    // actual /zakhybuildsai route rather than the Turbo Response defaults.
+    const requestPath = new URL(req.originalUrl || "/", "http://localhost").pathname || "/";
     const isZakhyRoute = requestPath === "/zakhybuildsai" || requestPath.startsWith("/zakhybuildsai/");
 
     if (!isZakhyRoute) {
@@ -77,8 +80,28 @@ export function serveStatic(app: Express) {
       return;
     }
 
-    const zakhyTitle = "Zakhy Builds AI — Creator Automations & Automation Systems for Creators";
-    const zakhyDescription = "Creator websites, business automations, lead capture, AI systems, and digital growth infrastructure built for artists, influencers, podcasters, and modern creators.";
+    const routeMetadata = requestPath === "/zakhybuildsai"
+      ? {
+          title: "ZAKHY — AI Systems for Creators",
+          description: "ZAKHY helps creators build stronger brands, automate their business, organize opportunities, and capture more revenue.",
+        }
+      : requestPath === "/zakhybuildsai/services"
+        ? { title: "ZAKHY Services — Brands, Automation & Creator Systems", description: "Premium creator websites, automation systems, brand infrastructure, and revenue-focused digital operations." }
+        : requestPath === "/zakhybuildsai/automation-services"
+          ? { title: "Turbo Automations — ZAKHY", description: "Creator automations for bookings, lead capture, follow-up, audience operations, and business growth." }
+          : requestPath === "/zakhybuildsai/portfolio"
+            ? { title: "ZAKHY Portfolio — Creator Brands & Platforms", description: "Explore creator websites, brands, and digital platforms built by ZAKHY." }
+            : requestPath === "/zakhybuildsai/about"
+              ? { title: "About ZAKHY — Creativity, Technology & Creator Business", description: "Learn how ZAKHY combines creativity, technology, and creator business systems." }
+              : requestPath.includes("/spillo")
+                ? { title: "Spillo — ZAKHY Portfolio", description: "Spillo creator brand and digital platform by ZAKHY." }
+                : requestPath.includes("/ralo")
+                  ? { title: "Ralo — ZAKHY Portfolio", description: "Ralo creator brand and digital platform by ZAKHY." }
+                  : requestPath.includes("/ms-pop-it")
+                    ? { title: "MS POP IT — ZAKHY Portfolio", description: "MS POP IT creator brand and digital platform by ZAKHY." }
+                    : { title: "ZAKHY — AI Systems for Creators", description: "ZAKHY helps creators build stronger brands, automate their business, organize opportunities, and capture more revenue." };
+    const zakhyTitle = routeMetadata.title;
+    const zakhyDescription = routeMetadata.description;
     const zakhyUrl = `https://turboresponsehq.ai${requestPath}`;
     const page = fs
       .readFileSync(indexPath, "utf8")
