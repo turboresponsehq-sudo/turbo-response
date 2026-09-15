@@ -83,13 +83,13 @@ export function serveStatic(app: Express) {
     const page = fs
       .readFileSync(indexPath, "utf8")
       .replace(/<title>.*?<\/title>/i, `<title>${zakhyTitle}</title>`)
-      .replace(/<meta name="description" content="[^"]*"\s*\/>/i, `<meta name="description" content="${zakhyDescription}" />`)
-      .replace(/<meta property="og:url" content="[^"]*"\s*\/>/i, `<meta property="og:url" content="${zakhyUrl}" />`)
-      .replace(/<meta property="og:title" content="[^"]*"\s*\/>/i, `<meta property="og:title" content="${zakhyTitle}" />`)
-      .replace(/<meta property="og:description" content="[^"]*"\s*\/>/i, `<meta property="og:description" content="${zakhyDescription}" />`)
-      .replace(/<meta name="twitter:title" content="[^"]*"\s*\/>/i, `<meta name="twitter:title" content="${zakhyTitle}" />`)
-      .replace(/<meta name="twitter:description" content="[^"]*"\s*\/>/i, `<meta name="twitter:description" content="${zakhyDescription}" />`)
-      .replace(/<link rel="canonical" href="[^"]*"\s*\/>/i, `<link rel="canonical" href="${zakhyUrl}" />`);
+      .replace(/<meta name="description" content="[^"]*"\s*\/?\s*>/i, `<meta name="description" content="${zakhyDescription}" />`)
+      .replace(/<meta property="og:url" content="[^"]*"\s*\/?\s*>/i, `<meta property="og:url" content="${zakhyUrl}" />`)
+      .replace(/<meta property="og:title" content="[^"]*"\s*\/?\s*>/i, `<meta property="og:title" content="${zakhyTitle}" />`)
+      .replace(/<meta property="og:description" content="[^"]*"\s*\/?\s*>/i, `<meta property="og:description" content="${zakhyDescription}" />`)
+      .replace(/<meta name="twitter:title" content="[^"]*"\s*\/?\s*>/i, `<meta name="twitter:title" content="${zakhyTitle}" />`)
+      .replace(/<meta name="twitter:description" content="[^"]*"\s*\/?\s*>/i, `<meta name="twitter:description" content="${zakhyDescription}" />`)
+      .replace(/<link rel="canonical" href="[^"]*"\s*\/?\s*>/i, `<link rel="canonical" href="${zakhyUrl}" />`);
 
     res.status(200).set({ "Content-Type": "text/html" }).send(page);
   });
