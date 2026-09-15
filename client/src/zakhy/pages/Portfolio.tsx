@@ -27,12 +27,12 @@ export default function PortfolioPage() {
     const priorBodyTouchAction = pageBody.style.touchAction;
     documentRoot.classList.add("portfolio-gallery-document");
     pageBody.classList.add("portfolio-gallery-body");
-    documentRoot.style.background = "#ffffff";
-    documentRoot.style.backgroundColor = "#ffffff";
+    documentRoot.style.background = "#050505";
+    documentRoot.style.backgroundColor = "#050505";
     documentRoot.style.overscrollBehaviorX = "none";
     documentRoot.style.touchAction = "pan-y";
-    pageBody.style.background = "#ffffff";
-    pageBody.style.backgroundColor = "#ffffff";
+    pageBody.style.background = "#050505";
+    pageBody.style.backgroundColor = "#050505";
     pageBody.style.overscrollBehaviorX = "none";
     pageBody.style.touchAction = "pan-y";
     return () => {
