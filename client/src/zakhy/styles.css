@@ -516,6 +516,12 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
   .route-page .desktop-nav a { color: #fff; font-family: "Arial Black", Impact, Arial, sans-serif; }
   .automation-page .mobile-book-link,
   .route-page .mobile-book-link { color: var(--gold); }
+
+  /* Restore the approved dark drawer even when the base mobile rule is cached first. */
+  .route-page .desktop-nav.desktop-nav--open,
+  .automation-page .desktop-nav.desktop-nav--open { background: #080808 !important; color: #fff !important; }
+  .route-page .desktop-nav.desktop-nav--open a,
+  .automation-page .desktop-nav.desktop-nav--open a { color: #fff !important; }
 }
 
 
