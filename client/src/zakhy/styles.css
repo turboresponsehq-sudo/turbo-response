@@ -1,15 +1,15 @@
 :root {
   color: #070707;
-  background: #f7f7f5;
+  background: #080808;
   font-family: Arial, Helvetica, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   scroll-behavior: smooth;
   --ink: #070707;
-  --paper: #f7f7f5;
+  --paper: #080808;
   --line: #d6d6d1;
   --muted: #686866;
-  --electric: #1e5bff;
+  --electric: #ef1526;
   --display: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
   --ease: cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -50,7 +50,7 @@ h1, h2, h3, p { margin: 0; }
 .nav-actions { display: flex; align-items: center; gap: 12px; }
 .nav-book { background: var(--electric); color: white; text-transform: uppercase; font-size: 12px; font-weight: 800; letter-spacing: -.02em; height: 46px; padding: 0 18px 0 21px; display: inline-flex; align-items: center; gap: 19px; border-radius: 4px; transition: transform 160ms var(--ease), background 160ms var(--ease); }
 .nav-book svg, .button svg, .mobile-book-link svg { width: 17px; height: 17px; flex: 0 0 auto; }
-.nav-book:hover { background: #1748cc; transform: translateY(-2px); }
+.nav-book:hover { background: #b80f1b; transform: translateY(-2px); }
 .nav-book:active, .button:active { transform: scale(.97); }
 .menu-toggle { display: none; width: 48px; height: 44px; background: var(--ink); color: white; align-items: center; justify-content: center; }
 .menu-icon { display: grid; gap: 6px; width: 18px; }
@@ -73,14 +73,14 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 27px; }
 .button { min-height: 54px; padding: 0 22px; display: inline-flex; align-items: center; justify-content: center; gap: 30px; border: 1px solid var(--ink); border-radius: 4px; text-transform: uppercase; font-size: 12px; letter-spacing: -.015em; font-weight: 800; white-space: nowrap; transition: transform 160ms var(--ease), background 160ms var(--ease), color 160ms var(--ease), border-color 160ms var(--ease); cursor: pointer; }
 .button--dark { background: var(--electric); color: white; border-color: var(--electric); }
-.button--dark:hover { background: #1748cc; border-color: #1748cc; transform: translateY(-2px); }
+.button--dark:hover { background: #b80f1b; border-color: #b80f1b; transform: translateY(-2px); }
 .button--light { background: rgba(255,255,255,.55); color: var(--ink); }
 .button--light:hover { background: white; transform: translateY(-2px); }
 .button--white { background: white; color: var(--ink); border-color: white; }
 .button--white:hover { transform: translateY(-2px); background: #ececea; border-color: #ececea; }
 .button--wide { width: 100%; }
 .proof-line { margin-top: 29px; display: flex; align-items: center; gap: 11px; font-size: 11px; letter-spacing: -.015em; font-weight: 600; }
-.proof-line svg { height: 23px; width: 23px; color: #1e5bff; flex: 0 0 auto; }
+.proof-line svg { height: 23px; width: 23px; color: #ef1526; flex: 0 0 auto; }
 
 .section { padding: 78px 0; }
 .services { background: white; }
@@ -142,7 +142,7 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
 .footer-inner > a { font-weight: 800; color: white; }
 
 .dialog-backdrop { position: fixed; z-index: 50; inset: 0; padding: 24px; background: rgba(0,0,0,.64); display: grid; place-items: center; animation: fade-in 180ms var(--ease) both; }
-.booking-dialog { width: min(100%, 518px); max-height: min(760px, calc(100vh - 48px)); overflow: auto; background: #f7f7f5; padding: 38px; position: relative; border: 1px solid #dadad5; box-shadow: 0 30px 90px rgba(0,0,0,.3); animation: dialog-in 240ms var(--ease) both; }
+.booking-dialog { width: min(100%, 518px); max-height: min(760px, calc(100vh - 48px)); overflow: auto; background: #080808; padding: 38px; position: relative; border: 1px solid #dadad5; box-shadow: 0 30px 90px rgba(0,0,0,.3); animation: dialog-in 240ms var(--ease) both; }
 .dialog-close { background: transparent; color: var(--ink); position: absolute; top: 17px; right: 20px; height: 32px; width: 32px; font-size: 28px; font-weight: 300; line-height: 1; cursor: pointer; }
 .booking-dialog h2 { font-size: 56px; margin-top: 10px; }
 .dialog-intro { color: #555553; font-size: 13px; line-height: 1.5; margin-top: 13px; max-width: 405px; }
@@ -173,7 +173,7 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
   .site-header { height: 82px; }
   .brand__name { font-size: 25px; }
   .brand__descriptor { margin-top: 7px; font-size: 8px; }
-  .desktop-nav { position: fixed; inset: 82px 0 auto; height: calc(100vh - 82px); background: #f7f7f5; z-index: 20; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: 40px calc((100% - min(100% - 40px, 620px)) / 2); gap: 24px; transform: translateX(100%); transition: transform 250ms var(--ease); }
+  .desktop-nav { position: fixed; inset: 82px 0 auto; height: calc(100vh - 82px); background: #080808; z-index: 20; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: 40px calc((100% - min(100% - 40px, 620px)) / 2); gap: 24px; transform: translateX(100%); transition: transform 250ms var(--ease); }
   .desktop-nav--open { transform: translateX(0); }
   .desktop-nav a, .mobile-book-link { font-family: var(--display); font-size: 45px; font-weight: 400; line-height: .9; text-transform: uppercase; display: flex; align-items: center; gap: 12px; }
   .desktop-nav a:first-child::after { display: none; }
@@ -313,7 +313,7 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
 .service-card h3 { width: 100%; text-align: center; min-height: 44px; }
 .service-card__details { width: 100%; margin-top: 15px; }
 .service-card__details p { max-width: none; margin: 0 0 12px; color: #e5e5e4; font-size: 11px; line-height: 1.42; }
-.service-card__details strong { display: block; margin-bottom: 3px; color: #8db6ff; font-size: 9px; line-height: 1.1; letter-spacing: .04em; }
+.service-card__details strong { display: block; margin-bottom: 3px; color: #ef1526; font-size: 9px; line-height: 1.1; letter-spacing: .04em; }
 @media (max-width: 1110px) {
   .desktop-nav { gap: 18px; margin-right: 22px; }
   .desktop-nav a { font-size: 11px; }
@@ -350,7 +350,7 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
 .automation-card h3 { margin-top: 17px; min-height: 23px; font-family: var(--display); font-size: 25px; line-height: .92; font-weight: 400; text-transform: uppercase; }
 .automation-card-copy { margin-top: 15px; }
 .automation-card-copy p { margin: 0 0 9px; color: #e3e3e1; font-size: 11px; line-height: 1.35; }
-.automation-card-copy strong { display: block; margin-bottom: 2px; color: #8db6ff; font-size: 8px; line-height: 1.1; letter-spacing: .08em; }
+.automation-card-copy strong { display: block; margin-bottom: 2px; color: #ef1526; font-size: 8px; line-height: 1.1; letter-spacing: .08em; }
 .automation-cta { background: var(--ink); color: white; padding: 80px 0 75px; }
 .automation-cta-inner { display: flex; align-items: flex-end; justify-content: space-between; gap: 70px; }
 .automation-cta h2 { margin-top: 13px; font-size: clamp(58px, 6vw, 92px); }
@@ -430,7 +430,7 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
 /* Creator Automations visual refresh: scoped to the requested existing routes. */
 .automation-page,
 .route-page {
-  --ink: #f7f7f5;
+  --ink: #ffffff;
   --paper: #050505;
   --line: rgba(255,255,255,.17);
   --muted: #b9b9b5;
