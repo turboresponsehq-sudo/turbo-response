@@ -47,7 +47,7 @@ import CaseBrief from "./pages/CaseBrief";
 import CreatorIntake from "./features/creator/pages/CreatorIntake";
 import CreatorLeadsAdmin from "./features/creator/pages/CreatorLeadsAdmin";
 import AiLearningIntakesAdmin from "./features/ai-learning/AiLearningIntakesAdmin";
-import ZakhyBuildsAIHub, { ZakhyAboutRoute, ZakhyAutomationServicesRoute, ZakhyLearnAiRoute, ZakhyPortfolioRoute, ZakhyServicesRoute, ZakhyProjectRoute } from "./pages/ZakhyBuildsAIHub";
+import ZakhyBuildsAIHub, { ZakhyAutomationServicesRoute, ZakhyLearnAiRoute, ZakhyPortfolioRoute, ZakhyServicesRoute, ZakhyProjectRoute } from "./pages/ZakhyBuildsAIHub";
 
 function ProtectedCreatorLeads() {
   return (
@@ -160,7 +160,6 @@ function Router() {
       <Route path="/crunk-fit" component={() => <ZakhyProjectRoute sourcePath="/crunk-fit" />} />
       <Route path="/crunk-fit/content" component={() => <ZakhyProjectRoute sourcePath="/crunk-fit/content" />} />
       <Route path="/crunk-fit/inquiries" component={() => <ZakhyProjectRoute sourcePath="/crunk-fit/inquiries" />} />
-      <Route path="/zakhybuildsai/about" component={ZakhyAboutRoute} />
       <Route path="/zakhybuildsai/learn-ai" component={ZakhyLearnAiRoute} />
 
       {/* Isolated Creator Business V1 routes */}

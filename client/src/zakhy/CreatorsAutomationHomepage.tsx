@@ -47,7 +47,6 @@ export default function CreatorsAutomationHomepage() {
   const intake = zakhyDemoSite.creatorIntakeUrl;
   const services = `${home}/services`;
   const portfolio = zakhyDemoSite.portfolioUrl;
-  const about = `${home}/about`;
 
   useEffect(() => {
     const priorTitle = document.title;
@@ -71,7 +70,6 @@ export default function CreatorsAutomationHomepage() {
           <nav className="creators-desktop-nav" aria-label="Primary navigation">
             <SiteLink href={home}>Home</SiteLink>
             <SiteLink href={services}>Services</SiteLink>
-            <SiteLink href={about}>About</SiteLink>
             <SiteLink href={portfolio}>Portfolio</SiteLink>
             <SiteLink href={services}>Pricing</SiteLink>
             <SiteLink href={intake}>Contact</SiteLink>
@@ -102,7 +100,6 @@ export default function CreatorsAutomationHomepage() {
         <div className="creators-mobile-hero-nav" aria-label="Mobile quick navigation">
           <SiteLink href={services}>Services</SiteLink>
           <SiteLink href={portfolio}>Portfolio</SiteLink>
-          <SiteLink href={about}>About</SiteLink>
         </div>
       </div>
 
@@ -162,7 +159,6 @@ export default function CreatorsAutomationHomepage() {
           <SiteLink href={home}>Home</SiteLink>
           <SiteLink href={services}>Services</SiteLink>
           <SiteLink href={portfolio}>Portfolio</SiteLink>
-          <SiteLink href={about}>About</SiteLink>
           <SiteLink href={intake}>Start your project</SiteLink>
         </div>
       )}
