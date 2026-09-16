@@ -1,5 +1,4 @@
 import "../zakhy/styles.css";
-import { SimpleRoutePage } from "../zakhy/StandaloneApp";
 import AutomationServicesPage from "../zakhy/pages/AutomationServices";
 import ZakhyServicesPage from "../zakhy/pages/ZakhyServices";
 import PortfolioPage from "../zakhy/pages/Portfolio";
@@ -15,7 +14,6 @@ import MiamiExperiences from "../zakhy/pages/MiamiExperiences";
 import MiamiInquiries from "../zakhy/pages/MiamiInquiries";
 import { AtlantaHome, AtlantaMedia, AtlantaNeighborhoods } from "../zakhy/pages/Atlanta";
 import { CrunkFitHome, CrunkFitContent, CrunkFitInquiries } from "../zakhy/pages/CrunkFit";
-import { zakhyDemoSite } from "../zakhy/config";
 import CreatorsAutomationHomepage from "../zakhy/CreatorsAutomationHomepage";
 import LearnAiPage from "../zakhy/pages/LearnAi";
 
@@ -37,9 +35,6 @@ export function ZakhyPortfolioRoute() {
   return <PortfolioPage />;
 }
 
-export function ZakhyAboutRoute() {
-  return <SimpleRoutePage eyebrow="THE ZAKHY BUILDS AI APPROACH" title={<>CULTURE FIRST.<br /><em>BUSINESS SECOND.</em></>} body="We build practical AI systems that help creators organize the business behind their creativity and grow with confidence." button="MAKE AN INQUIRY" onBooking={() => window.location.assign(zakhyDemoSite.creatorIntakeUrl)} />;
-}
 
 export function ZakhyLearnAiRoute() {
   return <LearnAiPage />;
