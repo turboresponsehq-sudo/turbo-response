@@ -19,7 +19,7 @@ const servicePillars = [
     title: "Creator Websites",
     description: "A premium home for your brand, offers, releases, bookings, products, and audience — built to make the next move clear.",
     cta: "Explore brand systems",
-    href: `${zakhyDemoSite.productionHomeUrl}/portfolio`,
+    href: zakhyDemoSite.portfolioUrl,
   },
   {
     number: "02",
@@ -46,7 +46,7 @@ export default function CreatorsAutomationHomepage() {
   const home = zakhyDemoSite.productionHomeUrl;
   const intake = zakhyDemoSite.creatorIntakeUrl;
   const services = `${home}/services`;
-  const portfolio = `${home}/portfolio`;
+  const portfolio = zakhyDemoSite.portfolioUrl;
   const about = `${home}/about`;
 
   useEffect(() => {
