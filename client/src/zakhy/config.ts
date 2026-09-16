@@ -17,6 +17,7 @@ export const zakhyDemoSite = {
   creatorIntakeUrl: "https://turboresponsehq.ai/creator/start",
   productionHomeUrl: "https://turboresponsehq.ai/zakhybuildsai",
   demoBaseUrl: "https://turboresponsehq.ai/zakhybuildsai",
+  portfolioUrl: "https://turboresponsehq.ai/zakhybuildsai/portfolio",
   brand: {
     name: "ZAKHY",
     descriptor: "BUILDS AI",
