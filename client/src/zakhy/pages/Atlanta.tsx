@@ -39,14 +39,14 @@ function AtlantaHeader({ active }: { active: Page }) {
 
   return (
     <header className="atlanta-header">
-      <a className="atlanta-brand" href="/zakhybuildsai/portfolio/story-of-atlanta" aria-label="The Story of Atlanta home"><img src="/zakhy-assets/atlanta-script-a-reference_c86f1f06.png" alt="A" /></a>
+      <a className="atlanta-brand" href="/atlanta" aria-label="The Story of Atlanta home"><img src="/zakhy-assets/atlanta-script-a-reference_c86f1f06.png" alt="A" /></a>
       <nav className={`atlanta-nav ${menuOpen ? "atlanta-nav--open" : ""}`} aria-label="Atlanta navigation">
         {links.map((link) => <a key={link.label} href={link.href} className={link.current ? "is-active" : ""} onClick={() => setMenuOpen(false)}>{link.label}</a>)}
-        <a className="atlanta-mobile-shop" href="/zakhybuildsai/portfolio/story-of-atlanta/media#merch" onClick={() => setMenuOpen(false)}>Shop</a>
+        <a className="atlanta-mobile-shop" href="/atlanta/media#merch" onClick={() => setMenuOpen(false)}>Shop</a>
       </nav>
       <div className="atlanta-header-actions">
-        <a className="atlanta-search" href="/zakhybuildsai/portfolio/story-of-atlanta/media#archive" aria-label="Search the Atlanta archive"><span /></a>
-        <a className="atlanta-shop" href="/zakhybuildsai/portfolio/story-of-atlanta/media#merch">Shop</a>
+        <a className="atlanta-search" href="/atlanta/media#archive" aria-label="Search the Atlanta archive"><span /></a>
+        <a className="atlanta-shop" href="/atlanta/media#merch">Shop</a>
         <button className="atlanta-menu" type="button" aria-label="Toggle navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><i /><i /></button>
       </div>
     </header>
@@ -54,11 +54,11 @@ function AtlantaHeader({ active }: { active: Page }) {
 }
 
 function AtlantaFooter() {
-  return <footer className="atlanta-footer"><a className="atlanta-brand" href="/zakhybuildsai/portfolio/story-of-atlanta" aria-label="The Story of Atlanta home"><span>A</span></a><p><b>ATLANTA</b><br />THE CULTURE LIVES HERE.</p><div><a href="/zakhybuildsai/portfolio/story-of-atlanta/media">Instagram</a><a href="/zakhybuildsai/portfolio/story-of-atlanta/media">YouTube</a><a href="/zakhybuildsai/portfolio/story-of-atlanta/media">TikTok</a><a href="/zakhybuildsai/portfolio/story-of-atlanta/media">Contact</a></div></footer>;
+  return <footer className="atlanta-footer"><a className="atlanta-brand" href="/atlanta" aria-label="The Story of Atlanta home"><span>A</span></a><p><b>ATLANTA</b><br />THE CULTURE LIVES HERE.</p><div><a href="/atlanta/media">Instagram</a><a href="/atlanta/media">YouTube</a><a href="/atlanta/media">TikTok</a><a href="/atlanta/media">Contact</a></div></footer>;
 }
 
 function ZoneRail() {
-  return <section className="atlanta-zone-rail" aria-label="Explore Atlanta by zone"><div><p>Explore Atlanta by zone</p><nav>{zones.map((zone, i) => <a href="/zakhybuildsai/portfolio/story-of-atlanta/neighborhoods" className={i === 0 ? "is-selected" : ""} key={zone}>{zone}</a>)}</nav></div><span>Different zones.<br />One Atlanta.</span></section>;
+  return <section className="atlanta-zone-rail" aria-label="Explore Atlanta by zone"><div><p>Explore Atlanta by zone</p><nav>{zones.map((zone, i) => <a href="/atlanta/neighborhoods" className={i === 0 ? "is-selected" : ""} key={zone}>{zone}</a>)}</nav></div><span>Different zones.<br />One Atlanta.</span></section>;
 }
 
 export function AtlantaHome() {
@@ -72,14 +72,14 @@ export function AtlantaHome() {
         <h1>Atlanta</h1>
         <i className="atlanta-red-rule" />
         <p className="atlanta-hero-lines">The people.<br />The neighborhoods.<br />The sound.<br />A global movement.</p>
-        <div className="atlanta-home-actions"><a href="/zakhybuildsai/portfolio/story-of-atlanta/neighborhoods" className="atlanta-red-button">Explore the story <b>→</b></a><a href="/zakhybuildsai/portfolio/story-of-atlanta/media#archive" className="atlanta-trailer"><span>▶</span><em>Watch trailer<br /><small>Atlanta forever</small></em></a><ShareProjectButton className="atlanta-share-button" title="The Story of Atlanta" text="Explore The Story of Atlanta demo website." /></div>
+        <div className="atlanta-home-actions"><a href="/atlanta/neighborhoods" className="atlanta-red-button">Explore the story <b>→</b></a><a href="/atlanta/media#archive" className="atlanta-trailer"><span>▶</span><em>Watch trailer<br /><small>Atlanta forever</small></em></a><ShareProjectButton className="atlanta-share-button" title="The Story of Atlanta" text="Explore The Story of Atlanta demo website." /></div>
       </div>
       <div className="atlanta-mobile-hero" style={{ backgroundImage: `url(${mobileCarImage})` }} aria-label="Classic black car on an Atlanta street at night" />
       <p className="atlanta-hero-note">Same city.<br />Different legends.</p>
     </section>
     <ZoneRail />
-    <section className="atlanta-neighborhood-preview" id="neighborhoods"><div className="atlanta-section-heading"><p>Explore the neighborhoods</p><a href="/zakhybuildsai/portfolio/story-of-atlanta/neighborhoods">View all <b>→</b></a></div><div className="atlanta-neighborhood-grid">{neighborhoods.map(([name, number], index) => <a href="/zakhybuildsai/portfolio/story-of-atlanta/neighborhoods" className="atlanta-neighborhood-card" key={name} style={{ backgroundImage: `linear-gradient(0deg, rgba(5,6,6,.9), rgba(5,6,6,.08)), url(${index % 2 ? streetImage : wallImage})`, backgroundPosition: `${(index * 13) % 100}% center` }}><span>{number}</span><strong>{name}</strong><b>→</b></a>)}</div></section>
-    <section className="atlanta-story-slab"><div className="atlanta-slab-image" style={{ backgroundImage: `url(${streetImage})` }} /><div><p>Atlanta, Georgia</p><h2>A city that created <em>a culture.</em></h2><span /> <p className="atlanta-slab-copy">From the neighborhoods to the world stage, Atlanta turned resilience into a movement. The music, language, style, and people helped reshape global culture.</p><a href="/zakhybuildsai/portfolio/story-of-atlanta/neighborhoods" className="atlanta-red-button">Read the story <b>→</b></a></div><div className="atlanta-slab-wall" style={{ backgroundImage: `url(${wallImage})` }} /></section>
+    <section className="atlanta-neighborhood-preview" id="neighborhoods"><div className="atlanta-section-heading"><p>Explore the neighborhoods</p><a href="/atlanta/neighborhoods">View all <b>→</b></a></div><div className="atlanta-neighborhood-grid">{neighborhoods.map(([name, number], index) => <a href="/atlanta/neighborhoods" className="atlanta-neighborhood-card" key={name} style={{ backgroundImage: `linear-gradient(0deg, rgba(5,6,6,.9), rgba(5,6,6,.08)), url(${index % 2 ? streetImage : wallImage})`, backgroundPosition: `${(index * 13) % 100}% center` }}><span>{number}</span><strong>{name}</strong><b>→</b></a>)}</div></section>
+    <section className="atlanta-story-slab"><div className="atlanta-slab-image" style={{ backgroundImage: `url(${streetImage})` }} /><div><p>Atlanta, Georgia</p><h2>A city that created <em>a culture.</em></h2><span /> <p className="atlanta-slab-copy">From the neighborhoods to the world stage, Atlanta turned resilience into a movement. The music, language, style, and people helped reshape global culture.</p><a href="/atlanta/neighborhoods" className="atlanta-red-button">Read the story <b>→</b></a></div><div className="atlanta-slab-wall" style={{ backgroundImage: `url(${wallImage})` }} /></section>
     <AtlantaFooter />
   </main>;
 }
