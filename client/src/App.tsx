@@ -66,10 +66,10 @@ function ProtectedAiLearningIntakes() {
   );
 }
 
-function LegacyZakhyAboutRedirect() {
+function LegacyZakhyRedirect({ to }: { to: string }) {
   useEffect(() => {
-    window.location.replace("/zakhybuildsai/portfolio");
-  }, []);
+    window.location.replace(to);
+  }, [to]);
   return null;
 }
 
@@ -140,9 +140,9 @@ function Router() {
       <Route path="/zakhybuildsai/portfolio/miami-trips-restaurants" component={() => <ZakhyProjectRoute sourcePath="/miami" />} />
       <Route path="/zakhybuildsai/portfolio/miami-trips-restaurants/experiences" component={() => <ZakhyProjectRoute sourcePath="/miami/experiences" />} />
       <Route path="/zakhybuildsai/portfolio/miami-trips-restaurants/inquiries" component={() => <ZakhyProjectRoute sourcePath="/miami/inquiries" />} />
-      <Route path="/zakhybuildsai/portfolio/story-of-atlanta" component={() => <ZakhyProjectRoute sourcePath="/atlanta" />} />
-      <Route path="/zakhybuildsai/portfolio/story-of-atlanta/neighborhoods" component={() => <ZakhyProjectRoute sourcePath="/atlanta/neighborhoods" />} />
-      <Route path="/zakhybuildsai/portfolio/story-of-atlanta/media" component={() => <ZakhyProjectRoute sourcePath="/atlanta/media" />} />
+      <Route path="/zakhybuildsai/portfolio/story-of-atlanta" component={() => <LegacyZakhyRedirect to="/atlanta" />} />
+      <Route path="/zakhybuildsai/portfolio/story-of-atlanta/neighborhoods" component={() => <LegacyZakhyRedirect to="/atlanta/neighborhoods" />} />
+      <Route path="/zakhybuildsai/portfolio/story-of-atlanta/media" component={() => <LegacyZakhyRedirect to="/atlanta/media" />} />
       <Route path="/zakhybuildsai/portfolio/spillo" component={() => <ZakhyProjectRoute sourcePath="/spillo" />} />
       <Route path="/zakhybuildsai/portfolio/spillo/content" component={() => <ZakhyProjectRoute sourcePath="/spillo/content" />} />
       <Route path="/zakhybuildsai/portfolio/spillo/inquiries" component={() => <ZakhyProjectRoute sourcePath="/spillo/inquiries" />} />
@@ -169,7 +169,7 @@ function Router() {
       <Route path="/crunk-fit/content" component={() => <ZakhyProjectRoute sourcePath="/crunk-fit/content" />} />
       <Route path="/crunk-fit/inquiries" component={() => <ZakhyProjectRoute sourcePath="/crunk-fit/inquiries" />} />
       {/* The former About page is archived; preserve old links without a 404. */}
-      <Route path="/zakhybuildsai/about" component={LegacyZakhyAboutRedirect} />
+      <Route path="/zakhybuildsai/about" component={() => <LegacyZakhyRedirect to="/zakhybuildsai/portfolio" />} />
       <Route path="/zakhybuildsai/learn-ai" component={ZakhyLearnAiRoute} />
 
       {/* Isolated Creator Business V1 routes */}
