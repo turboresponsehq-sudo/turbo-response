@@ -1,5 +1,6 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useEffect } from "react";
 import { AdminSessionGate } from "@/components/AdminSessionGate";
 import { OAuthAdminGate } from "@/components/OAuthAdminGate";
 import NotFound from "@/pages/NotFound";
@@ -63,6 +64,13 @@ function ProtectedAiLearningIntakes() {
       <AiLearningIntakesAdmin />
     </AdminSessionGate>
   );
+}
+
+function LegacyZakhyAboutRedirect() {
+  useEffect(() => {
+    window.location.replace("/zakhybuildsai/portfolio");
+  }, []);
+  return null;
 }
 
 function OAuthKnowledgeBase() {
@@ -160,6 +168,8 @@ function Router() {
       <Route path="/crunk-fit" component={() => <ZakhyProjectRoute sourcePath="/crunk-fit" />} />
       <Route path="/crunk-fit/content" component={() => <ZakhyProjectRoute sourcePath="/crunk-fit/content" />} />
       <Route path="/crunk-fit/inquiries" component={() => <ZakhyProjectRoute sourcePath="/crunk-fit/inquiries" />} />
+      {/* The former About page is archived; preserve old links without a 404. */}
+      <Route path="/zakhybuildsai/about" component={LegacyZakhyAboutRedirect} />
       <Route path="/zakhybuildsai/learn-ai" component={ZakhyLearnAiRoute} />
 
       {/* Isolated Creator Business V1 routes */}
