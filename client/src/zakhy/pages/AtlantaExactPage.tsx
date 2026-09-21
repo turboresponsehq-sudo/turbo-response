@@ -67,7 +67,13 @@ export default function AtlantaExactPage() {
           width: 100% !important;
           height: 100% !important;
           object-fit: contain !important;
-          object-position: center !important;
+          object-position: center center !important;
+        }
+        #atlanta-exact-root .city-skyline {
+          width: 56% !important;
+          height: 22% !important;
+          opacity: 0.34 !important;
+          z-index: 1 !important;
         }
       }
       @media (max-width: 480px) {
