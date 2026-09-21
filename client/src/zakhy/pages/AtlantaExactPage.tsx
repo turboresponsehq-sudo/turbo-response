@@ -12,11 +12,6 @@ export default function AtlantaExactPage() {
     stylesheet.href = "/atlanta-exact/index.css";
     document.head.appendChild(stylesheet);
 
-    const heroOverrides = document.createElement("link");
-    heroOverrides.rel = "stylesheet";
-    heroOverrides.href = "/atlanta-exact/hero-overrides.css";
-    document.head.appendChild(heroOverrides);
-
     const script = document.createElement("script");
     script.type = "module";
     script.src = "/atlanta-exact/index.js";
@@ -24,7 +19,6 @@ export default function AtlantaExactPage() {
 
     return () => {
       stylesheet.remove();
-      heroOverrides.remove();
       script.remove();
       host.replaceChildren();
     };
