@@ -33,6 +33,52 @@ export default function AtlantaExactPage() {
       #atlanta-exact-root .hero-lines {
         text-align: left !important;
       }
+      @media (max-width: 800px) {
+        #atlanta-exact-root .site-nav {
+          display: flex !important;
+          width: calc(100% - 36px) !important;
+          height: 70px !important;
+          z-index: 20 !important;
+        }
+        #atlanta-exact-root .nav-links,
+        #atlanta-exact-root .connect-button {
+          display: none !important;
+        }
+        #atlanta-exact-root .menu-toggle {
+          display: flex !important;
+        }
+        #atlanta-exact-root .hero {
+          align-items: flex-start !important;
+          height: 100svh !important;
+          min-height: 820px !important;
+          max-height: none !important;
+        }
+        #atlanta-exact-root .hero-content {
+          padding-top: 155px !important;
+        }
+        #atlanta-exact-root .hero-image-wrap {
+          width: 100% !important;
+          height: 600px !important;
+          top: 220px !important;
+          right: 0 !important;
+          left: 0 !important;
+        }
+        #atlanta-exact-root .hero-image {
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: contain !important;
+          object-position: center !important;
+        }
+      }
+      @media (max-width: 480px) {
+        #atlanta-exact-root .hero-image-wrap {
+          height: 520px !important;
+          top: 260px !important;
+        }
+        #atlanta-exact-root .hero-content {
+          padding-top: 145px !important;
+        }
+      }
     `;
     document.head.appendChild(exactVisualGuard);
 
