@@ -13,7 +13,6 @@ import MiamiHome from "../zakhy/pages/MiamiHome";
 import MiamiExperiences from "../zakhy/pages/MiamiExperiences";
 import MiamiInquiries from "../zakhy/pages/MiamiInquiries";
 import { AtlantaHome, AtlantaMedia, AtlantaNeighborhoods } from "../zakhy/pages/Atlanta";
-import AtlantaExactPage from "../zakhy/pages/AtlantaExactPage";
 import { CrunkFitHome, CrunkFitContent, CrunkFitInquiries } from "../zakhy/pages/CrunkFit";
 import CreatorsAutomationHomepage from "../zakhy/CreatorsAutomationHomepage";
 import LearnAiPage from "../zakhy/pages/LearnAi";
@@ -55,9 +54,6 @@ export function ZakhyProjectRoute({ sourcePath }: { sourcePath: string }) {
     case "/miami": return <MiamiHome />;
     case "/miami/experiences": return <MiamiExperiences />;
     case "/miami/inquiries": return <MiamiInquiries />;
-    case "/atlanta": return <AtlantaExactPage />;
-    case "/atlanta/neighborhoods": return <AtlantaExactPage />;
-    case "/atlanta/media": return <AtlantaExactPage />;
     case "/crunk-fit": return <CrunkFitHome />;
     case "/crunk-fit/content": return <CrunkFitContent />;
     case "/crunk-fit/inquiries": return <CrunkFitInquiries />;
