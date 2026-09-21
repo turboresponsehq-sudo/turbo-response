@@ -49,6 +49,7 @@ import CreatorIntake from "./features/creator/pages/CreatorIntake";
 import CreatorLeadsAdmin from "./features/creator/pages/CreatorLeadsAdmin";
 import AiLearningIntakesAdmin from "./features/ai-learning/AiLearningIntakesAdmin";
 import ZakhyBuildsAIHub, { ZakhyAutomationServicesRoute, ZakhyLearnAiRoute, ZakhyPortfolioRoute, ZakhyServicesRoute, ZakhyProjectRoute } from "./pages/ZakhyBuildsAIHub";
+import AtlantaExactPage from "./zakhy/pages/AtlantaExactPage";
 
 function ProtectedCreatorLeads() {
   return (
@@ -131,6 +132,7 @@ function Router() {
       <Route path="/zakhybuildsai/services" component={ZakhyServicesRoute} />
       <Route path="/zakhybuildsai/automation-services" component={ZakhyAutomationServicesRoute} />
       <Route path="/zakhybuildsai/portfolio" component={ZakhyPortfolioRoute} />
+      <Route path="/zakhybuildsai/portfolio/story-of-atlanta" component={AtlantaExactPage} />
       <Route path="/zakhybuildsai/portfolio/ralo" component={() => <ZakhyProjectRoute sourcePath="/ralo" />} />
       <Route path="/zakhybuildsai/portfolio/ralo/content" component={() => <ZakhyProjectRoute sourcePath="/ralo/content" />} />
       <Route path="/zakhybuildsai/portfolio/ralo/inquiries" component={() => <ZakhyProjectRoute sourcePath="/ralo/inquiries" />} />
