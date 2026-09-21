@@ -16,12 +16,12 @@ export default function AtlantaExactPage() {
     originalHeroStyle.textContent = `
       #atlanta-exact-root .hero-image-wrap { width: 65% !important; }
       #atlanta-exact-root .hero-image {
-        object-fit: contain !important;
+        object-fit: cover !important;
         object-position: center !important;
       }
       #atlanta-exact-root .hero-title {
-        color: var(--atl-offwhite, #f6ebd5) !important;
-        text-shadow: none !important;
+        color: #20d9ff !important;
+        text-shadow: 0 0 24px rgba(32, 217, 255, 0.32) !important;
       }
     `;
     document.head.appendChild(originalHeroStyle);
