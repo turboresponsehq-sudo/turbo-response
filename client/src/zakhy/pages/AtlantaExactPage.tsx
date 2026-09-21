@@ -7,6 +7,9 @@ export default function AtlantaExactPage() {
     const host = hostRef.current;
     if (!host) return;
 
+    const previousTitle = document.title;
+    document.title = "The Story of Atlanta — Chapter I";
+
     const stylesheet = document.createElement("link");
     stylesheet.rel = "stylesheet";
     stylesheet.href = "/atlanta-exact/index.css";
@@ -21,6 +24,7 @@ export default function AtlantaExactPage() {
       stylesheet.remove();
       script.remove();
       host.replaceChildren();
+      document.title = previousTitle;
     };
   }, []);
 
