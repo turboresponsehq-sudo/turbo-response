@@ -68,11 +68,17 @@ export default function AtlantaExactPage() {
           height: 100% !important;
           object-fit: contain !important;
           object-position: center center !important;
+          filter: contrast(1.02) saturate(1.04) brightness(1.16) sepia(0.03) !important;
+        }
+        #atlanta-exact-root .hero-image-overlay {
+          background:
+            linear-gradient(0deg, rgba(13, 12, 10, 0.22) 0%, rgba(13, 12, 10, 0.04) 58%, transparent 100%),
+            linear-gradient(90deg, rgba(13, 12, 10, 0.22) 0%, transparent 72%) !important;
         }
         #atlanta-exact-root .city-skyline {
           width: 56% !important;
           height: 22% !important;
-          opacity: 0.34 !important;
+          opacity: 0.14 !important;
           z-index: 1 !important;
         }
       }
