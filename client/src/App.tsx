@@ -140,9 +140,6 @@ function Router() {
       <Route path="/zakhybuildsai/portfolio/miami-trips-restaurants" component={() => <ZakhyProjectRoute sourcePath="/miami" />} />
       <Route path="/zakhybuildsai/portfolio/miami-trips-restaurants/experiences" component={() => <ZakhyProjectRoute sourcePath="/miami/experiences" />} />
       <Route path="/zakhybuildsai/portfolio/miami-trips-restaurants/inquiries" component={() => <ZakhyProjectRoute sourcePath="/miami/inquiries" />} />
-      <Route path="/zakhybuildsai/portfolio/story-of-atlanta" component={() => <ZakhyProjectRoute sourcePath="/atlanta" />} />
-      <Route path="/zakhybuildsai/portfolio/story-of-atlanta/neighborhoods" component={() => <ZakhyProjectRoute sourcePath="/atlanta/neighborhoods" />} />
-      <Route path="/zakhybuildsai/portfolio/story-of-atlanta/media" component={() => <ZakhyProjectRoute sourcePath="/atlanta/media" />} />
       <Route path="/zakhybuildsai/portfolio/spillo" component={() => <ZakhyProjectRoute sourcePath="/spillo" />} />
       <Route path="/zakhybuildsai/portfolio/spillo/content" component={() => <ZakhyProjectRoute sourcePath="/spillo/content" />} />
       <Route path="/zakhybuildsai/portfolio/spillo/inquiries" component={() => <ZakhyProjectRoute sourcePath="/spillo/inquiries" />} />
@@ -162,9 +159,6 @@ function Router() {
       <Route path="/miami" component={() => <ZakhyProjectRoute sourcePath="/miami" />} />
       <Route path="/miami/experiences" component={() => <ZakhyProjectRoute sourcePath="/miami/experiences" />} />
       <Route path="/miami/inquiries" component={() => <ZakhyProjectRoute sourcePath="/miami/inquiries" />} />
-      <Route path="/atlanta" component={() => <ZakhyProjectRoute sourcePath="/atlanta" />} />
-      <Route path="/atlanta/neighborhoods" component={() => <ZakhyProjectRoute sourcePath="/atlanta/neighborhoods" />} />
-      <Route path="/atlanta/media" component={() => <ZakhyProjectRoute sourcePath="/atlanta/media" />} />
       <Route path="/crunk-fit" component={() => <ZakhyProjectRoute sourcePath="/crunk-fit" />} />
       <Route path="/crunk-fit/content" component={() => <ZakhyProjectRoute sourcePath="/crunk-fit/content" />} />
       <Route path="/crunk-fit/inquiries" component={() => <ZakhyProjectRoute sourcePath="/crunk-fit/inquiries" />} />
