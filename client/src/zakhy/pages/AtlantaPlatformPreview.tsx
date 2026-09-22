@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import "./atlanta-platform-preview.css";
 
 type CardItem = {
@@ -15,12 +15,12 @@ const asset = (name: string) => `/atlanta-exact/${name}`;
 const zakhyAsset = (name: string) => `/zakhy-assets/${name}`;
 
 const paths: PathItem[] = [
-  { label: "THE STORY", description: "History, neighborhoods, culture, and untold Atlanta stories.", href: "/zakhybuildsai/portfolio/story-of-atlanta", image: asset("14973_920b2cb1.jpg") },
-  { label: "SHOP ATLANTA", description: "Products, art, books, food, and Atlanta-owned brands.", href: "#shop", image: asset("wicker-chair_b027401e.jpg") },
-  { label: "FIND SERVICES", description: "The people and businesses that make Atlanta move.", href: "#services", image: asset("portrait-chain_038a1479.jpg") },
-  { label: "EVENTS", description: "Concerts, pop-ups, networking, and nights worth remembering.", href: "#events", image: asset("atlanta-group-01_2a96e790.jpg") },
-  { label: "WATCH + LISTEN", description: "Podcasts, creators, shows, and independent Atlanta media.", href: "#media", image: asset("15093_a0a6a5cc.jpg") },
-  { label: "VISITING ATLANTA", description: "Find the people, services, and experiences you need while here.", href: "#visit-atlanta", image: asset("atlanta-skyline-night_b6c134ee.jpg") },
+  { label: "THE STORY", description: "History, neighborhoods, culture, and untold Atlanta stories.", href: "/zakhybuildsai/portfolio/story-of-atlanta", image: asset("14973_920bcb1.jpg") },
+  { label: "DISCOVER", description: "Products, brands, services, businesses, and creators.", href: "#discover", image: asset("wicker-chair_b027401e.jpg") },
+  { label: "MEDIA", description: "Podcasts, creators, shows, and independent Atlanta media.", href: "#media", image: asset("15093_a0a6a5cc.jpg") },
+  { label: "WHAT'S HAPPENING", description: "Concerts, pop-ups, networking, and nights worth remembering.", href: "#happening", image: asset("atlanta-group-01_2a96e790.jpg") },
+  { label: "CONNECT", description: "Visitors, businesses, partnerships, and Atlanta opportunities.", href: "#connect", image: asset("atlanta-skyline-night_b6c134ee.jpg") },
+  { label: "TAP IN", description: "Share, list, submit, collaborate, and join the platform.", href: "#tap-in", image: asset("portrait-chain_038a1479.jpg") },
 ];
 
 const products: CardItem[] = [
@@ -54,10 +54,23 @@ function Arrow() {
 }
 
 function AtlantaHeader({ open, onToggle }: { open: boolean; onToggle: () => void }) {
-  const nav = ["STORY", "PEOPLE", "NEIGHBORHOODS", "SHOP", "SERVICES", "EVENTS", "MEDIA", "VISIT ATLANTA"];
+  const nav = [
+    { label: "STORY", href: "/zakhybuildsai/portfolio/story-of-atlanta" },
+    { label: "DISCOVER", href: "#discover" },
+    { label: "MEDIA", href: "#media" },
+    { label: "WHAT'S HAPPENING", href: "#happening" },
+    { label: "CONNECT", href: "#connect" },
+  ];
+  const handleNavigation = (event: MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith("#")) {
+      event.preventDefault();
+      document.getElementById(href.slice(1))?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    onToggle();
+  };
   return (
     <header className="atl-header">
-      <a className="atl-brand" href="#top" aria-label="Atlanta platform home">
+      <a className="atl-brand" href="/zakhybuildsai/atlanta" aria-label="Atlanta platform home">
         <span className="atl-brand-mark">ATL</span>
         <span>THE ATLANTA PLATFORM</span>
       </a>
@@ -65,8 +78,8 @@ function AtlantaHeader({ open, onToggle }: { open: boolean; onToggle: () => void
         <i /><i />
       </button>
       <nav className={`atl-nav ${open ? "is-open" : ""}`} aria-label="Atlanta platform navigation">
-        {nav.map((label) => <a key={label} href={label === "STORY" ? "/zakhybuildsai/portfolio/story-of-atlanta" : `#${label.toLowerCase().replaceAll(" ", "-")}`} onClick={onToggle}>{label}</a>)}
-        <a className="atl-nav-cta" href="#business" onClick={onToggle}>DO BUSINESS IN ATLANTA <Arrow /></a>
+        {nav.map(({ label, href }) => <a key={label} href={href} onClick={(event) => handleNavigation(event, href)}>{label}</a>)}
+        <a className="atl-nav-cta" href="#tap-in" onClick={(event) => handleNavigation(event, "#tap-in")}>TAP IN <Arrow /></a>
       </nav>
     </header>
   );
@@ -126,26 +139,26 @@ export default function AtlantaPlatformPreview() {
         </div>
       </section>
 
-      <section className="atl-story-band">
+      <section className="atl-story-band" id="story">
         <div className="atl-story-image" aria-hidden="true" />
         <div className="atl-shell atl-story-content"><SectionKicker>THE STORY OF ATLANTA</SectionKicker><h2>BEFORE ATLANTA<br />BECAME A GLOBAL BRAND,<br /><em>ATLANTA ALREADY HAD A STORY.</em></h2><p>Culture is what brings people in. The story is what makes them stay.</p><a className="atl-button atl-button-paper" href="/zakhybuildsai/portfolio/story-of-atlanta">ENTER THE STORY <Arrow /></a></div>
       </section>
 
-      <section className="atl-section atl-paper" id="shop"><div className="atl-shell"><SectionKicker>SHOP ATLANTA</SectionKicker><div className="atl-section-heading"><h2>MADE HERE.<br /><em>MEANT TO TRAVEL.</em></h2><p>Atlanta products going from Atlanta to the world: featured brands, new drops, Atlanta originals, and objects with a story.</p></div><div className="atl-shop-note"><strong>ATLANTA ORIGINALS</strong><span>Featured Brand · Featured Product · New Drops</span></div><div className="atl-card-grid">{products.map((item) => <EditorialCard key={item.title} item={item} kind="product" />)}</div><a className="atl-text-link" href="#map">LIST YOUR PRODUCT <Arrow /></a></div></section>
+      <section className="atl-section atl-paper" id="discover"><div className="atl-shell"><SectionKicker>SHOP ATLANTA</SectionKicker><div className="atl-section-heading"><h2>MADE HERE.<br /><em>MEANT TO TRAVEL.</em></h2><p>Atlanta products going from Atlanta to the world: featured brands, new drops, Atlanta originals, and objects with a story.</p></div><div className="atl-shop-note"><strong>ATLANTA ORIGINALS</strong><span>Featured Brand · Featured Product · New Drops</span></div><div className="atl-card-grid">{products.map((item) => <EditorialCard key={item.title} item={item} kind="product" />)}</div><a className="atl-text-link" href="#tap-in">LIST YOUR PRODUCT <Arrow /></a></div></section>
 
-      <section className="atl-section atl-charcoal" id="services"><div className="atl-shell"><SectionKicker>ATLANTA SERVICES</SectionKicker><div className="atl-section-heading atl-light-heading"><h2>WHO DO<br /><em>YOU NEED?</em></h2><p>Atlanta runs on people. Find somebody here for the work, the look, the move, or the next idea.</p></div><div className="atl-service-tags">{["PHOTOGRAPHY", "VIDEO", "STUDIOS", "BEAUTY + STYLE", "REAL ESTATE", "BUSINESS", "AI + TECH", "EVENTS", "TRANSPORTATION"].map((tag) => <span key={tag}>{tag}</span>)}</div><div className="atl-card-grid atl-service-grid">{services.map((item) => <EditorialCard key={item.title} item={item} kind="service" />)}</div><a className="atl-button atl-button-red" href="#map">LIST YOUR SERVICE <Arrow /></a></div></section>
+      <section className="atl-section atl-charcoal" id="discover-services"><div className="atl-shell"><SectionKicker>ATLANTA SERVICES</SectionKicker><div className="atl-section-heading atl-light-heading"><h2>WHO DO<br /><em>YOU NEED?</em></h2><p>Atlanta runs on people. Find somebody here for the work, the look, the move, or the next idea.</p></div><div className="atl-service-tags">{["PHOTOGRAPHY", "VIDEO", "STUDIOS", "BEAUTY + STYLE", "REAL ESTATE", "BUSINESS", "AI + TECH", "EVENTS", "TRANSPORTATION"].map((tag) => <span key={tag}>{tag}</span>)}</div><div className="atl-card-grid atl-service-grid">{services.map((item) => <EditorialCard key={item.title} item={item} kind="service" />)}</div><a className="atl-button atl-button-red" href="#tap-in">LIST YOUR SERVICE <Arrow /></a></div></section>
 
-      <section className="atl-section atl-events" id="events"><div className="atl-shell"><SectionKicker>WHAT'S HAPPENING</SectionKicker><div className="atl-section-heading"><h2>THE CITY<br /><em>IS THE EVENT.</em></h2><p>Concerts, live podcasts, pop-ups, fashion, comedy, community, and nights that turn into stories.</p></div><div className="atl-card-grid">{events.map((item) => <EditorialCard key={item.title} item={item} kind="event" />)}</div><a className="atl-text-link" href="#map">LIST YOUR EVENT <Arrow /></a></div></section>
+      <section className="atl-section atl-events" id="happening"><div className="atl-shell"><SectionKicker>WHAT'S HAPPENING</SectionKicker><div className="atl-section-heading"><h2>THE CITY<br /><em>IS THE EVENT.</em></h2><p>Concerts, live podcasts, pop-ups, fashion, comedy, community, and nights that turn into stories.</p></div><div className="atl-card-grid">{events.map((item) => <EditorialCard key={item.title} item={item} kind="event" />)}</div><a className="atl-text-link" href="#tap-in">LIST YOUR EVENT <Arrow /></a></div></section>
 
-      <section className="atl-media" id="media"><div className="atl-shell"><SectionKicker>WATCH + LISTEN</SectionKicker><div className="atl-media-top"><h2>ATLANTA HAS<br /><em>SOMETHING TO SAY.</em></h2><p>Podcasts, documentaries, interviews, music shows, and independent media from the city.</p></div><div className="atl-media-list">{media.map((item, index) => <a href="#map" className="atl-media-row" key={item.title}><span>0{index + 1}</span><span className="atl-media-thumb" style={{ backgroundImage: `url(${item.image})` }} aria-hidden="true" /><div><p>{item.type}</p><h3>{item.title}</h3><small>{item.detail}</small></div><Arrow /></a>)}</div></div></section>
+      <section className="atl-media" id="media"><div className="atl-shell"><SectionKicker>WATCH + LISTEN</SectionKicker><div className="atl-media-top"><h2>ATLANTA HAS<br /><em>SOMETHING TO SAY.</em></h2><p>Podcasts, documentaries, interviews, music shows, and independent media from the city.</p></div><div className="atl-media-list">{media.map((item, index) => <a href="#tap-in" className="atl-media-row" key={item.title}><span>0{index + 1}</span><span className="atl-media-thumb" style={{ backgroundImage: `url(${item.image})` }} aria-hidden="true" /><div><p>{item.type}</p><h3>{item.title}</h3><small>{item.detail}</small></div><Arrow /></a>)}</div></div></section>
 
-      <section className="atl-section atl-visit" id="visit-atlanta"><div className="atl-shell"><SectionKicker>VISIT ATLANTA</SectionKicker><div className="atl-visit-layout"><div><h2>COMING TO<br /><em>ATLANTA?</em></h2><h3 className="atl-visit-subhead">WHAT ARE YOU HERE TO DO?</h3><p>Tell us why you're coming. We'll help you find the people, places, and services you need.</p><a className="atl-button atl-button-red" href="#business">BUILD MY ATLANTA PLAN <Arrow /></a></div><div className="atl-visit-selector"><p className="atl-card-category">I'M HERE FOR</p><div className="atl-choice-grid">{["MUSIC", "FILM", "FASHION", "BUSINESS", "REAL ESTATE", "CONTENT", "TECH", "EVENTS", "NIGHTLIFE"].map((choice) => <button className={visitChoice === choice ? "is-active" : ""} key={choice} onClick={() => setVisitChoice(choice)}>{choice}</button>)}</div><p className="atl-choice-note">Selected path: <strong>{visitChoice}</strong><br />Recommendations come in a future phase.</p></div></div></div></section>
+      <section className="atl-section atl-visit" id="connect"><div className="atl-shell"><SectionKicker>VISIT ATLANTA</SectionKicker><div className="atl-visit-layout"><div><h2>COMING TO<br /><em>ATLANTA?</em></h2><h3 className="atl-visit-subhead">WHAT ARE YOU HERE TO DO?</h3><p>Tell us why you're coming. We'll help you find the people, places, and services you need.</p><a className="atl-button atl-button-red" href="#business">BUILD MY ATLANTA PLAN <Arrow /></a></div><div className="atl-visit-selector"><p className="atl-card-category">I'M HERE FOR</p><div className="atl-choice-grid">{["MUSIC", "FILM", "FASHION", "BUSINESS", "REAL ESTATE", "CONTENT", "TECH", "EVENTS", "NIGHTLIFE"].map((choice) => <button className={visitChoice === choice ? "is-active" : ""} key={choice} onClick={() => setVisitChoice(choice)}>{choice}</button>)}</div><p className="atl-choice-note">Selected path: <strong>{visitChoice}</strong><br />Recommendations come in a future phase.</p></div></div></div></section>
 
-      <section className="atl-business" id="business"><div className="atl-shell atl-business-inner"><div><SectionKicker>THE OTHER SIDE OF THE PLATFORM</SectionKicker><h2>DO BUSINESS<br /><em>IN ATLANTA.</em></h2><p className="atl-business-tagline">THE CITY IS THE NETWORK.</p></div><div><p>Atlanta is where people come to create, connect, build, buy, sell, and make moves. This is not only culture — Atlanta is an economy.</p><div className="atl-business-paths"><a href="#services"><span>01</span><strong>FIND ATLANTA SERVICES</strong><Arrow /></a><a href="#map"><span>02</span><strong>BRING YOUR BUSINESS TO ATLANTA</strong><Arrow /></a><a href="#map"><span>03</span><strong>LIST YOUR BUSINESS</strong><Arrow /></a></div><div className="atl-actions"><a className="atl-button atl-button-red" href="#map">BUILD YOUR PLATFORM <Arrow /></a></div></div></div></section>
+      <section className="atl-business" id="business"><div className="atl-shell atl-business-inner"><div><SectionKicker>THE OTHER SIDE OF THE PLATFORM</SectionKicker><h2>DO BUSINESS<br /><em>IN ATLANTA.</em></h2><p className="atl-business-tagline">THE CITY IS THE NETWORK.</p></div><div><p>Atlanta is where people come to create, connect, build, buy, sell, and make moves. This is not only culture — Atlanta is an economy.</p><div className="atl-business-paths"><a href="#discover-services"><span>01</span><strong>FIND ATLANTA SERVICES</strong><Arrow /></a><a href="#tap-in"><span>02</span><strong>BRING YOUR BUSINESS TO ATLANTA</strong><Arrow /></a><a href="#tap-in"><span>03</span><strong>LIST YOUR BUSINESS</strong><Arrow /></a></div><div className="atl-actions"><a className="atl-button atl-button-red" href="#tap-in">BUILD YOUR PLATFORM <Arrow /></a></div></div></div></section>
 
-      <section className="atl-section atl-map" id="map"><div className="atl-shell"><SectionKicker>JOIN THE PLATFORM</SectionKicker><div className="atl-section-heading"><h2>PUT YOURSELF<br /><em>ON THE MAP.</em></h2><p>Atlanta has something to offer. Put yours on the map.</p></div><div className="atl-submit-grid">{["LIST A PRODUCT", "LIST A SERVICE", "LIST AN EVENT", "SUBMIT A SHOW", "SHARE ATLANTA HISTORY", "COLLABORATE"].map((item, index) => <a href="#map" className="atl-submit-card" key={item}><span>0{index + 1}</span><strong>{item}</strong><Arrow /></a>)}</div></div></section>
+      <section className="atl-section atl-map" id="tap-in"><div className="atl-shell"><SectionKicker>JOIN THE PLATFORM</SectionKicker><div className="atl-section-heading"><h2>PUT YOURSELF<br /><em>ON THE MAP.</em></h2><p>Atlanta has something to offer. Put yours on the map.</p></div><div className="atl-submit-grid">{["LIST A PRODUCT", "LIST A SERVICE", "LIST AN EVENT", "SUBMIT A SHOW", "SHARE ATLANTA HISTORY", "COLLABORATE"].map((item, index) => <a href="#tap-in" className="atl-submit-card" key={item}><span>0{index + 1}</span><strong>{item}</strong><Arrow /></a>)}</div></div></section>
 
-      <footer className="atl-footer"><div className="atl-shell atl-footer-inner"><a className="atl-brand" href="#top"><span className="atl-brand-mark">ATL</span><span>THE ATLANTA PLATFORM</span></a><p>CULTURE FIRST. COMMERCE SECOND.</p><p>LOCAL PREVIEW · PHASE 1</p></div></footer>
+      <footer className="atl-footer"><div className="atl-shell atl-footer-inner"><a className="atl-brand" href="/zakhybuildsai/atlanta"><span className="atl-brand-mark">ATL</span><span>THE ATLANTA PLATFORM</span></a><p>CULTURE FIRST. COMMERCE SECOND.</p><p>LOCAL PREVIEW · PHASE 1</p></div></footer>
     </main>
   );
 }
