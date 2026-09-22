@@ -50,6 +50,7 @@ import CreatorLeadsAdmin from "./features/creator/pages/CreatorLeadsAdmin";
 import AiLearningIntakesAdmin from "./features/ai-learning/AiLearningIntakesAdmin";
 import ZakhyBuildsAIHub, { ZakhyAutomationServicesRoute, ZakhyLearnAiRoute, ZakhyPortfolioRoute, ZakhyServicesRoute, ZakhyProjectRoute } from "./pages/ZakhyBuildsAIHub";
 import AtlantaExactPage from "./zakhy/pages/AtlantaExactPage";
+import AtlantaPlatformPreview from "./zakhy/pages/AtlantaPlatformPreview";
 
 function ProtectedCreatorLeads() {
   return (
@@ -129,6 +130,7 @@ function Router() {
 
       {/* Isolated Zakhy Builds AI homepage hub; the approved demo remains the visual source of truth. */}
       <Route path="/zakhybuildsai" component={ZakhyBuildsAIHub} />
+      <Route path="/zakhybuildsai/atlanta" component={AtlantaPlatformPreview} />
       <Route path="/zakhybuildsai/services" component={ZakhyServicesRoute} />
       <Route path="/zakhybuildsai/automation-services" component={ZakhyAutomationServicesRoute} />
       <Route path="/zakhybuildsai/portfolio" component={ZakhyPortfolioRoute} />
