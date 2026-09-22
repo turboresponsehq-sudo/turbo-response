@@ -34,8 +34,22 @@ export default function AtlantaExactPage() {
         text-align: left !important;
       }
       @media (min-width: 801px) {
+        #atlanta-exact-root .hero-content {
+          width: 36% !important;
+          max-width: 36% !important;
+          margin-left: 5% !important;
+          margin-right: auto !important;
+        }
         #atlanta-exact-root .hero-image-wrap {
-          width: 72% !important;
+          width: 64% !important;
+        }
+        #atlanta-exact-root .hero-image {
+          object-fit: cover !important;
+          object-position: center center !important;
+        }
+        #atlanta-exact-root .nav-links a:not(:first-child),
+        #atlanta-exact-root .connect-button {
+          display: none !important;
         }
       }
       @media (max-width: 800px) {
@@ -47,6 +61,9 @@ export default function AtlantaExactPage() {
         }
         #atlanta-exact-root .nav-links,
         #atlanta-exact-root .connect-button {
+          display: none !important;
+        }
+        #atlanta-exact-root .site-nav.is-open .nav-links a:not(:first-child) {
           display: none !important;
         }
         #atlanta-exact-root .menu-toggle {
