@@ -33,6 +33,11 @@ export default function AtlantaExactPage() {
       #atlanta-exact-root .hero-lines {
         text-align: left !important;
       }
+      @media (min-width: 801px) {
+        #atlanta-exact-root .hero-image-wrap {
+          width: 72% !important;
+        }
+      }
       @media (max-width: 800px) {
         #atlanta-exact-root .site-nav {
           display: flex !important;
@@ -91,31 +96,28 @@ export default function AtlantaExactPage() {
           padding-top: 145px !important;
         }
       }
-      #atlanta-exact-root .atlanta-platform-return {
-        position: fixed;
-        z-index: 30;
-        top: 94px;
-        left: 24px;
-        color: #f6ebd5;
-        border-bottom: 1px solid #b8955a;
-        padding-bottom: 5px;
-        font: 600 9px/1.2 Arial, sans-serif;
-        letter-spacing: .16em;
-        text-decoration: none;
-        text-transform: uppercase;
-      }
-      #atlanta-exact-root .atlanta-platform-return:hover { color: #cf4037; }
-      @media (max-width: 800px) {
-        #atlanta-exact-root .atlanta-platform-return { top: 92px; left: 18px; }
-      }
     `;
     document.head.appendChild(exactVisualGuard);
 
-    const platformReturn = document.createElement("a");
-    platformReturn.className = "atlanta-platform-return";
-    platformReturn.href = "/zakhybuildsai/atlanta";
-    platformReturn.textContent = "Atlanta Platform ↗";
-    host.appendChild(platformReturn);
+    const normalizeStoryNavigation = () => {
+      const nav = host.querySelector<HTMLElement>(".site-nav");
+      const links = nav?.querySelector<HTMLElement>(".nav-links");
+      if (!nav || !links) return;
+
+      links.querySelectorAll<HTMLAnchorElement>("a").forEach((link) => {
+        if (link.textContent?.trim().toLowerCase() === "home") {
+          link.textContent = "HOME";
+          link.href = "/zakhybuildsai/atlanta";
+        } else {
+          link.remove();
+        }
+      });
+
+      nav.querySelector<HTMLElement>(".connect-button")?.remove();
+    };
+    const navigationObserver = new MutationObserver(normalizeStoryNavigation);
+    navigationObserver.observe(host, { childList: true, subtree: true });
+    normalizeStoryNavigation();
 
     const script = document.createElement("script");
     script.type = "module";
@@ -126,7 +128,7 @@ export default function AtlantaExactPage() {
       stylesheet.remove();
       exactVisualGuard.remove();
       script.remove();
-      platformReturn.remove();
+      navigationObserver.disconnect();
       host.replaceChildren();
       document.title = previousTitle;
     };
