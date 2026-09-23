@@ -10,6 +10,12 @@ export default function AtlantaExactPage() {
     const previousTitle = document.title;
     document.title = "The Story of Atlanta — Chapter I";
 
+    // Retire the old desktop verification URL without archiving the live Story route.
+    const currentUrl = new URL(window.location.href);
+    if (currentUrl.searchParams.has("desktop_verify")) {
+      window.history.replaceState({}, "", currentUrl.pathname);
+    }
+
     const stylesheet = document.createElement("link");
     stylesheet.rel = "stylesheet";
     stylesheet.href = "/atlanta-exact/index.css";
