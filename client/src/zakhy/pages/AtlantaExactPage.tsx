@@ -21,124 +21,73 @@ export default function AtlantaExactPage() {
     stylesheet.href = "/atlanta-exact/index.css";
     document.head.appendChild(stylesheet);
 
-    // The host application has legacy heading rules that can override the
-    // approved Atlanta bundle. Keep this correction isolated to this route.
-    const exactVisualGuard = document.createElement("style");
-    exactVisualGuard.textContent = `
-      #atlanta-exact-root .hero-title,
-      #atlanta-exact-root .hero-title span,
-      #atlanta-exact-root .hero-title em {
-        color: #f6ebd5 !important;
-        background: none !important;
-        -webkit-background-clip: initial !important;
-        background-clip: initial !important;
-        -webkit-text-fill-color: #f6ebd5 !important;
-        text-align: left !important;
+    // The host application contains generic .hero-content and .hero-title
+    // rules. Re-apply only the source page's own values under its mount root
+    // so the localized bundle retains the approved source composition.
+    const sourceStyleIsolation = document.createElement("style");
+    sourceStyleIsolation.textContent = `
+      #atlanta-exact-root .hero {
+        padding: 0;
       }
-      #atlanta-exact-root .hero-content,
-      #atlanta-exact-root .hero-lines {
-        text-align: left !important;
+      #atlanta-exact-root .hero-title {
+        color: var(--atl-offwhite);
+        text-align: start;
+        background: none;
+        -webkit-background-clip: border-box;
+        background-clip: border-box;
+        -webkit-text-fill-color: var(--atl-offwhite);
+      }
+      #atlanta-exact-root .hero-content.story-inner {
+        text-align: start;
+      }
+      #atlanta-exact-root .hero-image-wrap {
+        width: 65%;
+      }
+      #atlanta-exact-root .hero-image {
+        position: static;
+        inset: auto;
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        background: none;
+        transform: none;
+        object-fit: contain;
+        object-position: center;
       }
       @media (min-width: 801px) {
-        #atlanta-exact-root .hero-content {
-          width: 36% !important;
-          max-width: 36% !important;
-          margin-left: 5% !important;
-          margin-right: auto !important;
-        }
-        #atlanta-exact-root .hero-image-wrap {
-          width: 64% !important;
-        }
-        #atlanta-exact-root .hero-image {
-          object-fit: cover !important;
-          object-position: center center !important;
-        }
-        #atlanta-exact-root .nav-links a:not(:first-child),
-        #atlanta-exact-root .connect-button {
-          display: none !important;
-        }
-      }
-      @media (max-width: 800px) {
-        #atlanta-exact-root .site-nav {
-          display: flex !important;
-          width: calc(100% - 36px) !important;
-          height: 70px !important;
-          z-index: 20 !important;
-        }
-        #atlanta-exact-root .nav-links,
-        #atlanta-exact-root .connect-button {
-          display: none !important;
-        }
-        #atlanta-exact-root .site-nav.is-open .nav-links a:not(:first-child) {
-          display: none !important;
-        }
-        #atlanta-exact-root .menu-toggle {
-          display: flex !important;
-        }
-        #atlanta-exact-root .hero {
-          align-items: flex-start !important;
-          height: 100svh !important;
-          min-height: 820px !important;
-          max-height: none !important;
-        }
-        #atlanta-exact-root .hero-content {
-          padding-top: 155px !important;
-        }
-        #atlanta-exact-root .hero-image-wrap {
-          width: 100% !important;
-          height: 600px !important;
-          top: 220px !important;
-          right: 0 !important;
-          left: 0 !important;
-        }
-        #atlanta-exact-root .hero-image {
-          width: 100% !important;
-          height: 100% !important;
-          object-fit: contain !important;
-          object-position: center center !important;
-          filter: contrast(1.02) saturate(1.04) brightness(1.16) sepia(0.03) !important;
-        }
-        #atlanta-exact-root .hero-image-overlay {
-          background:
-            linear-gradient(0deg, rgba(13, 12, 10, 0.22) 0%, rgba(13, 12, 10, 0.04) 58%, transparent 100%),
-            linear-gradient(90deg, rgba(13, 12, 10, 0.22) 0%, transparent 72%) !important;
-        }
-        #atlanta-exact-root .city-skyline {
-          width: 56% !important;
-          height: 22% !important;
-          opacity: 0.14 !important;
-          z-index: 1 !important;
-        }
-      }
-      @media (max-width: 480px) {
-        #atlanta-exact-root .hero-image-wrap {
-          height: 520px !important;
-          top: 260px !important;
-        }
-        #atlanta-exact-root .hero-content {
-          padding-top: 145px !important;
+        #atlanta-exact-root .hero-content.story-inner {
+          width: min(calc(100% - 96px), var(--content-max));
+          max-width: none;
+          margin: 0 auto;
+          padding: 68px 0 0;
+          text-align: start;
         }
       }
     `;
-    document.head.appendChild(exactVisualGuard);
+    document.head.appendChild(sourceStyleIsolation);
 
     const normalizeStoryNavigation = () => {
       const nav = host.querySelector<HTMLElement>(".site-nav");
       const links = nav?.querySelector<HTMLElement>(".nav-links");
       if (!nav || !links) return;
 
-      links.querySelectorAll<HTMLAnchorElement>("a").forEach((link) => {
-        if (link.textContent?.trim().toLowerCase() === "home") {
-          link.textContent = "HOME";
-          link.href = "/zakhybuildsai/atlanta";
-        } else {
-          link.remove();
+      const firstLink = links.querySelector<HTMLAnchorElement>("a");
+      if (firstLink) {
+        if (firstLink.textContent?.trim() !== "HOME") firstLink.textContent = "HOME";
+        if (firstLink.getAttribute("href") !== "/zakhybuildsai/atlanta") {
+          firstLink.setAttribute("href", "/zakhybuildsai/atlanta");
         }
-      });
-
+      }
+      links.querySelectorAll<HTMLAnchorElement>("a:not(:first-child)").forEach((link) => link.remove());
       nav.querySelector<HTMLElement>(".connect-button")?.remove();
+      return true;
     };
-    const navigationObserver = new MutationObserver(normalizeStoryNavigation);
+    const navigationObserver = new MutationObserver(() => {
+      if (host.querySelector(".site-nav")) {
+        navigationObserver.disconnect();
+        normalizeStoryNavigation();
+      }
+    });
     navigationObserver.observe(host, { childList: true, subtree: true });
     normalizeStoryNavigation();
 
@@ -149,7 +98,7 @@ export default function AtlantaExactPage() {
 
     return () => {
       stylesheet.remove();
-      exactVisualGuard.remove();
+      sourceStyleIsolation.remove();
       script.remove();
       navigationObserver.disconnect();
       host.replaceChildren();
