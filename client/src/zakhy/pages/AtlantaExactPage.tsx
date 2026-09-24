@@ -54,6 +54,20 @@ export default function AtlantaExactPage() {
         object-fit: contain;
         object-position: center;
       }
+      @media (max-width: 800px) {
+        #atlanta-exact-root .hero-image-wrap {
+          width: 100%;
+          height: 600px;
+          top: 220px;
+          right: 0;
+        }
+      }
+      @media (max-width: 480px) {
+        #atlanta-exact-root .hero-image-wrap {
+          height: 520px;
+          top: 260px;
+        }
+      }
       @media (min-width: 801px) {
         #atlanta-exact-root .hero-content.story-inner {
           width: min(calc(100% - 96px), var(--content-max));
@@ -71,15 +85,21 @@ export default function AtlantaExactPage() {
       const links = nav?.querySelector<HTMLElement>(".nav-links");
       if (!nav || !links) return;
 
-      const firstLink = links.querySelector<HTMLAnchorElement>("a");
-      if (firstLink) {
-        if (firstLink.textContent?.trim() !== "HOME") firstLink.textContent = "HOME";
-        if (firstLink.getAttribute("href") !== "/zakhybuildsai/atlanta") {
-          firstLink.setAttribute("href", "/zakhybuildsai/atlanta");
-        }
-      }
-      links.querySelectorAll<HTMLAnchorElement>("a:not(:first-child)").forEach((link) => link.remove());
-      nav.querySelector<HTMLElement>(".connect-button")?.remove();
+      const platformTabs = [
+        ["STORY", "/zakhybuildsai/portfolio/story-of-atlanta"],
+        ["DISCOVER", "/zakhybuildsai/atlanta#discover"],
+        ["MEDIA", "/zakhybuildsai/atlanta#media"],
+        ["WHAT'S HAPPENING", "/zakhybuildsai/atlanta#happening"],
+        ["CONNECT", "/zakhybuildsai/atlanta#connect"],
+        ["TAP IN", "/zakhybuildsai/atlanta#tap-in"],
+      ] as const;
+      links.replaceChildren(...platformTabs.map(([label, href]) => {
+        const link = document.createElement("a");
+        link.textContent = label;
+        link.href = href;
+        return link;
+      }));
+      nav.querySelector(".connect-button")?.remove();
       return true;
     };
     const navigationObserver = new MutationObserver(() => {
