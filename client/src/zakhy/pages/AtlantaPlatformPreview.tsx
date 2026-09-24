@@ -55,6 +55,7 @@ function Arrow() {
 
 function AtlantaHeader({ open, onToggle }: { open: boolean; onToggle: () => void }) {
   const nav = [
+    { label: "HOME", href: "/zakhybuildsai/portfolio/story-of-atlanta" },
     { label: "STORY", href: "/zakhybuildsai/portfolio/story-of-atlanta" },
     { label: "DISCOVER", href: "#discover" },
     { label: "MEDIA", href: "#media" },
