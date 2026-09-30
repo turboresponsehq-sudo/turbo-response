@@ -145,6 +145,12 @@
   gap: 10px;
 }
 
+/* Keep intake questions readable when other page styles define a generic
+   .section-title selector later in the bundled stylesheet. */
+.intake-page .section-title {
+  color: #0A1A3F;
+}
+
 .section-icon {
   font-size: 1.2rem;
 }
