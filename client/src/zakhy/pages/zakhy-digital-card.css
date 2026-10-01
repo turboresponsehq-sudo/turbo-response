@@ -1,0 +1,26 @@
+
+/* Popl-inspired structure only: current Zakhy artwork, typography, colors, and branded QR treatment. */
+.zakhy-card-hero{max-width:760px;grid-template-columns:1fr;gap:0;padding:0;margin:0 auto 34px;background:#2b2e29;border:1px solid rgba(251,245,232,.2);border-radius:18px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.42)}
+.zakhy-card-portrait-wrap{min-height:0;display:block;position:relative}
+.zakhy-card-portrait-wrap picture{display:block}
+.zakhy-card-portrait{display:block;width:100%;height:230px;object-fit:cover;border:0;box-shadow:none;filter:none}
+.zakhy-card-avatar{position:absolute;left:28px;bottom:-45px;width:96px;height:96px;border-radius:50%;overflow:hidden;border:5px solid #2b2e29;background:#171a17;box-shadow:0 10px 24px rgba(0,0,0,.35)}
+.zakhy-card-avatar img{width:100%;height:100%;object-fit:cover;object-position:center 35%}
+.zakhy-card-copy{padding:66px 30px 26px}
+.zakhy-card-copy h1{font-size:clamp(56px,8vw,96px);margin:0 0 12px}
+.zakhy-card-title{font-size:clamp(20px,3vw,30px);margin-bottom:10px}
+.zakhy-card-description{max-width:560px}
+.zakhy-card-actions{margin-top:16px}
+.zakhy-share-row{max-width:760px;margin:0 auto 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px 20px;background:#242722;border:1px solid rgba(251,245,232,.18);border-radius:14px}
+.zakhy-share-copy{min-width:0}.zakhy-share-copy p{margin:0}.zakhy-share-copy p:not(.zakhy-card-kicker){color:var(--zk-muted);font-size:13px;line-height:1.45;margin-top:5px}
+.zakhy-share-qr{width:104px;height:104px;flex:0 0 auto;padding:8px;background:#2d302b;border:1px solid rgba(251,245,232,.35);border-radius:10px}.zakhy-share-qr img{display:block;width:100%;height:100%;image-rendering:pixelated}
+@media(max-width:800px){
+ .zakhy-card-hero{margin-bottom:20px;border-radius:14px}
+ .zakhy-card-portrait{height:170px}
+ .zakhy-card-avatar{left:18px;bottom:-37px;width:78px;height:78px;border-width:4px}
+ .zakhy-card-copy{padding:54px 18px 18px}
+ .zakhy-card-copy h1{font-size:58px}
+ .zakhy-share-row{margin-bottom:20px;padding:14px 15px}
+ .zakhy-share-qr{width:82px;height:82px}
+ .zakhy-share-copy p:not(.zakhy-card-kicker){font-size:12px}
+}

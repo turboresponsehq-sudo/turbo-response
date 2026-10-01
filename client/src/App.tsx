@@ -51,6 +51,7 @@ import AiLearningIntakesAdmin from "./features/ai-learning/AiLearningIntakesAdmi
 import ZakhyBuildsAIHub, { ZakhyAutomationServicesRoute, ZakhyLearnAiRoute, ZakhyPortfolioRoute, ZakhyServicesRoute, ZakhyProjectRoute } from "./pages/ZakhyBuildsAIHub";
 import AtlantaExactPage from "./zakhy/pages/AtlantaExactPage";
 import AtlantaPlatformPreview from "./zakhy/pages/AtlantaPlatformPreview";
+import ZakhyDigitalCard from "./zakhy/pages/ZakhyDigitalCard";
 
 function ProtectedCreatorLeads() {
   return (
@@ -135,6 +136,7 @@ function Router() {
       <Route path="/zakhybuildsai/automation-services" component={ZakhyAutomationServicesRoute} />
       <Route path="/zakhybuildsai/portfolio" component={ZakhyPortfolioRoute} />
       <Route path="/zakhybuildsai/portfolio/story-of-atlanta" component={AtlantaExactPage} />
+      <Route path="/zakhy/connect" component={ZakhyDigitalCard} />
       <Route path="/zakhybuildsai/portfolio/ralo" component={() => <ZakhyProjectRoute sourcePath="/ralo" />} />
       <Route path="/zakhybuildsai/portfolio/ralo/content" component={() => <ZakhyProjectRoute sourcePath="/ralo/content" />} />
       <Route path="/zakhybuildsai/portfolio/ralo/inquiries" component={() => <ZakhyProjectRoute sourcePath="/ralo/inquiries" />} />
@@ -221,7 +223,7 @@ function App() {
     console.warn('[App] Axios interceptor detected 401');
   });
 
-  const isZakhyPublicPath = /^\/(zakhybuildsai|ralo|ms-pop-it|spillo|miami|atlanta|crunk-fit)(\/|$)/.test(window.location.pathname);
+  const isZakhyPublicPath = /^(\/zakhy\/connect|\/zakhybuildsai|\/ralo|\/ms-pop-it|\/spillo|\/miami|\/atlanta|\/crunk-fit)(\/|$)/.test(window.location.pathname);
 
   return (
     <ErrorBoundary>
