@@ -47,6 +47,7 @@ export default function CreatorsAutomationHomepage() {
   const intake = zakhyDemoSite.creatorIntakeUrl;
   const services = `${home}/services`;
   const portfolio = zakhyDemoSite.portfolioUrl;
+  const learnAi = `${home}/learn-ai`;
 
   useEffect(() => {
     const priorTitle = document.title;
@@ -70,6 +71,7 @@ export default function CreatorsAutomationHomepage() {
           <nav className="creators-desktop-nav" aria-label="Primary navigation">
             <SiteLink href={home}>Home</SiteLink>
             <SiteLink href={services}>Services</SiteLink>
+            <SiteLink href={learnAi}>Learn AI</SiteLink>
             <SiteLink href={portfolio}>Portfolio</SiteLink>
             <SiteLink href={services}>Pricing</SiteLink>
             <SiteLink href={intake}>Contact</SiteLink>
@@ -158,6 +160,7 @@ export default function CreatorsAutomationHomepage() {
           <button className="creators-drawer-close" type="button" aria-label="Close navigation menu" onClick={() => setMenuOpen(false)}>×</button>
           <SiteLink href={home}>Home</SiteLink>
           <SiteLink href={services}>Services</SiteLink>
+          <SiteLink href={learnAi}>Learn AI</SiteLink>
           <SiteLink href={portfolio}>Portfolio</SiteLink>
           <SiteLink href={intake}>Start your project</SiteLink>
         </div>
