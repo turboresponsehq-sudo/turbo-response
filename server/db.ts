@@ -130,6 +130,42 @@ export async function listCases() {
   }
 
   try {
+    // Intake forms historically wrote only to intake_leads, while the legacy
+    // /admin page reads cases. Bridge those records on read so older valid
+    // submissions become visible without duplicating rows or inventing data.
+    await db.execute(`
+      INSERT INTO cases (
+        case_number, full_name, email, phone, category, status,
+        case_details, title, case_type
+      )
+      SELECT
+        CASE
+          WHEN source = 'turbo-intake' THEN 'TR-OFF-' || LPAD(id::text, 5, '0')
+          ELSE 'TR-DEF-' || LPAD(id::text, 5, '0')
+        END,
+        "fullName",
+        email,
+        phone,
+        CASE WHEN source = 'turbo-intake' THEN 'offense' ELSE 'consumer' END,
+        'Pending Review',
+        COALESCE("fullSituation", "situationPreview", 'Intake submission'),
+        CASE
+          WHEN source = 'turbo-intake' THEN 'Offense Intake — ' || "fullName"
+          ELSE 'Defense Intake — ' || "fullName"
+        END,
+        CASE WHEN source = 'turbo-intake' THEN 'offense' ELSE 'defense' END
+      FROM intake_leads
+      WHERE source IN ('turbo-intake', 'intake')
+        AND NOT EXISTS (
+          SELECT 1
+          FROM cases c
+          WHERE c.case_number = CASE
+            WHEN intake_leads.source = 'turbo-intake' THEN 'TR-OFF-' || LPAD(intake_leads.id::text, 5, '0')
+            ELSE 'TR-DEF-' || LPAD(intake_leads.id::text, 5, '0')
+          END
+        )
+    `);
+
     const result = await db.execute(`
       SELECT
         id,

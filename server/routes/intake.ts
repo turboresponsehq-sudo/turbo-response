@@ -3,6 +3,7 @@ import { notifyOwner } from "../_core/notification";
 import { saveIntakeLead } from "../intakeLeadsDb";
 import { syncContactToHubSpot } from "../hubspotSync";
 import { sendOwnerNotification } from "../services/auditEmailService";
+import { createCase } from "../db";
 
 const router = Router();
 
@@ -71,7 +72,37 @@ async function handleOffenseIntake(req: any, res: any) {
     });
 
     const caseNumber = `TR-OFF-${String(insertId).padStart(5, "0")}`;
-    const caseId = String(insertId);
+    let caseId = String(insertId);
+
+    // Keep the intake_leads record used by Command Center, and also create the
+    // established cases-table record used by /admin. Without this bridge,
+    // offense submissions were emailed successfully but were invisible in the
+    // main admin case list.
+    try {
+      const result = await createCase({
+        caseNumber,
+        clientName: fullName,
+        clientEmail: email,
+        clientPhone: phone || null,
+        category: "offense",
+        status: "Pending Review",
+        title: `Offense Case — ${business || actionTypeVal || "New submission"}`,
+        caseType: "offense",
+        description: [
+          `Action: ${actionTypeVal || "N/A"}`,
+          `Target: ${business || "N/A"}`,
+          `Goal: ${goal || "N/A"}`,
+          `Amount: ${amount || "N/A"}`,
+          "",
+          description || "No narrative provided.",
+        ].join("\n"),
+      });
+      const rows = (result as any).rows ?? result;
+      if (rows?.[0]?.id != null) caseId = String(rows[0].id);
+    } catch (caseError: any) {
+      // Do not discard a valid intake lead if the legacy bridge is unavailable.
+      console.error("[Intake] Failed to create admin case record:", caseError?.message || caseError);
+    }
 
     // Sync to HubSpot (non-blocking — don't fail submission if HubSpot is down)
     try {
@@ -175,7 +206,33 @@ router.post("/intake", async (req, res) => {
     });
 
     const caseNumber = `TR-DEF-${String(insertId).padStart(5, "0")}`;
-    const caseId = String(insertId);
+    let caseId = String(insertId);
+
+    // Mirror the Case Brief behavior so defense intake submissions are also
+    // visible in the established /admin case list.
+    try {
+      const result = await createCase({
+        caseNumber,
+        clientName: fullName,
+        clientEmail: email,
+        clientPhone: phone || null,
+        category: category || "consumer",
+        status: "Pending Review",
+        title: `Defense Case — ${category || "New submission"}`,
+        caseType: "defense",
+        description: [
+          `Category: ${category || "N/A"}`,
+          `Deadline: ${deadline || "N/A"}`,
+          `Amount: ${amount || "N/A"}`,
+          "",
+          situation || "No narrative provided.",
+        ].join("\n"),
+      });
+      const rows = (result as any).rows ?? result;
+      if (rows?.[0]?.id != null) caseId = String(rows[0].id);
+    } catch (caseError: any) {
+      console.error("[Intake] Failed to create admin case record:", caseError?.message || caseError);
+    }
 
     // Sync to HubSpot (non-blocking)
     try {
