@@ -1,146 +1,16 @@
-import express from 'express';
-import bcrypt from 'bcrypt';
-import { getDb } from '../db';
+import express from "express";
 
 const router = express.Router();
 
-// One-time setup endpoint to create admin user
-router.get('/setup-admin', async (req, res) => {
-  try {
-    const db = await getDb();
-    if (!db) {
-      return res.status(500).send('Database not available');
-    }
-
-    const email = 'turboresponsehq@gmail.com';
-    const password = 'Admin123!';
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // First, try to add password column if it doesn't exist
-    try {
-      await db.execute('ALTER TABLE users ADD COLUMN IF NOT EXISTS password VARCHAR(255)');
-      console.log('✅ Password column added');
-    } catch (error: any) {
-      if (error.message.includes('Duplicate column') || error.message.includes('already exists')) {
-        console.log('✅ Password column already exists');
-      } else {
-        console.log('⚠️ Column add warning:', error.message);
-      }
-    }
-
-    // Check if admin exists
-    const users = await db.execute(`SELECT id, email FROM users WHERE email = '${email}'`);
-    const existingUser = (users as any).rows?.[0] || (users as any)[0];
-
-    if (existingUser) {
-      // Update existing user
-      await db.execute(`
-        UPDATE users 
-        SET password = '${hashedPassword}', role = 'admin' 
-        WHERE email = '${email}'
-      `);
-      console.log('✅ Admin user updated');
-    } else {
-      // Create new user
-      await db.execute(`
-        INSERT INTO users (email, password_hash, password, role, full_name, created_at, updated_at)
-        VALUES (
-          '${email}',
-          '${hashedPassword}',
-          '${hashedPassword}',
-          'admin',
-          'Admin',
-          NOW(),
-          NOW()
-        )
-      `);
-      console.log('✅ Admin user created');
-    }
-
-    res.send(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Admin Setup Complete</title>
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-            color: #0A1A3F;
-          }
-          .container {
-            text-align: center;
-            padding: 40px;
-            background: #FFFFFF;
-            border-radius: 20px;
-            border: 1px solid #4285F4;
-            box-shadow: 0 10px 40px rgba(26, 63, 199, 0.3);
-          }
-          h1 { color: #4285F4; margin-bottom: 20px; }
-          .credentials {
-            background: rgba(30, 41, 59, 0.6);
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-            border: 1px solid #334155;
-          }
-          .credential-row {
-            margin: 10px 0;
-            font-size: 18px;
-          }
-          .label { color: #94a3b8; }
-          .value { color: #4285F4; font-weight: bold; }
-          a {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 15px 30px;
-            background: #4285F4;
-            color: #0A1A3F;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: bold;
-            transition: all 0.3s;
-          }
-          a:hover {
-            background: #4285F4;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(26, 63, 199, 0.4);
-          }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <h1>✅ Admin Setup Complete!</h1>
-          <p>Your admin account is ready to use.</p>
-          <div class="credentials">
-            <div class="credential-row">
-              <span class="label">Email:</span>
-              <span class="value">turboresponsehq@gmail.com</span>
-            </div>
-            <div class="credential-row">
-              <span class="label">Password:</span>
-              <span class="value">Admin123!</span>
-            </div>
-          </div>
-          <a href="/admin/login">Go to Admin Login →</a>
-        </div>
-      </body>
-      </html>
-    `);
-
-  } catch (error: any) {
-    console.error('❌ Setup error:', error);
-    res.status(500).send(`
-      <h1>Setup Error</h1>
-      <p>${error.message}</p>
-      <pre>${error.stack}</pre>
-    `);
-  }
+/**
+ * Retired legacy setup route.
+ *
+ * Administrator identity and password hashes are managed through Render
+ * environment variables and the approved identity workflow. This route remains
+ * intentionally unavailable so it cannot become a credential-bearing fallback.
+ */
+router.all("/setup-admin", (_req, res) => {
+  return res.status(404).json({ error: "Not found" });
 });
 
 export default router;

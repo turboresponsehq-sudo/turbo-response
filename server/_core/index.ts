@@ -23,6 +23,7 @@ import { registerGoogleDriveOAuthRoutes } from "../routes/googleDriveOAuth";
 import { resumePersistedDriveIngestion } from "../services/googleDriveIngestionService";
 import { creatorRouter } from "../modules/creator/routes";
 import { aiLearningRouter } from "../modules/aiLearning";
+import { amaniRouter } from "../modules/amani/routes";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -45,17 +46,26 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 
 async function startServer() {
   const app = express();
-
+  const amaniOrigins = (process.env.AMANI_ALLOWED_ORIGINS || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+  const allowedOrigins = new Set([
+    "https://turboresponsehq.ai",
+    "https://turbo-response-backend.onrender.com",
+    "http://localhost:3000",
+    "http://localhost:3001",
+    ...amaniOrigins,
+  ]);
   // -------------------------
   // CORS CONFIGURATION
   // -------------------------
   app.use(
     cors({
-      origin: [
-        "https://turboresponsehq.ai",
-        "https://turbo-response-backend.onrender.com",
-        "http://localhost:3000"
-      ],
+      origin(origin, callback) {
+        if (!origin || allowedOrigins.has(origin)) return callback(null, true);
+        return callback(new Error("Origin is not allowed by CORS"));
+      },
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       credentials: true
     })
@@ -87,6 +97,10 @@ async function startServer() {
   // Creator Business V1 routes. This feature owns creator_* tables only and
   // never delegates to consumer case, portal, or payment workflow code.
   app.use("/api", creatorRouter);
+
+  // Amani is a Creator Automations client. Her API remains scoped to its own
+  // relationship and opportunity records, never Turbo Response case workflows.
+  app.use("/api", amaniRouter);
 
   // AI learning intake owns ai_learning_intakes only and remains separate
   // from Creator Leads and Creator Intake records.
@@ -232,9 +246,15 @@ async function startServer() {
         return res.status(400).json({ message: 'Email and password required' });
       }
 
-      const adminEmail = 'turboresponsehq@gmail.com';
-      const adminPassword = 'Turbo1234!';
-      if (email.trim().toLowerCase() !== adminEmail || password !== adminPassword) {
+      const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+      const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH;
+      if (!adminEmail || !adminPasswordHash) {
+        console.error('[Login] ADMIN_EMAIL or ADMIN_PASSWORD_HASH is not configured');
+        return res.status(503).json({ message: 'Admin login is not configured' });
+      }
+      const bcrypt = await import("bcrypt");
+      const passwordMatches = await bcrypt.default.compare(password, adminPasswordHash);
+      if (email.trim().toLowerCase() !== adminEmail || !passwordMatches) {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
 
