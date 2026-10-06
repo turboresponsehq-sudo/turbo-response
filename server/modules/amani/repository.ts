@@ -24,7 +24,7 @@ export async function createAmaniInquiry(input: AmaniInquiryInput, metadata: { r
 
   const email = input.email.toLowerCase();
   const relationshipResult = await db.execute(sql`
-    INSERT INTO amani_relationships (
+    INSERT INTO amani_creator_automations.relationships AS amani_relationship (
       creator_client_key, email, full_name, phone, organization, contact_role, city, brand_or_social,
       original_source, landing_page, referrer, utm_data, relationship_type,
       relationship_strength, relationship_owner, implementation_owner, handoff_destination, next_action
@@ -39,14 +39,14 @@ export async function createAmaniInquiry(input: AmaniInquiryInput, metadata: { r
     )
     ON CONFLICT (creator_client_key, email) DO UPDATE SET
       full_name = EXCLUDED.full_name,
-      phone = COALESCE(EXCLUDED.phone, amani_relationships.phone),
-      organization = COALESCE(EXCLUDED.organization, amani_relationships.organization),
-      contact_role = COALESCE(EXCLUDED.contact_role, amani_relationships.contact_role),
-      city = COALESCE(EXCLUDED.city, amani_relationships.city),
-      brand_or_social = COALESCE(EXCLUDED.brand_or_social, amani_relationships.brand_or_social),
-      landing_page = COALESCE(EXCLUDED.landing_page, amani_relationships.landing_page),
-      referrer = COALESCE(EXCLUDED.referrer, amani_relationships.referrer),
-      utm_data = CASE WHEN EXCLUDED.utm_data::text <> '{}' THEN EXCLUDED.utm_data ELSE amani_relationships.utm_data END,
+      phone = COALESCE(EXCLUDED.phone, amani_relationship.phone),
+      organization = COALESCE(EXCLUDED.organization, amani_relationship.organization),
+      contact_role = COALESCE(EXCLUDED.contact_role, amani_relationship.contact_role),
+      city = COALESCE(EXCLUDED.city, amani_relationship.city),
+      brand_or_social = COALESCE(EXCLUDED.brand_or_social, amani_relationship.brand_or_social),
+      landing_page = COALESCE(EXCLUDED.landing_page, amani_relationship.landing_page),
+      referrer = COALESCE(EXCLUDED.referrer, amani_relationship.referrer),
+      utm_data = CASE WHEN EXCLUDED.utm_data::text <> '{}' THEN EXCLUDED.utm_data ELSE amani_relationship.utm_data END,
       updated_at = NOW()
     RETURNING id, hubspot_contact_id
   `);
@@ -54,7 +54,7 @@ export async function createAmaniInquiry(input: AmaniInquiryInput, metadata: { r
   if (!relationship) throw new Error("Amani relationship could not be saved");
 
   const opportunityResult = await db.execute(sql`
-    INSERT INTO amani_opportunities (
+    INSERT INTO amani_creator_automations.opportunities (
       relationship_id, client_submission_id, opportunity_type, business_pathway,
       what_they_are_building, primary_challenge, operating_stage, timeline,
       budget_range, notes, opportunity_owner, relationship_owner,
@@ -79,7 +79,7 @@ export async function createAmaniInquiry(input: AmaniInquiryInput, metadata: { r
   if (!opportunity) {
     const existing = await db.execute(sql`
       SELECT id, relationship_id, client_submission_id, created_at, hubspot_contact_id, hubspot_note_id, hubspot_sync_status, is_internal_test
-      FROM amani_opportunities
+      FROM amani_creator_automations.opportunities
       WHERE client_submission_id = ${input.clientSubmissionId}
       LIMIT 1
     `);
@@ -125,7 +125,7 @@ export async function appendAmaniEvent(event: {
   const db = await getDb();
   if (!db) throw new Error("Amani event storage is unavailable");
   await db.execute(sql`
-    INSERT INTO amani_opportunity_events (opportunity_id, event_type, actor, payload, idempotency_key)
+    INSERT INTO amani_creator_automations.opportunity_events (opportunity_id, event_type, actor, payload, idempotency_key)
     VALUES (${event.opportunityId}, ${event.eventType}, ${event.actor}, ${JSON.stringify(event.payload ?? {})}, ${event.idempotencyKey})
     ON CONFLICT (idempotency_key) DO NOTHING
   `);
@@ -144,14 +144,14 @@ export async function setAmaniHubSpotSync(input: {
 
   if (input.contactId) {
     await db.execute(sql`
-      UPDATE amani_relationships
+      UPDATE amani_creator_automations.relationships
       SET hubspot_contact_id = ${input.contactId}, updated_at = NOW()
       WHERE id = ${input.relationshipId}
     `);
   }
 
   await db.execute(sql`
-    UPDATE amani_opportunities
+    UPDATE amani_creator_automations.opportunities
     SET hubspot_contact_id = COALESCE(${input.contactId ?? null}, hubspot_contact_id),
         hubspot_note_id = COALESCE(${input.noteId ?? null}, hubspot_note_id),
         hubspot_sync_status = ${input.status},

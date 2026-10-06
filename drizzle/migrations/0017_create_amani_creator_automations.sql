@@ -1,7 +1,10 @@
 -- Amani Mansur is a Creator Automations client. These records are intentionally
 -- isolated from Turbo Response cases, consumer intake, payments, and client portals.
+-- This migration is additive only: it creates no objects in the public schema.
 
-CREATE TABLE IF NOT EXISTS amani_relationships (
+CREATE SCHEMA IF NOT EXISTS amani_creator_automations;
+
+CREATE TABLE IF NOT EXISTS amani_creator_automations.relationships (
   id BIGSERIAL PRIMARY KEY,
   creator_client_key VARCHAR(50) NOT NULL DEFAULT 'amani',
   email VARCHAR(320) NOT NULL,
@@ -30,11 +33,11 @@ CREATE TABLE IF NOT EXISTS amani_relationships (
 );
 
 CREATE INDEX IF NOT EXISTS idx_amani_relationships_owner
-  ON amani_relationships (relationship_owner, updated_at DESC);
+  ON amani_creator_automations.relationships (relationship_owner, updated_at DESC);
 
-CREATE TABLE IF NOT EXISTS amani_opportunities (
+CREATE TABLE IF NOT EXISTS amani_creator_automations.opportunities (
   id BIGSERIAL PRIMARY KEY,
-  relationship_id BIGINT NOT NULL REFERENCES amani_relationships(id) ON DELETE RESTRICT,
+  relationship_id BIGINT NOT NULL REFERENCES amani_creator_automations.relationships(id) ON DELETE RESTRICT,
   client_submission_id UUID NOT NULL UNIQUE,
   opportunity_type VARCHAR(500) NOT NULL,
   business_pathway VARCHAR(255) NOT NULL,
@@ -70,15 +73,15 @@ CREATE TABLE IF NOT EXISTS amani_opportunities (
 );
 
 CREATE INDEX IF NOT EXISTS idx_amani_opportunities_relationship_created
-  ON amani_opportunities (relationship_id, created_at DESC);
+  ON amani_creator_automations.opportunities (relationship_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_amani_opportunities_owner_status
-  ON amani_opportunities (opportunity_owner, status, created_at DESC);
+  ON amani_creator_automations.opportunities (opportunity_owner, status, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_amani_opportunities_handoff
-  ON amani_opportunities (handoff_destination, created_at DESC);
+  ON amani_creator_automations.opportunities (handoff_destination, created_at DESC);
 
-CREATE TABLE IF NOT EXISTS amani_opportunity_events (
+CREATE TABLE IF NOT EXISTS amani_creator_automations.opportunity_events (
   id BIGSERIAL PRIMARY KEY,
-  opportunity_id BIGINT NOT NULL REFERENCES amani_opportunities(id) ON DELETE CASCADE,
+  opportunity_id BIGINT NOT NULL REFERENCES amani_creator_automations.opportunities(id) ON DELETE CASCADE,
   event_type VARCHAR(100) NOT NULL,
   actor VARCHAR(255) NOT NULL,
   payload JSONB NOT NULL DEFAULT '{}'::jsonb,
@@ -87,4 +90,4 @@ CREATE TABLE IF NOT EXISTS amani_opportunity_events (
 );
 
 CREATE INDEX IF NOT EXISTS idx_amani_opportunity_events_opportunity_created
-  ON amani_opportunity_events (opportunity_id, created_at DESC);
+  ON amani_creator_automations.opportunity_events (opportunity_id, created_at DESC);
