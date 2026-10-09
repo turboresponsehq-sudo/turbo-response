@@ -18,7 +18,7 @@ function cleanObject<T extends Record<string, string | undefined>>(value: T | un
   return Object.fromEntries(Object.entries(value ?? {}).filter(([, item]) => Boolean(item?.trim())));
 }
 
-export async function createAmaniInquiry(input: AmaniInquiryInput, metadata: { referrer?: string; ip?: string }) {
+export async function createAmaniInquiry(input: AmaniInquiryInput, metadata: { referrer?: string; ip?: string; eventActor?: string }) {
   const db = await getDb();
   if (!db) throw new Error("Amani inquiry storage is unavailable");
 
@@ -92,7 +92,7 @@ export async function createAmaniInquiry(input: AmaniInquiryInput, metadata: { r
     await appendAmaniEvent({
       opportunityId: normalized.id,
       eventType: "inquiry_submitted",
-      actor: "public_amani_website",
+      actor: metadata.eventActor ?? "public_amani_website",
       idempotencyKey: `amani-opportunity:${normalized.id}:submitted`,
       payload: {
         source: input.source?.trim() || "Amani Website",

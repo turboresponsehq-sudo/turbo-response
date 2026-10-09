@@ -37,6 +37,10 @@ function isAuthorizedInternalTest(req: any) {
   return timingSafeEqual(Buffer.from(configured), Buffer.from(supplied));
 }
 
+function internalTestEnabled() {
+  return process.env.AMANI_INTERNAL_TEST_ENABLED === "true";
+}
+
 function splitName(fullName: string) {
   const parts = fullName.trim().split(/\s+/);
   return { firstname: parts.shift() || fullName.trim(), lastname: parts.join(" ") };
@@ -65,6 +69,55 @@ function structuredHubSpotNote(input: ReturnType<typeof amaniInquirySchema.parse
     input.isInternalTest ? "Internal test record: yes" : "Internal test record: no",
   ].join("\n");
 }
+
+// Protected staging-only path. This is intentionally registered before the
+// public capture gate and never calls HubSpot, email, or notification code.
+amaniRouter.post("/creator/amani/internal-test/inquiries", async (req: any, res) => {
+  if (!internalTestEnabled() || !isAuthorizedInternalTest(req)) {
+    return res.status(404).json({ error: "Not found" });
+  }
+
+  const key = clientKey(req);
+  if (!allowAttempt(key)) return res.status(429).json({ error: "Please wait a few minutes before trying again." });
+
+  const parsed = amaniInquirySchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({
+      error: "Please complete the required internal test inquiry details.",
+      fields: parsed.error.flatten().fieldErrors,
+    });
+  }
+
+  try {
+    const stored = await createAmaniInquiry(
+      { ...parsed.data, isInternalTest: true },
+      {
+        referrer: typeof req.get === "function" ? req.get("referer") : undefined,
+        ip: key,
+        eventActor: "amani_internal_test",
+      },
+    );
+    await setAmaniHubSpotSync({
+      opportunityId: stored.opportunity.id,
+      relationshipId: stored.relationship.id,
+      status: "disabled",
+    });
+    console.info("[Amani] Internal test inquiry stored; external gates remain disabled", {
+      inquiryId: stored.opportunity.id,
+      created: stored.created,
+    });
+    return res.status(201).json({
+      success: true,
+      message: "Internal Amani test inquiry stored.",
+      inquiryId: stored.opportunity.id,
+      created: stored.created,
+      internalTest: true,
+    });
+  } catch (error) {
+    console.error("[Amani] Internal test inquiry failed", error);
+    return res.status(500).json({ error: "The internal Amani test inquiry could not be saved." });
+  }
+});
 
 amaniRouter.use("/creator/amani", (_req, res, next) => {
   if (!enabled()) return res.status(404).json({ error: "Not found" });
