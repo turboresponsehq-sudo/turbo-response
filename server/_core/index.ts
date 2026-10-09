@@ -23,6 +23,7 @@ import { registerGoogleDriveOAuthRoutes } from "../routes/googleDriveOAuth";
 import { resumePersistedDriveIngestion } from "../services/googleDriveIngestionService";
 import { creatorRouter } from "../modules/creator/routes";
 import { aiLearningRouter } from "../modules/aiLearning";
+import { amaniRouter } from "../modules/amani/routes";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -45,17 +46,26 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 
 async function startServer() {
   const app = express();
-
+  const amaniOrigins = (process.env.AMANI_ALLOWED_ORIGINS || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+  const allowedOrigins = new Set([
+    "https://turboresponsehq.ai",
+    "https://turbo-response-backend.onrender.com",
+    "http://localhost:3000",
+    "http://localhost:3001",
+    ...amaniOrigins,
+  ]);
   // -------------------------
   // CORS CONFIGURATION
   // -------------------------
   app.use(
     cors({
-      origin: [
-        "https://turboresponsehq.ai",
-        "https://turbo-response-backend.onrender.com",
-        "http://localhost:3000"
-      ],
+      origin(origin, callback) {
+        if (!origin || allowedOrigins.has(origin)) return callback(null, true);
+        return callback(new Error("Origin is not allowed by CORS"));
+      },
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       credentials: true
     })
@@ -77,12 +87,16 @@ async function startServer() {
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   registerGoogleDriveOAuthRoutes(app);
-  
+
   // Brain System routes (with access token middleware built-in)
   app.use("/api/brain", brainRouter);
   
   // Intake form routes (Offense and Defense)
   app.use("/api", intakeRouter);
+
+  // Amani is a Creator Automations client. Her API remains scoped to its own
+  // relationship and opportunity records, never Turbo Response case workflows.
+  app.use("/api", amaniRouter);
 
   // Creator Business V1 routes. This feature owns creator_* tables only and
   // never delegates to consumer case, portal, or payment workflow code.

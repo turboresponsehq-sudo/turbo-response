@@ -148,6 +148,46 @@ async function createContactNote(contactId: string, body: string): Promise<void>
 }
 
 /**
+ * Adds structured context to one existing contact without creating a duplicate.
+ * Callers persist their own retry state because this is an external side effect.
+ */
+export async function appendHubSpotContactNote(contactId: string, body: string): Promise<string | null> {
+  if (!HUBSPOT_API_KEY || !contactId || !body.trim()) return null;
+  try {
+    const response = await axios.post(
+      `${HUBSPOT_BASE}/crm/v3/objects/notes`,
+      {
+        properties: {
+          hs_note_body: body,
+          hs_timestamp: new Date().toISOString(),
+        },
+        associations: [
+          {
+            to: { id: contactId },
+            types: [
+              {
+                associationCategory: 'HUBSPOT_DEFINED',
+                associationTypeId: 202,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${HUBSPOT_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    return response.data.id || null;
+  } catch (error) {
+    console.error('[HubSpot] Error creating contact note:', error);
+    return null;
+  }
+}
+
+/**
  * Sync or create a contact in HubSpot
  * Returns the HubSpot contact ID
  */

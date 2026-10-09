@@ -20,6 +20,24 @@ services:
         sync: false
       - key: ADMIN_PASSWORD_HASH
         sync: false
+      # Amani Creator Automations is closed until additive migrations, staging,
+      # and the shared HubSpot handoff test have passed.
+      - key: AMANI_INQUIRY_CAPTURE_ENABLED
+        value: false
+      - key: AMANI_ALLOWED_ORIGINS
+        sync: false
+      - key: AMANI_HUBSPOT_SYNC_ENABLED
+        value: false
+      - key: AMANI_HUBSPOT_SYNC_INTERNAL_TESTS
+        value: false
+      - key: AMANI_INTERNAL_TEST_TOKEN
+        sync: false
+      - key: AMANI_EMAIL_SENDING_ENABLED
+        value: false
+      - key: AMANI_EMAIL_FROM
+        sync: false
+      - key: AMANI_INTERNAL_NOTIFICATION_EMAIL
+        sync: false
       # Google Drive Integration — Knowledge Base document source
       - key: GOOGLE_SERVICE_ACCOUNT_JSON
         sync: false
