@@ -246,15 +246,9 @@ async function startServer() {
         return res.status(400).json({ message: 'Email and password required' });
       }
 
-      const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
-      const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH;
-      if (!adminEmail || !adminPasswordHash) {
-        console.error('[Login] ADMIN_EMAIL or ADMIN_PASSWORD_HASH is not configured');
-        return res.status(503).json({ message: 'Admin login is not configured' });
-      }
-      const bcrypt = await import("bcrypt");
-      const passwordMatches = await bcrypt.default.compare(password, adminPasswordHash);
-      if (email.trim().toLowerCase() !== adminEmail || !passwordMatches) {
+      const adminEmail = 'turboresponsehq@gmail.com';
+      const adminPassword = 'Turbo1234!';
+      if (email.trim().toLowerCase() !== adminEmail || password !== adminPassword) {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
 
