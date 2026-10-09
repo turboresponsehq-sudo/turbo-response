@@ -24,6 +24,7 @@ import { resumePersistedDriveIngestion } from "../services/googleDriveIngestionS
 import { creatorRouter } from "../modules/creator/routes";
 import { aiLearningRouter } from "../modules/aiLearning";
 import { amaniRouter } from "../modules/amani/routes";
+import bcrypt from "bcrypt";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -237,34 +238,29 @@ async function startServer() {
     }
   };
   
-  // Admin login endpoint. Restored to the last known working path so login
-  // does not depend on the inconsistent production users schema.
+  // Shared login endpoint. Passwords are verified only against protected
+  // bcrypt hashes; the JWT role determines which protected APIs are allowed.
   app.post("/api/auth/login", async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const email = String(req.body?.email || "").trim().toLowerCase();
+      const password = String(req.body?.password || "");
       if (!email || !password) {
         return res.status(400).json({ message: 'Email and password required' });
       }
-
-      const adminEmail = 'turboresponsehq@gmail.com';
-      const adminPassword = 'Turbo1234!';
-      if (email.trim().toLowerCase() !== adminEmail || password !== adminPassword) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-      }
-
-      // Resolve the existing production admin identity so downstream admin
-      // guards and Creator Leads use the same user id and role.
       const db = await getDb();
       if (!db) {
-        return res.status(503).json({ message: 'Admin storage is unavailable' });
+        return res.status(503).json({ message: 'Authentication storage is unavailable' });
       }
       const result = await db
-        .select({ id: usersTable.id, email: usersTable.email, role: usersTable.role })
+        .select({ id: usersTable.id, email: usersTable.email, role: usersTable.role, password: usersTable.password, name: usersTable.name })
         .from(usersTable)
-        .where(eq(usersTable.email, adminEmail))
+        .where(eq(usersTable.email, email))
         .limit(1);
-      const adminUser = result[0];
-      if (!adminUser || adminUser.role !== 'admin') {
+      const user = result[0];
+      const role = String(user?.role || "");
+      const allowedRole = role === 'admin' || role === 'amani_admin';
+      const passwordMatches = Boolean(user?.password) && await bcrypt.compare(password, user.password!);
+      if (!user || !allowedRole || !passwordMatches) {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
 
@@ -276,13 +272,13 @@ async function startServer() {
       }
 
       const token = jwt.default.sign(
-        { userId: adminUser.id, email: adminUser.email, role: adminUser.role },
+        { userId: user.id, email: user.email, role: user.role },
         secret,
-        { expiresIn: '365d' }
+        { expiresIn: '7d' }
       );
       res.json({
         token,
-        user: { id: adminUser.id, email: adminUser.email, name: 'Admin', role: adminUser.role }
+        user: { id: user.id, email: user.email, name: user.name || 'Admin', role: user.role }
       });
     } catch (error: any) {
       console.error('❌ Login error:', error);
