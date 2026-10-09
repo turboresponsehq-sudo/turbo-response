@@ -328,7 +328,7 @@ export const users = pgTable("users", {
 	createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
 	lastSignedIn: timestamp({ mode: 'string' }).defaultNow().notNull(),
-	password: varchar({ length: 255 }),
+  password: varchar("password_hash", { length: 255 }),
 },
 (table) => [
 	index("users_openId_unique").on(table.openId),
