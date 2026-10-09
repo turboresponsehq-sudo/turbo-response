@@ -1,6 +1,5 @@
 import "dotenv/config";
 import express from "express";
-import { timingSafeEqual } from "crypto";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { createServer } from "http";
@@ -47,14 +46,6 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 
 async function startServer() {
   const app = express();
-  const internalTestToken = process.env.AMANI_INTERNAL_TEST_TOKEN ?? "";
-  console.info("AMANI_RUNTIME_136F397", {
-    RENDER_GIT_COMMIT: process.env.RENDER_GIT_COMMIT ?? "unknown",
-    internalTestEnabled: process.env.AMANI_INTERNAL_TEST_ENABLED === "true",
-    tokenConfigured: internalTestToken.length > 0,
-    tokenLength: internalTestToken.length,
-    databaseUrlConfigured: Boolean(process.env.DATABASE_URL),
-  });
   const amaniOrigins = (process.env.AMANI_ALLOWED_ORIGINS || "")
     .split(",")
     .map((origin) => origin.trim())
@@ -97,30 +88,6 @@ async function startServer() {
   registerOAuthRoutes(app);
   registerGoogleDriveOAuthRoutes(app);
 
-  // Temporary staging diagnostic only; no token value is returned or logged.
-  app.get("/api/creator/amani/internal-test/status", (_req, res) => {
-    const token = process.env.AMANI_INTERNAL_TEST_TOKEN ?? "";
-    return res.json({
-      internalTestEnabled: process.env.AMANI_INTERNAL_TEST_ENABLED === "true",
-      tokenConfigured: token.length > 0,
-      tokenLength: token.length,
-    });
-  });
-  app.get("/api/creator/amani/internal-test/token-check", (req, res) => {
-    const configured = process.env.AMANI_INTERNAL_TEST_TOKEN ?? "";
-    const supplied = req.get("x-amani-internal-test");
-    const suppliedLength = supplied?.length ?? 0;
-    const tokenMatch = suppliedLength > 0
-      && configured.length === suppliedLength
-      && timingSafeEqual(Buffer.from(configured), Buffer.from(supplied ?? ""));
-    return res.json({
-      headerPresent: suppliedLength > 0,
-      suppliedLength,
-      configuredLength: configured.length,
-      tokenMatch,
-    });
-  });
-  
   // Brain System routes (with access token middleware built-in)
   app.use("/api/brain", brainRouter);
   
