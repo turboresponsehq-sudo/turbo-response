@@ -46,6 +46,14 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 
 async function startServer() {
   const app = express();
+  const internalTestToken = process.env.AMANI_INTERNAL_TEST_TOKEN ?? "";
+  console.info("AMANI_RUNTIME_136F397", {
+    RENDER_GIT_COMMIT: process.env.RENDER_GIT_COMMIT ?? "unknown",
+    internalTestEnabled: process.env.AMANI_INTERNAL_TEST_ENABLED === "true",
+    tokenConfigured: internalTestToken.length > 0,
+    tokenLength: internalTestToken.length,
+    databaseUrlConfigured: Boolean(process.env.DATABASE_URL),
+  });
   const amaniOrigins = (process.env.AMANI_ALLOWED_ORIGINS || "")
     .split(",")
     .map((origin) => origin.trim())
