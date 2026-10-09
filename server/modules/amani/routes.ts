@@ -31,10 +31,25 @@ function allowAttempt(key: string) {
 }
 
 function isAuthorizedInternalTest(req: any) {
-  const configured = process.env.AMANI_INTERNAL_TEST_TOKEN;
+  const configured = process.env.AMANI_INTERNAL_TEST_TOKEN ?? "";
   const supplied = typeof req.get === "function" ? req.get("x-amani-internal-test") : undefined;
-  if (!configured || !supplied || configured.length !== supplied.length) return false;
+  if (!supplied || configured.length !== supplied.length || configured.length === 0) return false;
   return timingSafeEqual(Buffer.from(configured), Buffer.from(supplied));
+}
+
+function internalTestTokenCheck(req: any) {
+  const configured = process.env.AMANI_INTERNAL_TEST_TOKEN ?? "";
+  const supplied = typeof req.get === "function" ? req.get("x-amani-internal-test") : undefined;
+  const suppliedLength = typeof supplied === "string" ? supplied.length : 0;
+  const tokenMatch = suppliedLength > 0
+    && configured.length === suppliedLength
+    && timingSafeEqual(Buffer.from(configured), Buffer.from(supplied));
+  return {
+    headerPresent: suppliedLength > 0,
+    suppliedLength,
+    configuredLength: configured.length,
+    tokenMatch,
+  };
 }
 
 function internalTestEnabled() {
@@ -127,6 +142,11 @@ amaniRouter.get("/creator/amani/internal-test/status", (_req, res) => {
     tokenConfigured: token.length > 0,
     tokenLength: token.length,
   });
+});
+
+// Temporary staging diagnostic only. Never returns or logs either token value.
+amaniRouter.get("/creator/amani/internal-test/token-check", (req: any, res) => {
+  return res.json(internalTestTokenCheck(req));
 });
 
 amaniRouter.use("/creator/amani", (_req, res, next) => {

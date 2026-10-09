@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import { timingSafeEqual } from "crypto";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { createServer } from "http";
@@ -103,6 +104,20 @@ async function startServer() {
       internalTestEnabled: process.env.AMANI_INTERNAL_TEST_ENABLED === "true",
       tokenConfigured: token.length > 0,
       tokenLength: token.length,
+    });
+  });
+  app.get("/api/creator/amani/internal-test/token-check", (req, res) => {
+    const configured = process.env.AMANI_INTERNAL_TEST_TOKEN ?? "";
+    const supplied = req.get("x-amani-internal-test");
+    const suppliedLength = supplied?.length ?? 0;
+    const tokenMatch = suppliedLength > 0
+      && configured.length === suppliedLength
+      && timingSafeEqual(Buffer.from(configured), Buffer.from(supplied ?? ""));
+    return res.json({
+      headerPresent: suppliedLength > 0,
+      suppliedLength,
+      configuredLength: configured.length,
+      tokenMatch,
     });
   });
   
