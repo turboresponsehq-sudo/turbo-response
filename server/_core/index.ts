@@ -87,6 +87,16 @@ async function startServer() {
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   registerGoogleDriveOAuthRoutes(app);
+
+  // Temporary staging diagnostic only; no token value is returned or logged.
+  app.get("/api/creator/amani/internal-test/status", (_req, res) => {
+    const token = process.env.AMANI_INTERNAL_TEST_TOKEN ?? "";
+    return res.json({
+      internalTestEnabled: process.env.AMANI_INTERNAL_TEST_ENABLED === "true",
+      tokenConfigured: token.length > 0,
+      tokenLength: token.length,
+    });
+  });
   
   // Brain System routes (with access token middleware built-in)
   app.use("/api/brain", brainRouter);
