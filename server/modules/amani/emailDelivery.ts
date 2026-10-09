@@ -11,6 +11,10 @@ export type AmaniInquiryEmail = {
   timeline: string;
   investment?: string;
   source: string;
+  phone?: string;
+  submittedAt: string;
+  opportunityId: number;
+  adminReviewUrl?: string;
   relationshipOwner: "AMANI";
   implementationOwner: "AMANI";
   nextAction: string;
@@ -34,7 +38,8 @@ function settings() {
     smtpUser: process.env.EMAIL_USER?.trim(),
     smtpPassword: process.env.EMAIL_PASSWORD,
     from: process.env.AMANI_EMAIL_FROM?.trim(),
-    internalRecipient: process.env.AMANI_INTERNAL_NOTIFICATION_EMAIL?.trim(),
+    amaniRecipient: process.env.AMANI_INTERNAL_NOTIFICATION_EMAIL?.trim(),
+    zakhyRecipient: process.env.ZAKHY_ADMIN_EMAIL?.trim(),
   };
   const missing = Object.entries(values).filter(([, value]) => !value).map(([key]) => key);
   return { values, missing };
@@ -64,44 +69,42 @@ export async function deliverAmaniInquiryEmails(inquiry: AmaniInquiryEmail): Pro
     auth: { user: values.smtpUser, pass: values.smtpPassword },
   });
   const failures: string[] = [];
-  let visitor: DeliveryStatus = "sent";
+  let visitor: DeliveryStatus = "suppressed";
   let internal: DeliveryStatus = "sent";
-  const visitorHtml = `<p>Thanks — we received your request.</p><p>Amani’s team will review what you’re building and follow up with the appropriate next step.</p>`;
+  const adminUrl = `${inquiry.adminReviewUrl || process.env.AMANI_ADMIN_REVIEW_URL || "https://turboresponsehq.ai/admin/creator/amani"}/${inquiry.opportunityId}`;
   const internalHtml = `<h2>Amani website inquiry</h2><dl>
     <dt>Name</dt><dd>${escapeHtml(inquiry.fullName)}</dd>
     <dt>Organization</dt><dd>${escapeHtml(inquiry.organization || "Not provided")}</dd>
+    <dt>Email</dt><dd>${escapeHtml(inquiry.email)}</dd>
+    <dt>Phone</dt><dd>${escapeHtml(inquiry.phone || "Not provided")}</dd>
     <dt>Opportunity type</dt><dd>${escapeHtml(inquiry.goal)}</dd>
     <dt>What they want</dt><dd>${escapeHtml(inquiry.challenge)}</dd>
     <dt>Budget</dt><dd>${escapeHtml(inquiry.investment || "Not provided")}</dd>
     <dt>Timeline</dt><dd>${escapeHtml(inquiry.timeline)}</dd>
     <dt>Source</dt><dd>${escapeHtml(inquiry.source)}</dd>
+    <dt>Date submitted</dt><dd>${escapeHtml(inquiry.submittedAt)}</dd>
     <dt>Relationship owner</dt><dd>${inquiry.relationshipOwner}</dd>
     <dt>Recommended implementation owner</dt><dd>${inquiry.implementationOwner}</dd>
     <dt>Next action</dt><dd>${escapeHtml(inquiry.nextAction)}</dd>
+    <dt>Review record</dt><dd><a href="${escapeHtml(adminUrl)}">Open protected Amani review</a></dd>
   </dl>`;
 
-  try {
-    await transport.sendMail({
-      from: `Amani N. Mansur <${values.from}>`,
-      to: inquiry.email,
-      subject: "We received your request",
-      html: visitorHtml,
-    });
-  } catch (error) {
-    visitor = "failed";
-    failures.push(error instanceof Error ? error.message.slice(0, 300) : "Visitor email delivery failed");
-  }
-
-  try {
-    await transport.sendMail({
-      from: `Amani N. Mansur <${values.from}>`,
-      to: values.internalRecipient,
-      subject: `New Amani inquiry — ${inquiry.fullName}`,
-      html: internalHtml,
-    });
-  } catch (error) {
-    internal = "failed";
-    failures.push(error instanceof Error ? error.message.slice(0, 300) : "Internal notification delivery failed");
+  const recipients = [values.amaniRecipient, values.zakhyRecipient].filter(
+    (recipient, index, all): recipient is string => Boolean(recipient) && all.indexOf(recipient) === index,
+  );
+  internal = "sent";
+  for (const recipient of recipients) {
+    try {
+      await transport.sendMail({
+        from: `Amani N. Mansur <${values.from}>`,
+        to: recipient,
+        subject: `New Amani inquiry — ${inquiry.fullName}`,
+        html: internalHtml,
+      });
+    } catch (error) {
+      internal = "failed";
+      failures.push(`${recipient}: ${error instanceof Error ? error.message.slice(0, 300) : "Internal notification delivery failed"}`);
+    }
   }
 
   return { status: failures.length ? "failed" : "sent", visitor, internal, failures };

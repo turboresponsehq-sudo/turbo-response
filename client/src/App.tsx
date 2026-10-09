@@ -1,10 +1,11 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
+import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { AdminSessionGate } from "@/components/AdminSessionGate";
 import { OAuthAdminGate } from "@/components/OAuthAdminGate";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { Route, Switch, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AdminAuthProvider } from "./contexts/AdminAuthContext";
@@ -70,6 +71,21 @@ function ProtectedAmaniReview() {
   );
 }
 
+function RoleScopedAdminBoundary({ children }: { children: ReactNode }) {
+  const [location, setLocation] = useLocation();
+  const { user, isLoading } = useAdminAuth();
+  const isAmaniRoute = location === "/admin/creator/amani" || location.startsWith("/admin/creator/amani/");
+
+  useEffect(() => {
+    if (!isLoading && user?.role === "amani_admin" && !isAmaniRoute) {
+      setLocation("/admin/creator/amani");
+    }
+  }, [isAmaniRoute, isLoading, setLocation, user?.role]);
+
+  if (!isLoading && user?.role === "amani_admin" && !isAmaniRoute) return null;
+  return <>{children}</>;
+}
+
 function ProtectedAiLearningIntakes() {
   return (
     <AdminSessionGate>
@@ -112,7 +128,8 @@ function OAuthBrain() {
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
-    <Switch>
+    <RoleScopedAdminBoundary>
+      <Switch>
       <Route path={"/"} component={Home} />
 
       <Route path="/consumer-solutions" component={ConsumerSolutions} />
@@ -219,7 +236,8 @@ function Router() {
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
-    </Switch>
+      </Switch>
+    </RoleScopedAdminBoundary>
   );
 }
 

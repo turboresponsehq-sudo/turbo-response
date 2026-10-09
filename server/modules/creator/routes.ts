@@ -60,7 +60,8 @@ function safeLeadId(value: string): number | null {
   return Number.isSafeInteger(id) && id > 0 ? id : null;
 }
 
-export const requireCreatorAdmin: RequestHandler = async (req: any, res, next) => {
+function requireRoles(allowedRoles: string[]): RequestHandler {
+  return async (req: any, res, next) => {
   const authorization = req.headers.authorization;
   if (!authorization?.startsWith("Bearer ")) {
     return res.status(401).json({ error: "Admin authentication required" });
@@ -79,8 +80,8 @@ export const requireCreatorAdmin: RequestHandler = async (req: any, res, next) =
       role?: string;
     };
     const userId = Number(claims.userId);
-    if (claims.role !== "admin" || !Number.isSafeInteger(userId) || userId < 1) {
-      return res.status(403).json({ error: "Admin access required" });
+    if (!allowedRoles.includes(String(claims.role)) || !Number.isSafeInteger(userId) || userId < 1) {
+      return res.status(403).json({ error: "Insufficient admin access" });
     }
 
     const db = await getDb();
@@ -92,8 +93,8 @@ export const requireCreatorAdmin: RequestHandler = async (req: any, res, next) =
       ? userResult
       : ((userResult as { rows?: unknown[] }).rows ?? []);
     const user = users[0] as { id: number; email?: string; role?: string } | undefined;
-    if (!user || user.role !== "admin" || (claims.email && user.email?.toLowerCase() !== claims.email.toLowerCase())) {
-      return res.status(403).json({ error: "Admin access required" });
+    if (!user || !allowedRoles.includes(String(user.role)) || (claims.email && user.email?.toLowerCase() !== claims.email.toLowerCase())) {
+      return res.status(403).json({ error: "Insufficient admin access" });
     }
 
     req.creatorAdmin = { id: user.id, email: user.email || "admin" };
@@ -101,7 +102,11 @@ export const requireCreatorAdmin: RequestHandler = async (req: any, res, next) =
   } catch {
     return res.status(401).json({ error: "Invalid or expired admin session" });
   }
-};
+  };
+}
+
+export const requireCreatorAdmin: RequestHandler = requireRoles(["admin"]);
+export const requireAmaniAdmin: RequestHandler = requireRoles(["admin", "amani_admin"]);
 
 /** Public Creator Business intake. It never uses consumer case records. */
 creatorRouter.post("/creator/leads", async (req: any, res) => {
@@ -220,7 +225,7 @@ creatorRouter.get("/creator/admin/leads", requireCreatorAdmin, async (req, res) 
   }
 });
 
-creatorRouter.get("/creator/admin/amani", requireCreatorAdmin, async (req, res) => {
+creatorRouter.get("/creator/admin/amani", requireAmaniAdmin, async (req, res) => {
   try {
     const requestedLimit = Number(req.query.limit ?? 100);
     const opportunities = await listAmaniAdminOpportunities(
@@ -233,7 +238,7 @@ creatorRouter.get("/creator/admin/amani", requireCreatorAdmin, async (req, res) 
   }
 });
 
-creatorRouter.get("/creator/admin/amani/:opportunityId", requireCreatorAdmin, async (req, res) => {
+creatorRouter.get("/creator/admin/amani/:opportunityId", requireAmaniAdmin, async (req, res) => {
   const opportunityId = safeLeadId(req.params.opportunityId);
   if (!opportunityId) return res.status(400).json({ error: "Invalid Amani opportunity identifier" });
 

@@ -218,6 +218,7 @@ amaniRouter.post("/creator/amani/inquiries", async (req: any, res) => {
     const emailDelivery = await deliverAmaniInquiryEmails({
       fullName: inquiry.fullName,
       email: inquiry.email,
+      phone: inquiry.phone,
       organization: inquiry.organization,
       goal: inquiry.goal,
       challenge: inquiry.challenge,
@@ -225,6 +226,9 @@ amaniRouter.post("/creator/amani/inquiries", async (req: any, res) => {
       timeline: inquiry.timeline,
       investment: inquiry.investment,
       source: inquiry.source || "Amani Website",
+      submittedAt: stored.opportunity.createdAt,
+      opportunityId: stored.opportunity.id,
+      adminReviewUrl: process.env.AMANI_ADMIN_REVIEW_URL,
       relationshipOwner: AMANI_RELATIONSHIP_OWNER,
       implementationOwner: AMANI_RELATIONSHIP_OWNER,
       nextAction: "Review inquiry and recommend the next relationship or campaign action.",
