@@ -72,9 +72,9 @@ function ProtectedAmaniReview() {
 }
 
 function RoleScopedAdminBoundary({ children }: { children: ReactNode }) {
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const { user, isLoading } = useAdminAuth();
-  const isAmaniRoute = window.location.pathname === "/admin/creator/amani" || window.location.pathname.startsWith("/admin/creator/amani/");
+  const isAmaniRoute = location === "/admin/creator/amani" || location.startsWith("/admin/creator/amani/");
 
   useEffect(() => {
     if (!isLoading && user?.role === "amani_admin" && !isAmaniRoute) {
