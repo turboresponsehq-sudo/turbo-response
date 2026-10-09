@@ -35,8 +35,8 @@ router.get('/setup-admin', async (req, res) => {
     if (existingUser) {
       // Update existing user
       await db.execute(`
-        UPDATE users
-        SET password = '${hashedPassword}', role = 'admin'
+        UPDATE users 
+        SET password = '${hashedPassword}', role = 'admin' 
         WHERE email = '${email}'
       `);
       console.log('✅ Admin user updated');
