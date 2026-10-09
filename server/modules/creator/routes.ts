@@ -19,6 +19,7 @@ import {
 import { processCreatorLeadEmailWorkflow } from "./emailWorkflow";
 import { creatorLeadCaptureEnabled } from "./featureGate";
 import { syncContactToHubSpot } from "../../hubspotSync";
+import { getAmaniAdminOpportunity, listAmaniAdminOpportunities } from "../amani/adminRepository";
 
 export const creatorRouter = Router();
 
@@ -216,6 +217,33 @@ creatorRouter.get("/creator/admin/leads", requireCreatorAdmin, async (req, res) 
   } catch (error) {
     console.error("[Creator] Lead list failed", error);
     return res.status(500).json({ error: "Unable to load Creator Leads." });
+  }
+});
+
+creatorRouter.get("/creator/admin/amani", requireCreatorAdmin, async (req, res) => {
+  try {
+    const requestedLimit = Number(req.query.limit ?? 100);
+    const opportunities = await listAmaniAdminOpportunities(
+      Number.isFinite(requestedLimit) ? requestedLimit : 100,
+    );
+    return res.json({ success: true, opportunities });
+  } catch (error) {
+    console.error("[Creator] Amani opportunity list failed", error);
+    return res.status(500).json({ error: "Unable to load Amani opportunities." });
+  }
+});
+
+creatorRouter.get("/creator/admin/amani/:opportunityId", requireCreatorAdmin, async (req, res) => {
+  const opportunityId = safeLeadId(req.params.opportunityId);
+  if (!opportunityId) return res.status(400).json({ error: "Invalid Amani opportunity identifier" });
+
+  try {
+    const record = await getAmaniAdminOpportunity(opportunityId);
+    if (!record) return res.status(404).json({ error: "Amani opportunity not found" });
+    return res.json({ success: true, ...record });
+  } catch (error) {
+    console.error("[Creator] Amani opportunity detail failed", error);
+    return res.status(500).json({ error: "Unable to load Amani opportunity." });
   }
 });
 

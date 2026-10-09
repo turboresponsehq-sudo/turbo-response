@@ -181,3 +181,16 @@
 .creator-intake-shell .creator-button { background: #ef1526; border-color: #ef1526; border-radius: 6px; color: #fff; font-family: Arial, Helvetica, sans-serif; }
 .creator-intake-shell .creator-button:hover:not(:disabled) { background: #ff3546; }
 .creator-intake-shell .creator-form-error { background: #2a0a0d; border-color: rgba(255,219,59,.52); color: #ffdb3b; }
+
+
+.amani-admin-shell .creator-eyebrow { color: #0f6b50; }
+.amani-admin-layout { grid-template-columns: minmax(300px, .9fr) minmax(0, 1.6fr); }
+.amani-admin-shell .creator-lead-row div span + span { margin-top: 3px; }
+.amani-admin-shell .creator-status.new { background: #e4f5ed; color: #0f6b50; }
+.amani-detail-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.amani-detail-list { display: grid; gap: 8px; }
+.amani-detail-list p { background: #f8f9fc; border-radius: 6px; color: #556278; font-size: 13px; line-height: 1.45; margin: 0; padding: 9px 10px; }
+.amani-detail-list b, .amani-admin-shell .creator-detail-section > p b { color: #1b273b; display: block; font-size: 10px; letter-spacing: .04em; margin-bottom: 3px; text-transform: uppercase; }
+.amani-json { color: #33425b; display: inline-block; font: 500 11px/1.45 "DM Mono", monospace; max-width: 100%; overflow-wrap: anywhere; white-space: pre-wrap; }
+@media (max-width: 900px) { .amani-detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 680px) { .amani-detail-grid { grid-template-columns: 1fr; } }
