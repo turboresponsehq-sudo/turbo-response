@@ -129,7 +129,7 @@ amaniRouter.get("/creator/amani/health", (_req, res) => {
     service: "Amani Creator Automations",
     captureEnabled: enabled(),
     hubSpotSyncEnabled: process.env.AMANI_HUBSPOT_SYNC_ENABLED === "true",
-    notificationEnabled: process.env.AMANI_NOTIFICATION_ENABLED === "true",
+    emailSendingEnabled: process.env.AMANI_EMAIL_SENDING_ENABLED === "true",
   });
 });
 
