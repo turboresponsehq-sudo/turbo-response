@@ -127,13 +127,13 @@ async function startServer() {
   // Intake form routes (Offense and Defense)
   app.use("/api", intakeRouter);
 
-  // Creator Business V1 routes. This feature owns creator_* tables only and
-  // never delegates to consumer case, portal, or payment workflow code.
-  app.use("/api", creatorRouter);
-
   // Amani is a Creator Automations client. Her API remains scoped to its own
   // relationship and opportunity records, never Turbo Response case workflows.
   app.use("/api", amaniRouter);
+
+  // Creator Business V1 routes. This feature owns creator_* tables only and
+  // never delegates to consumer case, portal, or payment workflow code.
+  app.use("/api", creatorRouter);
 
   // AI learning intake owns ai_learning_intakes only and remains separate
   // from Creator Leads and Creator Intake records.
