@@ -119,6 +119,16 @@ amaniRouter.post("/creator/amani/internal-test/inquiries", async (req: any, res)
   }
 });
 
+// Temporary staging diagnostic only. Never returns or logs the token value.
+amaniRouter.get("/creator/amani/internal-test/status", (_req, res) => {
+  const token = process.env.AMANI_INTERNAL_TEST_TOKEN ?? "";
+  return res.json({
+    internalTestEnabled: internalTestEnabled(),
+    tokenConfigured: token.length > 0,
+    tokenLength: token.length,
+  });
+});
+
 amaniRouter.use("/creator/amani", (_req, res, next) => {
   if (!enabled()) return res.status(404).json({ error: "Not found" });
   return next();
