@@ -47,6 +47,7 @@ import AdminCommandCenter from "./pages/AdminCommandCenter";
 import CaseBrief from "./pages/CaseBrief";
 import CreatorIntake from "./features/creator/pages/CreatorIntake";
 import CreatorLeadsAdmin from "./features/creator/pages/CreatorLeadsAdmin";
+import AmaniReviewAdmin from "./features/creator/pages/AmaniReviewAdmin";
 import AiLearningIntakesAdmin from "./features/ai-learning/AiLearningIntakesAdmin";
 import ZakhyBuildsAIHub, { ZakhyAutomationServicesRoute, ZakhyLearnAiRoute, ZakhyPortfolioRoute, ZakhyServicesRoute, ZakhyProjectRoute } from "./pages/ZakhyBuildsAIHub";
 import AtlantaExactPage from "./zakhy/pages/AtlantaExactPage";
@@ -57,6 +58,14 @@ function ProtectedCreatorLeads() {
   return (
     <AdminSessionGate>
       <CreatorLeadsAdmin />
+    </AdminSessionGate>
+  );
+}
+
+function ProtectedAmaniReview() {
+  return (
+    <AdminSessionGate>
+      <AmaniReviewAdmin />
     </AdminSessionGate>
   );
 }
@@ -189,6 +198,7 @@ function Router() {
       {/* Admin workflow routes - restored to specification */}
       <Route path="/admin/command-center" component={AdminCommandCenter} />
       <Route path="/admin/creator/leads" component={ProtectedCreatorLeads} />
+      <Route path="/admin/creator/amani" component={ProtectedAmaniReview} />
       <Route path="/admin/ai-learning-intakes" component={ProtectedAiLearningIntakes} />
       <Route path="/admin/knowledge-base/import" component={OAuthKnowledgeBaseImport} />
       <Route path="/admin/knowledge-base" component={OAuthKnowledgeBase} />

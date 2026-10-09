@@ -196,6 +196,21 @@ export default function AdminDashboard() {
             Creator Leads
           </button>
           <button
+            onClick={() => setLocation('/admin/creator/amani')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#0f6b50',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            Amani Opportunities
+          </button>
+          <button
             onClick={() => setLocation('/admin/ai-learning-intakes')}
             style={{
               padding: '8px 16px',
