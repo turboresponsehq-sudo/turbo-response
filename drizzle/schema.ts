@@ -321,10 +321,10 @@ export const turboIntakeSubmissions = pgTable("turbo_intake_submissions", {
 export const users = pgTable("users", {
 	id: serial().primaryKey(),
 	openId: varchar({ length: 64 }).notNull(),
-	name: text(),
+	name: text("full_name"),
 	email: varchar({ length: 320 }),
 	loginMethod: varchar({ length: 64 }),
-	role: varchar({ length: 50 }).$type<'user' | 'admin'>().default('user').notNull(),
+	role: varchar({ length: 50 }).$type<'user' | 'admin' | 'amani_admin'>().default('user').notNull(),
 	createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
 	lastSignedIn: timestamp({ mode: 'string' }).defaultNow().notNull(),
