@@ -51,10 +51,12 @@ async function startServer() {
     .split(",")
     .map((origin) => origin.trim())
     .filter(Boolean);
-  const allowedOrigins = new Set([
-    "https://turboresponsehq.ai",
-    "https://turbo-response-backend.onrender.com",
-    "http://localhost:3000",
+	const allowedOrigins = new Set([
+	    "https://turboresponsehq.ai",
+	    "https://turbo-response-backend.onrender.com",
+	    "https://amanimansur.info",
+	    "https://www.amanimansur.info",
+	    "http://localhost:3000",
     "http://localhost:3001",
     ...amaniOrigins,
   ]);
