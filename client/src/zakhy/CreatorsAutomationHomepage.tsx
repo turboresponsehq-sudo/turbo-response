@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { zakhyDemoSite } from "./config";
 import TurboChatbot, { turboChatbotStyles } from "./components/TurboChatbot";
+import EntryServicesSection from "./components/EntryServicesSection";
 import "./creators-automation-home.css";
 
 const desktopImage = "/zakhy-assets/creators-automation-desktop.png";
@@ -112,6 +113,8 @@ export default function CreatorsAutomationHomepage() {
           <p>Zakhy helps artists, creators, and influencers build a business that looks premium, captures opportunities, and stays organized behind the scenes.</p>
         </div>
       </section>
+
+      <EntryServicesSection />
 
       <section className="zakhy-services-section" aria-labelledby="zakhy-services-heading">
         <div className="zakhy-section-heading">
