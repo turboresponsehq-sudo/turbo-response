@@ -131,3 +131,63 @@
 @media (max-width: 767px) {
   .zakhy-services-header .desktop-nav { background: #080808; }
 }
+
+
+/* Local preview marketplace and intake flow. Payment remains intentionally unconnected. */
+.services-marketplace { padding: 105px 0 115px; background: #050505; border-bottom: 1px solid var(--services-line); }
+.marketplace-heading { display: flex; align-items: end; justify-content: space-between; gap: 36px; margin-bottom: 60px; }
+.marketplace-heading h2 { margin: 17px 0 0; color: #fff; font: 900 clamp(46px, 5.5vw, 82px)/.9 Arial Black, Arial, sans-serif; letter-spacing: -.075em; }
+.marketplace-heading h2 em { color: var(--services-gold); font-style: normal; }
+.marketplace-heading > p { max-width: 430px; margin: 0 0 5px; color: #d7d7d2; font-size: 17px; line-height: 1.5; }
+.marketplace-categories { display: grid; gap: 58px; }
+.marketplace-category { padding-top: 36px; border-top: 1px solid var(--services-line); }
+.marketplace-category-heading { display: grid; grid-template-columns: 78px minmax(0, 1fr); gap: 23px; margin-bottom: 26px; }
+.marketplace-category-heading > span { color: var(--services-red); font: 800 14px/1 Arial, sans-serif; letter-spacing: .14em; }
+.marketplace-category-heading h3 { margin: 10px 0 12px; color: #fff; font: 900 clamp(28px, 3vw, 44px)/.95 Arial Black, Arial, sans-serif; letter-spacing: -.065em; text-transform: uppercase; }
+.marketplace-category-heading > div > p:last-child { max-width: 650px; margin: 0; color: #bfc0bb; font-size: 15px; line-height: 1.45; }
+.marketplace-package-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; margin-left: 101px; }
+.marketplace-package { min-height: 300px; display: flex; flex-direction: column; padding: 22px; border: 1px solid rgba(255,255,255,.16); border-radius: 8px; background: linear-gradient(145deg, #1a090b, #090909); box-shadow: inset 0 -90px 110px rgba(239,21,38,.08); }
+.marketplace-package--premium { border-color: rgba(255,219,59,.48); }
+.marketplace-package-top { display: flex; align-items: start; justify-content: space-between; gap: 14px; }
+.marketplace-package-top span { max-width: 190px; color: #fff; font: 900 22px/.95 Arial Black, Arial, sans-serif; letter-spacing: -.06em; text-transform: uppercase; }
+.marketplace-package-top strong { color: var(--services-gold); font: 800 17px/1 Arial, sans-serif; text-align: right; }
+.marketplace-package > p { min-height: 51px; margin: 25px 0 0; color: #d7d7d2; font-size: 14px; line-height: 1.42; }
+.marketplace-package ul { display: grid; gap: 7px; margin: 22px 0 22px; padding: 16px 0 0; border-top: 1px solid rgba(255,255,255,.14); list-style: none; }
+.marketplace-package li { color: #bfc0bb; font-size: 12px; line-height: 1.35; }
+.marketplace-package li::before { content: "→"; margin-right: 7px; color: var(--services-gold); font-weight: 800; }
+.marketplace-start { display: inline-flex; align-items: center; gap: 8px; width: max-content; margin-top: auto; padding: 0; border: 0; color: #fff; background: transparent; font: 800 11px/1 Arial, sans-serif; letter-spacing: .08em; cursor: pointer; }
+.marketplace-start svg { width: 16px; height: 16px; color: var(--services-red); }
+.marketplace-start:hover { color: var(--services-gold); }
+.service-intake { display: grid; grid-template-columns: 1fr minmax(360px, .7fr); gap: 10%; align-items: start; padding: 105px max(calc((100% - 1280px) / 2), 56px); background: #f7f7f7; color: #090909; }
+.service-intake h2 { margin: 17px 0 18px; font: 900 clamp(44px, 5vw, 70px)/.92 Arial Black, Arial, sans-serif; letter-spacing: -.075em; }
+.service-intake h2 em { color: var(--services-red); font-style: normal; }
+.service-intake > div > p:not(.services-eyebrow) { max-width: 490px; color: #555; font-size: 17px; line-height: 1.52; }
+.intake-examples { display: flex; flex-wrap: wrap; gap: 8px; max-width: 560px; margin-top: 27px; }
+.intake-examples span { padding: 10px 12px; border: 1px solid #cfd0cb; border-radius: 999px; color: #454542; font-size: 12px; }
+.service-intake form { display: grid; gap: 15px; padding: 26px; border: 1px solid #d0d1cc; background: #fff; }
+.service-intake label { display: grid; gap: 7px; color: #171716; font: 800 10px/1 Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+.service-intake input, .service-intake select, .service-intake textarea { width: 100%; padding: 12px; border: 1px solid #c7c8c4; border-radius: 2px; color: #111; background: #fff; font: 400 14px/1.35 Arial, sans-serif; }
+.service-intake textarea { resize: vertical; }
+.service-intake .services-primary { justify-content: center; border: 0; cursor: pointer; }
+.service-intake form small { color: #666; font-size: 11px; line-height: 1.4; }
+.service-intake--success { display: block; min-height: 420px; }
+.service-intake--success > p:not(.services-eyebrow) { max-width: 480px; margin: 0 0 26px; color: #555; font-size: 17px; line-height: 1.5; }
+.service-intake--success .services-secondary { color: #111; border-color: #111; background: transparent; cursor: pointer; }
+
+@media (max-width: 900px) {
+  .marketplace-heading { display: block; }
+  .marketplace-heading > p { margin-top: 23px; max-width: 600px; }
+  .marketplace-package-grid { margin-left: 0; }
+  .service-intake { grid-template-columns: 1fr; gap: 38px; padding: 78px 40px; }
+}
+
+@media (max-width: 767px) {
+  .services-marketplace { padding: 72px 0 80px; }
+  .marketplace-heading h2 { font-size: clamp(43px, 12vw, 58px); }
+  .marketplace-category-heading { grid-template-columns: 46px minmax(0, 1fr); gap: 12px; }
+  .marketplace-package-grid { grid-template-columns: 1fr; gap: 11px; }
+  .marketplace-package { min-height: 0; padding: 21px; }
+  .marketplace-package > p { min-height: 0; }
+  .service-intake { padding: 72px 20px; }
+  .service-intake form { padding: 21px; }
+}
