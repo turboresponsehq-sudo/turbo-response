@@ -191,3 +191,58 @@
   .service-intake { padding: 72px 20px; }
   .service-intake form { padding: 21px; }
 }
+
+
+/* Simplified storefront preview: five clear sections, six featured offers, no checkout. */
+.services-hero-note { max-width: 650px; margin: 20px 0 0; color: #bfc0bb; font-size: 14px; line-height: 1.45; }
+.services-hero .services-lead span, .services-advanced-lead span { color: var(--services-gold); padding: 0 5px; }
+.services-marketplace { padding-top: 88px; }
+.marketplace-heading { margin-bottom: 42px; }
+.marketplace-package-grid { margin-left: 0; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.marketplace-package { min-height: 284px; }
+.marketplace-package--featured { border-color: var(--services-gold); box-shadow: inset 0 -90px 110px rgba(255,219,59,.11); }
+.services-advanced { padding: 100px 0; background: radial-gradient(circle at 75% 40%, rgba(239,21,38,.22), transparent 34%), #111; border-bottom: 1px solid var(--services-line); }
+.services-advanced-grid, .services-why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10%; align-items: center; }
+.services-advanced h2, .services-why h2 { margin: 17px 0 0; color: #fff; font: 900 clamp(44px, 5vw, 70px)/.92 Arial Black, Arial, sans-serif; letter-spacing: -.075em; }
+.services-advanced h2 em, .services-why h2 em { color: var(--services-gold); font-style: normal; }
+.services-advanced-grid > div:last-child { max-width: 600px; color: #d7d7d2; font-size: 18px; line-height: 1.55; }
+.services-advanced-lead { color: #fff; font-weight: 800; }
+.services-advanced-grid .services-actions { margin-top: 28px; }
+.services-why { padding: 100px 0; background: #050505; }
+.services-why-grid > div:last-child { max-width: 560px; color: #d7d7d2; font-size: 18px; line-height: 1.6; }
+.services-why-close { color: #fff; font-weight: 800; }
+@media (max-width: 900px) {
+  .marketplace-package-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .services-advanced-grid, .services-why-grid { grid-template-columns: 1fr; gap: 34px; }
+}
+@media (max-width: 767px) {
+  .services-hero { padding-top: 72px; }
+  .services-hero h1 { font-size: clamp(44px, 12vw, 58px); }
+  .services-hero-note { font-size: 13px; }
+  .services-marketplace { padding-top: 72px; }
+  .marketplace-package-grid { grid-template-columns: 1fr; }
+  .services-advanced, .services-why { padding: 72px 0; }
+  .services-advanced h2, .services-why h2 { font-size: clamp(43px, 12vw, 58px); }
+  .services-advanced-grid > div:last-child, .services-why-grid > div:last-child { font-size: 16px; }
+}
+
+
+.marketplace-package--premium { grid-column: 1 / -1; min-height: 250px; border-color: rgba(255,219,59,.72); background: linear-gradient(145deg, #21150a, #0b0907); box-shadow: inset 0 -100px 130px rgba(255,219,59,.10), 0 0 0 1px rgba(255,219,59,.10); }
+.marketplace-package--premium .marketplace-package-top span { max-width: 430px; }
+.marketplace-package--premium .marketplace-package > p { max-width: 700px; }
+.marketplace-package--premium .marketplace-start { color: var(--services-gold); }
+@media (max-width: 767px) {
+  .marketplace-package--premium { grid-column: auto; }
+}
+
+
+.service-intake--handoff { align-items: center; }
+.intake-handoff-card { display: grid; gap: 16px; padding: 30px; border: 1px solid #d0d1cc; background: #fff; color: #111; }
+.intake-handoff-card h3 { margin: 0; font: 800 clamp(24px, 3vw, 36px)/1 Arial Black, Arial, sans-serif; letter-spacing: -.045em; }
+.intake-handoff-card p:not(.services-eyebrow) { margin: 0; color: #555; font-size: 15px; line-height: 1.55; }
+.intake-handoff-card .services-primary { width: fit-content; }
+.intake-handoff-card small { color: #666; font-size: 11px; line-height: 1.4; }
+@media (max-width: 767px) {
+  .intake-handoff-card { padding: 22px; }
+  .intake-handoff-card .services-primary { width: 100%; justify-content: center; }
+}
