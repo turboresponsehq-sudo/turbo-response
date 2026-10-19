@@ -11,6 +11,7 @@ const projects = [
   { name: "Spillo — Spill Season", type: "Recording Artist & Podcast", href: `${zakhyDemoSite.productionHomeUrl}/portfolio/spillo`, image: "/zakhy-assets/spillo-hero-artist_a25123a3.jpg", position: "center 24%" },
   { name: "CRUNK FIT", type: "Fitness, Wellness & Lifestyle", href: `${zakhyDemoSite.productionHomeUrl}/portfolio/crunk-fit`, image: "/zakhy-assets/crunk-fit-hero_2df060d3.jpg", position: "62% 24%" },
   { name: "Amani Mansur", type: "Marketing, Culture & Opportunity", href: "https://amanimansur.info", image: "/zakhy-assets/amani-mansur-portfolio.png", position: "center top" },
+  { name: "Allah Souja", type: "Fitness, Coaching & Lifestyle", href: "https://zakhydemo-mpd8k29q.manus.space/allah-souja", image: "/zakhy-assets/allah-souja-portfolio.png", position: "center top" },
 ] as const;
 
 export default function PortfolioPage() {
