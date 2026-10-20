@@ -48,6 +48,7 @@ import AdminCommandCenter from "./pages/AdminCommandCenter";
 import CaseBrief from "./pages/CaseBrief";
 import CreatorIntake from "./features/creator/pages/CreatorIntake";
 import CreatorLeadsAdmin from "./features/creator/pages/CreatorLeadsAdmin";
+import CreatorPortalPreview from "./features/creator/pages/CreatorPortalPreview";
 import AmaniReviewAdmin from "./features/creator/pages/AmaniReviewAdmin";
 import AiLearningIntakesAdmin from "./features/ai-learning/AiLearningIntakesAdmin";
 import ZakhyBuildsAIHub, { ZakhyAutomationServicesRoute, ZakhyLearnAiRoute, ZakhyPortfolioRoute, ZakhyServicesRoute, ZakhyProjectRoute } from "./pages/ZakhyBuildsAIHub";
@@ -61,6 +62,10 @@ function ProtectedCreatorLeads() {
       <CreatorLeadsAdmin />
     </AdminSessionGate>
   );
+}
+
+function CreatorPortalPreviewRoute({ view }: { view: "admin" | "portal" }) {
+  return <CreatorPortalPreview view={view} />;
 }
 
 function ProtectedAmaniReview() {
@@ -200,6 +205,8 @@ function Router() {
 
       {/* Isolated Creator Business V1 routes */}
       <Route path="/creator/start" component={CreatorIntake} />
+      <Route path="/admin/creator/portal-preview" component={() => <CreatorPortalPreviewRoute view="admin" />} />
+      <Route path="/creator/portal/preview" component={() => <CreatorPortalPreviewRoute view="portal" />} />
       
       {/* Client Portal Routes */}
       <Route path="/client/login" component={ClientLogin} />
