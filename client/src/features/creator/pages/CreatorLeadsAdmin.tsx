@@ -11,6 +11,7 @@ type Lead = {
   packageInterest: string | null; budgetRange: string | null; status: Status; isInternalTest: boolean; submittedAt: string; nextAction: string | null; openTaskDueAt: string | null;
 };
 type LeadDetail = Lead & { goals?: string; challenges?: string; automation_wish?: string; website_url?: string; revenue_streams?: string[] | string; audience_size?: string; collects_fan_contacts?: string; brand_assets?: string[] | string; brand_style?: string; business_systems?: string[] | string; opportunity_focus?: string[] | string; priority_platforms?: string[] | string; project_priority?: string; final_question?: string; notes: Array<{ id: number; note: string; created_at: string }>; tasks: Array<{ id: number; task_type: string; task_detail: string | null; due_at: string | null; status: string }>; events: Array<{ id: number; event_type: string; actor: string; created_at: string }> };
+type Portal = { id: number; creator_lead_id: number; status: "disabled" | "invited" | "active"; current_status: string; current_phase: string; next_step: string | null; drive_folder_url: string | null; invitation_sent_at: string | null; last_access_at: string | null; };
 
 const statuses: Status[] = ["new", "reviewing", "follow_up", "converted", "closed"];
 const label = (status: string) => status.replace("_", " ");
@@ -62,6 +63,10 @@ export default function CreatorLeadsAdmin() {
   const [selectedTemplate, setSelectedTemplate] = useState("");
   const [saving, setSaving] = useState(false);
   const [includeInternalTests, setIncludeInternalTests] = useState(false);
+  const [portal, setPortal] = useState<Portal | null>(null);
+  const [portalEnabled, setPortalEnabled] = useState(true);
+  const [portalForm, setPortalForm] = useState({ status: "disabled", currentStatus: "Intake Received", currentPhase: "Discovery", nextStep: "", driveFolderUrl: "" });
+  const [portalSaving, setPortalSaving] = useState(false);
 
   const request = (path: string, init?: RequestInit) => fetch(path, {
     ...init,
@@ -86,6 +91,17 @@ export default function CreatorLeadsAdmin() {
       const body = await response.json();
       if (!response.ok) throw new Error(body.error || "Unable to load lead details.");
       setSelected(body.lead);
+      const portalResponse = await request(`/api/creator/admin/leads/${id}/portal`);
+      if (portalResponse.ok) {
+        const portalBody = await portalResponse.json();
+        const nextPortal = portalBody.portal as Portal | null;
+        setPortal(nextPortal);
+        setPortalForm({ status: nextPortal?.status || "disabled", currentStatus: nextPortal?.current_status || "Intake Received", currentPhase: nextPortal?.current_phase || "Discovery", nextStep: nextPortal?.next_step || "", driveFolderUrl: nextPortal?.drive_folder_url || "" });
+        setPortalEnabled(true);
+      } else {
+        setPortal(null);
+        setPortalEnabled(portalResponse.status !== 404);
+      }
     } catch (loadError) { setError(loadError instanceof Error ? loadError.message : "Unable to load lead details."); }
   }
 
@@ -127,6 +143,43 @@ export default function CreatorLeadsAdmin() {
     finally { setSaving(false); }
   }
 
+  async function savePortal(event: React.FormEvent) {
+    event.preventDefault(); if (!selected) return;
+    setPortalSaving(true); setError("");
+    try {
+      const response = await request(`/api/creator/admin/leads/${selected.id}/portal`, { method: "PATCH", body: JSON.stringify(portalForm) });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || "Portal settings could not be saved.");
+      setPortal(body.portal); setPortalForm((current) => ({ ...current, status: body.portal.status }));
+    } catch (saveError) { setError(saveError instanceof Error ? saveError.message : "Portal settings could not be saved."); }
+    finally { setPortalSaving(false); }
+  }
+
+  async function createInvitation() {
+    if (!selected) return;
+    setPortalSaving(true); setError("");
+    try {
+      const response = await request(`/api/creator/admin/leads/${selected.id}/portal/invite`, { method: "POST", body: "{}" });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || "Invitation could not be created.");
+      setPortal(body.portal); setPortalForm((current) => ({ ...current, status: body.portal.status }));
+      window.prompt("Copy this secure portal link. It expires in 7 days and is not shown again:", body.invitationUrl);
+    } catch (saveError) { setError(saveError instanceof Error ? saveError.message : "Invitation could not be created."); }
+    finally { setPortalSaving(false); }
+  }
+
+  async function revokePortal() {
+    if (!selected || !window.confirm("Revoke this creator's portal access? Their current invitation will stop working.")) return;
+    setPortalSaving(true); setError("");
+    try {
+      const response = await request(`/api/creator/admin/leads/${selected.id}/portal/revoke`, { method: "POST", body: "{}" });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || "Portal access could not be revoked.");
+      setPortal(body.portal); setPortalForm((current) => ({ ...current, status: "disabled" }));
+    } catch (saveError) { setError(saveError instanceof Error ? saveError.message : "Portal access could not be revoked."); }
+    finally { setPortalSaving(false); }
+  }
+
   function applyTaskTemplate(templateId: string) {
     setSelectedTemplate(templateId);
     const template = taskTemplates.find((item) => item.id === templateId);
@@ -149,6 +202,7 @@ export default function CreatorLeadsAdmin() {
         <div className="creator-detail-head"><div><p className="creator-eyebrow">LEAD #{selected.id}</p><h2>{selected.brandName || selected.fullName}</h2><p>{selected.fullName} · {selected.email}</p></div><select aria-label="Lead status" value={selected.status} disabled={saving} onChange={(event) => updateStatus(event.target.value as Status)}>{statuses.map((status) => <option value={status} key={status}>{label(status)}</option>)}</select></div>
         <div className="creator-detail-grid"><article><span>Package</span><strong>{selected.packageInterest || "Not sure yet"}</strong></article><article><span>Budget</span><strong>{selected.budgetRange || "Not provided"}</strong></article></div>
         <CreatorBusinessAssessment lead={selected} />
+        <section className="creator-detail-section creator-portal-access-panel"><div className="creator-section-heading"><div><p className="creator-eyebrow">CREATOR WORKSPACE</p><h3>Portal access</h3></div><span className={`creator-status ${portalForm.status}`}>{portalForm.status}</span></div>{!portalEnabled ? <p className="creator-task-safety">Portal storage is prepared but not enabled yet. Production migration and feature-flag activation are still required.</p> : <form onSubmit={savePortal}><div className="creator-task-fields"><label>Portal status<select value={portalForm.status} onChange={(event) => setPortalForm({ ...portalForm, status: event.target.value })}><option value="disabled">Disabled</option><option value="invited">Invited</option><option value="active">Active</option></select></label><label>Project status<select value={portalForm.currentStatus} onChange={(event) => setPortalForm({ ...portalForm, currentStatus: event.target.value })}>{["Intake Received", "Reviewing", "Awaiting Client", "Planning", "In Progress", "Ready for Review", "Completed"].map((status) => <option value={status} key={status}>{status}</option>)}</select></label></div><div className="creator-task-fields"><label>Current phase<input value={portalForm.currentPhase} onChange={(event) => setPortalForm({ ...portalForm, currentPhase: event.target.value })} /></label><label>Next step<input value={portalForm.nextStep} onChange={(event) => setPortalForm({ ...portalForm, nextStep: event.target.value })} placeholder="What happens next?" /></label></div><label>Dedicated Google Drive folder URL<input type="url" value={portalForm.driveFolderUrl} onChange={(event) => setPortalForm({ ...portalForm, driveFolderUrl: event.target.value })} placeholder="https://drive.google.com/drive/folders/..." /></label><p className="creator-task-safety">Only this dedicated folder link is stored. No Drive sync or permission changes are performed.</p><div className="creator-portal-actions"><button type="submit" disabled={portalSaving}>Save portal settings</button><button type="button" disabled={portalSaving} onClick={createInvitation}>Send invitation</button><button type="button" className="creator-secondary-button" disabled={portalSaving || !portal} onClick={revokePortal}>Revoke access</button></div></form>}</section>
         <section className="creator-detail-section"><h3>Project priority</h3><p>{selected.project_priority || "Not provided"}</p><h3>Goals</h3><p>{selected.goals || "Not provided"}</p><h3>Challenges</h3><p>{selected.challenges || "Not provided"}</p></section>
         <section className="creator-detail-section"><h3>Next actions</h3><div className="creator-mini-list">{selected.tasks.length ? selected.tasks.map((item) => <p key={item.id}><b>{label(item.status)}</b> · {item.task_detail || item.task_type}</p>) : <p>No follow-up scheduled.</p>}</div><form className="creator-task-template-form" onSubmit={addTask}><label className="creator-template-label">Task template<select aria-label="Task template" value={selectedTemplate} onChange={(event) => applyTaskTemplate(event.target.value)}><option value="">Manual task</option>{taskTemplates.map((template) => <option value={template.id} key={template.id}>{template.label}</option>)}</select></label><div className="creator-task-fields"><label>Task type<input value={taskType} onChange={(event) => setTaskType(event.target.value)} placeholder="Task type" /></label><label>Suggested due date<input type="datetime-local" value={taskDueAt} onChange={(event) => setTaskDueAt(event.target.value)} /></label></div><label>Task detail<textarea value={task} onChange={(event) => setTask(event.target.value)} placeholder="Add a manual follow-up action" /></label><p className="creator-task-safety">Templates only pre-fill a manual internal task. No customer message is sent automatically.</p><button type="submit" disabled={saving}>Create manual task</button></form></section>
         <section className="creator-detail-section"><h3>Internal notes</h3><div className="creator-mini-list">{selected.notes.length ? selected.notes.map((item) => <p key={item.id}>{item.note}</p>) : <p>No notes yet.</p>}</div><form className="creator-inline-form" onSubmit={addNote}><input value={note} onChange={(event) => setNote(event.target.value)} placeholder="Add an internal note" /><button disabled={saving}>Save</button></form></section>

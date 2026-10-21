@@ -1,4 +1,4 @@
-import { pgTable, index, bigint, bigserial, serial, integer, text, jsonb, varchar, timestamp, numeric, smallint } from "drizzle-orm/pg-core"
+import { pgTable, index, bigint, bigserial, serial, integer, text, jsonb, varchar, timestamp, numeric, smallint, boolean } from "drizzle-orm/pg-core"
 
 export const brainEmbeddings = pgTable("brain_embeddings", {
 	id: bigserial({ mode: "number" }).notNull(),
@@ -740,6 +740,52 @@ export const creatorFollowUpTasks = pgTable("creator_follow_up_tasks", {
 }, (table) => [
 	index("idx_creator_follow_up_tasks_open_due").on(table.status, table.dueAt),
 ]);
+
+export const creatorPortals = pgTable("creator_portals", {
+	id: bigserial({ mode: "number" }).primaryKey(),
+	creatorLeadId: bigint("creator_lead_id", { mode: "number" }).notNull(),
+	status: varchar({ length: 20 }).$type<"disabled" | "invited" | "active">().default("disabled").notNull(),
+	currentStatus: varchar("current_status", { length: 50 }).default("Intake Received").notNull(),
+	currentPhase: varchar("current_phase", { length: 100 }).default("Discovery").notNull(),
+	nextStep: text("next_step"),
+	driveFolderUrl: varchar("drive_folder_url", { length: 1000 }),
+	accessTokenHash: varchar("access_token_hash", { length: 128 }),
+	tokenExpiresAt: timestamp("token_expires_at", { mode: "string", withTimezone: true }),
+	invitationSentAt: timestamp("invitation_sent_at", { mode: "string", withTimezone: true }),
+	lastAccessAt: timestamp("last_access_at", { mode: "string", withTimezone: true }),
+	createdAt: timestamp("created_at", { mode: "string", withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { mode: "string", withTimezone: true }).defaultNow().notNull(),
+}, (table) => [
+	index("idx_creator_portals_status").on(table.status),
+	index("idx_creator_portals_lead").on(table.creatorLeadId),
+]);
+
+export const creatorPortalItems = pgTable("creator_portal_items", {
+	id: bigserial({ mode: "number" }).primaryKey(),
+	portalId: bigint("portal_id", { mode: "number" }).notNull(),
+	label: varchar({ length: 255 }).notNull(),
+	status: varchar({ length: 20 }).$type<"needed" | "received" | "complete">().default("needed").notNull(),
+	createdAt: timestamp("created_at", { mode: "string", withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { mode: "string", withTimezone: true }).defaultNow().notNull(),
+}, (table) => [index("idx_creator_portal_items_portal_status").on(table.portalId, table.status)]);
+
+export const creatorPortalUpdates = pgTable("creator_portal_updates", {
+	id: bigserial({ mode: "number" }).primaryKey(),
+	portalId: bigint("portal_id", { mode: "number" }).notNull(),
+	updateText: text("update_text").notNull(),
+	visibleToCreator: boolean("visible_to_creator").default(false).notNull(),
+	createdByUserId: bigint("created_by_user_id", { mode: "number" }),
+	createdAt: timestamp("created_at", { mode: "string", withTimezone: true }).defaultNow().notNull(),
+}, (table) => [index("idx_creator_portal_updates_visible_created").on(table.portalId, table.visibleToCreator, table.createdAt)]);
+
+export const creatorPortalEvents = pgTable("creator_portal_events", {
+	id: bigserial({ mode: "number" }).primaryKey(),
+	portalId: bigint("portal_id", { mode: "number" }).notNull(),
+	eventType: varchar("event_type", { length: 100 }).notNull(),
+	actor: varchar("actor", { length: 255 }).default("system").notNull(),
+	payload: jsonb().notNull(),
+	createdAt: timestamp("created_at", { mode: "string", withTimezone: true }).defaultNow().notNull(),
+}, (table) => [index("idx_creator_portal_events_portal_created").on(table.portalId, table.createdAt)]);
 
 export type CreatorLead = typeof creatorLeads.$inferSelect;
 export type InsertCreatorLead = typeof creatorLeads.$inferInsert;

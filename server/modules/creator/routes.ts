@@ -20,6 +20,17 @@ import { processCreatorLeadEmailWorkflow } from "./emailWorkflow";
 import { creatorLeadCaptureEnabled } from "./featureGate";
 import { syncContactToHubSpot } from "../../hubspotSync";
 import { getAmaniAdminOpportunity, listAmaniAdminOpportunities } from "../amani/adminRepository";
+import {
+  acceptCreatorPortalToken,
+  createPortalItem,
+  createPortalUpdate,
+  creatorPortalEnabled,
+  getCreatorPortalByLeadId,
+  getPortalForSession,
+  inviteCreatorPortal,
+  revokeCreatorPortal,
+  saveCreatorPortalConfig,
+} from "./creatorPortalRepository";
 
 export const creatorRouter = Router();
 
@@ -27,7 +38,8 @@ export const creatorRouter = Router();
 // and a release is explicitly approved. This prevents traffic from reaching
 // the module while it is only prepared in source control.
 creatorRouter.use("/creator", (_req, res, next) => {
-  if (!creatorLeadCaptureEnabled()) {
+  const portalRequest = _req.originalUrl.includes("/portal");
+  if (!creatorLeadCaptureEnabled() && !(portalRequest && creatorPortalEnabled())) {
     return res.status(404).json({ error: "Not found" });
   }
   return next();
@@ -107,6 +119,165 @@ function requireRoles(allowedRoles: string[]): RequestHandler {
 
 export const requireCreatorAdmin: RequestHandler = requireRoles(["admin"]);
 export const requireAmaniAdmin: RequestHandler = requireRoles(["admin", "amani_admin"]);
+
+function portalUnavailable(res: any) {
+  return res.status(404).json({ error: "Creator Portal is not enabled" });
+}
+
+function portalBaseUrl() {
+  return process.env.FRONTEND_URL || "https://turboresponsehq.ai";
+}
+
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>\"']/g, (character) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;",
+  }[character] || character));
+}
+
+function creatorPortalSessionClaims(req: any): { portalId: number } | null {
+  const token = req.cookies?.creator_portal_session;
+  const secret = process.env.JWT_SECRET;
+  if (!token || !secret) return null;
+  try {
+    const claims = jwt.verify(token, secret) as { portalId?: number; purpose?: string };
+    const portalId = Number(claims.portalId);
+    return claims.purpose === "creator_portal" && Number.isSafeInteger(portalId) && portalId > 0 ? { portalId } : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Creator Portal access is isolated from the legacy consumer client portal. */
+creatorRouter.post("/creator/portal/accept", async (req: any, res) => {
+  if (!creatorPortalEnabled()) return portalUnavailable(res);
+  const token = String(req.body?.token || "").trim();
+  if (!/^[A-Za-z0-9_-]{40,100}$/.test(token)) return res.status(400).json({ error: "Invalid invitation token" });
+  try {
+    const portal = await acceptCreatorPortalToken(token);
+    if (!portal) return res.status(401).json({ error: "Invitation is invalid, expired, or revoked" });
+    const secret = process.env.JWT_SECRET;
+    if (!secret) return res.status(503).json({ error: "Portal authentication is unavailable" });
+    const session = jwt.sign({ portalId: Number(portal.id), purpose: "creator_portal" }, secret, { expiresIn: "7d" });
+    res.cookie("creator_portal_session", session, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 7 * 24 * 60 * 60 * 1000, path: "/" });
+    return res.json({ success: true });
+  } catch (error) {
+    console.error("[Creator Portal] Invitation acceptance failed", error);
+    return res.status(503).json({ error: "Creator Portal storage is unavailable" });
+  }
+});
+
+creatorRouter.get("/creator/portal/me", async (req: any, res) => {
+  if (!creatorPortalEnabled()) return portalUnavailable(res);
+  const claims = creatorPortalSessionClaims(req);
+  if (!claims) return res.status(401).json({ error: "Creator Portal session required" });
+  try {
+    const portal = await getPortalForSession(claims.portalId);
+    if (!portal) return res.status(401).json({ error: "Creator Portal access is inactive" });
+    return res.json({ success: true, portal });
+  } catch (error) {
+    console.error("[Creator Portal] Workspace load failed", error);
+    return res.status(503).json({ error: "Creator Portal storage is unavailable" });
+  }
+});
+
+creatorRouter.post("/creator/portal/logout", async (_req: any, res) => {
+  res.clearCookie("creator_portal_session", { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/" });
+  return res.json({ success: true });
+});
+
+creatorRouter.get("/creator/admin/leads/:leadId/portal", requireCreatorAdmin, async (req: any, res) => {
+  if (!creatorPortalEnabled()) return portalUnavailable(res);
+  const leadId = safeLeadId(req.params.leadId);
+  if (!leadId) return res.status(400).json({ error: "Invalid lead identifier" });
+  try {
+    return res.json({ success: true, portal: await getCreatorPortalByLeadId(leadId) });
+  } catch (error) {
+    console.error("[Creator Portal] Admin load failed", error);
+    return res.status(503).json({ error: "Creator Portal storage is unavailable" });
+  }
+});
+
+creatorRouter.patch("/creator/admin/leads/:leadId/portal", requireCreatorAdmin, async (req: any, res) => {
+  if (!creatorPortalEnabled()) return portalUnavailable(res);
+  const leadId = safeLeadId(req.params.leadId);
+  if (!leadId) return res.status(400).json({ error: "Invalid lead identifier" });
+  try {
+    const portal = await saveCreatorPortalConfig({ creatorLeadId: leadId, actor: req.creatorAdmin.email, config: {
+      status: req.body?.status,
+      currentStatus: req.body?.currentStatus,
+      currentPhase: req.body?.currentPhase,
+      nextStep: req.body?.nextStep,
+      driveFolderUrl: req.body?.driveFolderUrl,
+    }});
+    return res.json({ success: true, portal });
+  } catch (error) {
+    console.error("[Creator Portal] Admin save failed", error);
+    return res.status(503).json({ error: "Unable to save Creator Portal settings" });
+  }
+});
+
+creatorRouter.post("/creator/admin/leads/:leadId/portal/invite", requireCreatorAdmin, async (req: any, res) => {
+  if (!creatorPortalEnabled()) return portalUnavailable(res);
+  const leadId = safeLeadId(req.params.leadId);
+  if (!leadId) return res.status(400).json({ error: "Invalid lead identifier" });
+  try {
+    const lead = await getCreatorLeadById(leadId);
+    if (!lead?.email) return res.status(404).json({ error: "Creator Lead email is missing" });
+    const invitation = await inviteCreatorPortal({ creatorLeadId: leadId, actor: req.creatorAdmin.email });
+    if (!invitation) return res.status(500).json({ error: "Invitation could not be created" });
+    const invitationUrl = `${portalBaseUrl()}/creator/portal/invite?token=${encodeURIComponent(invitation.token)}`;
+    const { sendRawEmail } = await import("../../services/auditEmailService");
+    const firstName = escapeHtml(String(lead.full_name || "there").split(" ")[0]);
+    const sent = await sendRawEmail({
+      to: String(lead.email),
+      subject: "Your Zakhy Creator Portal invitation",
+      html: `<p>Hi ${firstName},</p><p>Your private Zakhy Creator Portal is ready.</p><p><a href="${invitationUrl}">Open your Creator Portal</a></p><p>This invitation expires in 7 days. If you were not expecting it, you can ignore this message.</p>`,
+    });
+    return res.status(201).json({ success: true, portal: invitation.portal, invitationUrl, emailSent: sent });
+  } catch (error) {
+    console.error("[Creator Portal] Invitation creation failed", error);
+    return res.status(503).json({ error: "Unable to create Creator Portal invitation" });
+  }
+});
+
+creatorRouter.post("/creator/admin/leads/:leadId/portal/revoke", requireCreatorAdmin, async (req: any, res) => {
+  if (!creatorPortalEnabled()) return portalUnavailable(res);
+  const leadId = safeLeadId(req.params.leadId);
+  if (!leadId) return res.status(400).json({ error: "Invalid lead identifier" });
+  try {
+    return res.json({ success: true, portal: await revokeCreatorPortal({ creatorLeadId: leadId, actor: req.creatorAdmin.email }) });
+  } catch (error) {
+    console.error("[Creator Portal] Revoke failed", error);
+    return res.status(503).json({ error: "Unable to revoke Creator Portal access" });
+  }
+});
+
+creatorRouter.post("/creator/admin/leads/:leadId/portal/updates", requireCreatorAdmin, async (req: any, res) => {
+  if (!creatorPortalEnabled()) return portalUnavailable(res);
+  const leadId = safeLeadId(req.params.leadId);
+  const text = String(req.body?.text || "").trim();
+  if (!leadId || !text || text.length > 5000) return res.status(400).json({ error: "A valid update is required" });
+  try {
+    return res.status(201).json({ success: true, update: await createPortalUpdate({ creatorLeadId: leadId, text, visibleToCreator: req.body?.visibleToCreator === true, userId: req.creatorAdmin.id }) });
+  } catch (error) {
+    console.error("[Creator Portal] Update creation failed", error);
+    return res.status(503).json({ error: "Unable to save Creator Portal update" });
+  }
+});
+
+creatorRouter.post("/creator/admin/leads/:leadId/portal/items", requireCreatorAdmin, async (req: any, res) => {
+  if (!creatorPortalEnabled()) return portalUnavailable(res);
+  const leadId = safeLeadId(req.params.leadId);
+  const label = String(req.body?.label || "").trim();
+  const status = req.body?.status || "needed";
+  if (!leadId || !label || !["needed", "received", "complete"].includes(status)) return res.status(400).json({ error: "A valid portal item is required" });
+  try {
+    return res.status(201).json({ success: true, item: await createPortalItem({ creatorLeadId: leadId, label, status }) });
+  } catch (error) {
+    console.error("[Creator Portal] Item creation failed");
+    return res.status(503).json({ error: "Unable to save Creator Portal item" });
+  }
+});
 
 /** Public Creator Business intake. It never uses consumer case records. */
 creatorRouter.post("/creator/leads", async (req: any, res) => {
