@@ -12,6 +12,7 @@ export type CreatorProjectStatus =
   | "Ready for Review"
   | "Completed";
 export type CreatorPortalItemStatus = "needed" | "received" | "complete";
+export type CreatorPortalMessageSender = "admin" | "creator";
 
 type PortalConfig = {
   status?: CreatorPortalStatus;
@@ -174,7 +175,7 @@ export async function getPortalForSession(portalId: number) {
   `);
   const portal = rowsOf(result)[0];
   if (!portal) return null;
-  const [items, updates] = await Promise.all([
+  const [items, updates, messages] = await Promise.all([
     db.execute(sql`
       SELECT id, label, status, created_at, updated_at
       FROM creator_portal_items WHERE portal_id = ${portalId}
@@ -186,8 +187,49 @@ export async function getPortalForSession(portalId: number) {
       WHERE portal_id = ${portalId} AND visible_to_creator = TRUE
       ORDER BY created_at DESC, id DESC LIMIT 100
     `),
+    db.execute(sql`
+      SELECT id, sender_type, message_text, created_at
+      FROM creator_portal_messages
+      WHERE portal_id = ${portalId} AND visible_to_creator = TRUE
+      ORDER BY created_at ASC, id ASC LIMIT 200
+    `),
   ]);
-  return { ...portal, items: rowsOf(items), updates: rowsOf(updates) };
+  return { ...portal, items: rowsOf(items), updates: rowsOf(updates), messages: rowsOf(messages) };
+}
+
+export async function getCreatorPortalMessages(creatorLeadId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Creator portal storage is unavailable");
+  const portal = await ensureCreatorPortal(creatorLeadId);
+  if (!portal) throw new Error("Creator portal could not be created");
+  const result = await db.execute(sql`
+    SELECT id, portal_id, sender_type, message_text, visible_to_creator, created_by_user_id, created_at
+    FROM creator_portal_messages
+    WHERE portal_id = ${Number(portal.id)}
+    ORDER BY created_at ASC, id ASC LIMIT 200
+  `);
+  return rowsOf(result);
+}
+
+export async function createCreatorPortalMessage(input: {
+  creatorLeadId: number;
+  senderType: CreatorPortalMessageSender;
+  text: string;
+  visibleToCreator: boolean;
+  userId?: number;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Creator portal storage is unavailable");
+  const portal = await ensureCreatorPortal(input.creatorLeadId);
+  if (!portal) throw new Error("Creator portal could not be created");
+  const result = await db.execute(sql`
+    INSERT INTO creator_portal_messages (portal_id, sender_type, message_text, visible_to_creator, created_by_user_id)
+    VALUES (${Number(portal.id)}, ${input.senderType}, ${input.text.trim()}, ${input.visibleToCreator}, ${input.userId ?? null})
+    RETURNING id, portal_id, sender_type, message_text, visible_to_creator, created_by_user_id, created_at
+  `);
+  const message = rowsOf(result)[0] ?? null;
+  if (message) await appendPortalEvent({ portalId: Number(portal.id), eventType: "message_created", actor: input.senderType, payload: { messageId: Number(message.id) } });
+  return message;
 }
 
 export async function appendPortalEvent(input: { portalId: number; eventType: string; actor: string; payload?: Record<string, unknown> }) {

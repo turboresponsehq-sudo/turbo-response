@@ -22,10 +22,12 @@ import { syncContactToHubSpot } from "../../hubspotSync";
 import { getAmaniAdminOpportunity, listAmaniAdminOpportunities } from "../amani/adminRepository";
 import {
   acceptCreatorPortalToken,
+  createCreatorPortalMessage,
   createPortalItem,
   createPortalUpdate,
   creatorPortalEnabled,
   getCreatorPortalByLeadId,
+  getCreatorPortalMessages,
   getPortalForSession,
   inviteCreatorPortal,
   revokeCreatorPortal,
@@ -185,6 +187,22 @@ creatorRouter.post("/creator/portal/logout", async (_req: any, res) => {
   return res.json({ success: true });
 });
 
+creatorRouter.post("/creator/portal/messages", async (req: any, res) => {
+  if (!creatorPortalEnabled()) return portalUnavailable(res);
+  const claims = creatorPortalSessionClaims(req);
+  const text = String(req.body?.text || "").trim();
+  if (!claims || !text || text.length > 10000) return res.status(400).json({ error: "A valid portal message is required" });
+  try {
+    const portal = await getPortalForSession(claims.portalId);
+    if (!portal) return res.status(401).json({ error: "Creator Portal access is inactive" });
+    const message = await createCreatorPortalMessage({ creatorLeadId: Number(portal.creator_lead_id), senderType: "creator", text, visibleToCreator: true });
+    return res.status(201).json({ success: true, message });
+  } catch (error) {
+    console.error("[Creator Portal] Creator message failed", error);
+    return res.status(503).json({ error: "Unable to save Creator Portal message" });
+  }
+});
+
 creatorRouter.get("/creator/admin/leads/:leadId/portal", requireCreatorAdmin, async (req: any, res) => {
   if (!creatorPortalEnabled()) return portalUnavailable(res);
   const leadId = safeLeadId(req.params.leadId);
@@ -262,6 +280,31 @@ creatorRouter.post("/creator/admin/leads/:leadId/portal/updates", requireCreator
   } catch (error) {
     console.error("[Creator Portal] Update creation failed", error);
     return res.status(503).json({ error: "Unable to save Creator Portal update" });
+  }
+});
+
+creatorRouter.get("/creator/admin/leads/:leadId/portal/messages", requireCreatorAdmin, async (req: any, res) => {
+  if (!creatorPortalEnabled()) return portalUnavailable(res);
+  const leadId = safeLeadId(req.params.leadId);
+  if (!leadId) return res.status(400).json({ error: "Invalid lead identifier" });
+  try {
+    return res.json({ success: true, messages: await getCreatorPortalMessages(leadId) });
+  } catch (error) {
+    console.error("[Creator Portal] Admin message load failed", error);
+    return res.status(503).json({ error: "Unable to load Creator Portal messages" });
+  }
+});
+
+creatorRouter.post("/creator/admin/leads/:leadId/portal/messages", requireCreatorAdmin, async (req: any, res) => {
+  if (!creatorPortalEnabled()) return portalUnavailable(res);
+  const leadId = safeLeadId(req.params.leadId);
+  const text = String(req.body?.text || "").trim();
+  if (!leadId || !text || text.length > 10000) return res.status(400).json({ error: "A valid portal message is required" });
+  try {
+    return res.status(201).json({ success: true, message: await createCreatorPortalMessage({ creatorLeadId: leadId, senderType: "admin", text, visibleToCreator: req.body?.visibleToCreator !== false, userId: req.creatorAdmin.id }) });
+  } catch (error) {
+    console.error("[Creator Portal] Admin message failed", error);
+    return res.status(503).json({ error: "Unable to save Creator Portal message" });
   }
 });
 

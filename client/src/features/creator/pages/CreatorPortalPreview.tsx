@@ -126,6 +126,8 @@ function CreatorPortalScreen() {
   const [portal, setPortal] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [messageNotice, setMessageNotice] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -156,6 +158,18 @@ function CreatorPortalScreen() {
     setLocation("/creator/portal/invite");
   };
 
+  const sendMessage = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const text = message.trim();
+    if (!text) return;
+    const response = await fetch("/api/creator/portal/messages", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ text }) });
+    const body = await response.json();
+    if (!response.ok) { setMessageNotice(body.error || "Unable to save your message."); return; }
+    setPortal((current: any) => ({ ...current, messages: [...(current.messages || []), body.message] }));
+    setMessage("");
+    setMessageNotice("Your message was saved to the project record.");
+  };
+
   if (loading) return <main className="creator-portal-screen"><section className="creator-portal-welcome"><p className="creator-eyebrow">ZAKHY BUILDS AI</p><h1>Loading your workspace.</h1><p>Preparing your private Creator Portal.</p></section></main>;
   if (error || !portal) return <main className="creator-portal-screen"><section className="creator-portal-support"><div><p className="creator-eyebrow">CREATOR PORTAL</p><h2>We couldn’t open this workspace.</h2><p>{error || "Please use the latest invitation link or contact the Zakhy team."}</p></div><a className="creator-button" href="mailto:turboresponsehq@gmail.com?subject=Creator%20Portal%20Support">Contact Support</a></section></main>;
 
@@ -165,6 +179,7 @@ function CreatorPortalScreen() {
       <section className="creator-portal-welcome"><p className="creator-eyebrow">WELCOME BACK, {String(portal.full_name || "CREATOR").split(" ")[0].toUpperCase()}</p><h1>Your project home.</h1><p>Your private workspace for clear next steps, requested materials, project updates, and shared files.</p></section>
       <section className="creator-portal-card-grid"><article className="creator-portal-card creator-portal-card-wide"><span>YOUR BRAND</span><h2>{portal.brand_name || portal.full_name}</h2><p>{portal.creator_type}</p><div className="creator-portal-service-pills">{portal.package_interest && <b>{portal.package_interest}</b>}<b>Creator project</b></div></article><article className="creator-portal-card"><span>CURRENT STATUS</span><h3>{portal.current_status}</h3><p>Current phase: {portal.current_phase}</p></article><article className="creator-portal-card"><span>NEXT STEP</span><h3>Keep moving forward</h3><p>{portal.next_step || "Zakhy will update your next step here."}</p></article></section>
       <section className="creator-portal-content-grid"><article className="creator-portal-card"><span>ITEMS WE NEED FROM YOU</span>{portal.items?.length ? <ul>{portal.items.map((item: any) => <li key={item.id}>{item.label} <small>{item.status}</small></li>)}</ul> : <p>No requested items yet.</p>}</article><article className="creator-portal-card"><span>PROJECT UPDATES</span>{portal.updates?.length ? <div className="creator-portal-updates">{portal.updates.map((update: any) => <div key={update.id}><b>{new Date(update.created_at).toLocaleDateString()}</b><p>{update.update_text}</p></div>)}</div> : <p>No creator-visible updates yet.</p>}</article></section>
+      <section className="creator-portal-card creator-portal-message-card"><div className="creator-portal-message-card-head"><div><span>PROJECT RECORD</span><h2>Messages & important decisions</h2></div><small>Creator-visible</small></div><div className="creator-portal-thread">{portal.messages?.length ? portal.messages.map((item: any) => <article className={`creator-portal-message ${item.sender_type === "creator" ? "from-creator" : "from-zakhy"}`} key={item.id}><div className="creator-portal-message-meta"><strong>{item.sender_type === "creator" ? "You" : "Zakhy Builds AI"}</strong><span>{new Date(item.created_at).toLocaleString()}</span></div><p>{item.message_text}</p></article>) : <p>No messages yet.</p>}</div><form className="creator-portal-message-form" onSubmit={sendMessage}><label>Reply to Zakhy<textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Ask a question or share an update…" /></label><button className="creator-button" type="submit">Save message</button>{messageNotice && <small role="status">{messageNotice}</small>}</form></section>
       <section className="creator-portal-support"><div><p className="creator-eyebrow">SHARED FILES</p><h2>Everything for your project, in one place.</h2><p>Your Zakhy team will add approved files to your dedicated Google Drive folder.</p></div>{portal.drive_folder_url ? <a className="creator-button" href={portal.drive_folder_url} target="_blank" rel="noreferrer">Open shared files</a> : <span className="creator-portal-muted-action">Shared files folder coming soon</span>}</section>
       <section className="creator-portal-support"><div><p className="creator-eyebrow">NEED HELP?</p><h2>Have a question about your project?</h2><p>Contact the Zakhy team and we’ll help with the next step.</p></div><a className="creator-button" href="mailto:turboresponsehq@gmail.com?subject=Creator%20Portal%20Support">Contact Support</a></section>
     </main>
