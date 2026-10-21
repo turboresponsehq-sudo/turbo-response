@@ -778,6 +778,19 @@ export const creatorPortalUpdates = pgTable("creator_portal_updates", {
 	createdAt: timestamp("created_at", { mode: "string", withTimezone: true }).defaultNow().notNull(),
 }, (table) => [index("idx_creator_portal_updates_visible_created").on(table.portalId, table.visibleToCreator, table.createdAt)]);
 
+export const creatorPortalMessages = pgTable("creator_portal_messages", {
+	id: bigserial({ mode: "number" }).primaryKey(),
+	portalId: bigint("portal_id", { mode: "number" }).notNull(),
+	senderType: varchar("sender_type", { length: 20 }).$type<"admin" | "creator">().notNull(),
+	messageText: text("message_text").notNull(),
+	visibleToCreator: boolean("visible_to_creator").default(true).notNull(),
+	createdByUserId: bigint("created_by_user_id", { mode: "number" }),
+	createdAt: timestamp("created_at", { mode: "string", withTimezone: true }).defaultNow().notNull(),
+}, (table) => [
+	index("idx_creator_portal_messages_portal_created").on(table.portalId, table.createdAt),
+	index("idx_creator_portal_messages_visible_created").on(table.portalId, table.visibleToCreator, table.createdAt),
+]);
+
 export const creatorPortalEvents = pgTable("creator_portal_events", {
 	id: bigserial({ mode: "number" }).primaryKey(),
 	portalId: bigint("portal_id", { mode: "number" }).notNull(),

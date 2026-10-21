@@ -4,3 +4,21 @@
 .creator-portal-muted-action { color: #52617a; font-size: 12px; font-weight: 700; }
 .creator-portal-card li small { color: #9fa7b7; font-size: 10px; margin-left: 4px; text-transform: uppercase; }
 @media (max-width: 680px) { .creator-portal-header-actions { align-items: flex-end; flex-direction: column; gap: 7px; } }
+.creator-portal-message-card { margin-top: 18px; }
+.creator-portal-message-card-head { align-items: flex-start; border-bottom: 1px solid #e7ebf2; display: flex; justify-content: space-between; padding-bottom: 12px; }
+.creator-portal-message-card-head h2 { margin: 4px 0 0; }
+.creator-portal-thread { display: grid; gap: 12px; padding: 18px 0; }
+.creator-portal-message { border-radius: 8px; max-width: 82%; padding: 13px 15px; }
+.creator-portal-message.from-zakhy { background: #edf3ff; border-left: 4px solid #1e5bff; justify-self: start; }
+.creator-portal-message.from-creator { background: #f5f1eb; border-right: 4px solid #b8955a; justify-self: end; }
+.creator-portal-message-meta { align-items: center; display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 5px; }
+.creator-portal-message-meta strong { color: #172238; }
+.creator-portal-message-meta span { color: #75839a; font-size: 12px; }
+.creator-portal-message-meta em { color: #b34b45; font-size: 11px; font-style: normal; font-weight: 800; text-transform: uppercase; }
+.creator-portal-message p { color: #34425a; line-height: 1.55; margin: 0; }
+.creator-portal-message-form { border-top: 1px solid #e7ebf2; display: grid; gap: 10px; padding-top: 16px; }
+.creator-portal-message-form label { color: #52617a; display: grid; font-size: 12px; font-weight: 800; gap: 6px; text-transform: uppercase; }
+.creator-portal-message-form textarea { border: 1px solid #bdc9da; border-radius: 6px; color: #172238; font: inherit; min-height: 82px; padding: 11px; resize: vertical; text-transform: none; }
+.creator-portal-checkbox { align-items: center; display: flex !important; flex-direction: row; gap: 8px !important; text-transform: none !important; }
+.creator-portal-checkbox input { accent-color: #1e5bff; }
+@media (max-width: 680px) { .creator-portal-message { max-width: 100%; } }
