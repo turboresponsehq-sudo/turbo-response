@@ -40,6 +40,8 @@ services:
         sync: false
       - key: ZAKHY_ADMIN_EMAIL
         sync: false
+      - key: CREATOR_PORTAL_ENABLED
+        value: false
       - key: AMANI_ADMIN_REVIEW_URL
         value: https://turboresponsehq.ai/admin/creator/amani
       # Google Drive Integration — Knowledge Base document source

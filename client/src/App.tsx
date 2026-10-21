@@ -207,6 +207,8 @@ function Router() {
       <Route path="/creator/start" component={CreatorIntake} />
       <Route path="/admin/creator/portal-preview" component={() => <CreatorPortalPreviewRoute view="admin" />} />
       <Route path="/creator/portal/preview" component={() => <CreatorPortalPreviewRoute view="portal" />} />
+      <Route path="/creator/portal/invite" component={() => <CreatorPortalPreviewRoute view="portal" />} />
+      <Route path="/creator/portal" component={() => <CreatorPortalPreviewRoute view="portal" />} />
       
       {/* Client Portal Routes */}
       <Route path="/client/login" component={ClientLogin} />
