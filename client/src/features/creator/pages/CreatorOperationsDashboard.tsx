@@ -5,6 +5,7 @@ import {
   Bot,
   CalendarDays,
   FileBarChart,
+  FileDown,
   Image,
   Megaphone,
   MessageSquareText,
@@ -15,7 +16,7 @@ import {
 import { getAdminLoginUrl } from "@/lib/adminLoginRedirect";
 import { getAdminSessionAuthorizationHeader } from "@/lib/adminSession";
 import TurboChatbot, { turboChatbotStyles } from "@/components/TurboChatbot";
-import "./creatorOperations.css";
+import "../styles/creatorOperations.css";
 
 type LeadStatus = "new" | "reviewing" | "follow_up" | "converted" | "closed";
 
@@ -125,6 +126,36 @@ export default function CreatorOperationsDashboard() {
         .slice(0, 5),
     [leads],
   );
+
+  function downloadLeadReport() {
+    const generatedAt = new Date().toLocaleString();
+    const lines = [
+      "ZAKHY — CREATOR OPERATIONS REPORT",
+      `Generated: ${generatedAt}`,
+      "",
+      `New leads: ${metrics.newLeads}`,
+      `Active opportunities: ${metrics.active}`,
+      `Follow-ups due: ${metrics.due}`,
+      `Converted creator clients: ${metrics.converted}`,
+      "",
+      "LEAD SNAPSHOT",
+      ...leads.map((lead) => {
+        const name = lead.brandName || lead.fullName;
+        const due = lead.openTaskDueAt ? new Date(lead.openTaskDueAt).toLocaleString() : "No open due date";
+        return `#${lead.id} — ${name} — ${statusLabel(lead.status)} — ${lead.creatorType} — ${due}`;
+      }),
+    ];
+
+    const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `zakhy-creator-operations-${new Date().toISOString().slice(0, 10)}.txt`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
+  }
 
   const recent = useMemo(
     () =>
@@ -299,12 +330,15 @@ export default function CreatorOperationsDashboard() {
               <FileBarChart size={20} />
             </div>
             <div className="zops-report-list">
-              <button disabled>Creator Performance Report <span>Data connection next</span></button>
-              <button disabled>Campaign Report <span>Data connection next</span></button>
-              <button disabled>Lead & Follow-up Report <span>Data connection next</span></button>
-              <button disabled>Revenue & Growth Report <span>Data connection next</span></button>
+              <button className="is-ready" onClick={downloadLeadReport} disabled={loading}>
+                <span className="zops-report-title"><FileDown size={15} /> Lead & Follow-up Report</span>
+                <span>{loading ? "Loading…" : "Download now"}</span>
+              </button>
+              <button disabled>Creator Performance Report <span>Analytics connection next</span></button>
+              <button disabled>Campaign Report <span>Campaign data next</span></button>
+              <button disabled>Revenue & Growth Report <span>Sales data next</span></button>
             </div>
-            <p className="zops-report-note">The report workspace is intentionally staged until analytics and campaign data sources are approved.</p>
+            <p className="zops-report-note">Lead reporting is live now. Performance, campaign and revenue reports stay staged until those approved data sources are connected.</p>
           </article>
         </section>
 
