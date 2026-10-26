@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { getAdminLoginUrl } from "@/lib/adminLoginRedirect";
 import { getAdminSessionAuthorizationHeader } from "@/lib/adminSession";
-import TurboChatbot, { turboChatbotStyles } from "@/components/TurboChatbot";
 import "../styles/creatorOperations.css";
 
 type LeadStatus = "new" | "reviewing" | "follow_up" | "converted" | "closed";
@@ -167,8 +166,6 @@ export default function CreatorOperationsDashboard() {
 
   return (
     <main className="zops-page">
-      <style>{turboChatbotStyles}</style>
-
       <aside className="zops-sidebar" aria-label="Creator Operations navigation">
         <div className="zops-brand">
           <span className="zops-bolt">⚡</span>
@@ -206,7 +203,7 @@ export default function CreatorOperationsDashboard() {
               Open Leads
             </Link>
             <a href="#assistant" className="zops-button zops-button-red">
-              <Sparkles size={16} /> Ask Turbo
+              <Sparkles size={16} /> AI Assistant
             </a>
           </div>
         </header>
@@ -275,7 +272,7 @@ export default function CreatorOperationsDashboard() {
               <span>Help organize a launch</span>
               <span>Build a follow-up idea</span>
             </div>
-            <small>Open “Chat with Turbo” in the bottom-right corner.</small>
+            <small>Use the blue Turbo AI Assistant in the bottom-right corner.</small>
           </article>
         </section>
 
@@ -348,7 +345,6 @@ export default function CreatorOperationsDashboard() {
         </footer>
       </section>
 
-      <TurboChatbot />
     </main>
   );
 }
