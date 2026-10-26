@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { getAdminLoginUrl } from "@/lib/adminLoginRedirect";
 import { getAdminSessionAuthorizationHeader } from "@/lib/adminSession";
+import TurboChatbot, { turboChatbotStyles } from "@/components/TurboChatbot";
 import "../styles/creatorOperations.css";
 
 type LeadStatus = "new" | "reviewing" | "follow_up" | "converted" | "closed";
@@ -272,7 +273,7 @@ export default function CreatorOperationsDashboard() {
               <span>Help organize a launch</span>
               <span>Build a follow-up idea</span>
             </div>
-            <small>Use the blue Turbo AI Assistant in the bottom-right corner.</small>
+            <small>Open “Chat with Turbo” in the bottom-right corner.</small>
           </article>
         </section>
 
@@ -345,6 +346,8 @@ export default function CreatorOperationsDashboard() {
         </footer>
       </section>
 
+      <style>{turboChatbotStyles}</style>
+      <TurboChatbot />
     </main>
   );
 }
