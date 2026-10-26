@@ -48,6 +48,7 @@ import AdminCommandCenter from "./pages/AdminCommandCenter";
 import CaseBrief from "./pages/CaseBrief";
 import CreatorIntake from "./features/creator/pages/CreatorIntake";
 import CreatorLeadsAdmin from "./features/creator/pages/CreatorLeadsAdmin";
+import CreatorOperationsDashboard from "./features/creator/pages/CreatorOperationsDashboard";
 import CreatorPortalPreview from "./features/creator/pages/CreatorPortalPreview";
 import AmaniReviewAdmin from "./features/creator/pages/AmaniReviewAdmin";
 import AiLearningIntakesAdmin from "./features/ai-learning/AiLearningIntakesAdmin";
@@ -60,6 +61,14 @@ function ProtectedCreatorLeads() {
   return (
     <AdminSessionGate>
       <CreatorLeadsAdmin />
+    </AdminSessionGate>
+  );
+}
+
+function ProtectedCreatorOperations() {
+  return (
+    <AdminSessionGate>
+      <CreatorOperationsDashboard />
     </AdminSessionGate>
   );
 }
@@ -223,6 +232,7 @@ function Router() {
       <Route path="/admin/login" component={AdminLogin} />
       {/* Admin workflow routes - restored to specification */}
       <Route path="/admin/command-center" component={AdminCommandCenter} />
+      <Route path="/admin/zakhy" component={ProtectedCreatorOperations} />
       <Route path="/admin/creator/leads" component={ProtectedCreatorLeads} />
       <Route path="/admin/creator/amani" component={ProtectedAmaniReview} />
       <Route path="/admin/ai-learning-intakes" component={ProtectedAiLearningIntakes} />
