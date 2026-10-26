@@ -457,3 +457,26 @@
   .zops-module-grid { grid-template-columns: 1fr; }
   .zops-header h1 { font-size: 36px; }
 }
+
+
+.zops-report-list button.is-ready {
+  cursor: pointer;
+  background: var(--zops-black);
+  border-color: var(--zops-black);
+  color: #fff;
+}
+
+.zops-report-list button.is-ready:hover {
+  background: var(--zops-red);
+  border-color: var(--zops-red);
+}
+
+.zops-report-list button.is-ready > span:last-child {
+  color: var(--zops-yellow);
+}
+
+.zops-report-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
