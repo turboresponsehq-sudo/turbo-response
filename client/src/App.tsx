@@ -270,7 +270,8 @@ function App() {
     console.warn('[App] Axios interceptor detected 401');
   });
 
-  const isZakhyPublicPath = /^(\/zakhy\/connect|\/zakhybuildsai|\/ralo|\/ms-pop-it|\/spillo|\/miami|\/atlanta|\/crunk-fit)(\/|$)/.test(window.location.pathname);
+  const [location] = useLocation();
+  const isCreatorChatPath = location === "/admin/zakhy" || /^(\/zakhy\/connect|\/zakhybuildsai|\/ralo|\/ms-pop-it|\/spillo|\/miami|\/atlanta|\/crunk-fit)(\/|$)/.test(location);
 
   return (
     <ErrorBoundary>
@@ -281,7 +282,7 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <Router />
-            {!isZakhyPublicPath && <FloatingChatWidget />}
+            {!isCreatorChatPath && <FloatingChatWidget />}
           </TooltipProvider>
         </ThemeProvider>
       </AdminAuthProvider>
