@@ -72,6 +72,7 @@ export default function CreatorLeadsAdmin() {
   const [portalForm, setPortalForm] = useState({ status: "disabled", currentStatus: "Intake Received", currentPhase: "Discovery", nextStep: "", driveFolderUrl: "" });
   const [portalSaving, setPortalSaving] = useState(false);
   const [portalMessages, setPortalMessages] = useState<PortalMessage[]>([]);
+  const [portalMessagesReady, setPortalMessagesReady] = useState(false);
   const [portalMessage, setPortalMessage] = useState("");
   const [portalMessageVisible, setPortalMessageVisible] = useState(true);
 
@@ -96,7 +97,7 @@ export default function CreatorLeadsAdmin() {
     const version = ++selectionVersion.current;
     setSelected(null);
     setSimpleView(true); setNotice(""); setError(""); setNote("");
-    setPortal(null); setPortalMessages([]); setPortalEnabled(false);
+    setPortal(null); setPortalMessages([]); setPortalEnabled(false); setPortalMessagesReady(false);
     try {
       const response = await request(`/api/creator/admin/leads/${id}`);
       const body = await response.json();
@@ -114,7 +115,10 @@ export default function CreatorLeadsAdmin() {
         const messagesResponse = await request(`/api/creator/admin/leads/${id}/portal/messages`);
         if (messagesResponse.ok) {
           const messagesBody = await messagesResponse.json();
-          if (version === selectionVersion.current) setPortalMessages(messagesBody.messages || []);
+          if (version === selectionVersion.current) {
+            setPortalMessages(messagesBody.messages || []);
+            setPortalMessagesReady(true);
+          }
         }
       } else {
         if (version !== selectionVersion.current) return;
@@ -178,6 +182,7 @@ export default function CreatorLeadsAdmin() {
 
   async function createInvitation() {
     if (!selected) return;
+    if (!portalMessagesReady) { setError("Portal setup is incomplete. Refresh after messages storage is available before sending an invitation."); return; }
     if (!window.confirm(`Send a private portal invitation email to ${selected.email}? This gives ${selected.brandName || selected.fullName} access to their project status and client-visible updates.`)) return;
     setPortalSaving(true); setError("");
     try {
@@ -205,6 +210,7 @@ export default function CreatorLeadsAdmin() {
 
   async function addPortalMessage(event: React.FormEvent) {
     event.preventDefault(); if (!selected || !portalMessage.trim()) return;
+    if (!portalMessagesReady) { setError("Portal messages are unavailable. Your message has not been sent or saved."); return; }
     setPortalSaving(true); setError("");
     try {
       const response = await request(`/api/creator/admin/leads/${selected.id}/portal/messages`, { method: "POST", body: JSON.stringify({ text: portalMessage, visibleToCreator: portalMessageVisible }) });
@@ -241,6 +247,7 @@ export default function CreatorLeadsAdmin() {
       <aside className="creator-lead-detail">{selected ? <>
         <div className="creator-detail-head"><div><p className="creator-eyebrow">LEAD #{selected.id}</p><h2>{selected.brandName || selected.fullName}</h2><p>{selected.fullName} · {selected.email}</p></div><select aria-label="Lead status" value={selected.status} disabled={saving} onChange={(event) => updateStatus(event.target.value as Status)}>{statuses.map((status) => <option value={status} key={status}>{label(status)}</option>)}</select></div>
         <div className="creator-portal-actions" aria-label="Client view"><button type="button" aria-pressed={simpleView} onClick={() => setSimpleView(true)}>Simple view</button><button type="button" aria-pressed={!simpleView} onClick={() => setSimpleView(false)}>Full record</button></div>
+        {portalEnabled && !portalMessagesReady && <p role="status" className="creator-form-error">Portal setup is incomplete: messages are unavailable. Invitations are on hold. Status and internal notes still work.</p>}
         {simpleView ? <>
           <section className="creator-detail-section"><h3>At a glance</h3><div className="creator-detail-grid"><article><span>Service requested</span><strong>{selected.packageInterest || "Not recorded"}</strong></article><article><span>Portal access</span><strong>{portalEnabled ? portal?.status || "Not invited" : "Unavailable"}</strong></article></div><p>{selected.status === "converted" ? "Active client" : "Use the status selector above to move a lead to converted when they become a client."}</p></section>
           <section className="creator-detail-section"><h3>What happens next?</h3>{portalEnabled ? <form className="creator-task-template-form" onSubmit={savePortal}><label>Project stage<select value={portalForm.currentStatus} onChange={(event) => setPortalForm({ ...portalForm, currentStatus: event.target.value })}>{["Intake Received", "Reviewing", "Awaiting Client", "Planning", "In Progress", "Ready for Review", "Completed"].map(status => <option key={status}>{status}</option>)}</select></label><label>Working on<input value={portalForm.currentPhase} onChange={(event) => setPortalForm({ ...portalForm, currentPhase: event.target.value })} /></label><label>Next step for the client<textarea value={portalForm.nextStep} onChange={(event) => setPortalForm({ ...portalForm, nextStep: event.target.value })} placeholder="For example: send your logo and product photos." /></label><p className="creator-task-safety">Visible in the client's portal when access is enabled. Saving does not send an email.</p><button disabled={portalSaving}>Save project update</button></form> : <p>Portal details are not available yet. You can still update status and save an internal note.</p>}</section>
