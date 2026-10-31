@@ -12,6 +12,7 @@ type Lead = {
 };
 type LeadDetail = Lead & { goals?: string; challenges?: string; automation_wish?: string; website_url?: string; revenue_streams?: string[] | string; audience_size?: string; collects_fan_contacts?: string; brand_assets?: string[] | string; brand_style?: string; business_systems?: string[] | string; opportunity_focus?: string[] | string; priority_platforms?: string[] | string; project_priority?: string; final_question?: string; notes: Array<{ id: number; note: string; created_at: string }>; tasks: Array<{ id: number; task_type: string; task_detail: string | null; due_at: string | null; status: string }>; events: Array<{ id: number; event_type: string; actor: string; created_at: string }> };
 type Portal = { id: number; creator_lead_id: number; status: "disabled" | "invited" | "active"; current_status: string; current_phase: string; next_step: string | null; drive_folder_url: string | null; invitation_sent_at: string | null; last_access_at: string | null; };
+type TeamMember = { id: number; email: string; display_name: string; status: string; requested_at: string; verified_at: string | null; };
 type PortalMessage = { id: number; sender_type: "admin" | "creator"; message_text: string; visible_to_creator: boolean; created_at: string };
 
 const statuses: Status[] = ["new", "reviewing", "follow_up", "converted", "closed"];
@@ -76,6 +77,10 @@ export default function CreatorLeadsAdmin() {
   const [portalMessagesReady, setPortalMessagesReady] = useState(false);
   const [portalMessage, setPortalMessage] = useState("");
   const [portalMessageVisible, setPortalMessageVisible] = useState(true);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [teamLink, setTeamLink] = useState("");
+  const [teamNotice, setTeamNotice] = useState("");
+  const [teamBusy, setTeamBusy] = useState(false);
 
   const request = (path: string, init?: RequestInit) => fetch(path, {
     ...init,
@@ -99,12 +104,14 @@ export default function CreatorLeadsAdmin() {
     setSelected(null);
     setSimpleView(true); setNotice(""); setPortalSaveNotice(""); setError(""); setNote("");
     setPortal(null); setPortalMessages([]); setPortalEnabled(false); setPortalMessagesReady(false);
+    setTeamMembers([]); setTeamLink(""); setTeamNotice("");
     try {
       const response = await request(`/api/creator/admin/leads/${id}`);
       const body = await response.json();
       if (version !== selectionVersion.current) return;
       if (!response.ok) throw new Error(body.error || "Unable to load lead details.");
       setSelected(body.lead);
+      void loadTeamMembers(id);
       const portalResponse = await request(`/api/creator/admin/leads/${id}/portal`);
       if (portalResponse.ok) {
         const portalBody = await portalResponse.json();
@@ -128,6 +135,53 @@ export default function CreatorLeadsAdmin() {
         setPortalEnabled(portalResponse.status !== 404);
       }
     } catch (loadError) { if (version === selectionVersion.current) setError(loadError instanceof Error ? loadError.message : "Unable to load lead details."); }
+  }
+
+  async function loadTeamMembers(leadId: number) {
+    try {
+      const r = await request(`/api/creator/admin/leads/${leadId}/portal/team-members`);
+      if (r.ok) {
+        const data = await r.json();
+        if (selectionVersion.current && selected?.id && selected.id !== leadId) return;
+        setTeamMembers(data.members || []);
+      } else {
+        setTeamNotice("Team access is not available until the new workspace is activated.");
+      }
+    } catch {
+      setTeamNotice("Unable to load team members.");
+    }
+  }
+
+  async function createTeamLink() {
+    if (!selected || teamBusy) return;
+    setTeamBusy(true); setTeamNotice("");
+    try {
+      const r = await request(`/api/creator/admin/leads/${selected.id}/portal/team-link`,
+        { method: "POST", body: "{}" });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || "Could not create join link.");
+      setTeamLink(data.url);
+      setTeamNotice("Registration link created. Send it to the group; each person still needs your approval.");
+    } catch (e) {
+      setTeamNotice(e instanceof Error ? e.message : "Unable to create link.");
+    } finally { setTeamBusy(false); }
+  }
+
+  async function changeTeamAccess(member: TeamMember, action: "approve" | "revoke") {
+    if (!selected || teamBusy) return;
+    if (!window.confirm(`${action==="approve"?"Approve":"Revoke"} access for ${member.display_name} (${member.email})?`)) return;
+    setTeamBusy(true); setTeamNotice("");
+    try {
+      const r = await request(`/api/creator/admin/leads/${selected.id}/portal/team-members/${member.id}/${action}`,
+        { method: "POST", body: "{}" });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || "Could not update member.");
+      await loadTeamMembers(selected.id);
+      setTeamNotice(action === "approve"
+        ? data.emailSent ? "Member approved and notified by email." : "Approved. Email notification not confirmed."
+        : "Member access revoked.");
+    } catch (e) { setTeamNotice(e instanceof Error ? e.message : "Unable to update access."); }
+    finally { setTeamBusy(false); }
   }
 
   async function updateStatus(status: Status) {
@@ -281,17 +335,41 @@ export default function CreatorLeadsAdmin() {
       <aside className="creator-lead-detail">{selected ? <>
         <div className="creator-detail-head"><div><p className="creator-eyebrow">LEAD #{selected.id}</p><h2>{selected.brandName || selected.fullName}</h2><p>{selected.fullName} · {selected.email}</p></div><select aria-label="Lead status" value={selected.status} disabled={saving} onChange={(event) => updateStatus(event.target.value as Status)}>{statuses.map((status) => <option value={status} key={status}>{label(status)}</option>)}</select></div>
         <div className="creator-portal-actions" aria-label="Client view"><button type="button" aria-pressed={simpleView} onClick={() => setSimpleView(true)}>Simple view</button><button type="button" aria-pressed={!simpleView} onClick={() => setSimpleView(false)}>Full record</button></div>
-        <Link href={`/admin/creator/portal-preview?lead=${selected.id}`} className="creator-back">Preview client portal →</Link>
+        <Link href={`/admin/creator/portal-preview?lead=${selected.id}`} className="creator-back">Preview legacy client status →</Link>
         {portalEnabled && !portalMessagesReady && <p role="status" className="creator-form-error">Portal setup is incomplete: messages are unavailable. Invitations are on hold. Status and internal notes still work.</p>}
+        <section className="creator-detail-section creator-portal-access-panel" aria-label="Team Workspace Access">
+          <div className="creator-section-heading"><div><p className="creator-eyebrow">CREATOR AUTOMATIONS · APPROVAL REQUIRED</p>
+            <h3>Team workspace access</h3></div></div>
+          <p>One link for the group chat. Every person chooses their own login code, verifies email, and waits for your approval.</p>
+          <div className="creator-portal-actions">
+            <button type="button" disabled={teamBusy} onClick={createTeamLink}>Generate private registration link</button>
+            <button type="button" className="creator-secondary-button" disabled={teamBusy} onClick={() => loadTeamMembers(selected.id)}>Refresh requests</button>
+          </div>
+          {teamLink && <div className="creator-task-template-form"><label>Copy this registration-only link
+            <input readOnly value={teamLink} onFocus={e=>e.target.select()} /></label>
+            <button type="button" onClick={() => navigator.clipboard.writeText(teamLink).then(()=>setTeamNotice("Link copied. Send it in the group chat.")).catch(()=>setTeamNotice("Select and copy the visible link."))}>Copy group link</button>
+            <p className="creator-task-safety">Generating a new link invalidates the previous link. No shared passwords.</p>
+          </div>}
+          <h4>Team member requests</h4>
+          {teamMembers.length === 0 ? <p className="creator-task-safety">No requests yet. Members appear here after submitting the join form.</p> :
+            teamMembers.map(member => <div key={member.id} className="creator-detail-grid">
+              <article><strong>{member.display_name}</strong><span>{member.email}</span><span>{member.status.replaceAll("_"," ")}</span></article>
+              <article><div className="creator-portal-actions">
+                {member.status === "pending_approval" && <button type="button" disabled={teamBusy} onClick={() => changeTeamAccess(member,"approve")}>Approve</button>}
+                {member.status !== "revoked" && <button type="button" className="creator-secondary-button" disabled={teamBusy} onClick={() => changeTeamAccess(member,"revoke")}>Revoke</button>}
+              </div></article>
+            </div>)}
+          {teamNotice && <p role="status" className="creator-task-safety">{teamNotice}</p>}
+        </section>
         {simpleView ? <>
           <section className="creator-detail-section"><h3>At a glance</h3><div className="creator-detail-grid"><article><span>Service requested</span><strong>{selected.packageInterest || "Not recorded"}</strong></article><article><span>Portal access</span><strong>{portalEnabled ? portal?.status || "Not invited" : "Unavailable"}</strong></article></div><p>{selected.status === "converted" ? "Active client" : "Use the status selector above to move a lead to converted when they become a client."}</p></section>
           <section className="creator-detail-section"><h3>What happens next?</h3>{portalEnabled ? <form className="creator-task-template-form" onSubmit={savePortal}><label>Project stage<select value={portalForm.currentStatus} onChange={(event) => setPortalForm({ ...portalForm, currentStatus: event.target.value })}>{["Intake Received", "Reviewing", "Awaiting Client", "Planning", "In Progress", "Ready for Review", "Completed"].map(status => <option key={status}>{status}</option>)}</select></label><label>Working on<input value={portalForm.currentPhase} onChange={(event) => setPortalForm({ ...portalForm, currentPhase: event.target.value })} /></label><label>Next step for the client<textarea value={portalForm.nextStep} onChange={(event) => setPortalForm({ ...portalForm, nextStep: event.target.value })} placeholder="For example: send your logo and product photos." /></label><p className="creator-task-safety">Visible in the client's portal when access is enabled. Saving does not send an email.</p><button disabled={portalSaving}>{portalSaving ? "Saving…" : "Save project update"}</button>{portalSaveNotice && <p role="status" className="creator-task-safety">{portalSaveNotice}</p>}</form> : <p>Portal details are not available yet. You can still update status and save an internal note.</p>}</section>
           <section className="creator-detail-section"><h3>Quick internal update</h3><form className="creator-task-template-form" onSubmit={addNote}><label>What changed?<textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder="Email recap, agreed scope, payment confirmed, or what you need next…" /></label><p className="creator-task-safety">Internal only. This does not message the client.</p><button disabled={saving || !note.trim()}>Save internal update</button></form>{selected.notes[0] && <p><strong>Latest update:</strong> {selected.notes[0].note}</p>}</section>
-          <section className="creator-detail-section"><h3>Client portal</h3><p>{portal?.last_access_at ? `Last opened ${new Date(portal.last_access_at).toLocaleDateString()}.` : "No portal visit recorded."}</p><p>The client sees their project progress, next step, and shared messages. Internal notes stay private.</p><button type="button" disabled={portalSaving || !portalEnabled} onClick={createInvitation}>{portal?.status === "active" || portal?.status === "invited" ? "Send new portal invitation" : "Invite client to portal"}</button><p className="creator-task-safety">You will confirm the recipient before an invitation email is sent. A new invitation replaces the previous link.</p><button type="button" className="creator-secondary-button" onClick={() => setSimpleView(false)}>Messages, tasks & full details</button></section>
+          <section className="creator-detail-section"><h3>Project communication</h3><p>Use Team Workspace Access above to share a registration link. Each team member must verify their email and receive your approval.</p><button type="button" className="creator-secondary-button" onClick={() => setSimpleView(false)}>Messages, tasks & full details</button></section>
         </> : <>
         <div className="creator-detail-grid"><article><span>Package</span><strong>{selected.packageInterest || "Not sure yet"}</strong></article><article><span>Budget</span><strong>{selected.budgetRange || "Not provided"}</strong></article></div>
         <CreatorBusinessAssessment lead={selected} />
-        <section className="creator-detail-section creator-portal-access-panel"><div className="creator-section-heading"><div><p className="creator-eyebrow">CREATOR WORKSPACE</p><h3>Portal access</h3></div><span className={`creator-status ${portalForm.status}`}>{portalForm.status}</span></div>{!portalEnabled ? <p className="creator-task-safety">Portal storage is prepared but not enabled yet. Production migration and feature-flag activation are still required.</p> : <form onSubmit={savePortal}><div className="creator-task-fields"><label>Portal status<select value={portalForm.status} onChange={(event) => setPortalForm({ ...portalForm, status: event.target.value })}><option value="disabled">Disabled</option><option value="invited">Invited</option><option value="active">Active</option></select></label><label>Project status<select value={portalForm.currentStatus} onChange={(event) => setPortalForm({ ...portalForm, currentStatus: event.target.value })}>{["Intake Received", "Reviewing", "Awaiting Client", "Planning", "In Progress", "Ready for Review", "Completed"].map((status) => <option value={status} key={status}>{status}</option>)}</select></label></div><div className="creator-task-fields"><label>Current phase<input value={portalForm.currentPhase} onChange={(event) => setPortalForm({ ...portalForm, currentPhase: event.target.value })} /></label><label>Next step<input value={portalForm.nextStep} onChange={(event) => setPortalForm({ ...portalForm, nextStep: event.target.value })} placeholder="What happens next?" /></label></div><label>Dedicated Google Drive folder URL<input type="url" value={portalForm.driveFolderUrl} onChange={(event) => setPortalForm({ ...portalForm, driveFolderUrl: event.target.value })} placeholder="https://drive.google.com/drive/folders/..." /></label><p className="creator-task-safety">Only this dedicated folder link is stored. No Drive sync or permission changes are performed.</p><div className="creator-portal-actions"><button type="submit" disabled={portalSaving}>{portalSaving ? "Saving…" : "Save portal settings"}</button><button type="button" disabled={portalSaving} onClick={createInvitation}>Send invitation</button><button type="button" className="creator-secondary-button" disabled={portalSaving || !portal} onClick={revokePortal}>Revoke access</button></div>{portalSaveNotice && <p role="status" className="creator-task-safety">{portalSaveNotice}</p>}</form>}</section>
+        <section className="creator-detail-section creator-portal-access-panel"><div className="creator-section-heading"><div><p className="creator-eyebrow">CREATOR WORKSPACE</p><h3>Portal access</h3></div><span className={`creator-status ${portalForm.status}`}>{portalForm.status}</span></div>{!portalEnabled ? <p className="creator-task-safety">Portal storage is prepared but not enabled yet. Production migration and feature-flag activation are still required.</p> : <form onSubmit={savePortal}><div className="creator-task-fields"><label>Portal status<select value={portalForm.status} onChange={(event) => setPortalForm({ ...portalForm, status: event.target.value })}><option value="disabled">Disabled</option><option value="invited">Invited</option><option value="active">Active</option></select></label><label>Project status<select value={portalForm.currentStatus} onChange={(event) => setPortalForm({ ...portalForm, currentStatus: event.target.value })}>{["Intake Received", "Reviewing", "Awaiting Client", "Planning", "In Progress", "Ready for Review", "Completed"].map((status) => <option value={status} key={status}>{status}</option>)}</select></label></div><div className="creator-task-fields"><label>Current phase<input value={portalForm.currentPhase} onChange={(event) => setPortalForm({ ...portalForm, currentPhase: event.target.value })} /></label><label>Next step<input value={portalForm.nextStep} onChange={(event) => setPortalForm({ ...portalForm, nextStep: event.target.value })} placeholder="What happens next?" /></label></div><label>Dedicated Google Drive folder URL<input type="url" value={portalForm.driveFolderUrl} onChange={(event) => setPortalForm({ ...portalForm, driveFolderUrl: event.target.value })} placeholder="https://drive.google.com/drive/folders/..." /></label><p className="creator-task-safety">Only this dedicated folder link is stored. No Drive sync or permission changes are performed.</p><div className="creator-portal-actions"><button type="submit" disabled={portalSaving}>{portalSaving ? "Saving…" : "Save portal settings"}</button><button type="button" className="creator-secondary-button" disabled={portalSaving || !portal} onClick={revokePortal}>Revoke access</button></div>{portalSaveNotice && <p role="status" className="creator-task-safety">{portalSaveNotice}</p>}</form>}</section>
         <section className="creator-detail-section creator-portal-message-card"><div className="creator-portal-message-card-head"><div><p className="creator-eyebrow">PROJECT RECORD</p><h3>Messages & important decisions</h3></div><span className="creator-portal-muted-action">{portalMessages.length} saved</span></div><div className="creator-portal-thread">{portalMessages.length ? portalMessages.map((item) => <article className={`creator-portal-message ${item.sender_type === "creator" ? "from-creator" : "from-zakhy"}`} key={item.id}><div className="creator-portal-message-meta"><strong>{item.sender_type === "creator" ? selected.fullName : "Zakhy Builds AI"}</strong><span>{new Date(item.created_at).toLocaleString()}</span>{!item.visible_to_creator && <em>Internal only</em>}</div><p>{item.message_text}</p></article>) : <p>No project messages yet.</p>}</div><form className="creator-portal-message-form" onSubmit={addPortalMessage}><label>Add an update or message<textarea value={portalMessage} onChange={(event) => setPortalMessage(event.target.value)} placeholder="Share a next step, decision, or request…" /></label><label className="creator-portal-checkbox"><input type="checkbox" checked={portalMessageVisible} onChange={(event) => setPortalMessageVisible(event.target.checked)} /> Visible to creator</label><button type="submit" disabled={portalSaving}>Save message</button></form></section>
         <section className="creator-detail-section"><h3>Project priority</h3><p>{selected.project_priority || "Not provided"}</p><h3>Goals</h3><p>{selected.goals || "Not provided"}</p><h3>Challenges</h3><p>{selected.challenges || "Not provided"}</p></section>
         <section className="creator-detail-section"><h3>Next actions</h3><div className="creator-mini-list">{selected.tasks.length ? selected.tasks.map((item) => <p key={item.id}><b>{label(item.status)}</b> · {item.task_detail || item.task_type}</p>) : <p>No follow-up scheduled.</p>}</div><form className="creator-task-template-form" onSubmit={addTask}><label className="creator-template-label">Task template<select aria-label="Task template" value={selectedTemplate} onChange={(event) => applyTaskTemplate(event.target.value)}><option value="">Manual task</option>{taskTemplates.map((template) => <option value={template.id} key={template.id}>{template.label}</option>)}</select></label><div className="creator-task-fields"><label>Task type<input value={taskType} onChange={(event) => setTaskType(event.target.value)} placeholder="Task type" /></label><label>Suggested due date<input type="datetime-local" value={taskDueAt} onChange={(event) => setTaskDueAt(event.target.value)} /></label></div><label>Task detail<textarea value={task} onChange={(event) => setTask(event.target.value)} placeholder="Add a manual follow-up action" /></label><p className="creator-task-safety">Templates only pre-fill a manual internal task. No customer message is sent automatically.</p><button type="submit" disabled={saving}>Create manual task</button></form></section>
