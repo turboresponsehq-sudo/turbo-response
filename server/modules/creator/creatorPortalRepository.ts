@@ -19,6 +19,7 @@ type PortalConfig = {
   currentStatus?: CreatorProjectStatus;
   currentPhase?: string;
   nextStep?: string | null;
+  nextStepOwner?: "team" | "client";
   driveFolderUrl?: string | null;
 };
 
@@ -57,6 +58,65 @@ export function hashPortalToken(token: string): string {
   return tokenHash(token);
 }
 
+
+export type CreatorNextStepOwner = "team" | "client";
+type NextStepState = { next_step_owner: CreatorNextStepOwner; next_step_done: boolean };
+
+function normalizedOwner(value: unknown): CreatorNextStepOwner {
+  return value === "client" ? "client" : "team";
+}
+
+/** Use the existing append-only portal event log for one simple next step; no migration required. */
+async function readNextStepState(db: NonNullable<Awaited<ReturnType<typeof getDb>>>, portalId: number, currentText: string | null): Promise<NextStepState> {
+  const events = await db.execute(sql`
+    SELECT payload FROM creator_portal_events
+    WHERE portal_id = ${portalId} AND event_type = 'next_step_state'
+    ORDER BY id DESC LIMIT 1
+  `);
+  const payload = rowsOf(events)[0]?.payload as Record<string, unknown> | undefined;
+  if (!payload || payload.text !== (currentText ?? "")) {
+    return { next_step_owner: "team", next_step_done: false };
+  }
+  return { next_step_owner: normalizedOwner(payload.owner), next_step_done: payload.done === true };
+}
+
+async function writeNextStepState(input: {
+  portalId: number; text: string; owner: CreatorNextStepOwner; done: boolean; actor: string;
+}) {
+  await appendPortalEvent({
+    portalId: input.portalId,
+    eventType: "next_step_state",
+    actor: input.actor,
+    payload: { text: input.text, owner: input.owner, done: input.done },
+  });
+}
+
+/** Admin can check either task; creator can only check their own task. */
+export async function setCreatorNextStepDone(input: {
+  portalId: number;
+  actor: string;
+  done: boolean;
+  scope: "admin" | "client";
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Creator portal storage is unavailable");
+  const result = await db.execute(sql`
+    SELECT id, status, next_step FROM creator_portals WHERE id = ${input.portalId} LIMIT 1
+  `);
+  const portal = rowsOf(result)[0];
+  if (!portal || (input.scope === "client" && portal.status !== "active")) return null;
+  const text = nullable(portal.next_step);
+  if (!text) return null;
+  const state = await readNextStepState(db, Number(portal.id), text);
+  if (input.scope === "client" && state.next_step_owner !== "client") return null;
+  if (state.next_step_done !== input.done) {
+    await writeNextStepState({
+      portalId: Number(portal.id), text, owner: state.next_step_owner, done: input.done, actor: input.actor,
+    });
+  }
+  return { next_step: text, next_step_owner: state.next_step_owner, next_step_done: input.done };
+}
+
 export async function getCreatorPortalByLeadId(creatorLeadId: number) {
   const db = await getDb();
   if (!db) throw new Error("Creator portal storage is unavailable");
@@ -67,7 +127,9 @@ export async function getCreatorPortalByLeadId(creatorLeadId: number) {
     WHERE creator_lead_id = ${creatorLeadId}
     LIMIT 1
   `);
-  return rowsOf(result)[0] ?? null;
+  const portal = rowsOf(result)[0] ?? null;
+  if (!portal) return null;
+  return { ...portal, ...await readNextStepState(db, Number(portal.id), portal.next_step) };
 }
 
 export async function ensureCreatorPortal(creatorLeadId: number) {
@@ -92,13 +154,17 @@ export async function saveCreatorPortalConfig(input: {
   if (!db) throw new Error("Creator portal storage is unavailable");
   const portal = await ensureCreatorPortal(input.creatorLeadId);
   if (!portal) throw new Error("Creator portal could not be created");
+  const previous = await readNextStepState(db, Number(portal.id), portal.next_step);
+  const nextText = nullable(input.config.nextStep);
+  const nextOwner = input.config.nextStepOwner ?? previous.next_step_owner;
+  const changed = nextText !== nullable(portal.next_step) || nextOwner !== previous.next_step_owner;
 
   const result = await db.execute(sql`
     UPDATE creator_portals
     SET status = COALESCE(${input.config.status ?? null}, status),
         current_status = COALESCE(${input.config.currentStatus ?? null}, current_status),
         current_phase = COALESCE(${nullable(input.config.currentPhase)}, current_phase),
-        next_step = ${nullable(input.config.nextStep)},
+        next_step = ${nextText},
         drive_folder_url = ${nullable(input.config.driveFolderUrl)},
         updated_at = NOW()
     WHERE creator_lead_id = ${input.creatorLeadId}
@@ -106,8 +172,11 @@ export async function saveCreatorPortalConfig(input: {
               drive_folder_url, invitation_sent_at, last_access_at, created_at, updated_at
   `);
   const updated = rowsOf(result)[0] ?? null;
-  if (updated) await appendPortalEvent({ portalId: Number(updated.id), eventType: "portal_config_saved", actor: input.actor });
-  return updated;
+  if (updated) {
+    if (changed) await writeNextStepState({ portalId: Number(updated.id), text: nextText ?? "", owner: nextOwner, done: false, actor: input.actor });
+    await appendPortalEvent({ portalId: Number(updated.id), eventType: "portal_config_saved", actor: input.actor });
+  }
+  return updated ? { ...updated, next_step_owner: nextOwner, next_step_done: changed ? false : previous.next_step_done } : null;
 }
 
 export async function inviteCreatorPortal(input: { creatorLeadId: number; actor: string }) {
@@ -176,7 +245,7 @@ export async function getPortalForSession(portalId: number) {
   `);
   const portal = rowsOf(result)[0];
   if (!portal) return null;
-  const [items, updates, messages] = await Promise.all([
+  const [items, updates, messages, step] = await Promise.all([
     db.execute(sql`
       SELECT id, label, status, created_at, updated_at
       FROM creator_portal_items WHERE portal_id = ${portalId}
@@ -194,8 +263,9 @@ export async function getPortalForSession(portalId: number) {
       WHERE portal_id = ${portalId} AND visible_to_creator = TRUE
       ORDER BY created_at ASC, id ASC LIMIT 200
     `),
+    readNextStepState(db, portalId, portal.next_step),
   ]);
-  return { ...portal, items: rowsOf(items), updates: rowsOf(updates), messages: rowsOf(messages) };
+  return { ...portal, ...step, items: rowsOf(items), updates: rowsOf(updates), messages: rowsOf(messages) };
 }
 
 export async function getCreatorPortalMessages(creatorLeadId: number) {
