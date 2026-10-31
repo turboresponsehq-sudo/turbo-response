@@ -226,13 +226,18 @@ export default function CreatorWorkspace({ initial, mode, leadId, clientName }: 
       const done = (a.status === "complete" ? 1 : 0) - (b.status === "complete" ? 1 : 0);
       return done || (a.priority === "urgent" ? -1 : 1) - (b.priority === "urgent" ? -1 : 1);
     });
-    const title = owner === "team" ? (admin ? "My Team's Tasks" : "Creator Automations Tasks") : (admin ? "Client's Tasks" : "Your Tasks");
-    return <article className="scp-project-card scp-task-panel" key={owner}>
-      <div className="scp-panel-heading"><div><span className="scp-label">{owner === "team" ? "CREATOR AUTOMATIONS" : "CLIENT"}</span><h2>{title}</h2></div><span className="scp-task-count">{tasks.filter(t => t.status === "complete").length}/{tasks.length} done</span></div>
+    const clientPrimary = !admin && owner === "client";
+    const title = owner === "team"
+      ? (admin ? "My Team's Tasks" : "What We're Working On")
+      : (admin ? "Client's Tasks" : "What You Need To Do");
+    const incomplete = tasks.filter(t => t.status !== "complete");
+    const urgent = incomplete.filter(t => t.priority === "urgent").length;
+    return <article className={`scp-project-card scp-task-panel${clientPrimary ? " scp-client-action-panel" : ""}`} key={owner}>
+      <div className="scp-panel-heading"><div><span className="scp-label">{clientPrimary ? "START HERE · ACTION NEEDED" : owner === "team" ? "CREATOR AUTOMATIONS" : "CLIENT"}</span><h2>{title}</h2>{clientPrimary && <p className="scp-action-prompt">{incomplete.length ? `You have ${incomplete.length} ${incomplete.length === 1 ? "thing" : "things"} to complete.${urgent ? " Start with the urgent " + (urgent === 1 ? "item." : "items.") : ""}` : "You're all caught up. We'll let you know when something else is needed."}</p>}</div><span className="scp-task-count">{tasks.filter(t => t.status === "complete").length}/{tasks.length} done</span></div>
       {tasks.length ? <div className="scp-task-list">{tasks.map(t => {
         const done = t.status === "complete";
         const canCheck = demo || admin || owner === "client";
-        return <label className={`scp-task ${done ? "is-done" : ""} ${!canCheck ? "is-readonly" : ""}`} key={t.id}>
+        return <label className={`scp-task ${done ? "is-done" : ""} ${!canCheck ? "is-readonly" : ""} ${clientPrimary && t.priority === "urgent" && !done ? "is-urgent-action" : ""}`} key={t.id}>
           <input type="checkbox" checked={done} disabled={!canCheck || busy === "task-" + t.id} onChange={e => checkTask(t.id, e.target.checked)} />
           <span className="scp-task-content"><strong>{t.label}</strong><small>{done ? "Completed" : t.priority === "urgent" ? "Urgent" : "Normal priority"}</small></span>
           {t.priority === "urgent" && !done ? <span className="scp-urgent">URGENT</span> : null}
@@ -254,8 +259,8 @@ export default function CreatorWorkspace({ initial, mode, leadId, clientName }: 
         {!project.tasks?.length && project.next_step ? <p className="scp-project-stage">Previous next step: {project.next_step} · Add it to the appropriate task list below.</p> : null}
       </section>
 
-      <section className="scp-task-columns" aria-label="Project to-do lists">
-        {taskBox("team")}{taskBox("client")}
+      <section className={`scp-task-columns${admin ? "" : " scp-client-first-tasks"}`} aria-label="Project to-do lists">
+        {admin ? <>{taskBox("team")}{taskBox("client")}</> : <>{taskBox("client")}{taskBox("team")}</>}
       </section>
 
       {admin && <form className="scp-add-task" onSubmit={addTask}>
