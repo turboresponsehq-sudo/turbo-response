@@ -23,8 +23,17 @@ export default function SimpleClientPortalPreview() {
         ]);
         if (!leadResponse.ok || !portalResponse.ok) throw new Error("Unable to load the project. Sign in as admin and try again.");
         const lead = (await leadResponse.json()).lead;
-        const portal = (await portalResponse.json()).portal;
-        if (!portal) throw new Error("Set up the Creator Portal for this client before opening the workspace.");
+        let portal = (await portalResponse.json()).portal;
+        if (!portal) {
+          const setup = await fetch(`/api/creator/admin/leads/${leadId}/portal/setup`, {
+            method: "POST", headers: { "Content-Type": "application/json", ...getAdminSessionAuthorizationHeader() },
+          });
+          if (!setup.ok) throw new Error("Could not create this client's workspace.");
+          const refreshed = await fetch(`/api/creator/admin/leads/${leadId}/portal`, { headers, cache: "no-store" });
+          if (!refreshed.ok) throw new Error("Could not load the new project workspace.");
+          portal = (await refreshed.json()).portal;
+          if (!portal) throw new Error("Project workspace is unavailable.");
+        }
         if (!active) return;
         setName(lead.brandName || lead.fullName);
         setProject(portal);
