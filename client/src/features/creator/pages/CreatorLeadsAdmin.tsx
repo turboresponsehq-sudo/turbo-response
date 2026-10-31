@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { getAdminLoginUrl } from "@/lib/adminLoginRedirect";
 import { getAdminSessionAuthorizationHeader } from "@/lib/adminSession";
 import CreatorBusinessAssessment from "../components/CreatorBusinessAssessment";
+import CreatorTeamAssetsAdmin from "../components/CreatorTeamAssetsAdmin";
 import "../styles/creator.css";
 
 type Status = "new" | "reviewing" | "follow_up" | "converted" | "closed";
@@ -364,6 +365,7 @@ export default function CreatorLeadsAdmin() {
             </div>)}
           {teamNotice && <p role="status" className="creator-task-safety">{teamNotice}</p>}
         </section>
+        <CreatorTeamAssetsAdmin leadId={selected.id} />
         {simpleView ? <>
           <section className="creator-detail-section"><h3>At a glance</h3><div className="creator-detail-grid"><article><span>Service requested</span><strong>{selected.packageInterest || "Not recorded"}</strong></article><article><span>Portal access</span><strong>{portalEnabled ? portal?.status || "Not invited" : "Unavailable"}</strong></article></div><p>{selected.status === "converted" ? "Active client" : "Use the status selector above to move a lead to converted when they become a client."}</p></section>
           <section className="creator-detail-section"><h3>What happens next?</h3>{portalEnabled ? <form className="creator-task-template-form" onSubmit={savePortal}><label>Project stage<select value={portalForm.currentStatus} onChange={(event) => setPortalForm({ ...portalForm, currentStatus: event.target.value })}>{["Intake Received", "Reviewing", "Awaiting Client", "Planning", "In Progress", "Ready for Review", "Completed"].map(status => <option key={status}>{status}</option>)}</select></label><label>Working on<input value={portalForm.currentPhase} onChange={(event) => setPortalForm({ ...portalForm, currentPhase: event.target.value })} /></label><label>Next step for the client<textarea value={portalForm.nextStep} onChange={(event) => setPortalForm({ ...portalForm, nextStep: event.target.value })} placeholder="For example: send your logo and product photos." /></label><p className="creator-task-safety">Visible in the client's portal when access is enabled. Saving does not send an email.</p><button disabled={portalSaving}>{portalSaving ? "Saving…" : "Save project update"}</button>{portalSaveNotice && <p role="status" className="creator-task-safety">{portalSaveNotice}</p>}</form> : <p>Portal details are not available yet. You can still update status and save an internal note.</p>}</section>
