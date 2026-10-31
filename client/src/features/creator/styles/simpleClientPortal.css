@@ -130,3 +130,5 @@
 .scp-client-action-panel .scp-task.is-urgent-action{border:2px solid #dfae99;background:#fff8f4}
 .scp-client-first-tasks .scp-task-panel:not(.scp-client-action-panel){background:#f9f9f7}
 @media(max-width:700px){.scp-client-action-panel{padding:21px 18px}.scp-client-action-panel .scp-task{padding:14px}.scp-client-action-panel .scp-task-content strong{font-size:15px}.scp-client-action-panel .scp-panel-heading{flex-wrap:wrap}}
+
+.scp-client-main-actions{margin:0 0 18px}
