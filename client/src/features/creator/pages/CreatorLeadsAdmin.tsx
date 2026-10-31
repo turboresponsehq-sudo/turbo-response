@@ -138,11 +138,12 @@ export default function CreatorLeadsAdmin() {
   }
 
   async function loadTeamMembers(leadId: number) {
+    const version = selectionVersion.current;
     try {
       const r = await request(`/api/creator/admin/leads/${leadId}/portal/team-members`);
       if (r.ok) {
         const data = await r.json();
-        if (selectionVersion.current && selected?.id && selected.id !== leadId) return;
+        if (version !== selectionVersion.current) return;
         setTeamMembers(data.members || []);
       } else {
         setTeamNotice("Team access is not available until the new workspace is activated.");
@@ -161,6 +162,8 @@ export default function CreatorLeadsAdmin() {
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || "Could not create join link.");
       setTeamLink(data.url);
+      setPortalForm(current => ({ ...current, status: "active" }));
+      setPortal(current => current ? { ...current, status: "active" } : current);
       setTeamNotice("Registration link created. Send it to the group; each person still needs your approval.");
     } catch (e) {
       setTeamNotice(e instanceof Error ? e.message : "Unable to create link.");
