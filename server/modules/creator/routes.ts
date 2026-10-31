@@ -2,6 +2,9 @@ import { Router, type RequestHandler } from "express";
 import jwt from "jsonwebtoken";
 import { sql } from "drizzle-orm";
 import { getDb } from "../../db";
+import { getWorkspaceData } from "./creatorWorkspaceRepository";
+import { registerCreatorWorkspaceRoutes } from "./creatorWorkspaceRoutes";
+import { workspaceEmailNotice } from "./creatorMessageNotification";
 import {
   addCreatorLeadNote,
   createCreatorFollowUpTask,
@@ -28,6 +31,7 @@ import {
   creatorPortalEnabled,
   getCreatorPortalByLeadId,
   getCreatorPortalMessages,
+  ensureCreatorPortal,
   getPortalForSession,
   inviteCreatorPortal,
   revokeCreatorPortal,
@@ -217,7 +221,8 @@ creatorRouter.post("/creator/portal/messages", async (req: any, res) => {
     const portal = await getPortalForSession(claims.portalId);
     if (!portal) return res.status(401).json({ error: "Creator Portal access is inactive" });
     const message = await createCreatorPortalMessage({ creatorLeadId: Number(portal.creator_lead_id), senderType: "creator", text, visibleToCreator: true });
-    return res.status(201).json({ success: true, message });
+    const emailSent = await workspaceEmailNotice(portal, text);
+    return res.status(201).json({ success: true, message, emailSent });
   } catch (error) {
     console.error("[Creator Portal] Creator message failed", error);
     return res.status(503).json({ error: "Unable to save Creator Portal message" });
@@ -229,10 +234,33 @@ creatorRouter.get("/creator/admin/leads/:leadId/portal", requireCreatorAdmin, as
   const leadId = safeLeadId(req.params.leadId);
   if (!leadId) return res.status(400).json({ error: "Invalid lead identifier" });
   try {
-    return res.json({ success: true, portal: await getCreatorPortalByLeadId(leadId) });
+    const portal = await getCreatorPortalByLeadId(leadId);
+    if (!portal) return res.json({ success: true, portal: null });
+    const lead = await getCreatorLeadById(leadId);
+    const [workspace, messages] = await Promise.all([
+      getWorkspaceData(Number(portal.id), String(lead?.package_interest || "Your project")),
+      getCreatorPortalMessages(leadId),
+    ]);
+    return res.json({ success: true, portal: { ...portal, ...workspace, messages: messages.filter((m: any) => m.visible_to_creator === true) } });
   } catch (error) {
     console.error("[Creator Portal] Admin load failed", error);
     return res.status(503).json({ error: "Creator Portal storage is unavailable" });
+  }
+});
+
+/** Explicitly initialize an empty project workspace without sending any client invitation. */
+creatorRouter.post("/creator/admin/leads/:leadId/portal/setup", requireCreatorAdmin, async (req: any, res) => {
+  if (!creatorPortalEnabled()) return portalUnavailable(res);
+  const leadId = safeLeadId(req.params.leadId);
+  if (!leadId) return res.status(400).json({ error: "Invalid lead" });
+  try {
+    const lead = await getCreatorLeadById(leadId);
+    if (!lead) return res.status(404).json({ error: "Client record not found" });
+    const portal = await ensureCreatorPortal(leadId);
+    return res.status(201).json({ success: true, portal });
+  } catch (err) {
+    console.error("[Creator workspace] Setup failed", err);
+    return res.status(503).json({ error: "Could not create project workspace" });
   }
 });
 
@@ -582,3 +610,6 @@ creatorRouter.post("/creator/admin/leads/:leadId/tasks", requireCreatorAdmin, as
     return res.status(500).json({ error: "Unable to save follow-up task." });
   }
 });
+
+// Creator-only project workspace endpoints; all keep the existing portal/admin authorization.
+registerCreatorWorkspaceRoutes(creatorRouter, requireCreatorAdmin, creatorPortalSessionClaims);

@@ -17,3 +17,69 @@
 .scp-next-check input { width:18px; height:18px; accent-color:#ffd428; }
 .scp-next-check small { font-weight:500; font-size:11px; color:#bfc0c5; }
 .scp-done-text { text-decoration:line-through; opacity:.75; }
+
+
+/* Creator Workspace V2: one project, two assigned task lists, shared communication. */
+.scp-project-workspace .scp-workspace{max-width:1040px}
+.scp-project-workspace .scp-intro{padding-bottom:22px}
+.scp-project-workspace .scp-intro h1{font-size:clamp(28px,5vw,42px)}
+.scp-project-hero{padding:24px 28px;margin-bottom:18px;background:#171719;color:white;border-radius:16px}
+.scp-project-hero .scp-label{color:#b4b4bd}
+.scp-goal-line{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+.scp-project-hero h2{font-size:clamp(22px,3vw,30px);line-height:1.3;margin:0;letter-spacing:-.025em}
+.scp-project-stage{font-size:12px;color:#bcbcc1;margin:15px 0 0}
+.scp-text-link{background:none;border:1px solid #777;color:#fff;padding:8px 13px;border-radius:7px;cursor:pointer;font-size:12px}
+.scp-goal-edit{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.scp-goal-edit input{flex:1;min-width:220px;padding:12px;border-radius:8px;border:1px solid #aaa;font:inherit}
+.scp-goal-edit button{border:0;border-radius:8px;padding:12px 15px;background:#ffd428;font-weight:750;cursor:pointer}
+.scp-goal-edit .scp-minor{background:#39393f;color:white}
+.scp-task-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:0 0 16px}
+.scp-project-card,.scp-project-section{background:white;border:1px solid #e4e2dc;border-radius:16px;padding:23px}
+.scp-panel-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.scp-panel-heading h2{font-size:20px;letter-spacing:-.025em;margin:0}
+.scp-task-count{font-size:11px;color:#767676;white-space:nowrap}
+.scp-task-list{display:grid;gap:10px}
+.scp-task{display:flex;align-items:flex-start;gap:11px;padding:12px;border:1px solid #ecebea;border-radius:10px;cursor:pointer}
+.scp-task input{width:18px;height:18px;flex:none;margin:2px 0 0;accent-color:#2b8757;cursor:pointer}
+.scp-task input:disabled{cursor:not-allowed}
+.scp-task-content{display:flex;flex:1;flex-direction:column;gap:5px;min-width:0}
+.scp-task-content strong{font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.scp-task-content small{font-size:10px;color:#777}
+.scp-task.is-done .scp-task-content strong{text-decoration:line-through;color:#8c8c8c}
+.scp-task.is-readonly{cursor:default;background:#fafafa}
+.scp-urgent{flex:none;padding:5px 7px;background:#fff0e8;border-radius:5px;color:#b8451b;font-size:9px;font-weight:900;letter-spacing:.04em}
+.scp-empty,.scp-task-hint{color:#777;font-size:12px;line-height:1.7}
+.scp-add-task{display:flex;align-items:flex-end;flex-wrap:wrap;gap:10px;padding:18px;background:#fff;border:1px dashed #cecbc4;border-radius:13px;margin-bottom:18px}
+.scp-add-task label{display:grid;gap:6px;color:#5e5e63;font-size:11px;font-weight:700}
+.scp-add-task label:first-child{flex:1;min-width:200px}
+.scp-add-task input,.scp-add-task select{font:inherit;font-size:13px;padding:11px;border:1px solid #ddd;border-radius:8px;background:white;color:#171719;max-width:100%}
+.scp-add-task button,.scp-chat-form button,.scp-attachment-forms button{padding:12px 16px;border:0;border-radius:8px;background:#c7162a;color:white;font-weight:800;font-size:12px;cursor:pointer}
+.scp-add-task button:disabled,.scp-chat-form button:disabled,.scp-attachment-forms button:disabled{opacity:.5;cursor:not-allowed}
+.scp-project-section{margin-bottom:18px}
+.scp-section-note{font-size:13px;color:#626262;line-height:1.65;margin:0 0 18px}
+.scp-chat-thread{max-height:320px;overflow:auto;border-radius:10px;background:#f7f6f3;padding:13px;display:grid;gap:10px;margin-bottom:15px;align-content:start}
+.scp-chat-bubble{padding:12px 14px;border:1px solid #ebe9e3;border-radius:10px;background:white;max-width:90%}
+.scp-chat-bubble.from-team{border-left:3px solid #c7162a}
+.scp-chat-bubble.from-client{justify-self:end;background:#fff5e7;border-color:#f1e6d5}
+.scp-chat-bubble b{font-size:11px}
+.scp-chat-bubble p{font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6;margin:6px 0}
+.scp-chat-bubble small{font-size:10px;color:#7e7e83}
+.scp-chat-form{display:grid;gap:9px}
+.scp-chat-form label{font-size:12px;font-weight:700}
+.scp-chat-form textarea{width:100%;border:1px solid #ccc;border-radius:9px;padding:12px;background:white;color:#171719;resize:vertical;font:inherit;font-size:13px}
+.scp-chat-form button{justify-self:start}
+.scp-attachment-forms{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.scp-attachment-forms form{display:grid;align-content:start;gap:10px;padding:14px;background:#faf9f7;border:1px solid #eee;border-radius:10px}
+.scp-attachment-forms label{font-size:12px;font-weight:800}
+.scp-attachment-forms input{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font:inherit;font-size:12px;min-width:0}
+.scp-attachment-forms button{justify-self:start}
+.scp-attachment-list{padding:0;margin:20px 0 0;list-style:none;display:grid;gap:9px}
+.scp-attachment-list li{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px solid #eee;border-radius:9px;font-size:12px;overflow-wrap:anywhere}
+.scp-attachment-list a,.scp-attachment-list button,.scp-drive-link a{border:none;background:none;color:#a21a2b;text-decoration:underline;cursor:pointer;font-weight:800;font-size:12px}
+.scp-workspace-notice{position:sticky;bottom:12px;background:#171719;color:#fff;max-width:940px;padding:12px 18px;border-radius:9px;margin:10px auto;font-size:13px;box-shadow:0 4px 20px #0002}
+.scp-client-top{display:flex;align-items:center;justify-content:space-between;background:#1b1b1d;color:white;padding:12px max(16px,calc((100vw - 980px)/2));font-size:10px;letter-spacing:.1em;font-weight:800}
+.scp-client-top button{background:none;color:white;border:1px solid #777;padding:8px 12px;border-radius:7px;cursor:pointer;font-size:12px}
+@media(max-width:700px){.scp-task-columns,.scp-attachment-forms{grid-template-columns:1fr}.scp-project-hero,.scp-project-card,.scp-project-section{padding:19px}.scp-chat-bubble{max-width:95%}.scp-project-workspace .scp-header{padding:20px 0}.scp-add-task label:first-child{flex-basis:100%}}
+
+.scp-refresh-chat{border:1px solid #ddd;background:white;padding:9px 12px;border-radius:7px;font-size:11px;font-weight:750;color:#8b2634;cursor:pointer}
+.scp-refresh-chat:hover{background:#fff1f2}

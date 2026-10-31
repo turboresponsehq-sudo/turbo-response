@@ -69,3 +69,13 @@
  .cap-login-panel { padding:30px 23px; margin:40px 18px 55px; }
  .cap-login-panel h1 { font-size:39px; }
 }
+
+
+/* Sample project worklists mirror the actual private client workspace. */
+.cap-demo-tasks{display:grid;gap:10px;margin-top:15px}
+.cap-demo-tasks label{display:flex;align-items:center;gap:9px;padding:10px 0;border-bottom:1px solid #eceae5;font-size:12px;font-weight:700;cursor:pointer}
+.cap-demo-tasks input{width:17px;height:17px;accent-color:#237f58;flex:none}
+.cap-demo-tasks label span{flex:1}
+.cap-demo-tasks label b{font-size:9px;border-radius:4px;padding:5px 6px;color:#ae441d;background:#fce7d8}
+.cap-demo-tasks .cap-demo-task-done span{text-decoration:line-through;opacity:.55}
+.cap-demo-action{display:inline-block;font-size:12px;font-weight:850;color:#a51a29;text-decoration:underline;margin-top:10px}

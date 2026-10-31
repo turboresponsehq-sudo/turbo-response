@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "wouter";
 import "../styles/creator.css";
 import "../styles/creator-portal-preview.css";
+import CreatorWorkspace from "../components/CreatorWorkspace";
 
 type PortalStatus = "disabled" | "invited" | "active";
 
@@ -124,80 +125,40 @@ export default function CreatorPortalPreview({ view = "admin" }: { view?: "admin
 function CreatorPortalScreen() {
   const [, setLocation] = useLocation();
   const [portal, setPortal] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
-  const [messageNotice, setMessageNotice] = useState("");
-  const [stepSaving, setStepSaving] = useState(false);
-  const [stepNotice, setStepNotice] = useState("");
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    let cancelled = false;
+    let active = true;
     async function load() {
       try {
-        const token = new URLSearchParams(window.location.search).get("token") || new URLSearchParams(window.location.search).get("invite");
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get("token") || params.get("invite");
         if (token) {
-          // Remove the secret from the address bar before issuing any API requests.
           window.history.replaceState({}, "", "/creator/portal");
-          const accepted = await fetch("/api/creator/portal/accept", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token }), credentials: "include", cache: "no-store" });
-          if (!accepted.ok) throw new Error((await accepted.json()).error || "This invitation is invalid, expired, or already used.");
+          const response = await fetch("/api/creator/portal/accept", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token }), credentials: "include", cache: "no-store",
+          });
+          if (!response.ok) throw new Error("Invitation expired or already used. Please request a new one.");
         }
-        const response = await fetch("/api/creator/portal/me", { credentials: "include" });
+        const response = await fetch("/api/creator/portal/me", { credentials: "include", cache: "no-store" });
         const body = await response.json();
-        if (!response.ok) throw new Error(body.error || "Creator Portal access is required.");
-        if (!cancelled) setPortal(body.portal);
-      } catch (loadError) {
-        if (!cancelled) setError(loadError instanceof Error ? loadError.message : "Unable to load Creator Portal.");
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
+        if (!response.ok) throw new Error(body.error || "Client sign-in required");
+        if (active) setPortal(body.portal);
+      } catch (e) { if (active) setError(e instanceof Error ? e.message : "Could not open workspace"); }
+      finally { if (active) setLoading(false); }
     }
     load();
-    return () => { cancelled = true; };
+    return () => { active = false; };
   }, []);
-
-  const logout = async () => {
+  async function logout() {
     await fetch("/api/creator/portal/logout", { method: "POST", credentials: "include" });
     setLocation("/creator/portal/login");
-  };
-
-  const sendMessage = async (event: React.FormEvent) => {
-    event.preventDefault();
-    const text = message.trim();
-    if (!text) return;
-    const response = await fetch("/api/creator/portal/messages", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ text }) });
-    const body = await response.json();
-    if (!response.ok) { setMessageNotice(body.error || "Unable to save your message."); return; }
-    setPortal((current: any) => ({ ...current, messages: [...(current.messages || []), body.message] }));
-    setMessage("");
-    setMessageNotice("Your message was saved to the project record.");
-  };
-
-  async function toggleStep(done: boolean) {
-    if (!portal?.next_step || portal.next_step_owner !== "client" || stepSaving) return;
-    setStepSaving(true); setStepNotice("");
-    try {
-      const response = await fetch("/api/creator/portal/next-step", { method: "PATCH", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ done }) });
-      const body = await response.json();
-      if (!response.ok) throw new Error(body.error || "Unable to update the next step");
-      setPortal((current: any) => ({ ...current, next_step_done: body.step.next_step_done }));
-      setStepNotice(done ? "Marked complete." : "Step reopened.");
-    } catch (err) { setStepNotice(err instanceof Error ? err.message : "Unable to update the next step."); }
-    finally { setStepSaving(false); }
   }
-
-  if (loading) return <main className="creator-portal-screen"><section className="creator-portal-welcome"><p className="creator-eyebrow">ZAKHY BUILDS AI</p><h1>Loading your workspace.</h1><p>Preparing your private Creator Portal.</p></section></main>;
-  if (error || !portal) return <main className="creator-portal-screen"><section className="creator-portal-support"><div><p className="creator-eyebrow">PRIVATE CREATOR PORTAL</p><h2>Use your invitation to open your project.</h2><p>This workspace requires a private invitation. Invitation links can be used once; if yours is expired or already used, request a fresh link.</p></div><Link className="creator-button" href="/creator/portal/login">Enter invitation</Link></section></main>;
-
-  return (
-    <main className="creator-portal-screen">
-      <header className="creator-portal-screen-header"><Link href="/zakhybuildsai" className="creator-brand">ZAKHY <span>BUILDS AI</span></Link><div className="creator-portal-header-actions"><span className="creator-portal-chip">CREATOR PORTAL · V1</span><button className="creator-portal-logout" onClick={logout}>Log out</button></div></header>
-      <section className="creator-portal-welcome"><p className="creator-eyebrow">WELCOME BACK, {String(portal.full_name || "CREATOR").split(" ")[0].toUpperCase()}</p><h1>Your project home.</h1><p>Your private workspace for clear next steps, requested materials, project updates, and shared files.</p></section>
-      <section className="creator-portal-card-grid"><article className="creator-portal-card creator-portal-card-wide"><span>YOUR BRAND</span><h2>{portal.brand_name || portal.full_name}</h2><p>{portal.creator_type}</p><div className="creator-portal-service-pills">{portal.package_interest && <b>{portal.package_interest}</b>}<b>Creator project</b></div></article><article className="creator-portal-card"><span>CURRENT STATUS</span><h3>{portal.current_status}</h3><p>Current phase: {portal.current_phase}</p></article><article className="creator-portal-card"><span>NEXT STEP</span><h3>Keep moving forward</h3>{portal.next_step ? <><p className={portal.next_step_done ? "creator-next-step-completed" : ""}>{portal.next_step}</p><p className="creator-next-step-owner">{portal.next_step_owner === "client" ? "Your turn" : "Our turn — Creator Automations"}</p>{portal.next_step_owner === "client" ? <label className="creator-next-step-check"><input type="checkbox" checked={portal.next_step_done === true} disabled={stepSaving} onChange={(event) => toggleStep(event.target.checked)} /> {portal.next_step_done ? "Done" : "Mark complete"}</label> : <span className="creator-next-step-progress">{portal.next_step_done ? "✓ Completed" : "We're working on it"}</span>}{stepNotice && <small role="status" className="creator-next-step-notice">{stepNotice}</small>}</> : <p>Zakhy will update your next step here.</p>}</article></section>
-      <section className="creator-portal-content-grid"><article className="creator-portal-card"><span>ITEMS WE NEED FROM YOU</span>{portal.items?.length ? <ul>{portal.items.map((item: any) => <li key={item.id}>{item.label} <small>{item.status}</small></li>)}</ul> : <p>No requested items yet.</p>}</article><article className="creator-portal-card"><span>PROJECT UPDATES</span>{portal.updates?.length ? <div className="creator-portal-updates">{portal.updates.map((update: any) => <div key={update.id}><b>{new Date(update.created_at).toLocaleDateString()}</b><p>{update.update_text}</p></div>)}</div> : <p>No creator-visible updates yet.</p>}</article></section>
-      <section className="creator-portal-card creator-portal-message-card"><div className="creator-portal-message-card-head"><div><span>PROJECT RECORD</span><h2>Messages & important decisions</h2></div><small>Creator-visible</small></div><div className="creator-portal-thread">{portal.messages?.length ? portal.messages.map((item: any) => <article className={`creator-portal-message ${item.sender_type === "creator" ? "from-creator" : "from-zakhy"}`} key={item.id}><div className="creator-portal-message-meta"><strong>{item.sender_type === "creator" ? "You" : "Zakhy Builds AI"}</strong><span>{new Date(item.created_at).toLocaleString()}</span></div><p>{item.message_text}</p></article>) : <p>No messages yet.</p>}</div><form className="creator-portal-message-form" onSubmit={sendMessage}><label>Reply to Zakhy<textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Ask a question or share an update…" /></label><button className="creator-button" type="submit">Save message</button>{messageNotice && <small role="status">{messageNotice}</small>}</form></section>
-      <section className="creator-portal-support"><div><p className="creator-eyebrow">SHARED FILES</p><h2>Everything for your project, in one place.</h2><p>Your Zakhy team will add approved files to your dedicated Google Drive folder.</p></div>{portal.drive_folder_url ? <a className="creator-button" href={portal.drive_folder_url} target="_blank" rel="noreferrer">Open shared files</a> : <span className="creator-portal-muted-action">Shared files folder coming soon</span>}</section>
-      <section className="creator-portal-support"><div><p className="creator-eyebrow">NEED HELP?</p><h2>Have a question about your project?</h2><p>Contact the Zakhy team and we’ll help with the next step.</p></div><a className="creator-button" href="mailto:turboresponsehq@gmail.com?subject=Creator%20Portal%20Support">Contact Support</a></section>
-    </main>
-  );
+  if (loading) return <main className="scp-loading">Opening your private project…</main>;
+  if (error || !portal) return <main className="creator-portal-screen"><section className="creator-portal-support"><div><p className="creator-eyebrow">PRIVATE CLIENT PROJECT</p><h2>Sign in with your invitation.</h2><p>{error || "Your private invitation is required."}</p></div><Link className="creator-button" href="/creator/portal/login">Enter invitation</Link></section></main>;
+  return <>
+    <div className="scp-client-top"><span>PRIVATE CLIENT WORKSPACE</span><button type="button" onClick={logout}>Log out</button></div>
+    <CreatorWorkspace initial={portal} mode="client" />
+  </>;
 }
