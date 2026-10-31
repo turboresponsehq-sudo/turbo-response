@@ -18,6 +18,7 @@ export async function notifyCreatorTeamActivity(input: {
     WHERE p.id=${input.portalId} LIMIT 1`))[0];
  if(!project)return {attempted:0,delivered:0};
  const recipients=new Set<string>();
+ const adminRecipients=new Set<string>();
  if(input.audience!=="admins"){
   const m=rows(await db.execute(sql`SELECT email FROM creator_portal_members WHERE portal_id=${input.portalId}
    AND status='active' AND verified_at IS NOT NULL LIMIT 100`));
@@ -25,7 +26,10 @@ export async function notifyCreatorTeamActivity(input: {
  }
  if(input.audience!=="members"){
   const m=rows(await db.execute(sql`SELECT email FROM users WHERE role='admin' AND email IS NOT NULL LIMIT 20`));
-  for(const p of m)if(typeof p.email==="string")recipients.add(p.email.trim().toLowerCase());
+  for(const p of m)if(typeof p.email==="string"){
+    const address=p.email.trim().toLowerCase();
+    recipients.add(address); adminRecipients.add(address);
+  }
  }
  if(input.actorEmail)recipients.delete(input.actorEmail.trim().toLowerCase());
  const actions:Record<TeamActivity,string>={
@@ -34,18 +38,21 @@ export async function notifyCreatorTeamActivity(input: {
  };
  const projectName=String(project.brand_name||"Client project").slice(0,100), label=actions[input.type];
  const base=(process.env.FRONTEND_URL||"https://turboresponsehq.ai").replace(/\/+$/,"");
- // All recipients see only a sign-in link. No links with tokens or exposed files.
- const url=input.audience==="admins"?base+"/admin/creator/leads?lead="+encodeURIComponent(String(project.creator_lead_id))
-  :base+"/creator/portal/login";
- const html='<div style="font-family:Arial,sans-serif;max-width:520px;color:#202b49">'
-  +'<h2 style="color:#243b82">Creator Automations</h2>'
-  +'<p><strong>'+esc(projectName)+'</strong></p>'
-  +'<p>'+esc(label)+' — '+esc(input.actorName.slice(0,150))+'.</p>'
-  +'<p><a href="'+esc(url)+'">Open the private workspace</a></p>'
-  +'<p style="font-size:12px;color:#64708c">Sign in to view details. No private messages or files are included in this email.</p></div>';
+ // Each recipient receives only a login link appropriate for their role.
+ const emailBody=(to:string)=>{
+  const url=adminRecipients.has(to)
+    ? base+"/admin/creator/leads?lead="+encodeURIComponent(String(project.creator_lead_id))
+    : base+"/creator/portal/login";
+  return '<div style="font-family:Arial,sans-serif;max-width:520px;color:#202b49">'
+   +'<h2 style="color:#243b82">Creator Automations</h2>'
+   +'<p><strong>'+esc(projectName)+'</strong></p>'
+   +'<p>'+esc(label)+' — '+esc(input.actorName.slice(0,150))+'.</p>'
+   +'<p><a href="'+esc(url)+'">Open the private workspace</a></p>'
+   +'<p style="font-size:12px;color:#64708c">Sign in to view details. No private messages or files are included in this email.</p></div>';
+ };
  let delivered=0;
  const results=await Promise.allSettled([...recipients].map(to=>sendRawEmail({
-  to,subject:projectName+" | "+label,html
+  to,subject:projectName+" | "+label,html:emailBody(to),fromName:"Creator Automations"
  })));
  for(const r of results)if(r.status==="fulfilled"&&r.value)delivered++;
  if(delivered!==recipients.size)console.warn("[Creator Team] Some notification emails failed",{
