@@ -7,6 +7,7 @@ import { getDb } from "../../db";
 import multer from "multer";
 import { storagePut, storageGet } from "../../storage";
 import { sendRawEmail } from "../../services/auditEmailService";
+import { notifyCreatorTeamActivity } from "./creatorTeamNotifications";
 import { creatorPortalEnabled, ensureCreatorPortal } from "./creatorPortalRepository";
 
 const hash = (s:string)=>crypto.createHash("sha256").update(s).digest("hex");
@@ -90,7 +91,12 @@ export function registerCreatorTeamPortalRoutes(router:Router,requireAdmin:Reque
    const m=rows(await db.execute(sql`UPDATE creator_portal_members SET status='pending_approval',verified_at=NOW(),
      email_verification_hash=NULL,email_verification_expires_at=NULL,updated_at=NOW()
      WHERE email_verification_hash=${hash(verify)} AND email_verification_expires_at>NOW()
-     AND status='pending_verification' RETURNING id`))[0];
+     AND status='pending_verification' RETURNING id,portal_id,display_name,email`))[0];
+   if (m) {
+     try { await notifyCreatorTeamActivity({portalId:Number(m.portal_id),type:"access_request",
+       actorName:String(m.display_name),actorEmail:String(m.email),audience:"admins"}); }
+     catch (err) { console.error("[Creator Team] Access alert failed",err); }
+   }
    return m?res.json({message:"Email verified. Awaiting administrator approval."}):
       res.status(403).json({error:"Verification link invalid or expired."});
   }catch(e){return unavailable(res,e);}
@@ -194,6 +200,9 @@ export function registerCreatorTeamPortalRoutes(router:Router,requireAdmin:Reque
    await db.execute(sql`INSERT INTO creator_portal_messages
      (portal_id,sender_type,sender_member_id,sender_name,message_text,visible_to_creator)
      VALUES(${Number(m.portal_id)},'creator',${Number(m.id)},${String(m.display_name)},${value},TRUE)`);
+   try { await notifyCreatorTeamActivity({portalId:Number(m.portal_id),type:"message",
+     actorName:String(m.display_name),actorEmail:String(m.email),audience:"all"}); }
+   catch(err) { console.error("[Creator Team] Message alert failed",err); }
    return res.status(201).json({success:true});
   }catch(e){return unavailable(res,e);}
  });
@@ -209,6 +218,9 @@ export function registerCreatorTeamPortalRoutes(router:Router,requireAdmin:Reque
    await db.execute(sql`INSERT INTO creator_portal_calendar
     (portal_id,title,starts_at,ends_at,description,created_by)
     VALUES(${Number(m.portal_id)},${title},${start.toISOString()},${end.toISOString()},${description},${String(m.display_name)})`);
+   try { await notifyCreatorTeamActivity({portalId:Number(m.portal_id),type:"calendar",
+     actorName:String(m.display_name),actorEmail:String(m.email),audience:"all"}); }
+   catch(err) { console.error("[Creator Team] Calendar alert failed",err); }
    return res.status(201).json({success:true});
   }catch(e){return unavailable(res,e);}
  });
@@ -235,6 +247,9 @@ export function registerCreatorTeamPortalRoutes(router:Router,requireAdmin:Reque
    await storagePut(key,file.buffer,file.mimetype);
    await db.execute(sql`INSERT INTO creator_portal_files(portal_id,storage_key,file_name,mime_type,size_bytes,uploaded_by)
     VALUES(${Number(m.portal_id)},${key},${safe},${String(file.mimetype)},${Number(file.size)},${String(m.display_name)})`);
+   try { await notifyCreatorTeamActivity({portalId:Number(m.portal_id),type:"file",
+     actorName:String(m.display_name),actorEmail:String(m.email),audience:"all"}); }
+   catch(err) { console.error("[Creator Team] File alert failed",err); }
    return res.status(201).json({success:true});
   }catch(e){return unavailable(res,e);}
  });
@@ -285,6 +300,9 @@ export function registerCreatorTeamPortalRoutes(router:Router,requireAdmin:Reque
    await db.execute(sql`INSERT INTO creator_portal_calendar
     (portal_id,title,starts_at,ends_at,description,created_by)
     VALUES(${Number(p.id)},${title},${start.toISOString()},${end.toISOString()},${description},'Creator Automations')`);
+   try { await notifyCreatorTeamActivity({portalId:Number(p.id),type:"calendar",
+     actorName:"Creator Automations",actorEmail:req.creatorAdmin.email,audience:"members"}); }
+   catch(err) { console.error("[Creator Team] Admin calendar alert failed",err); }
    return res.status(201).json({success:true});
   }catch(e){return unavailable(res,e);}
  });
@@ -305,6 +323,9 @@ export function registerCreatorTeamPortalRoutes(router:Router,requireAdmin:Reque
     await storagePut(key,file.buffer,file.mimetype);
     await db.execute(sql`INSERT INTO creator_portal_files(portal_id,storage_key,file_name,mime_type,size_bytes,uploaded_by)
       VALUES(${Number(p.id)},${key},${name},${String(file.mimetype)},${Number(file.size)},'Creator Automations')`);
+    try { await notifyCreatorTeamActivity({portalId:Number(p.id),type:"file",
+      actorName:"Creator Automations",actorEmail:req.creatorAdmin.email,audience:"members"}); }
+    catch(err) { console.error("[Creator Team] Admin file alert failed",err); }
     return res.status(201).json({success:true});
    }catch(e){return unavailable(res,e);}
   });
