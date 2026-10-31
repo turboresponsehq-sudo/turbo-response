@@ -32,6 +32,7 @@ import {
   inviteCreatorPortal,
   revokeCreatorPortal,
   saveCreatorPortalConfig,
+  setCreatorNextStepDone,
 } from "./creatorPortalRepository";
 
 export const creatorRouter = Router();
@@ -185,6 +186,23 @@ creatorRouter.get("/creator/portal/me", async (req: any, res) => {
   }
 });
 
+/** Clients can only mark the step explicitly assigned to them. */
+creatorRouter.patch("/creator/portal/next-step", async (req: any, res) => {
+  res.set("Cache-Control", "no-store");
+  if (!creatorPortalEnabled()) return portalUnavailable(res);
+  const claims = creatorPortalSessionClaims(req);
+  if (!claims) return res.status(401).json({ error: "Creator Portal session required" });
+  if (typeof req.body?.done !== "boolean") return res.status(400).json({ error: "A completion value is required" });
+  try {
+    const step = await setCreatorNextStepDone({ portalId: claims.portalId, actor: "creator", done: req.body.done, scope: "client" });
+    if (!step) return res.status(403).json({ error: "This next step is not assigned to you" });
+    return res.json({ success: true, step });
+  } catch (error) {
+    console.error("[Creator Portal] Next-step completion failed", error);
+    return res.status(503).json({ error: "Unable to update this next step" });
+  }
+});
+
 creatorRouter.post("/creator/portal/logout", async (_req: any, res) => {
   res.clearCookie("creator_portal_session", { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/" });
   return res.json({ success: true });
@@ -228,12 +246,31 @@ creatorRouter.patch("/creator/admin/leads/:leadId/portal", requireCreatorAdmin, 
       currentStatus: req.body?.currentStatus,
       currentPhase: req.body?.currentPhase,
       nextStep: req.body?.nextStep,
+      nextStepOwner: req.body?.nextStepOwner === "client" ? "client" : "team",
       driveFolderUrl: req.body?.driveFolderUrl,
     }});
     return res.json({ success: true, portal });
   } catch (error) {
     console.error("[Creator Portal] Admin save failed", error);
     return res.status(503).json({ error: "Unable to save Creator Portal settings" });
+  }
+});
+
+/** Staff can mark the one next step completed, regardless of who owns it. */
+creatorRouter.patch("/creator/admin/leads/:leadId/portal/next-step", requireCreatorAdmin, async (req: any, res) => {
+  res.set("Cache-Control", "no-store");
+  if (!creatorPortalEnabled()) return portalUnavailable(res);
+  const leadId = safeLeadId(req.params.leadId);
+  if (!leadId || typeof req.body?.done !== "boolean") return res.status(400).json({ error: "Invalid next-step update" });
+  try {
+    const portal = await getCreatorPortalByLeadId(leadId);
+    if (!portal) return res.status(404).json({ error: "No Creator Portal has been set up for this client" });
+    const step = await setCreatorNextStepDone({ portalId: Number(portal.id), actor: req.creatorAdmin.email, done: req.body.done, scope: "admin" });
+    if (!step) return res.status(400).json({ error: "Add a next step before marking it completed" });
+    return res.json({ success: true, step });
+  } catch (error) {
+    console.error("[Creator Portal] Admin next-step update failed", error);
+    return res.status(503).json({ error: "Unable to update this next step" });
   }
 });
 

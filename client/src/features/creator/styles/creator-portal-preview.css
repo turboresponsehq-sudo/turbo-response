@@ -66,3 +66,12 @@
   .creator-portal-support { align-items:flex-start; flex-direction:column; padding:22px; }
   .creator-portal-screen-header { align-items:flex-start; }
 }
+
+
+/* One clear next step: owner and a single client-side check-off. */
+.creator-next-step-owner { display:inline-block; margin:6px 0 12px!important; padding:6px 9px; border-radius:20px; background:#f1f4f9; color:#344b70!important; font-size:11px!important; font-weight:800; }
+.creator-next-step-check { display:flex; align-items:center; gap:9px; font-size:13px; font-weight:800; color:#172236; cursor:pointer; margin-top:8px; }
+.creator-next-step-check input { width:18px; height:18px; accent-color:#157f53; }
+.creator-next-step-progress { display:inline-block; font-size:12px; font-weight:800; color:#297258; }
+.creator-next-step-completed { text-decoration:line-through; opacity:.7; }
+.creator-next-step-notice { display:block; font-size:11px; margin-top:8px; color:#556478; }
