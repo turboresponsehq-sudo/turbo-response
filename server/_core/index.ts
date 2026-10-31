@@ -24,6 +24,7 @@ import { resumePersistedDriveIngestion } from "../services/googleDriveIngestionS
 import { creatorRouter } from "../modules/creator/routes";
 import { cleanupZakhyHubSpotQaRecords } from "../modules/creator/hubspotQaCleanup";
 import { seedFeDelveyHostingTask } from "../modules/creator/creatorRequestedTaskSeed";
+import { seedRiyzeCreatorWorkspace } from "../modules/creator/creatorRiyzeWorkspaceSeed";
 import { ensureCreatorCredentialsSchema } from "../modules/creator/creatorPortalCredentials";
 import { aiLearningRouter } from "../modules/aiLearning";
 import { amaniRouter } from "../modules/amani/routes";
@@ -62,6 +63,13 @@ async function startServer() {
     await seedFeDelveyHostingTask();
   } catch (error) {
     console.error("[Creator Portal] FeDelvey hosting task seed failed", error);
+  }
+  // Owner-approved, isolated RIYZE REIGN setup. Creates an unsent invitation
+  // and seven scoped project tasks; repeat deploys cannot regenerate tokens.
+  try {
+    await seedRiyzeCreatorWorkspace();
+  } catch (error) {
+    console.error("[Creator Portal] RIYZE workspace setup failed", error);
   }
   const app = express();
   const amaniOrigins = (process.env.AMANI_ALLOWED_ORIGINS || "")
