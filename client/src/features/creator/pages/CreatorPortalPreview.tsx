@@ -171,7 +171,7 @@ function CreatorPortalScreen() {
   };
 
   if (loading) return <main className="creator-portal-screen"><section className="creator-portal-welcome"><p className="creator-eyebrow">ZAKHY BUILDS AI</p><h1>Loading your workspace.</h1><p>Preparing your private Creator Portal.</p></section></main>;
-  if (error || !portal) return <main className="creator-portal-screen"><section className="creator-portal-support"><div><p className="creator-eyebrow">CREATOR PORTAL</p><h2>We couldn’t open this workspace.</h2><p>{error || "Please use the latest invitation link or contact the Zakhy team."}</p></div><a className="creator-button" href="mailto:turboresponsehq@gmail.com?subject=Creator%20Portal%20Support">Contact Support</a></section></main>;
+  if (error || !portal) return <main className="creator-portal-screen"><section className="creator-portal-support"><div><p className="creator-eyebrow">PRIVATE CREATOR PORTAL</p><h2>Use your invitation to open your project.</h2><p>This workspace requires an active, private invitation. If your link expired, request a new one from the Creator Automations team.</p></div><Link className="creator-button" href="/creator/portal/login">Enter invitation</Link></section></main>;
 
   return (
     <main className="creator-portal-screen">
