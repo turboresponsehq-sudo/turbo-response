@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "wouter";
 import "../styles/creator-portal-access.css";
+import CreatorWorkspace from "../components/CreatorWorkspace";
 
 type AccessMode = "preview" | "login";
 
@@ -21,7 +22,6 @@ function invitationToken(value: string): string {
 export default function CreatorPortalAccess({ mode = "preview" }: { mode?: AccessMode }) {
   const [invite, setInvite] = useState("");
   const [notice, setNotice] = useState("");
-  const [demoChecks, setDemoChecks] = useState<Record<string, boolean>>({ logo: true, domain: false, hosting: false, review: false });
 
   function openInvitation(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -70,59 +70,37 @@ export default function CreatorPortalAccess({ mode = "preview" }: { mode?: Acces
         </section>
       ) : (
         <>
-          <section className="cap-hero">
+          <section className="cap-one-page-intro">
             <div>
-              <p className="cap-eyebrow">INTERACTIVE CHECKLIST · SAMPLE DATA ONLY</p>
-              <h1>Your project.<br/><em>One place.</em></h1>
-              <p>A simple client home for project milestones, requested materials, progress updates, and important next steps.</p>
-              <Link className="cap-primary-link" href="/creator/portal/login">Open your own workspace</Link>
+              <p className="cap-eyebrow">INTERACTIVE DEMO · SAMPLE DATA ONLY</p>
+              <h1>One project. <em>One page.</em></h1>
+              <p>Project goal, both checklists, chat and file uploads, all together. This demo does not send messages or store files.</p>
             </div>
-            <div className="cap-preview-label">PORTAL PREVIEW <span>01 / 01</span></div>
+            <Link className="cap-primary-link" href="/creator/portal/login">Private client sign-in</Link>
           </section>
-
-          <section className="cap-demo-heading">
-            <div><p className="cap-eyebrow">DEMO CREATOR</p><h2>Welcome back.</h2><p>Here's where your project stands today.</p></div>
-            <span className="cap-stage"><i/> In progress</span>
-          </section>
-
-          <section className="cap-grid">
-            <article className="cap-tile cap-tile-wide">
-              <span className="cap-label">THE PROJECT</span>
-              <h3>Get the website live on the internet.</h3>
-              <p>Current phase: Hosting, assets &amp; final review</p>
-              <small>SAMPLE PROJECT · IN PROGRESS</small>
-            </article>
-            {(["team", "client"] as const).map(owner => <article className="cap-tile" key={owner}>
-              <span className="cap-label">{owner === "team" ? "CREATOR AUTOMATIONS" : "CLIENT"}</span>
-              <h3>{owner === "team" ? "My Team's Tasks" : "Client's Tasks"}</h3>
-              <div className="cap-demo-tasks">
-                {(owner === "team" ? [
-                  { key: "hosting", text: "Set up website hosting", urgent: true },
-                  { key: "review", text: "Publish approved website", urgent: false },
-                ] : [
-                  { key: "logo", text: "Send brand logo", urgent: false },
-                  { key: "domain", text: "Approve website design", urgent: true },
-                ]).map(item => <label key={item.key} className={demoChecks[item.key] ? "cap-demo-task-done" : ""}>
-                  <input type="checkbox" checked={demoChecks[item.key] || false} onChange={e => setDemoChecks(c => ({ ...c, [item.key]: e.target.checked }))} />
-                  <span>{item.text}</span>{item.urgent && !demoChecks[item.key] ? <b>URGENT</b> : null}
-                </label>)}
-              </div>
-            </article>)}
-            <article className="cap-tile">
-              <span className="cap-label">PROJECT CONVERSATION</span>
-              <h3>Have a question?</h3>
-              <p>Ask questions inside your private workspace. The Creator Automations team gets an email with your message.</p>
-              <Link className="cap-demo-action" href="/creator/portal/login">Open private chat</Link>
-            </article>
-            <article className="cap-tile">
-              <span className="cap-label">FILES & LINKS</span>
-              <h3>Share what we need.</h3>
-              <p>Submit screenshots, PDFs, photographs and website links securely inside your project.</p>
-              <Link className="cap-demo-action" href="/creator/portal/login">Open file submission</Link>
-            </article>
-          </section>
-
-          <p className="cap-demo-disclaimer">This is a public illustration with fictional project details. Real client projects and files are only visible through a valid private invitation.</p>
+          <CreatorWorkspace
+            key="demo-workspace"
+            mode="demo"
+            clientName="Sample Website Project"
+            initial={{
+              id: -1,
+              brand_name: "Sample Website Project",
+              project_goal: "Get the website live on the internet",
+              current_status: "In Progress",
+              current_phase: "Hosting and launch",
+              tasks: [
+                { id: 1, label: "Prepare and test the website", status: "complete", owner: "team", priority: "normal" },
+                { id: 2, label: "Connect hosting and publish the approved website", status: "needed", owner: "team", priority: "normal" },
+                { id: 3, label: "Choose and purchase a website hosting platform", status: "needed", owner: "client", priority: "urgent" },
+                { id: 4, label: "Approve the final website", status: "needed", owner: "client", priority: "normal" },
+              ],
+              messages: [
+                { id: 1, sender_type: "admin", message_text: "The website is ready for hosting. Please choose a hosting platform so we can launch it.", created_at: "2026-10-31T14:00:00-04:00" },
+              ],
+              attachments: [],
+            }}
+          />
+          <p className="cap-demo-disclaimer">Demo data only. Nothing typed here is saved, emailed, or shared. Real client projects remain private.</p>
         </>
       )}
       <footer className="cap-footer"><span>CREATOR AUTOMATIONS · ZAKHY BUILDS AI</span><a href="mailto:turboresponsehq@gmail.com?subject=Creator%20Portal%20Support">Contact support</a></footer>
