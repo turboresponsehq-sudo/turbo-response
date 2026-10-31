@@ -154,13 +154,20 @@ function creatorPortalSessionClaims(req: any): { portalId: number } | null {
   }
 }
 
+/** Client stays signed in on this browser between visits. Sessions roll for 180 days
+ * of inactivity; clearing site data, logging out, or revocation ends access. */
+const CREATOR_SESSION_DAYS = 180;
+const CREATOR_SESSION_MS = CREATOR_SESSION_DAYS * 24 * 60 * 60 * 1000;
+// Renew at most once per day to keep the session active while this browser is in use.
+const CREATOR_RENEW_THRESHOLD_SECONDS = (CREATOR_SESSION_DAYS - 1) * 24 * 60 * 60;
+
 /** Current Creator sessions are tied to the version of the client's password. */
 function setCreatorSession(res: any, portalId: number, authVersion: string) {
   const secret = process.env.JWT_SECRET;
   if (!secret) throw new Error("Portal signing is unavailable");
-  const session = jwt.sign({ portalId, purpose: "creator_portal", authVersion }, secret, { expiresIn: "7d" });
+  const session = jwt.sign({ portalId, purpose: "creator_portal", authVersion }, secret, { expiresIn: CREATOR_SESSION_DAYS + "d" });
   res.cookie("creator_portal_session", session, { httpOnly: true, sameSite: "lax",
-    secure: process.env.NODE_ENV === "production", maxAge: 7 * 24 * 60 * 60 * 1000, path: "/" });
+    secure: process.env.NODE_ENV === "production", maxAge: CREATOR_SESSION_MS, path: "/" });
 }
 const clientAuthAttempts = new Map<string, number[]>();
 function allowClientAuthAttempt(key: string): boolean {
@@ -178,12 +185,19 @@ creatorRouter.use("/creator/portal", async (req: any, res, next) => {
   const secret = process.env.JWT_SECRET;
   if (!token || !secret) return res.status(401).json({ error: "Client sign-in required" });
   try {
-    const claims = jwt.verify(token, secret) as { portalId?: number; purpose?: string; authVersion?: string };
+    const claims = jwt.verify(token, secret) as { portalId?: number; purpose?: string; authVersion?: string; exp?: number };
     const portalId = Number(claims.portalId);
     if (claims.purpose !== "creator_portal" || !Number.isSafeInteger(portalId) || portalId < 1)
       return res.status(401).json({ error: "Client sign-in required" });
     if (!await checkCreatorSessionVersion(portalId, claims.authVersion))
       return res.status(401).json({ error: "Session expired. Sign in again." });
+    // Renew only password-enabled sessions. Legacy magic-link sessions retain
+    // their original expiry and cannot silently become permanent.
+    if (typeof claims.authVersion === "string" && claims.authVersion.length > 0 &&
+        typeof claims.exp === "number" &&
+        claims.exp - Math.floor(Date.now() / 1000) < CREATOR_RENEW_THRESHOLD_SECONDS) {
+      setCreatorSession(res, portalId, claims.authVersion);
+    }
     return next();
   } catch {
     return res.status(401).json({ error: "Client sign-in required" });
