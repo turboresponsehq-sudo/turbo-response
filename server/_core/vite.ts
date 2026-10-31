@@ -74,13 +74,21 @@ export function serveStatic(app: Express) {
     // actual /zakhybuildsai route rather than the Turbo Response defaults.
     const requestPath = new URL(req.originalUrl || "/", "http://localhost").pathname || "/";
     const isZakhyRoute = requestPath === "/zakhybuildsai" || requestPath.startsWith("/zakhybuildsai/");
+    // Creator client invitation and login links must show the agency brand, not
+    // consumer-site or founder metadata. Keep invite tokens out of OG URLs.
+    const isCreatorPortalRoute = requestPath === "/creator/portal" || requestPath.startsWith("/creator/portal/");
 
-    if (!isZakhyRoute) {
+    if (!isZakhyRoute && !isCreatorPortalRoute) {
       res.sendFile(indexPath);
       return;
     }
 
-    const routeMetadata = requestPath === "/zakhybuildsai"
+    const routeMetadata = isCreatorPortalRoute
+      ? {
+          title: "Creator Automations — Private Client Workspace",
+          description: "Review project updates, complete tasks, and securely share messages and files with your Creator Automations team.",
+        }
+      : requestPath === "/zakhybuildsai"
       ? {
           title: "ZAKHY — AI Systems for Creators",
           description: "ZAKHY helps creators build stronger brands, automate their business, organize opportunities, and capture more revenue.",
@@ -112,7 +120,10 @@ export function serveStatic(app: Express) {
       .replace(/<meta property="og:description" content="[^"]*"\s*\/?\s*>/i, `<meta property="og:description" content="${zakhyDescription}" />`)
       .replace(/<meta name="twitter:title" content="[^"]*"\s*\/?\s*>/i, `<meta name="twitter:title" content="${zakhyTitle}" />`)
       .replace(/<meta name="twitter:description" content="[^"]*"\s*\/?\s*>/i, `<meta name="twitter:description" content="${zakhyDescription}" />`)
-      .replace(/<link rel="canonical" href="[^"]*"\s*\/?\s*>/i, `<link rel="canonical" href="${zakhyUrl}" />`);
+      .replace(/<link rel="canonical" href="[^"]*"\s*\/?\s*>/i, `<link rel="canonical" href="${zakhyUrl}" />`)
+      .replace(/<meta name="robots" content="[^"]*"\s*\/?\s*>/i, isCreatorPortalRoute ? '<meta name="robots" content="noindex, nofollow, noarchive" />' : "      .replace(/<link rel="canonical" href="[^"]*"\s*\/?\s*>/i, `<link rel="canonical" href="${zakhyUrl}" />`);")
+      .replace(/<meta name="author" content="[^"]*"\s*\/?\s*>/i, isCreatorPortalRoute ? '<meta name="author" content="Creator Automations" />' : "      .replace(/<link rel="canonical" href="[^"]*"\s*\/?\s*>/i, `<link rel="canonical" href="${zakhyUrl}" />`);")
+      .replace(/<meta property="og:site_name" content="[^"]*"\s*\/?\s*>/i, isCreatorPortalRoute ? '<meta property="og:site_name" content="Creator Automations" />' : "      .replace(/<link rel="canonical" href="[^"]*"\s*\/?\s*>/i, `<link rel="canonical" href="${zakhyUrl}" />`);");
 
     res.status(200).set({ "Content-Type": "text/html" }).send(page);
   });
