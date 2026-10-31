@@ -6,6 +6,7 @@ import "../styles/simpleClientPortal.css";
 export type CreatorWorkspaceData = {
   id: number;
   project_goal?: string;
+  next_step?: string | null;
   full_name?: string;
   brand_name?: string;
   current_status?: string;
@@ -202,6 +203,7 @@ export default function CreatorWorkspace({ initial, mode, leadId, clientName }: 
         {editingGoal && admin ? <form onSubmit={saveGoal} className="scp-goal-edit"><input autoFocus value={goalText} maxLength={180} onChange={e => setGoalText(e.target.value)} placeholder="e.g. Get the website live on the internet" /><button disabled={busy === "goal" || !goalText.trim()}>Save goal</button><button type="button" className="scp-minor" onClick={() => setEditingGoal(false)}>Cancel</button></form>
           : <div className="scp-goal-line"><h2>{project.project_goal || "Project setup"}</h2>{admin && <button type="button" className="scp-text-link" onClick={() => setEditingGoal(true)}>Edit project</button>}</div>}
         <p className="scp-project-stage">Current stage: {project.current_status || "Planning"}{project.current_phase ? ` · ${project.current_phase}` : ""}</p>
+        {!project.tasks?.length && project.next_step ? <p className="scp-project-stage">Previous next step: {project.next_step} · Add it to the appropriate task list below.</p> : null}
       </section>
 
       <section className="scp-task-columns" aria-label="Project to-do lists">
