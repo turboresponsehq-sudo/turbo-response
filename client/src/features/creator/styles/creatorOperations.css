@@ -480,3 +480,13 @@
   align-items: center;
   gap: 7px;
 }
+
+
+/* Admin-only calendar shortcut: private events stay in Google Calendar. */
+.zops-calendar-today{display:flex;align-items:center;justify-content:space-between;gap:20px;background:#fff;border:1px solid #e4e6eb;border-radius:16px;padding:20px 24px;margin-bottom:20px}
+.zops-calendar-title{display:flex;align-items:center;gap:14px}
+.zops-calendar-title>svg{flex-shrink:0;color:#b21e2d}
+.zops-calendar-title h2{font-size:19px;letter-spacing:-.02em;margin:0 0 5px}
+.zops-calendar-title p:last-child{margin:0;color:#626673;font-size:12px;line-height:1.5}
+.zops-calendar-title .zops-section-kicker{margin:0 0 5px}
+@media(max-width:680px){.zops-calendar-today{align-items:stretch;flex-direction:column;padding:18px}.zops-calendar-today>a{justify-content:center;text-align:center}}
