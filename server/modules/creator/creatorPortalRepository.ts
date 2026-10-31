@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import { sql } from "drizzle-orm";
 import { getDb } from "../../db";
+import { invalidatePortalCredentials } from "./creatorPortalCredentials";
 import { getWorkspaceData } from "./creatorWorkspaceRepository";
 
 export type CreatorPortalStatus = "disabled" | "invited" | "active";
@@ -51,7 +52,7 @@ export function creatorPortalEnabled(): boolean {
 
 export function createPortalToken(): { token: string; hash: string; expiresAt: Date } {
   const token = makeToken();
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
   return { token, hash: tokenHash(token), expiresAt };
 }
 
@@ -196,7 +197,10 @@ export async function inviteCreatorPortal(input: { creatorLeadId: number; actor:
               drive_folder_url, invitation_sent_at, last_access_at, created_at, updated_at
   `);
   const updated = rowsOf(result)[0] ?? null;
-  if (updated) await appendPortalEvent({ portalId: Number(updated.id), eventType: "invitation_created", actor: input.actor });
+  if (updated) {
+    await invalidatePortalCredentials(Number(updated.id));
+    await appendPortalEvent({ portalId: Number(updated.id), eventType: "invitation_created", actor: input.actor });
+  }
   return updated ? { portal: updated, token: generated.token, expiresAt: generated.expiresAt } : null;
 }
 
@@ -211,7 +215,10 @@ export async function revokeCreatorPortal(input: { creatorLeadId: number; actor:
               drive_folder_url, invitation_sent_at, last_access_at, created_at, updated_at
   `);
   const updated = rowsOf(result)[0] ?? null;
-  if (updated) await appendPortalEvent({ portalId: Number(updated.id), eventType: "access_revoked", actor: input.actor });
+  if (updated) {
+    await invalidatePortalCredentials(Number(updated.id));
+    await appendPortalEvent({ portalId: Number(updated.id), eventType: "access_revoked", actor: input.actor });
+  }
   return updated;
 }
 

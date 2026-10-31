@@ -5,6 +5,7 @@ import { getDb } from "../../db";
 import { getWorkspaceData, linkWorkspaceAttachment } from "./creatorWorkspaceRepository";
 import { registerCreatorWorkspaceRoutes } from "./creatorWorkspaceRoutes";
 import { workspaceEmailNotice } from "./creatorMessageNotification";
+import { claimCreatorInvite, loginCreatorPassword, checkCreatorSessionVersion, validCreatorPassword } from "./creatorPortalCredentials";
 import {
   addCreatorLeadNote,
   createCreatorFollowUpTask,
@@ -24,7 +25,6 @@ import { creatorLeadCaptureEnabled } from "./featureGate";
 import { syncContactToHubSpot } from "../../hubspotSync";
 import { getAmaniAdminOpportunity, listAmaniAdminOpportunities } from "../amani/adminRepository";
 import {
-  acceptCreatorPortalToken,
   createCreatorPortalMessage,
   createPortalItem,
   createPortalUpdate,
@@ -154,26 +154,81 @@ function creatorPortalSessionClaims(req: any): { portalId: number } | null {
   }
 }
 
-/** Creator Portal access is isolated from the legacy consumer client portal. */
-creatorRouter.post("/creator/portal/accept", async (req: any, res) => {
-  res.set("Cache-Control", "no-store");
-  if (!creatorPortalEnabled()) return portalUnavailable(res);
-  const token = String(req.body?.token || "").trim();
-  if (!/^[A-Za-z0-9_-]{40,100}$/.test(token)) return res.status(400).json({ error: "Invalid invitation token" });
-  // Check signing configuration BEFORE consuming the one-time invitation.
+/** Current Creator sessions are tied to the version of the client's password. */
+function setCreatorSession(res: any, portalId: number, authVersion: string) {
   const secret = process.env.JWT_SECRET;
-  if (!secret) return res.status(503).json({ error: "Portal authentication is unavailable" });
+  if (!secret) throw new Error("Portal signing is unavailable");
+  const session = jwt.sign({ portalId, purpose: "creator_portal", authVersion }, secret, { expiresIn: "7d" });
+  res.cookie("creator_portal_session", session, { httpOnly: true, sameSite: "lax",
+    secure: process.env.NODE_ENV === "production", maxAge: 7 * 24 * 60 * 60 * 1000, path: "/" });
+}
+const clientAuthAttempts = new Map<string, number[]>();
+function allowClientAuthAttempt(key: string): boolean {
+  const now = Date.now();
+  const recent = (clientAuthAttempts.get(key) || []).filter(t => t > now - 15 * 60 * 1000);
+  if (recent.length >= 12) return false;
+  clientAuthAttempts.set(key, [...recent, now]);
+  return true;
+}
+/** Preserve existing legacy sessions only for portals with no password record. */
+creatorRouter.use("/creator/portal", async (req: any, res, next) => {
+  res.set("Cache-Control", "no-store");
+  if (["/auth/claim", "/auth/login", "/accept", "/logout"].includes(req.path)) return next();
+  const token = req.cookies?.creator_portal_session;
+  const secret = process.env.JWT_SECRET;
+  if (!token || !secret) return res.status(401).json({ error: "Client sign-in required" });
   try {
-    const portal = await acceptCreatorPortalToken(token);
-    if (!portal) return res.status(401).json({ error: "Invitation is invalid, expired, or already used" });
-    const session = jwt.sign({ portalId: Number(portal.id), purpose: "creator_portal" }, secret, { expiresIn: "7d" });
-    res.cookie("creator_portal_session", session, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 7 * 24 * 60 * 60 * 1000, path: "/" });
-    return res.json({ success: true });
-  } catch (error) {
-    console.error("[Creator Portal] Invitation acceptance failed", error);
-    return res.status(503).json({ error: "Creator Portal storage is unavailable" });
+    const claims = jwt.verify(token, secret) as { portalId?: number; purpose?: string; authVersion?: string };
+    const portalId = Number(claims.portalId);
+    if (claims.purpose !== "creator_portal" || !Number.isSafeInteger(portalId) || portalId < 1)
+      return res.status(401).json({ error: "Client sign-in required" });
+    if (!await checkCreatorSessionVersion(portalId, claims.authVersion))
+      return res.status(401).json({ error: "Session expired. Sign in again." });
+    return next();
+  } catch {
+    return res.status(401).json({ error: "Client sign-in required" });
   }
 });
+
+creatorRouter.post("/creator/portal/auth/claim", async (req: any, res) => {
+  if (!creatorPortalEnabled()) return portalUnavailable(res);
+  const token = String(req.body?.token || "").trim(), password = req.body?.password;
+  if (!/^[A-Za-z0-9_-]{40,100}$/.test(token) || !validCreatorPassword(password))
+    return res.status(400).json({ error: "Use a valid invitation and a password with at least 8 characters." });
+  if (!process.env.JWT_SECRET) return res.status(503).json({ error: "Portal authentication is unavailable" });
+  if (!allowClientAuthAttempt("claim:" + clientKey(req))) return res.status(429).json({ error: "Too many attempts. Try later." });
+  try {
+    const result = await claimCreatorInvite(token, password);
+    if (!result) return res.status(401).json({ error: "Invitation expired, already used or invalid. Request a new link." });
+    setCreatorSession(res, result.portalId, result.version);
+    return res.json({ success: true });
+  } catch (error) {
+    console.error("[Creator Portal] Password setup failed", error);
+    return res.status(503).json({ error: "Password setup is temporarily unavailable" });
+  }
+});
+
+creatorRouter.post("/creator/portal/auth/login", async (req: any, res) => {
+  if (!creatorPortalEnabled()) return portalUnavailable(res);
+  const email = String(req.body?.email || "").trim(), password = String(req.body?.password || "");
+  if (!email || !password) return res.status(400).json({ error: "Enter email and password" });
+  if (!process.env.JWT_SECRET) return res.status(503).json({ error: "Portal authentication is unavailable" });
+  if (!allowClientAuthAttempt("login:" + clientKey(req))) return res.status(429).json({ error: "Too many attempts. Try later." });
+  try {
+    const result = await loginCreatorPassword(email, password);
+    if (!result) return res.status(401).json({ error: "Email or password not recognized. Request a fresh invitation if needed." });
+    setCreatorSession(res, result.portalId, result.version);
+    return res.json({ success: true });
+  } catch (error) {
+    console.error("[Creator Portal] Password login failed", error);
+    return res.status(503).json({ error: "Sign-in is temporarily unavailable" });
+  }
+});
+
+/** Old magic-link-only access is disabled; a password must be set first. */
+creatorRouter.post("/creator/portal/accept", (_req: any, res) =>
+  res.status(410).json({ error: "Create your password from the invitation link to continue." })
+);
 
 creatorRouter.get("/creator/portal/me", async (req: any, res) => {
   res.set("Cache-Control", "no-store");
@@ -310,31 +365,33 @@ creatorRouter.post("/creator/admin/leads/:leadId/portal/invite", requireCreatorA
   res.set("Cache-Control", "no-store");
   if (!creatorPortalEnabled()) return portalUnavailable(res);
   const leadId = safeLeadId(req.params.leadId);
-  if (!leadId) return res.status(400).json({ error: "Invalid lead identifier" });
+  if (!leadId) return res.status(400).json({ error: "Invalid client" });
+  const channel = req.body?.channel === "text" ? "text" : "email";
   try {
     const lead = await getCreatorLeadById(leadId);
-    if (!lead?.email) return res.status(404).json({ error: "Creator Lead email is missing" });
+    if (!lead?.email) return res.status(404).json({ error: "This client needs an email address for future password sign-in" });
     const invitation = await inviteCreatorPortal({ creatorLeadId: leadId, actor: req.creatorAdmin.email });
     if (!invitation) return res.status(500).json({ error: "Invitation could not be created" });
     const invitationUrl = `${portalBaseUrl()}/creator/portal/invite?token=${encodeURIComponent(invitation.token)}`;
-    const firstName = escapeHtml(String(lead.full_name || "there").split(" ")[0]);
+    const firstName = String(lead.full_name || "there").split(" ")[0];
     let emailSent = false;
-    try {
-      const { sendRawEmail } = await import("../../services/auditEmailService");
-      emailSent = await sendRawEmail({
-        to: String(lead.email),
-        fromName: "Creator Automations",
-        subject: "Your Creator Automations workspace invitation",
-        html: `<p>Hi ${firstName},</p><p>Your private Creator Automations workspace is ready.</p><p><a href="${invitationUrl}">Open your Creator Portal</a></p><p>This one-time invitation link expires in 7 days. If you were not expecting it, you can ignore this message.</p>`,
-      });
-    } catch (sendError) {
-      console.error("[Creator Portal] Invitation email failed; manual link remains available", sendError);
+    if (channel === "email") {
+      try {
+        const { sendRawEmail } = await import("../../services/auditEmailService");
+        emailSent = await sendRawEmail({
+          to: String(lead.email), fromName: "Creator Automations",
+          subject: "Set up your private Creator Automations workspace",
+          html: `<p>Hi ${escapeHtml(firstName)},</p><p>Your project workspace is ready.</p><p><a href="${invitationUrl}">Create your password</a></p><p>This one-time link expires in 24 hours. Use your email address to sign in afterward.</p>`,
+        });
+      } catch (error) {
+        console.error("[Creator Portal] Invite email failed; manual link is available", error);
+      }
     }
-    // Preserve an admin-only manual sharing option if the email provider fails.
-    return res.status(201).json({ success: true, portal: invitation.portal, invitationUrl, emailSent });
+    const smsText = `Hi ${firstName}, your Creator Automations project workspace is ready. Use this private link within 24 hours to create your password: ${invitationUrl}`;
+    return res.status(201).json({ success: true, portal: invitation.portal, invitationUrl, smsText, expiresInHours: 24, emailSent });
   } catch (error) {
     console.error("[Creator Portal] Invitation creation failed", error);
-    return res.status(503).json({ error: "Unable to create Creator Portal invitation" });
+    return res.status(503).json({ error: "Unable to create invitation" });
   }
 });
 

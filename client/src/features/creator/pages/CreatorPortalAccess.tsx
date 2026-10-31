@@ -5,32 +5,33 @@ import CreatorWorkspace from "../components/CreatorWorkspace";
 
 type AccessMode = "preview" | "login";
 
-function invitationToken(value: string): string {
-  const trimmed = value.trim();
-  try {
-    const url = new URL(trimmed);
-    return url.searchParams.get("token") || url.searchParams.get("invite") || "";
-  } catch {
-    return trimmed;
-  }
-}
-
 /**
  * Public, sample-data-only preview and invitation entry.
  * Actual client workspaces remain protected by /creator/portal and the server.
  */
 export default function CreatorPortalAccess({ mode = "preview" }: { mode?: AccessMode }) {
-  const [invite, setInvite] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [notice, setNotice] = useState("");
+  const [busy, setBusy] = useState(false);
 
-  function openInvitation(event: FormEvent<HTMLFormElement>) {
+  async function signIn(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const token = invitationToken(invite);
-    if (!/^[a-zA-Z0-9_-]{20,150}$/.test(token)) {
-      setNotice("Enter the invitation link or access token from your project email.");
-      return;
+    if (!email.trim() || !password) return;
+    setBusy(true); setNotice("");
+    try {
+      const response = await fetch("/api/creator/portal/auth/login", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        credentials: "include", cache: "no-store",
+        body: JSON.stringify({ email: email.trim(), password }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Unable to sign in.");
+      window.location.assign("/creator/portal");
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Unable to sign in.");
+      setBusy(false);
     }
-    window.location.assign(`/creator/portal?token=${encodeURIComponent(token)}`);
   }
 
   return (
@@ -48,23 +49,25 @@ export default function CreatorPortalAccess({ mode = "preview" }: { mode?: Acces
       {mode === "login" ? (
         <section className="cap-login-panel">
           <p className="cap-eyebrow">PRIVATE PROJECT ACCESS</p>
-          <h1>Welcome to your workspace.</h1>
-          <p>Open your project using the secure invitation link sent by the Creator Automations team. Invitations expire and are unique to each client.</p>
-          <form onSubmit={openInvitation} className="cap-access-form">
-            <label htmlFor="cap-token">Invitation link or access token</label>
-            <input
-              id="cap-token"
-              value={invite}
-              onChange={(event) => { setInvite(event.target.value); setNotice(""); }}
-              placeholder="Paste your private invitation link"
-              autoComplete="off"
-              required
-            />
+          <h1>Welcome back.</h1>
+          <p>Sign in with the email address on your project and the password you created from your invitation.</p>
+          <form onSubmit={signIn} className="cap-access-form">
+            <label htmlFor="cap-email">Email address</label>
+            <input id="cap-email" type="email" value={email}
+              onChange={event => { setEmail(event.target.value); setNotice(""); }}
+              placeholder="you@example.com" autoComplete="username" required />
+            <label htmlFor="cap-password">Password</label>
+            <input id="cap-password" type="password" value={password}
+              onChange={event => { setPassword(event.target.value); setNotice(""); }}
+              placeholder="Your private password" autoComplete="current-password" required />
             {notice && <p role="alert" className="cap-error">{notice}</p>}
-            <button type="submit">Open my workspace</button>
+            <button disabled={busy} type="submit">{busy ? "Signing in…" : "Sign in to my project"}</button>
           </form>
           <div className="cap-footnote">
-            Don't have an invitation? <a href="mailto:turboresponsehq@gmail.com?subject=Creator%20Portal%20Invitation">Contact Creator Automations</a>.
+            First visit? Open the private invitation link we sent you by text or email to create your password. Invitations expire in 24 hours.
+          </div>
+          <div className="cap-footnote">
+            Need a fresh invitation? <a href="mailto:turboresponsehq@gmail.com?subject=Creator%20Portal%20Access%20Reset">Contact Creator Automations</a>.
           </div>
           <Link className="cap-underlink" href="/creator/portal/preview">See a sample workspace</Link>
         </section>
