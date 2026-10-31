@@ -23,6 +23,7 @@ import { registerGoogleDriveOAuthRoutes } from "../routes/googleDriveOAuth";
 import { resumePersistedDriveIngestion } from "../services/googleDriveIngestionService";
 import { creatorRouter } from "../modules/creator/routes";
 import { cleanupZakhyHubSpotQaRecords } from "../modules/creator/hubspotQaCleanup";
+import { seedFeDelveyHostingTask } from "../modules/creator/creatorRequestedTaskSeed";
 import { aiLearningRouter } from "../modules/aiLearning";
 import { amaniRouter } from "../modules/amani/routes";
 import bcrypt from "bcrypt";
@@ -48,6 +49,13 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 
 async function startServer() {
   await cleanupZakhyHubSpotQaRecords();
+  // User-requested, one-time FeDelvey website-hosting task. Scoped to this
+  // exact Creator lead. The seed is idempotent and never changes portal access.
+  try {
+    await seedFeDelveyHostingTask();
+  } catch (error) {
+    console.error("[Creator Portal] FeDelvey hosting task seed failed", error);
+  }
   const app = express();
   const amaniOrigins = (process.env.AMANI_ALLOWED_ORIGINS || "")
     .split(",")
