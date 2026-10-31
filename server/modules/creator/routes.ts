@@ -19,6 +19,7 @@ import {
 import { processCreatorLeadEmailWorkflow } from "./emailWorkflow";
 import { creatorLeadCaptureEnabled } from "./featureGate";
 import { syncContactToHubSpot } from "../../hubspotSync";
+import { registerCreatorTeamPortalRoutes } from "./teamPortalRoutes";
 import { getAmaniAdminOpportunity, listAmaniAdminOpportunities } from "../amani/adminRepository";
 import {
   acceptCreatorPortalToken,
@@ -121,6 +122,9 @@ function requireRoles(allowedRoles: string[]): RequestHandler {
 
 export const requireCreatorAdmin: RequestHandler = requireRoles(["admin"]);
 export const requireAmaniAdmin: RequestHandler = requireRoles(["admin", "amani_admin"]);
+
+// Isolated, opt-in team workspace routes. Existing one-person portal is unchanged.
+registerCreatorTeamPortalRoutes(creatorRouter, requireCreatorAdmin);
 
 function portalUnavailable(res: any) {
   return res.status(404).json({ error: "Creator Portal is not enabled" });
