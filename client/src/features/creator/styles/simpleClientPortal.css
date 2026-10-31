@@ -106,3 +106,9 @@
 .scp-chat-form .scp-link-toggle:hover,.scp-chat-form .scp-attach-button:hover{background:#f5f4f2}
 .scp-chat-form .scp-chat-send{background:#bd162b;color:#fff}
 .scp-chat-form .scp-chat-send:disabled{opacity:.55}
+
+
+.scp-header-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+.scp-text-invite{background:#bd162b;color:#fff;border:none;border-radius:8px;padding:9px 12px;font-size:11px;font-weight:800;cursor:pointer}
+.scp-text-invite:disabled{opacity:.55}
+@media(max-width:600px){.scp-header-actions{justify-content:flex-start}.scp-text-invite{width:100%}}
