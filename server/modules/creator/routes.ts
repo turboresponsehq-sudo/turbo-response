@@ -158,7 +158,8 @@ function creatorPortalSessionClaims(req: any): { portalId: number } | null {
  * of inactivity; clearing site data, logging out, or revocation ends access. */
 const CREATOR_SESSION_DAYS = 180;
 const CREATOR_SESSION_MS = CREATOR_SESSION_DAYS * 24 * 60 * 60 * 1000;
-const CREATOR_RENEW_THRESHOLD_SECONDS = 30 * 24 * 60 * 60;
+// Renew at most once per day to keep the session active while this browser is in use.
+const CREATOR_RENEW_THRESHOLD_SECONDS = (CREATOR_SESSION_DAYS - 1) * 24 * 60 * 60;
 
 /** Current Creator sessions are tied to the version of the client's password. */
 function setCreatorSession(res: any, portalId: number, authVersion: string) {
