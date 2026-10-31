@@ -100,3 +100,9 @@
 .scp-shared-files summary{cursor:pointer;font-size:12px;font-weight:750}
 .scp-demo-disclaimer{font-size:11px;color:#666;text-align:center;padding:10px}
 @media(max-width:600px){.scp-chat-toolbar .scp-chat-send{width:100%;margin:0}.scp-attach-button,.scp-link-toggle{flex:1}}
+
+
+.scp-chat-form .scp-link-toggle,.scp-chat-form .scp-attach-button{background:#fff;color:#252525;border:1px solid #d4d4d4}
+.scp-chat-form .scp-link-toggle:hover,.scp-chat-form .scp-attach-button:hover{background:#f5f4f2}
+.scp-chat-form .scp-chat-send{background:#bd162b;color:#fff}
+.scp-chat-form .scp-chat-send:disabled{opacity:.55}
