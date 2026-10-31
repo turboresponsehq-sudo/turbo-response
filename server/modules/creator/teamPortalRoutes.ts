@@ -12,7 +12,7 @@ import { creatorPortalEnabled, ensureCreatorPortal } from "./creatorPortalReposi
 const hash = (s:string)=>crypto.createHash("sha256").update(s).digest("hex");
 const token = ()=>crypto.randomBytes(32).toString("base64url");
 const rows = (v:any):any[] => Array.isArray(v)?v:v?.rows||[];
-const home=()=>process.env.FRONTEND_URL||"https://turboresponsehq.ai";
+const home=()=>(process.env.FRONTEND_URL||"https://turboresponsehq.ai").replace(/\/+$/,"");
 const emailOkay=(e:string)=>e.length<=320 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 const escape=(s:string)=>s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]||c));
 const unavailable=(res:any,e:unknown)=>{ console.error("[Creator Team]",e);return res.status(503).json({error:"Workspace unavailable. Contact Creator Automations."}); };
@@ -45,7 +45,7 @@ export function registerCreatorTeamPortalRoutes(router:Router,requireAdmin:Reque
    const portal=await ensureCreatorPortal(leadId);if(!portal)return res.status(404).json({error:"Client not found"});
    const invite=token(),exp=new Date(Date.now()+14*86400000).toISOString();
    await db.execute(sql`UPDATE creator_portals SET team_join_token_hash=${hash(invite)},
-     team_join_expires_at=${exp},status='active',updated_at=NOW() WHERE id=${Number(portal.id)}`);
+     team_join_expires_at=${exp},status='active',access_token_hash=NULL,token_expires_at=NULL,updated_at=NOW() WHERE id=${Number(portal.id)}`);
    return res.json({url:home()+"/creator/portal/join?invite="+encodeURIComponent(invite),expiresAt:exp});
   }catch(e){return unavailable(res,e);}
  });
@@ -224,6 +224,8 @@ export function registerCreatorTeamPortalRoutes(router:Router,requireAdmin:Reque
   if(!creatorPortalEnabled())return gate(res);
   const m=await memberFor(req,res);if(!m)return;
   const file=req.file;
+  if(file && !/\.(jpe?g|png|webp|pdf|docx?)$/i.test(file.originalname))
+    return res.status(400).json({error:"Unsupported file extension."});
   if(!file||!file.buffer||file.size>15*1024*1024)return res.status(400).json({error:"Choose a supported file under 15 MB."});
   try{
    const db=await getDb();if(!db)throw Error("DB");
