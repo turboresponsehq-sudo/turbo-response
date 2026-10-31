@@ -251,6 +251,7 @@ export default function CreatorWorkspace({ initial, mode, leadId, clientName }: 
     <div className="scp-workspace">
       <header className="scp-header"><span className="scp-brand">⚡ CREATOR AUTOMATIONS</span><div className="scp-header-actions">{admin && <button type="button" className="scp-text-invite" disabled={busy === "invite"} onClick={createTextInvite}>{busy === "invite" ? "Creating link…" : "Create text invite · 24h"}</button>}<span>{admin ? "ADMIN PROJECT VIEW" : demo ? "SAMPLE PROJECT · NOT SAVED" : "CLIENT PROJECT"}</span></div></header>
       <section className="scp-intro"><p className="scp-kicker">PROJECT WORKSPACE</p><h1>{clientName || project.brand_name || project.full_name || "Your project"}</h1><p>One project. Clear responsibilities. Everything in one place.</p></section>
+      {!admin && <section className="scp-client-main-actions" aria-label="Actions you need to complete">{taskBox("client")}</section>}
       <section className="scp-project-hero">
         <span className="scp-label">THE PROJECT</span>
         {editingGoal && admin ? <form onSubmit={saveGoal} className="scp-goal-edit"><input autoFocus value={goalText} maxLength={180} onChange={e => setGoalText(e.target.value)} placeholder="e.g. Get the website live on the internet" /><button disabled={busy === "goal" || !goalText.trim()}>Save goal</button><button type="button" className="scp-minor" onClick={() => setEditingGoal(false)}>Cancel</button></form>
@@ -260,7 +261,7 @@ export default function CreatorWorkspace({ initial, mode, leadId, clientName }: 
       </section>
 
       <section className={`scp-task-columns${admin ? "" : " scp-client-first-tasks"}`} aria-label="Project to-do lists">
-        {admin ? <>{taskBox("team")}{taskBox("client")}</> : <>{taskBox("client")}{taskBox("team")}</>}
+        {admin ? <>{taskBox("team")}{taskBox("client")}</> : taskBox("team")}
       </section>
 
       {admin && <form className="scp-add-task" onSubmit={addTask}>
