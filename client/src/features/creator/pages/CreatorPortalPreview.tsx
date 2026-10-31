@@ -124,39 +124,96 @@ export default function CreatorPortalPreview({ view = "admin" }: { view?: "admin
 
 function CreatorPortalScreen() {
   const [, setLocation] = useLocation();
+  const [inviteToken, setInviteToken] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("token") || params.get("invite") || "";
+  });
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [working, setWorking] = useState(false);
   const [portal, setPortal] = useState<any>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     let active = true;
-    async function load() {
+    // Remove the secret from the browser address bar before any network request.
+    if (inviteToken) {
+      window.history.replaceState({}, "", "/creator/portal/invite");
+      setLoading(false);
+      return;
+    }
+    async function loadSession() {
       try {
-        const params = new URLSearchParams(window.location.search);
-        const token = params.get("token") || params.get("invite");
-        if (token) {
-          window.history.replaceState({}, "", "/creator/portal");
-          const response = await fetch("/api/creator/portal/accept", {
-            method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token }), credentials: "include", cache: "no-store",
-          });
-          if (!response.ok) throw new Error("Invitation expired or already used. Please request a new one.");
-        }
         const response = await fetch("/api/creator/portal/me", { credentials: "include", cache: "no-store" });
         const body = await response.json();
-        if (!response.ok) throw new Error(body.error || "Client sign-in required");
+        if (!response.ok) throw new Error(body.error || "Sign in to your workspace.");
         if (active) setPortal(body.portal);
-      } catch (e) { if (active) setError(e instanceof Error ? e.message : "Could not open workspace"); }
-      finally { if (active) setLoading(false); }
+      } catch (e) {
+        if (active) setError(e instanceof Error ? e.message : "Sign in to your workspace.");
+      } finally { if (active) setLoading(false); }
     }
-    load();
+    void loadSession();
     return () => { active = false; };
   }, []);
+
+  async function setUpPassword(event: React.FormEvent) {
+    event.preventDefault();
+    if (password.length < 8 || password !== confirmPassword) {
+      setError("Use at least 8 characters and make sure both passwords match.");
+      return;
+    }
+    setWorking(true); setError("");
+    try {
+      const response = await fetch("/api/creator/portal/auth/claim", {
+        method: "POST", credentials: "include", cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: inviteToken, password }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Unable to create password.");
+      setPassword(""); setConfirmPassword(""); setInviteToken("");
+      window.history.replaceState({}, "", "/creator/portal");
+      const workspaceResponse = await fetch("/api/creator/portal/me", { credentials: "include", cache: "no-store" });
+      const workspaceBody = await workspaceResponse.json();
+      if (!workspaceResponse.ok) throw new Error("Password created. Please sign in using your email and password.");
+      setPortal(workspaceBody.portal);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Unable to create password.");
+    } finally { setWorking(false); }
+  }
+
   async function logout() {
     await fetch("/api/creator/portal/logout", { method: "POST", credentials: "include" });
     setLocation("/creator/portal/login");
   }
+
   if (loading) return <main className="scp-loading">Opening your private project…</main>;
-  if (error || !portal) return <main className="creator-portal-screen"><section className="creator-portal-support"><div><p className="creator-eyebrow">PRIVATE CLIENT PROJECT</p><h2>Sign in with your invitation.</h2><p>{error || "Your private invitation is required."}</p></div><Link className="creator-button" href="/creator/portal/login">Enter invitation</Link></section></main>;
+  if (inviteToken) return <main className="cap-shell cap-client-setup">
+    <section className="cap-login-panel">
+      <p className="cap-eyebrow">FIRST-TIME PROJECT ACCESS</p>
+      <h1>Create your password.</h1>
+      <p>This private invitation works one time and expires after 24 hours. Choose a password of at least 8 characters. You'll use your project email and this password whenever you return.</p>
+      <form onSubmit={setUpPassword} className="cap-access-form">
+        <label htmlFor="creator-new-password">Create password</label>
+        <input id="creator-new-password" type="password" value={password}
+          onChange={event => setPassword(event.target.value)}
+          autoComplete="new-password" minLength={8} maxLength={72} required />
+        <label htmlFor="creator-confirm-password">Confirm password</label>
+        <input id="creator-confirm-password" type="password" value={confirmPassword}
+          onChange={event => setConfirmPassword(event.target.value)}
+          autoComplete="new-password" minLength={8} maxLength={72} required />
+        {error && <p className="cap-error" role="alert">{error}</p>}
+        <button type="submit" disabled={working}>{working ? "Creating password…" : "Create password and open project"}</button>
+      </form>
+      <p className="cap-footnote">Only use this invitation if it was sent to you directly by Creator Automations.</p>
+    </section>
+  </main>;
+  if (error || !portal) return <main className="creator-portal-screen"><section className="creator-portal-support"><div>
+    <p className="creator-eyebrow">PRIVATE CLIENT PROJECT</p>
+    <h2>Sign in to your workspace.</h2>
+    <p>{error || "Enter the email and password for your project."}</p>
+  </div><Link className="creator-button" href="/creator/portal/login">Sign in</Link></section></main>;
   return <>
     <div className="scp-client-top"><span>PRIVATE CLIENT WORKSPACE</span><button type="button" onClick={logout}>Log out</button></div>
     <CreatorWorkspace initial={portal} mode="client" />
