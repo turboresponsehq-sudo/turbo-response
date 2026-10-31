@@ -150,10 +150,11 @@ export async function acceptCreatorPortalToken(token: string) {
   if (!db) throw new Error("Creator portal storage is unavailable");
   const result = await db.execute(sql`
     UPDATE creator_portals
-    SET status = 'active', last_access_at = NOW(), updated_at = NOW()
+    SET status = 'active', last_access_at = NOW(), updated_at = NOW(),
+        access_token_hash = NULL, token_expires_at = NULL
     WHERE access_token_hash = ${tokenHash(token)}
       AND token_expires_at > NOW()
-      AND status IN ('invited', 'active')
+      AND status = 'invited'
     RETURNING id, creator_lead_id, status
   `);
   const portal = rowsOf(result)[0] ?? null;
