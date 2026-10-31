@@ -214,14 +214,14 @@ export default function CreatorLeadsAdmin() {
       setPortal(body.portal);
       setPortalForm(current => ({ ...current, status: body.portal.status }));
       if (channel === "text") {
-        const smsText = String(body.smsText || body.invitationUrl || "");
+        const smsText = String(body.invitationUrl || "");
         try {
           await navigator.clipboard.writeText(smsText);
           setNotice("24-hour invitation copied. Paste it into a text to the verified client.");
         } catch {
-          setNotice("Invitation created. Copy the message from the box to text the client.");
+          setNotice("Invitation created. Copy the link from the box to text the client.");
         }
-        window.prompt("Copy and text this private invitation. Expires in 24 hours:", smsText);
+        window.prompt("Copy this private link. Expires in 24 hours:", smsText);
       } else {
         setNotice(body.emailSent ? "24-hour invitation emailed to the client."
           : "Invitation created but email delivery was not confirmed. Copy the private link.");

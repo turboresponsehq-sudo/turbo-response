@@ -132,7 +132,7 @@ function portalUnavailable(res: any) {
 }
 
 function portalBaseUrl() {
-  return process.env.FRONTEND_URL || "https://turboresponsehq.ai";
+  return "https://turboresponsehq.ai";
 }
 
 function escapeHtml(value: string): string {
