@@ -121,9 +121,9 @@ export function serveStatic(app: Express) {
       .replace(/<meta name="twitter:title" content="[^"]*"\s*\/?\s*>/i, `<meta name="twitter:title" content="${zakhyTitle}" />`)
       .replace(/<meta name="twitter:description" content="[^"]*"\s*\/?\s*>/i, `<meta name="twitter:description" content="${zakhyDescription}" />`)
       .replace(/<link rel="canonical" href="[^"]*"\s*\/?\s*>/i, `<link rel="canonical" href="${zakhyUrl}" />`)
-      .replace(/<meta name="robots" content="[^"]*"\s*\/?\s*>/i, isCreatorPortalRoute ? '<meta name="robots" content="noindex, nofollow, noarchive" />' : "      .replace(/<link rel="canonical" href="[^"]*"\s*\/?\s*>/i, `<link rel="canonical" href="${zakhyUrl}" />`);")
-      .replace(/<meta name="author" content="[^"]*"\s*\/?\s*>/i, isCreatorPortalRoute ? '<meta name="author" content="Creator Automations" />' : "      .replace(/<link rel="canonical" href="[^"]*"\s*\/?\s*>/i, `<link rel="canonical" href="${zakhyUrl}" />`);")
-      .replace(/<meta property="og:site_name" content="[^"]*"\s*\/?\s*>/i, isCreatorPortalRoute ? '<meta property="og:site_name" content="Creator Automations" />' : "      .replace(/<link rel="canonical" href="[^"]*"\s*\/?\s*>/i, `<link rel="canonical" href="${zakhyUrl}" />`);");
+      .replace(/<meta name="robots" content="[^"]*"\s*\/?\s*>/i, current => isCreatorPortalRoute ? '<meta name="robots" content="noindex, nofollow, noarchive" />' : current)
+      .replace(/<meta name="author" content="[^"]*"\s*\/?\s*>/i, current => isCreatorPortalRoute ? '<meta name="author" content="Creator Automations" />' : current)
+      .replace(/<meta property="og:site_name" content="[^"]*"\s*\/?\s*>/i, current => isCreatorPortalRoute ? '<meta property="og:site_name" content="Creator Automations" />' : current);
 
     res.status(200).set({ "Content-Type": "text/html" }).send(page);
   });
