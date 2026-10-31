@@ -2,7 +2,7 @@ import { Router, type RequestHandler } from "express";
 import jwt from "jsonwebtoken";
 import { sql } from "drizzle-orm";
 import { getDb } from "../../db";
-import { getWorkspaceData } from "./creatorWorkspaceRepository";
+import { getWorkspaceData, linkWorkspaceAttachment } from "./creatorWorkspaceRepository";
 import { registerCreatorWorkspaceRoutes } from "./creatorWorkspaceRoutes";
 import { workspaceEmailNotice } from "./creatorMessageNotification";
 import {
@@ -220,8 +220,12 @@ creatorRouter.post("/creator/portal/messages", async (req: any, res) => {
   try {
     const portal = await getPortalForSession(claims.portalId);
     if (!portal) return res.status(401).json({ error: "Creator Portal access is inactive" });
+    const attachmentId = req.body?.attachmentId == null ? null : safeLeadId(String(req.body.attachmentId));
+    const matched = attachmentId ? portal.attachments?.find((a: any) => Number(a.id) === attachmentId) : null;
+    if (req.body?.attachmentId != null && !matched) return res.status(400).json({ error: "Attachment was not found in your project" });
     const message = await createCreatorPortalMessage({ creatorLeadId: Number(portal.creator_lead_id), senderType: "creator", text, visibleToCreator: true });
-    const emailSent = await workspaceEmailNotice(portal, text);
+    if (attachmentId && message) await linkWorkspaceAttachment(Number(portal.id), attachmentId, Number(message.id), "creator");
+    const emailSent = await workspaceEmailNotice(portal, matched ? text + "\\n\\nAttachment: " + matched.name + " (view in project workspace)" : text);
     return res.status(201).json({ success: true, message, emailSent });
   } catch (error) {
     console.error("[Creator Portal] Creator message failed", error);
@@ -377,7 +381,17 @@ creatorRouter.post("/creator/admin/leads/:leadId/portal/messages", requireCreato
   const text = String(req.body?.text || "").trim();
   if (!leadId || !text || text.length > 10000) return res.status(400).json({ error: "A valid portal message is required" });
   try {
-    return res.status(201).json({ success: true, message: await createCreatorPortalMessage({ creatorLeadId: leadId, senderType: "admin", text, visibleToCreator: req.body?.visibleToCreator !== false, userId: req.creatorAdmin.id }) });
+    const portal = await getCreatorPortalByLeadId(leadId);
+    if (!portal) return res.status(404).json({ error: "Project not found" });
+    const attachmentId = req.body?.attachmentId == null ? null : safeLeadId(String(req.body.attachmentId));
+    if (req.body?.attachmentId != null && !attachmentId) return res.status(400).json({ error: "Invalid attachment" });
+    if (attachmentId) {
+      const workspace = await getWorkspaceData(Number(portal.id), "Project");
+      if (!workspace.attachments.some(a => a.id === attachmentId)) return res.status(400).json({ error: "Attachment not in this project" });
+    }
+    const message = await createCreatorPortalMessage({ creatorLeadId: leadId, senderType: "admin", text, visibleToCreator: req.body?.visibleToCreator !== false, userId: req.creatorAdmin.id });
+    if (attachmentId && message) await linkWorkspaceAttachment(Number(portal.id), attachmentId, Number(message.id), req.creatorAdmin.email);
+    return res.status(201).json({ success: true, message });
   } catch (error) {
     console.error("[Creator Portal] Admin message failed", error);
     return res.status(503).json({ error: "Unable to save Creator Portal message" });

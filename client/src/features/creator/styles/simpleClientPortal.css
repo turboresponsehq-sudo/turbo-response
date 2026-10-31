@@ -83,3 +83,26 @@
 
 .scp-refresh-chat{border:1px solid #ddd;background:white;padding:9px 12px;border-radius:7px;font-size:11px;font-weight:750;color:#8b2634;cursor:pointer}
 .scp-refresh-chat:hover{background:#fff1f2}
+
+
+.scp-chat-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.scp-attach-button,.scp-link-toggle{padding:10px 12px;border:1px solid #d4d4d4;border-radius:8px;background:#fff;color:#242424;font-weight:750;font-size:12px;cursor:pointer}
+.scp-hidden-file{position:absolute;width:1px;height:1px;opacity:0}
+.scp-chat-toolbar .scp-chat-send{margin-left:auto;padding:11px 22px;background:#bd162b;color:white}
+.scp-selected-attachment{display:flex;justify-content:space-between;gap:12px;padding:11px;border:1px solid #ddd;border-radius:8px;font-size:12px}
+.scp-selected-attachment button{border:0;background:none;color:#9b2233;text-decoration:underline;cursor:pointer}
+.scp-inline-link{display:flex;flex-wrap:wrap;gap:10px}
+.scp-inline-link input{flex:1;min-width:180px;padding:11px;border:1px solid #ccc;border-radius:8px}
+.scp-chat-attachment{display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:10px;background:#f7f6f3;border-radius:8px;font-size:12px}
+.scp-chat-attachment span{flex:1;overflow-wrap:anywhere}
+.scp-chat-attachment a,.scp-chat-attachment button{border:0;background:none;text-decoration:underline;color:#9b172c;font-weight:800;cursor:pointer}
+.scp-shared-files{margin-top:15px;border-top:1px solid #eee;padding-top:13px}
+.scp-shared-files summary{cursor:pointer;font-size:12px;font-weight:750}
+.scp-demo-disclaimer{font-size:11px;color:#666;text-align:center;padding:10px}
+@media(max-width:600px){.scp-chat-toolbar .scp-chat-send{width:100%;margin:0}.scp-attach-button,.scp-link-toggle{flex:1}}
+
+
+.scp-chat-form .scp-link-toggle,.scp-chat-form .scp-attach-button{background:#fff;color:#252525;border:1px solid #d4d4d4}
+.scp-chat-form .scp-link-toggle:hover,.scp-chat-form .scp-attach-button:hover{background:#f5f4f2}
+.scp-chat-form .scp-chat-send{background:#bd162b;color:#fff}
+.scp-chat-form .scp-chat-send:disabled{opacity:.55}

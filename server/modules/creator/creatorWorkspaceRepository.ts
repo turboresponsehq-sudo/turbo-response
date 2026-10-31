@@ -24,7 +24,7 @@ function normalizePriority(value: unknown): Priority {
 
 export type WorkspaceTask = { id: number; label: string; status: string; owner: Owner; priority: Priority };
 export type WorkspaceAttachment = {
-  id: number; kind: AttachmentKind; name: string; url?: string; size?: number; mime?: string; created_at: string;
+  id: number; message_id?: number; kind: AttachmentKind; name: string; url?: string; size?: number; mime?: string; created_at: string;
 };
 
 export async function getWorkspaceData(portalId: number, fallbackGoal: string) {
@@ -33,12 +33,13 @@ export async function getWorkspaceData(portalId: number, fallbackGoal: string) {
   const [taskRows, eventRows] = await Promise.all([
     db.execute(sql`SELECT id, label, status FROM creator_portal_items WHERE portal_id = ${portalId} ORDER BY id ASC LIMIT 100`),
     db.execute(sql`SELECT id, event_type, payload, created_at FROM creator_portal_events
-      WHERE portal_id = ${portalId} AND event_type IN ('workspace_goal','workspace_task_meta','workspace_attachment')
+      WHERE portal_id = ${portalId} AND event_type IN ('workspace_goal','workspace_task_meta','workspace_attachment','workspace_message_attachment')
       ORDER BY id ASC LIMIT 1000`),
   ]);
   const taskMeta = new Map<number, { owner: Owner; priority: Priority }>();
   let goal = fallbackGoal;
   const attachments: WorkspaceAttachment[] = [];
+  const messageAttachments = new Map<number, number>();
   for (const event of rowsOf(eventRows)) {
     const data = event.payload as Record<string, any> | null;
     if (!data || typeof data !== "object") continue;
@@ -46,6 +47,11 @@ export async function getWorkspaceData(portalId: number, fallbackGoal: string) {
       goal = data.title;
     } else if (event.event_type === "workspace_task_meta" && Number.isSafeInteger(Number(data.taskId))) {
       taskMeta.set(Number(data.taskId), { owner: normalizeOwner(data.owner), priority: normalizePriority(data.priority) });
+    } else if (event.event_type === "workspace_message_attachment") {
+      const attachmentId = Number(data.attachmentId), messageId = Number(data.messageId);
+      if (Number.isSafeInteger(attachmentId) && Number.isSafeInteger(messageId) && attachmentId > 0 && messageId > 0) {
+        messageAttachments.set(attachmentId, messageId);
+      }
     } else if (event.event_type === "workspace_attachment" && (data.kind === "link" || data.kind === "file")) {
       attachments.push({
         id: Number(event.id),
@@ -58,6 +64,7 @@ export async function getWorkspaceData(portalId: number, fallbackGoal: string) {
       });
     }
   }
+  for (const attachment of attachments) attachment.message_id = messageAttachments.get(attachment.id);
   const tasks: WorkspaceTask[] = rowsOf(taskRows).map(row => ({
     id: Number(row.id),
     label: String(row.label),
@@ -144,4 +151,21 @@ export async function findWorkspaceAttachment(portalId: number, attachmentId: nu
   const data = rowsOf(result)[0]?.payload as Record<string, unknown> | undefined;
   if (!data || data.kind !== "file" || typeof data.storageId !== "string") return null;
   return { name: String(data.name || "attachment"), storageId: data.storageId, mime: String(data.mime || "application/octet-stream") };
+}
+
+/** Link a client-private file or URL to an individual saved chat message. */
+export async function linkWorkspaceAttachment(portalId: number, attachmentId: number, messageId: number, actor: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Creator workspace storage is unavailable");
+  const check = await db.execute(sql`SELECT id FROM creator_portal_events
+    WHERE id = ${attachmentId} AND portal_id = ${portalId} AND event_type = 'workspace_attachment'
+    LIMIT 1`);
+  if (!rowsOf(check).length) return false;
+  const message = await db.execute(sql`SELECT id FROM creator_portal_messages
+    WHERE id = ${messageId} AND portal_id = ${portalId} LIMIT 1`);
+  if (!rowsOf(message).length) return false;
+  await db.execute(sql`INSERT INTO creator_portal_events (portal_id, event_type, actor, payload)
+    VALUES (${portalId}, 'workspace_message_attachment', ${actor},
+      ${JSON.stringify({ attachmentId, messageId })}::jsonb)`);
+  return true;
 }

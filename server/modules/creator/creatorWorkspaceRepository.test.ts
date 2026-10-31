@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({ getDb: vi.fn() }));
 vi.mock("../../db", () => ({ getDb: mocks.getDb }));
 
-import { getWorkspaceData, updateWorkspaceTask } from "./creatorWorkspaceRepository";
+import { getWorkspaceData, linkWorkspaceAttachment, updateWorkspaceTask } from "./creatorWorkspaceRepository";
 
 describe("Creator workspace: two-sided project tasks", () => {
   beforeEach(() => vi.clearAllMocks());
@@ -57,4 +57,23 @@ describe("Creator workspace: two-sided project tasks", () => {
     expect(await updateWorkspaceTask({ portalId: 2, taskId: 12, done: true, actor: "creator", role: "client" })).toBeNull();
     expect(execute).toHaveBeenCalledTimes(1);
   });
+  it("keeps a chat attachment linked to the correct message", async () => {
+    const execute = vi.fn()
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [
+        { id: 300, event_type: "workspace_attachment", payload: { kind: "file", name: "logo.png" }, created_at: "2026-10-31T12:00:00Z" },
+        { id: 301, event_type: "workspace_message_attachment", payload: { attachmentId: 300, messageId: 42 }, created_at: "2026-10-31T12:00:01Z" },
+      ]});
+    mocks.getDb.mockResolvedValue({ execute });
+    const workspace = await getWorkspaceData(9, "Website");
+    expect(workspace.attachments).toMatchObject([{ id: 300, message_id: 42, name: "logo.png" }]);
+  });
+
+  it("refuses cross-project attachment references before creating an association", async () => {
+    const execute = vi.fn().mockResolvedValueOnce({ rows: [] });
+    mocks.getDb.mockResolvedValue({ execute });
+    expect(await linkWorkspaceAttachment(9, 300, 42, "client")).toBe(false);
+    expect(execute).toHaveBeenCalledTimes(1);
+  });
+
 });

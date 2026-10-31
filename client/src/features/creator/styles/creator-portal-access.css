@@ -79,3 +79,12 @@
 .cap-demo-tasks label b{font-size:9px;border-radius:4px;padding:5px 6px;color:#ae441d;background:#fce7d8}
 .cap-demo-tasks .cap-demo-task-done span{text-decoration:line-through;opacity:.55}
 .cap-demo-action{display:inline-block;font-size:12px;font-weight:850;color:#a51a29;text-decoration:underline;margin-top:10px}
+
+
+.cap-one-page-intro{max-width:1030px;margin:24px auto 0;padding:26px 28px;display:flex;gap:28px;align-items:center;justify-content:space-between}
+.cap-one-page-intro h1{font-size:clamp(28px,4.6vw,48px);line-height:1.09;margin:10px 0;letter-spacing:-.045em}
+.cap-one-page-intro h1 em{color:#c7162a;font-style:normal}
+.cap-one-page-intro p:not(.cap-eyebrow){font-size:13px;line-height:1.65;max-width:640px}
+.cap-one-page-intro .cap-primary-link{flex:none}
+.cap-one-page-intro + .scp-page{padding-top:0}
+@media(max-width:700px){.cap-one-page-intro{flex-direction:column;align-items:flex-start;padding:18px}.cap-one-page-intro .cap-primary-link{width:100%;text-align:center}}
