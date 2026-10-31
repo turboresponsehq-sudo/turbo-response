@@ -366,31 +366,33 @@ creatorRouter.post("/creator/admin/leads/:leadId/portal/invite", requireCreatorA
   res.set("Cache-Control", "no-store");
   if (!creatorPortalEnabled()) return portalUnavailable(res);
   const leadId = safeLeadId(req.params.leadId);
-  if (!leadId) return res.status(400).json({ error: "Invalid lead identifier" });
+  if (!leadId) return res.status(400).json({ error: "Invalid client" });
+  const channel = req.body?.channel === "text" ? "text" : "email";
   try {
     const lead = await getCreatorLeadById(leadId);
-    if (!lead?.email) return res.status(404).json({ error: "Creator Lead email is missing" });
+    if (!lead?.email) return res.status(404).json({ error: "This client needs an email address for future password sign-in" });
     const invitation = await inviteCreatorPortal({ creatorLeadId: leadId, actor: req.creatorAdmin.email });
     if (!invitation) return res.status(500).json({ error: "Invitation could not be created" });
     const invitationUrl = `${portalBaseUrl()}/creator/portal/invite?token=${encodeURIComponent(invitation.token)}`;
-    const firstName = escapeHtml(String(lead.full_name || "there").split(" ")[0]);
+    const firstName = String(lead.full_name || "there").split(" ")[0];
     let emailSent = false;
-    try {
-      const { sendRawEmail } = await import("../../services/auditEmailService");
-      emailSent = await sendRawEmail({
-        to: String(lead.email),
-        fromName: "Creator Automations",
-        subject: "Your Creator Automations workspace invitation",
-        html: `<p>Hi ${firstName},</p><p>Your private Creator Automations workspace is ready.</p><p><a href="${invitationUrl}">Open your Creator Portal</a></p><p>This one-time invitation link expires in 7 days. If you were not expecting it, you can ignore this message.</p>`,
-      });
-    } catch (sendError) {
-      console.error("[Creator Portal] Invitation email failed; manual link remains available", sendError);
+    if (channel === "email") {
+      try {
+        const { sendRawEmail } = await import("../../services/auditEmailService");
+        emailSent = await sendRawEmail({
+          to: String(lead.email), fromName: "Creator Automations",
+          subject: "Set up your private Creator Automations workspace",
+          html: `<p>Hi ${escapeHtml(firstName)},</p><p>Your project workspace is ready.</p><p><a href="${invitationUrl}">Create your password</a></p><p>This one-time link expires in 24 hours. Use your email address to sign in afterward.</p>`,
+        });
+      } catch (error) {
+        console.error("[Creator Portal] Invite email failed; manual link is available", error);
+      }
     }
-    // Preserve an admin-only manual sharing option if the email provider fails.
-    return res.status(201).json({ success: true, portal: invitation.portal, invitationUrl, emailSent });
+    const smsText = `Hi ${firstName}, your Creator Automations project workspace is ready. Use this private link within 24 hours to create your password: ${invitationUrl}`;
+    return res.status(201).json({ success: true, portal: invitation.portal, invitationUrl, smsText, expiresInHours: 24, emailSent });
   } catch (error) {
     console.error("[Creator Portal] Invitation creation failed", error);
-    return res.status(503).json({ error: "Unable to create Creator Portal invitation" });
+    return res.status(503).json({ error: "Unable to create invitation" });
   }
 });
 
