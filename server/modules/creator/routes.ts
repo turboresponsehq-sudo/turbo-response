@@ -25,7 +25,6 @@ import { creatorLeadCaptureEnabled } from "./featureGate";
 import { syncContactToHubSpot } from "../../hubspotSync";
 import { getAmaniAdminOpportunity, listAmaniAdminOpportunities } from "../amani/adminRepository";
 import {
-  acceptCreatorPortalToken,
   createCreatorPortalMessage,
   createPortalItem,
   createPortalUpdate,
