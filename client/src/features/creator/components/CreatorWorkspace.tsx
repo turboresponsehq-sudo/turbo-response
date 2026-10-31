@@ -58,6 +58,22 @@ export default function CreatorWorkspace({ initial, mode, leadId, clientName }: 
     return data;
   }
 
+  async function refreshConversation() {
+    try {
+      const url = admin ? base + "/messages" : "/api/creator/portal/me";
+      const response = await fetch(url, { credentials: "include", headers: headers(), cache: "no-store" });
+      if (!response.ok) return;
+      const body = await response.json();
+      const messages = admin ? body.messages : body.portal?.messages;
+      if (Array.isArray(messages)) setProject(p => ({ ...p, messages: messages.filter((m: any) => m.visible_to_creator !== false) }));
+    } catch { /* Keep the currently displayed conversation if disconnected. */ }
+  }
+
+  useEffect(() => {
+    const interval = window.setInterval(() => { void refreshConversation(); }, 25000);
+    return () => window.clearInterval(interval);
+  }, [base, admin]);
+
   async function saveGoal(event: FormEvent) {
     event.preventDefault();
     const title = goalText.trim();
@@ -200,7 +216,7 @@ export default function CreatorWorkspace({ initial, mode, leadId, clientName }: 
       </form>}
 
       <section className="scp-project-section scp-conversation">
-        <div className="scp-panel-heading"><div><span className="scp-label">PROJECT CONVERSATION</span><h2>Have a question?</h2></div><span className="scp-task-count">{(project.messages || []).length} messages</span></div>
+        <div className="scp-panel-heading"><div><span className="scp-label">PROJECT CONVERSATION</span><h2>Have a question?</h2></div><button type="button" className="scp-refresh-chat" onClick={() => void refreshConversation()}>Refresh chat</button></div>
         <p className="scp-section-note">Write here instead of sending a separate email. {admin ? "Your replies appear in the client's workspace." : "When you message us, we also receive an email with your message."}</p>
         <div className="scp-chat-thread" role="log" aria-label="Project messages">{project.messages?.length ? project.messages.map(m => <article key={m.id} className={`scp-chat-bubble ${m.sender_type === "creator" ? "from-client" : "from-team"}`}><b>{m.sender_type === "creator" ? "Client" : "Creator Automations"}</b><p>{m.message_text}</p><small>{m.created_at ? new Date(m.created_at).toLocaleString() : ""}</small></article>) : <p className="scp-empty">Start the project conversation here.</p>}</div>
         <form onSubmit={sendMessage} className="scp-chat-form"><label htmlFor="scp-message">Message</label><textarea id="scp-message" value={message} onChange={e => setMessage(e.target.value)} placeholder="Write a question, update, or feedback…" maxLength={10000} rows={3} /><button disabled={busy === "message" || !message.trim()}>{busy === "message" ? "Sending…" : "Send message"}</button></form>
