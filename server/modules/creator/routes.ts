@@ -151,14 +151,16 @@ function creatorPortalSessionClaims(req: any): { portalId: number } | null {
 
 /** Creator Portal access is isolated from the legacy consumer client portal. */
 creatorRouter.post("/creator/portal/accept", async (req: any, res) => {
+  res.set("Cache-Control", "no-store");
   if (!creatorPortalEnabled()) return portalUnavailable(res);
   const token = String(req.body?.token || "").trim();
   if (!/^[A-Za-z0-9_-]{40,100}$/.test(token)) return res.status(400).json({ error: "Invalid invitation token" });
+  // Check signing configuration BEFORE consuming the one-time invitation.
+  const secret = process.env.JWT_SECRET;
+  if (!secret) return res.status(503).json({ error: "Portal authentication is unavailable" });
   try {
     const portal = await acceptCreatorPortalToken(token);
-    if (!portal) return res.status(401).json({ error: "Invitation is invalid, expired, or revoked" });
-    const secret = process.env.JWT_SECRET;
-    if (!secret) return res.status(503).json({ error: "Portal authentication is unavailable" });
+    if (!portal) return res.status(401).json({ error: "Invitation is invalid, expired, or already used" });
     const session = jwt.sign({ portalId: Number(portal.id), purpose: "creator_portal" }, secret, { expiresIn: "7d" });
     res.cookie("creator_portal_session", session, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 7 * 24 * 60 * 60 * 1000, path: "/" });
     return res.json({ success: true });
@@ -169,6 +171,7 @@ creatorRouter.post("/creator/portal/accept", async (req: any, res) => {
 });
 
 creatorRouter.get("/creator/portal/me", async (req: any, res) => {
+  res.set("Cache-Control", "no-store");
   if (!creatorPortalEnabled()) return portalUnavailable(res);
   const claims = creatorPortalSessionClaims(req);
   if (!claims) return res.status(401).json({ error: "Creator Portal session required" });
@@ -235,6 +238,7 @@ creatorRouter.patch("/creator/admin/leads/:leadId/portal", requireCreatorAdmin, 
 });
 
 creatorRouter.post("/creator/admin/leads/:leadId/portal/invite", requireCreatorAdmin, async (req: any, res) => {
+  res.set("Cache-Control", "no-store");
   if (!creatorPortalEnabled()) return portalUnavailable(res);
   const leadId = safeLeadId(req.params.leadId);
   if (!leadId) return res.status(400).json({ error: "Invalid lead identifier" });
@@ -244,14 +248,21 @@ creatorRouter.post("/creator/admin/leads/:leadId/portal/invite", requireCreatorA
     const invitation = await inviteCreatorPortal({ creatorLeadId: leadId, actor: req.creatorAdmin.email });
     if (!invitation) return res.status(500).json({ error: "Invitation could not be created" });
     const invitationUrl = `${portalBaseUrl()}/creator/portal/invite?token=${encodeURIComponent(invitation.token)}`;
-    const { sendRawEmail } = await import("../../services/auditEmailService");
     const firstName = escapeHtml(String(lead.full_name || "there").split(" ")[0]);
-    const sent = await sendRawEmail({
-      to: String(lead.email),
-      subject: "Your Zakhy Creator Portal invitation",
-      html: `<p>Hi ${firstName},</p><p>Your private Zakhy Creator Portal is ready.</p><p><a href="${invitationUrl}">Open your Creator Portal</a></p><p>This invitation expires in 7 days. If you were not expecting it, you can ignore this message.</p>`,
-    });
-    return res.status(201).json({ success: true, portal: invitation.portal, invitationUrl, emailSent: sent });
+    let emailSent = false;
+    try {
+      const { sendRawEmail } = await import("../../services/auditEmailService");
+      emailSent = await sendRawEmail({
+        to: String(lead.email),
+        fromName: "Creator Automations",
+        subject: "Your Creator Automations workspace invitation",
+        html: `<p>Hi ${firstName},</p><p>Your private Creator Automations workspace is ready.</p><p><a href="${invitationUrl}">Open your Creator Portal</a></p><p>This one-time invitation link expires in 7 days. If you were not expecting it, you can ignore this message.</p>`,
+      });
+    } catch (sendError) {
+      console.error("[Creator Portal] Invitation email failed; manual link remains available", sendError);
+    }
+    // Preserve an admin-only manual sharing option if the email provider fails.
+    return res.status(201).json({ success: true, portal: invitation.portal, invitationUrl, emailSent });
   } catch (error) {
     console.error("[Creator Portal] Invitation creation failed", error);
     return res.status(503).json({ error: "Unable to create Creator Portal invitation" });

@@ -135,9 +135,10 @@ function CreatorPortalScreen() {
       try {
         const token = new URLSearchParams(window.location.search).get("token") || new URLSearchParams(window.location.search).get("invite");
         if (token) {
-          const accepted = await fetch("/api/creator/portal/accept", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token }), credentials: "include" });
-          if (!accepted.ok) throw new Error((await accepted.json()).error || "This invitation is invalid or expired.");
+          // Remove the secret from the address bar before issuing any API requests.
           window.history.replaceState({}, "", "/creator/portal");
+          const accepted = await fetch("/api/creator/portal/accept", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token }), credentials: "include", cache: "no-store" });
+          if (!accepted.ok) throw new Error((await accepted.json()).error || "This invitation is invalid, expired, or already used.");
         }
         const response = await fetch("/api/creator/portal/me", { credentials: "include" });
         const body = await response.json();
@@ -155,7 +156,7 @@ function CreatorPortalScreen() {
 
   const logout = async () => {
     await fetch("/api/creator/portal/logout", { method: "POST", credentials: "include" });
-    setLocation("/creator/portal/invite");
+    setLocation("/creator/portal/login");
   };
 
   const sendMessage = async (event: React.FormEvent) => {
@@ -171,7 +172,7 @@ function CreatorPortalScreen() {
   };
 
   if (loading) return <main className="creator-portal-screen"><section className="creator-portal-welcome"><p className="creator-eyebrow">ZAKHY BUILDS AI</p><h1>Loading your workspace.</h1><p>Preparing your private Creator Portal.</p></section></main>;
-  if (error || !portal) return <main className="creator-portal-screen"><section className="creator-portal-support"><div><p className="creator-eyebrow">PRIVATE CREATOR PORTAL</p><h2>Use your invitation to open your project.</h2><p>This workspace requires an active, private invitation. If your link expired, request a new one from the Creator Automations team.</p></div><Link className="creator-button" href="/creator/portal/login">Enter invitation</Link></section></main>;
+  if (error || !portal) return <main className="creator-portal-screen"><section className="creator-portal-support"><div><p className="creator-eyebrow">PRIVATE CREATOR PORTAL</p><h2>Use your invitation to open your project.</h2><p>This workspace requires a private invitation. Invitation links can be used once; if yours is expired or already used, request a fresh link.</p></div><Link className="creator-button" href="/creator/portal/login">Enter invitation</Link></section></main>;
 
   return (
     <main className="creator-portal-screen">
