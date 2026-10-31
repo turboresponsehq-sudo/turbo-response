@@ -206,6 +206,7 @@ function CreatorPortalScreen() {
         {error && <p className="cap-error" role="alert">{error}</p>}
         <button type="submit" disabled={working}>{working ? "Creating password…" : "Create password and open project"}</button>
       </form>
+      <p className="cap-footnote">Already set up your password? <Link href="/creator/portal/login">Sign in here</Link>.</p>
       <p className="cap-footnote">Only use this invitation if it was sent to you directly by Creator Automations.</p>
     </section>
   </main>;
