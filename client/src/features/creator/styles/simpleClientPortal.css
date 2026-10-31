@@ -8,3 +8,6 @@
 .scp-card .scp-card-action.scp-email{background:#fff0f2;border-color:#f6cbd1;color:#a21a2b}
 .scp-card .scp-card-action.scp-email:hover{background:#ffe1e6}
 .scp-card .scp-card-secondary{display:block;margin-top:12px;color:#8b2730;font-weight:700;font-size:12px;text-align:center}
+
+.scp-review-links{display:flex;align-items:center;flex-wrap:wrap;gap:18px}
+@media(max-width:640px){.scp-review-links{gap:14px}}
