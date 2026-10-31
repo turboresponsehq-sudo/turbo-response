@@ -24,6 +24,7 @@ import { resumePersistedDriveIngestion } from "../services/googleDriveIngestionS
 import { creatorRouter } from "../modules/creator/routes";
 import { cleanupZakhyHubSpotQaRecords } from "../modules/creator/hubspotQaCleanup";
 import { seedFeDelveyHostingTask } from "../modules/creator/creatorRequestedTaskSeed";
+import { ensureCreatorCredentialsSchema } from "../modules/creator/creatorPortalCredentials";
 import { aiLearningRouter } from "../modules/aiLearning";
 import { amaniRouter } from "../modules/amani/routes";
 import bcrypt from "bcrypt";
@@ -48,6 +49,12 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 }
 
 async function startServer() {
+  // Credential table is Creator-only and additive; fail-closed for new password access on DB errors.
+  try {
+    await ensureCreatorCredentialsSchema();
+  } catch (error) {
+    console.error("[Creator Portal] Password credential storage unavailable", error);
+  }
   await cleanupZakhyHubSpotQaRecords();
   // User-requested, one-time FeDelvey website-hosting task. Scoped to this
   // exact Creator lead. The seed is idempotent and never changes portal access.
