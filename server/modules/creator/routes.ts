@@ -1,7 +1,13 @@
 import { Router, type RequestHandler } from "express";
 import jwt from "jsonwebtoken";
+import multer from "multer";
 import { sql } from "drizzle-orm";
 import { getDb } from "../../db";
+import {
+  addWorkspaceAttachment, addWorkspaceTask, findWorkspaceAttachment,
+  getWorkspaceData, setWorkspaceGoal, updateWorkspaceTask,
+} from "./creatorWorkspaceRepository";
+import { allowedWorkspaceMimes, getWorkspaceFile, MAX_WORKSPACE_FILE_BYTES, safeAttachmentName, saveWorkspaceFile } from "./creatorWorkspaceFiles";
 import {
   addCreatorLeadNote,
   createCreatorFollowUpTask,
@@ -36,6 +42,47 @@ import {
 } from "./creatorPortalRepository";
 
 export const creatorRouter = Router();
+
+const workspaceUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: MAX_WORKSPACE_FILE_BYTES, files: 1 },
+  fileFilter: (_req, file, cb) => {
+    if (!allowedWorkspaceMimes.has(file.mimetype)) return cb(new Error("Upload an image, PDF, Word file, or text file."));
+    cb(null, true);
+  },
+});
+const workspaceUploadOne: RequestHandler = (req, res, next) => {
+  workspaceUpload.single("file")(req, res, (error: any) => {
+    if (error) return res.status(400).json({ error: error.code === "LIMIT_FILE_SIZE" ? "File limit is 8 MB" : String(error.message || "Upload rejected") });
+    next();
+  });
+};
+function workspaceFileResponse(res: any, file: { name: string; mime: string }, buffer: Buffer) {
+  res.set("Cache-Control", "private, no-store");
+  res.set("X-Content-Type-Options", "nosniff");
+  res.set("Content-Type", "application/octet-stream");
+  res.set("Content-Disposition", `attachment; filename="${safeAttachmentName(file.name).replace(/"/g, "")}"`);
+  return res.send(buffer);
+}
+async function workspaceEmailNotice(portal: any, text: string) {
+  const to = process.env.CREATOR_PORTAL_NOTIFY_EMAIL || process.env.ZAKHY_ADMIN_EMAIL || process.env.ADMIN_EMAIL || "turboresponsehq@gmail.com";
+  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(to)) return false;
+  const name = escapeHtml(String(portal.brand_name || portal.full_name || "Creator client"));
+  const message = escapeHtml(text).replace(/\\n/g, "<br>");
+  try {
+    const { sendRawEmail } = await import("../../services/auditEmailService");
+    return await sendRawEmail({
+      to,
+      fromName: "Creator Automations",
+      subject: "New client portal message — " + String(portal.brand_name || portal.full_name || "Creator").slice(0, 100).replace(/[\\r\\n]/g, " "),
+      html: `<h2>New message from ${name}</h2><p style="white-space:pre-wrap">${message}</p><p><a href="https://turboresponsehq.ai/admin/creator/leads?lead=${Number(portal.creator_lead_id)}">Open the project conversation</a></p>`,
+    });
+  } catch (error) {
+    console.error("[Creator Portal] Message notification unavailable", error);
+    return false;
+  }
+}
+
 
 // Creator V1 remains closed until the additive PostgreSQL migration is applied
 // and a release is explicitly approved. This prevents traffic from reaching
@@ -217,7 +264,8 @@ creatorRouter.post("/creator/portal/messages", async (req: any, res) => {
     const portal = await getPortalForSession(claims.portalId);
     if (!portal) return res.status(401).json({ error: "Creator Portal access is inactive" });
     const message = await createCreatorPortalMessage({ creatorLeadId: Number(portal.creator_lead_id), senderType: "creator", text, visibleToCreator: true });
-    return res.status(201).json({ success: true, message });
+    const emailSent = await workspaceEmailNotice(portal, text);
+    return res.status(201).json({ success: true, message, emailSent });
   } catch (error) {
     console.error("[Creator Portal] Creator message failed", error);
     return res.status(503).json({ error: "Unable to save Creator Portal message" });
@@ -229,7 +277,14 @@ creatorRouter.get("/creator/admin/leads/:leadId/portal", requireCreatorAdmin, as
   const leadId = safeLeadId(req.params.leadId);
   if (!leadId) return res.status(400).json({ error: "Invalid lead identifier" });
   try {
-    return res.json({ success: true, portal: await getCreatorPortalByLeadId(leadId) });
+    const portal = await getCreatorPortalByLeadId(leadId);
+    if (!portal) return res.json({ success: true, portal: null });
+    const lead = await getCreatorLeadById(leadId);
+    const [workspace, messages] = await Promise.all([
+      getWorkspaceData(Number(portal.id), String(lead?.package_interest || "Your project")),
+      getCreatorPortalMessages(leadId),
+    ]);
+    return res.json({ success: true, portal: { ...portal, ...workspace, messages: messages.filter((m: any) => m.visible_to_creator === true) } });
   } catch (error) {
     console.error("[Creator Portal] Admin load failed", error);
     return res.status(503).json({ error: "Creator Portal storage is unavailable" });
