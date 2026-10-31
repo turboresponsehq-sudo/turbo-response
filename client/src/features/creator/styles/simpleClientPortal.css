@@ -80,3 +80,6 @@
 .scp-client-top{display:flex;align-items:center;justify-content:space-between;background:#1b1b1d;color:white;padding:12px max(16px,calc((100vw - 980px)/2));font-size:10px;letter-spacing:.1em;font-weight:800}
 .scp-client-top button{background:none;color:white;border:1px solid #777;padding:8px 12px;border-radius:7px;cursor:pointer;font-size:12px}
 @media(max-width:700px){.scp-task-columns,.scp-attachment-forms{grid-template-columns:1fr}.scp-project-hero,.scp-project-card,.scp-project-section{padding:19px}.scp-chat-bubble{max-width:95%}.scp-project-workspace .scp-header{padding:20px 0}.scp-add-task label:first-child{flex-basis:100%}}
+
+.scp-refresh-chat{border:1px solid #ddd;background:white;padding:9px 12px;border-radius:7px;font-size:11px;font-weight:750;color:#8b2634;cursor:pointer}
+.scp-refresh-chat:hover{background:#fff1f2}
