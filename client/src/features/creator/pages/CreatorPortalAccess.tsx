@@ -21,6 +21,7 @@ function invitationToken(value: string): string {
 export default function CreatorPortalAccess({ mode = "preview" }: { mode?: AccessMode }) {
   const [invite, setInvite] = useState("");
   const [notice, setNotice] = useState("");
+  const [demoChecks, setDemoChecks] = useState<Record<string, boolean>>({ logo: true, domain: false, hosting: false, review: false });
 
   function openInvitation(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -71,7 +72,7 @@ export default function CreatorPortalAccess({ mode = "preview" }: { mode?: Acces
         <>
           <section className="cap-hero">
             <div>
-              <p className="cap-eyebrow">INTERACTIVE LOOK · SAMPLE DATA ONLY</p>
+              <p className="cap-eyebrow">INTERACTIVE CHECKLIST · SAMPLE DATA ONLY</p>
               <h1>Your project.<br/><em>One place.</em></h1>
               <p>A simple client home for project milestones, requested materials, progress updates, and important next steps.</p>
               <Link className="cap-primary-link" href="/creator/portal/login">Open your own workspace</Link>
@@ -86,29 +87,38 @@ export default function CreatorPortalAccess({ mode = "preview" }: { mode?: Acces
 
           <section className="cap-grid">
             <article className="cap-tile cap-tile-wide">
-              <span className="cap-label">YOUR PROJECT</span>
-              <h3>Your Brand Website + Automation</h3>
-              <p>Current phase: Website concept &amp; content collection</p>
-              <div className="cap-meter" aria-label="Project demo progress: 3 of 5 stages"><span /></div>
-              <small>3 OF 5 MILESTONES · SAMPLE</small>
+              <span className="cap-label">THE PROJECT</span>
+              <h3>Get the website live on the internet.</h3>
+              <p>Current phase: Hosting, assets &amp; final review</p>
+              <small>SAMPLE PROJECT · IN PROGRESS</small>
+            </article>
+            {(["team", "client"] as const).map(owner => <article className="cap-tile" key={owner}>
+              <span className="cap-label">{owner === "team" ? "CREATOR AUTOMATIONS" : "CLIENT"}</span>
+              <h3>{owner === "team" ? "My Team's Tasks" : "Client's Tasks"}</h3>
+              <div className="cap-demo-tasks">
+                {(owner === "team" ? [
+                  { key: "hosting", text: "Set up website hosting", urgent: true },
+                  { key: "review", text: "Publish approved website", urgent: false },
+                ] : [
+                  { key: "logo", text: "Send brand logo", urgent: false },
+                  { key: "domain", text: "Approve website design", urgent: true },
+                ]).map(item => <label key={item.key} className={demoChecks[item.key] ? "cap-demo-task-done" : ""}>
+                  <input type="checkbox" checked={demoChecks[item.key] || false} onChange={e => setDemoChecks(c => ({ ...c, [item.key]: e.target.checked }))} />
+                  <span>{item.text}</span>{item.urgent && !demoChecks[item.key] ? <b>URGENT</b> : null}
+                </label>)}
+              </div>
+            </article>)}
+            <article className="cap-tile">
+              <span className="cap-label">PROJECT CONVERSATION</span>
+              <h3>Have a question?</h3>
+              <p>Ask questions inside your private workspace. The Creator Automations team gets an email with your message.</p>
+              <Link className="cap-demo-action" href="/creator/portal/login">Open private chat</Link>
             </article>
             <article className="cap-tile">
-              <span className="cap-label">NEXT STEP</span>
-              <h3>Send your brand assets.</h3>
-              <p>Share your logo, biography, and approved photographs to prepare your first review.</p>
-            </article>
-            <article className="cap-tile">
-              <span className="cap-label">REQUESTED ITEMS</span>
-              <ul className="cap-items">
-                <li><span>Brand logo</span><b>Received</b></li>
-                <li><span>Social media links</span><b>Received</b></li>
-                <li><span>Approved photos</span><b className="cap-pending">Needed</b></li>
-              </ul>
-            </article>
-            <article className="cap-tile">
-              <span className="cap-label">LATEST UPDATE</span>
-              <h3>Your concept is being prepared.</h3>
-              <p>We'll share the first website direction after the remaining materials are received.</p>
+              <span className="cap-label">FILES & LINKS</span>
+              <h3>Share what we need.</h3>
+              <p>Submit screenshots, PDFs, photographs and website links securely inside your project.</p>
+              <Link className="cap-demo-action" href="/creator/portal/login">Open file submission</Link>
             </article>
           </section>
 
