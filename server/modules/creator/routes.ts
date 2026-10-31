@@ -31,6 +31,7 @@ import {
   creatorPortalEnabled,
   getCreatorPortalByLeadId,
   getCreatorPortalMessages,
+  ensureCreatorPortal,
   getPortalForSession,
   inviteCreatorPortal,
   revokeCreatorPortal,
@@ -244,6 +245,22 @@ creatorRouter.get("/creator/admin/leads/:leadId/portal", requireCreatorAdmin, as
   } catch (error) {
     console.error("[Creator Portal] Admin load failed", error);
     return res.status(503).json({ error: "Creator Portal storage is unavailable" });
+  }
+});
+
+/** Explicitly initialize an empty project workspace without sending any client invitation. */
+creatorRouter.post("/creator/admin/leads/:leadId/portal/setup", requireCreatorAdmin, async (req: any, res) => {
+  if (!creatorPortalEnabled()) return portalUnavailable(res);
+  const leadId = safeLeadId(req.params.leadId);
+  if (!leadId) return res.status(400).json({ error: "Invalid lead" });
+  try {
+    const lead = await getCreatorLeadById(leadId);
+    if (!lead) return res.status(404).json({ error: "Client record not found" });
+    const portal = await ensureCreatorPortal(leadId);
+    return res.status(201).json({ success: true, portal });
+  } catch (err) {
+    console.error("[Creator workspace] Setup failed", err);
+    return res.status(503).json({ error: "Could not create project workspace" });
   }
 });
 
