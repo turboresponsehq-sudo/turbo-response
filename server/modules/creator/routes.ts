@@ -1,13 +1,9 @@
 import { Router, type RequestHandler } from "express";
 import jwt from "jsonwebtoken";
-import multer from "multer";
 import { sql } from "drizzle-orm";
 import { getDb } from "../../db";
-import {
-  addWorkspaceAttachment, addWorkspaceTask, findWorkspaceAttachment,
-  getWorkspaceData, setWorkspaceGoal, updateWorkspaceTask,
-} from "./creatorWorkspaceRepository";
-import { allowedWorkspaceMimes, getWorkspaceFile, MAX_WORKSPACE_FILE_BYTES, safeAttachmentName, saveWorkspaceFile } from "./creatorWorkspaceFiles";
+import { getWorkspaceData } from "./creatorWorkspaceRepository";
+import { registerCreatorWorkspaceRoutes } from "./creatorWorkspaceRoutes";
 import {
   addCreatorLeadNote,
   createCreatorFollowUpTask,
@@ -42,47 +38,6 @@ import {
 } from "./creatorPortalRepository";
 
 export const creatorRouter = Router();
-
-const workspaceUpload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: MAX_WORKSPACE_FILE_BYTES, files: 1 },
-  fileFilter: (_req, file, cb) => {
-    if (!allowedWorkspaceMimes.has(file.mimetype)) return cb(new Error("Upload an image, PDF, Word file, or text file."));
-    cb(null, true);
-  },
-});
-const workspaceUploadOne: RequestHandler = (req, res, next) => {
-  workspaceUpload.single("file")(req, res, (error: any) => {
-    if (error) return res.status(400).json({ error: error.code === "LIMIT_FILE_SIZE" ? "File limit is 8 MB" : String(error.message || "Upload rejected") });
-    next();
-  });
-};
-function workspaceFileResponse(res: any, file: { name: string; mime: string }, buffer: Buffer) {
-  res.set("Cache-Control", "private, no-store");
-  res.set("X-Content-Type-Options", "nosniff");
-  res.set("Content-Type", "application/octet-stream");
-  res.set("Content-Disposition", `attachment; filename="${safeAttachmentName(file.name).replace(/"/g, "")}"`);
-  return res.send(buffer);
-}
-async function workspaceEmailNotice(portal: any, text: string) {
-  const to = process.env.CREATOR_PORTAL_NOTIFY_EMAIL || process.env.ZAKHY_ADMIN_EMAIL || process.env.ADMIN_EMAIL || "turboresponsehq@gmail.com";
-  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(to)) return false;
-  const name = escapeHtml(String(portal.brand_name || portal.full_name || "Creator client"));
-  const message = escapeHtml(text).replace(/\\n/g, "<br>");
-  try {
-    const { sendRawEmail } = await import("../../services/auditEmailService");
-    return await sendRawEmail({
-      to,
-      fromName: "Creator Automations",
-      subject: "New client portal message — " + String(portal.brand_name || portal.full_name || "Creator").slice(0, 100).replace(/[\\r\\n]/g, " "),
-      html: `<h2>New message from ${name}</h2><p style="white-space:pre-wrap">${message}</p><p><a href="https://turboresponsehq.ai/admin/creator/leads?lead=${Number(portal.creator_lead_id)}">Open the project conversation</a></p>`,
-    });
-  } catch (error) {
-    console.error("[Creator Portal] Message notification unavailable", error);
-    return false;
-  }
-}
-
 
 // Creator V1 remains closed until the additive PostgreSQL migration is applied
 // and a release is explicitly approved. This prevents traffic from reaching
@@ -637,3 +592,6 @@ creatorRouter.post("/creator/admin/leads/:leadId/tasks", requireCreatorAdmin, as
     return res.status(500).json({ error: "Unable to save follow-up task." });
   }
 });
+
+// Creator-only project workspace endpoints; all keep the existing portal/admin authorization.
+registerCreatorWorkspaceRoutes(creatorRouter, requireCreatorAdmin, creatorPortalSessionClaims);
