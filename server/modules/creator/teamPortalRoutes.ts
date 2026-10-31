@@ -252,4 +252,74 @@ export function registerCreatorTeamPortalRoutes(router:Router,requireAdmin:Reque
   }catch(e){return unavailable(res,e);}
  });
 
+
+ const adminProject=async(leadId:number,db:any)=>{
+  if(!Number.isSafeInteger(leadId)||leadId<=0)return null;
+  return rows(await db.execute(sql`SELECT id FROM creator_portals WHERE creator_lead_id=${leadId} LIMIT 1`))[0]||null;
+ };
+ router.get("/creator/admin/leads/:leadId/portal/team-content",requireAdmin,async(req:any,res)=>{
+  if(!creatorPortalEnabled())return gate(res);
+  try{
+   const db=await getDb();if(!db)throw Error("DB");
+   const p=await adminProject(Number(req.params.leadId),db);
+   if(!p)return res.json({calendar:[],files:[]});
+   const [calendar,files]=await Promise.all([
+    db.execute(sql`SELECT id,title,starts_at,ends_at,description,created_by FROM creator_portal_calendar
+     WHERE portal_id=${Number(p.id)} AND starts_at>NOW()-INTERVAL '30 days' ORDER BY starts_at LIMIT 100`),
+    db.execute(sql`SELECT id,file_name,mime_type,size_bytes,uploaded_by,created_at FROM creator_portal_files
+     WHERE portal_id=${Number(p.id)} ORDER BY id DESC LIMIT 100`)
+   ]);
+   return res.json({calendar:rows(calendar),files:rows(files)});
+  }catch(e){return unavailable(res,e);}
+ });
+ router.post("/creator/admin/leads/:leadId/portal/team-calendar",requireAdmin,async(req:any,res)=>{
+  if(!creatorPortalEnabled())return gate(res);
+  const title=String(req.body?.title||"").trim(),description=String(req.body?.description||"").trim();
+  const start=new Date(String(req.body?.startsAt||"")),end=new Date(String(req.body?.endsAt||""));
+  if(!title||title.length>250||description.length>3000||!Number.isFinite(start.getTime())
+   ||!Number.isFinite(end.getTime())||end<=start)return res.status(400).json({error:"Invalid event title or dates."});
+  try{
+   const db=await getDb();if(!db)throw Error("DB");
+   const p=await adminProject(Number(req.params.leadId),db);
+   if(!p)return res.status(404).json({error:"Client workspace not initialized"});
+   await db.execute(sql`INSERT INTO creator_portal_calendar
+    (portal_id,title,starts_at,ends_at,description,created_by)
+    VALUES(${Number(p.id)},${title},${start.toISOString()},${end.toISOString()},${description},'Creator Automations')`);
+   return res.status(201).json({success:true});
+  }catch(e){return unavailable(res,e);}
+ });
+ router.post("/creator/admin/leads/:leadId/portal/team-files",requireAdmin,
+  (req:any,res:any,next:any)=>fileUpload.single("file")(req,res,(err:any)=>
+    err?res.status(400).json({error:"File upload failed. Limit 15 MB."}):next()),
+  async(req:any,res)=>{
+   if(!creatorPortalEnabled())return gate(res);
+   const file=req.file;
+   if(!file||!file.buffer||file.size>15*1024*1024||!/\\.(jpe?g|png|webp|pdf|docx?)$/i.test(file.originalname))
+    return res.status(400).json({error:"Select an image, PDF, or Word document under 15 MB."});
+   try{
+    const db=await getDb();if(!db)throw Error("DB");
+    const p=await adminProject(Number(req.params.leadId),db);
+    if(!p)return res.status(404).json({error:"Client workspace not initialized"});
+    const name=String(file.originalname).replace(/[^a-zA-Z0-9_.-]/g,"_").slice(0,160)||"file";
+    const key="creator-team/"+p.id+"/"+crypto.randomUUID()+"-"+name;
+    await storagePut(key,file.buffer,file.mimetype);
+    await db.execute(sql`INSERT INTO creator_portal_files(portal_id,storage_key,file_name,mime_type,size_bytes,uploaded_by)
+      VALUES(${Number(p.id)},${key},${name},${String(file.mimetype)},${Number(file.size)},'Creator Automations')`);
+    return res.status(201).json({success:true});
+   }catch(e){return unavailable(res,e);}
+  });
+ router.get("/creator/admin/leads/:leadId/portal/team-files/:fileId",requireAdmin,async(req:any,res)=>{
+  if(!creatorPortalEnabled())return gate(res);
+  try{
+   const db=await getDb();if(!db)throw Error("DB");
+   const p=await adminProject(Number(req.params.leadId),db),fileId=Number(req.params.fileId);
+   if(!p||!Number.isSafeInteger(fileId)||fileId<=0)return res.status(404).json({error:"File not found"});
+   const f=rows(await db.execute(sql`SELECT storage_key FROM creator_portal_files
+     WHERE id=${fileId} AND portal_id=${Number(p.id)} LIMIT 1`))[0];
+   if(!f)return res.status(404).json({error:"File not found"});
+   const download=await storageGet(String(f.storage_key));
+   return res.json({url:download.url});
+  }catch(e){return unavailable(res,e);}
+ });
+
 }
