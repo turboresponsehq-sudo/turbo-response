@@ -73,7 +73,7 @@ export function registerCreatorTeamPortalRoutes(router:Router,requireAdmin:Reque
     (portal_id,email,display_name,password_hash,status,email_verification_hash,email_verification_expires_at)
     VALUES(${portalId},${email},${name},${passhash},'pending_verification',${hash(verify)},${exp}) RETURNING id`))[0];
    const url=home()+"/creator/portal/verify?token="+encodeURIComponent(verify);
-   const sent=await sendRawEmail({to:email,subject:"Verify your Creator Automations project request",
+   const sent=await sendRawEmail({to:email,fromName:"Creator Automations",subject:"Verify your Creator Automations project request",
      html:"<p>Hi "+escape(name)+",</p><p>Verify your email to request access:</p><p><a href='"+escape(url)+"'>Verify email</a></p><p>Access still requires administrator approval. Expires in 24 hours.</p>"});
    if(!sent){
     await db.execute(sql`DELETE FROM creator_portal_members WHERE id=${Number(m.id)} AND status='pending_verification'`);
@@ -128,7 +128,7 @@ export function registerCreatorTeamPortalRoutes(router:Router,requireAdmin:Reque
       OR (${action}='revoke' AND m.status<>'revoked')) RETURNING m.email,m.display_name,m.status`))[0];
    if(!m)return res.status(409).json({error:"Member must verify email before approval."});
    if(action==="approve"){
-    const sent=await sendRawEmail({to:String(m.email),subject:"Creator Automations access approved",
+    const sent=await sendRawEmail({to:String(m.email),fromName:"Creator Automations",subject:"Creator Automations access approved",
       html:"<p>Hi "+escape(String(m.display_name))+",</p><p>Your project access is approved.</p><p><a href='"+
         home()+"/creator/portal/login'>Open your project and log in</a></p>"});
     return res.json({member:m,emailSent:sent});
