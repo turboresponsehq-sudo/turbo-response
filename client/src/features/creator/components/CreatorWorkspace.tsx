@@ -1,5 +1,4 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { Link } from "wouter";
 import { getAdminSessionAuthorizationHeader } from "@/lib/adminSession";
 import "../styles/simpleClientPortal.css";
 
@@ -20,11 +19,12 @@ export type CreatorWorkspaceData = {
 
 export default function CreatorWorkspace({ initial, mode, leadId, clientName }: {
   initial: CreatorWorkspaceData;
-  mode: "admin" | "client";
+  mode: "admin" | "client" | "demo";
   leadId?: number;
   clientName?: string;
 }) {
   const admin = mode === "admin";
+  const demo = mode === "demo";
   const [project, setProject] = useState<CreatorWorkspaceData>(initial);
   const [goalText, setGoalText] = useState(initial.project_goal || "");
   const [editingGoal, setEditingGoal] = useState(false);
@@ -60,6 +60,7 @@ export default function CreatorWorkspace({ initial, mode, leadId, clientName }: 
   }
 
   async function refreshConversation() {
+    if (demo) return;
     try {
       const url = admin ? base + "/messages" : "/api/creator/portal/me";
       const response = await fetch(url, { credentials: "include", headers: headers(), cache: "no-store" });
@@ -71,6 +72,7 @@ export default function CreatorWorkspace({ initial, mode, leadId, clientName }: 
   }
 
   useEffect(() => {
+    if (demo) return;
     const interval = window.setInterval(() => { void refreshConversation(); }, 25000);
     return () => window.clearInterval(interval);
   }, [base, admin]);
@@ -103,6 +105,11 @@ export default function CreatorWorkspace({ initial, mode, leadId, clientName }: 
   }
 
   async function checkTask(id: number, done: boolean) {
+    if (demo) {
+      setProject(p => ({ ...p, tasks: (p.tasks || []).map(t => t.id === id ? { ...t, status: done ? "complete" : "needed" } : t) }));
+      setNotice("Sample checklist updated. Real projects save changes securely.");
+      return;
+    }
     setBusy("task-" + id); setNotice("");
     try {
       const data = await send("/tasks/" + id, "PATCH", { done });
@@ -114,6 +121,12 @@ export default function CreatorWorkspace({ initial, mode, leadId, clientName }: 
   async function sendMessage(event: FormEvent) {
     event.preventDefault();
     if (!message.trim()) return;
+    if (demo) {
+      setProject(p => ({ ...p, messages: [...(p.messages || []), { id: -(Date.now()), sender_type: "creator", message_text: message.trim(), created_at: new Date().toISOString() }] }));
+      setMessage("");
+      setNotice("Sample message added here only. No email was sent.");
+      return;
+    }
     setBusy("message"); setNotice("");
     try {
       const data = await send("/messages", "POST", { text: message.trim(), ...(admin ? { visibleToCreator: true } : {}) });
@@ -127,6 +140,14 @@ export default function CreatorWorkspace({ initial, mode, leadId, clientName }: 
   async function addLink(event: FormEvent) {
     event.preventDefault();
     if (!linkUrl.trim()) return;
+    if (demo) {
+      try { const u = new URL(linkUrl); if (!["https:", "http:"].includes(u.protocol)) throw new Error(); }
+      catch { setNotice("Enter a valid website link."); return; }
+      setProject(p => ({ ...p, attachments: [{ id: -(Date.now()), kind: "link", name: linkName || linkUrl, url: linkUrl.trim(), created_at: new Date().toISOString() }, ...(p.attachments || [])] }));
+      setLinkUrl(""); setLinkName("");
+      setNotice("Sample link added to this preview only.");
+      return;
+    }
     setBusy("link"); setNotice("");
     try {
       const data = await send("/attachments/link", "POST", { name: linkName || linkUrl, url: linkUrl.trim() });
@@ -140,6 +161,14 @@ export default function CreatorWorkspace({ initial, mode, leadId, clientName }: 
   async function uploadFile(event: FormEvent) {
     event.preventDefault();
     if (!file) return;
+    if (demo) {
+      setProject(p => ({ ...p, attachments: [{ id: -(Date.now()), kind: "file", name: file.name, created_at: new Date().toISOString() }, ...(p.attachments || [])] }));
+      setFile(null);
+      const input = document.getElementById("workspace-file-input") as HTMLInputElement | null;
+      if (input) input.value = "";
+      setNotice("Sample file listed here only. No file was uploaded.");
+      return;
+    }
     setBusy("file"); setNotice("");
     try {
       if (file.size > 8 * 1024 * 1024) throw new Error("Please use a file under 8 MB.");
@@ -156,6 +185,7 @@ export default function CreatorWorkspace({ initial, mode, leadId, clientName }: 
   }
 
   async function downloadFile(id: number, name: string) {
+    if (demo) { setNotice("This is a demo. No real file was uploaded."); return; }
     setBusy("download-" + id);
     try {
       const response = await fetch(base + "/attachments/" + id, { credentials: "include", headers: headers(), cache: "no-store" });
@@ -178,25 +208,25 @@ export default function CreatorWorkspace({ initial, mode, leadId, clientName }: 
       const done = (a.status === "complete" ? 1 : 0) - (b.status === "complete" ? 1 : 0);
       return done || (a.priority === "urgent" ? -1 : 1) - (b.priority === "urgent" ? -1 : 1);
     });
-    const title = owner === "team" ? "My Team's Tasks" : "Client's Tasks";
+    const title = owner === "team" ? (admin ? "My Team's Tasks" : "Creator Automations Tasks") : (admin ? "Client's Tasks" : "Your Tasks");
     return <article className="scp-project-card scp-task-panel" key={owner}>
       <div className="scp-panel-heading"><div><span className="scp-label">{owner === "team" ? "CREATOR AUTOMATIONS" : "CLIENT"}</span><h2>{title}</h2></div><span className="scp-task-count">{tasks.filter(t => t.status === "complete").length}/{tasks.length} done</span></div>
       {tasks.length ? <div className="scp-task-list">{tasks.map(t => {
         const done = t.status === "complete";
-        const canCheck = admin || owner === "client";
+        const canCheck = demo || admin || owner === "client";
         return <label className={`scp-task ${done ? "is-done" : ""} ${!canCheck ? "is-readonly" : ""}`} key={t.id}>
           <input type="checkbox" checked={done} disabled={!canCheck || busy === "task-" + t.id} onChange={e => checkTask(t.id, e.target.checked)} />
           <span className="scp-task-content"><strong>{t.label}</strong><small>{done ? "Completed" : t.priority === "urgent" ? "Urgent" : "Normal priority"}</small></span>
           {t.priority === "urgent" && !done ? <span className="scp-urgent">URGENT</span> : null}
         </label>;
       })}</div> : <p className="scp-empty">No tasks assigned yet.</p>}
-      {!admin && owner === "team" ? <p className="scp-task-hint">Your team checks these off as work is completed.</p> : null}
+      {!admin && !demo && owner === "team" ? <p className="scp-task-hint">Your team checks these off as work is completed.</p> : null}
     </article>;
   }
 
   return <main className="scp-page scp-project-workspace">
     <div className="scp-workspace">
-      <header className="scp-header"><span className="scp-brand">⚡ CREATOR AUTOMATIONS</span><span>{admin ? "ADMIN PROJECT VIEW" : "CLIENT PROJECT"}</span></header>
+      <header className="scp-header"><span className="scp-brand">⚡ CREATOR AUTOMATIONS</span><span>{admin ? "ADMIN PROJECT VIEW" : demo ? "SAMPLE PROJECT · NOT SAVED" : "CLIENT PROJECT"}</span></header>
       <section className="scp-intro"><p className="scp-kicker">PROJECT WORKSPACE</p><h1>{clientName || project.brand_name || project.full_name || "Your project"}</h1><p>One project. Clear responsibilities. Everything in one place.</p></section>
       <section className="scp-project-hero">
         <span className="scp-label">THE PROJECT</span>
@@ -219,21 +249,22 @@ export default function CreatorWorkspace({ initial, mode, leadId, clientName }: 
 
       <section className="scp-project-section scp-conversation">
         <div className="scp-panel-heading"><div><span className="scp-label">PROJECT CONVERSATION</span><h2>Have a question?</h2></div><button type="button" className="scp-refresh-chat" onClick={() => void refreshConversation()}>Refresh chat</button></div>
-        <p className="scp-section-note">Write here instead of sending a separate email. {admin ? "Your replies appear in the client's workspace." : "When you message us, we also receive an email with your message."}</p>
+        <p className="scp-section-note">Write here instead of sending a separate email. {admin ? "Your replies appear in the client's workspace." : demo ? "Try this chat below. Demo messages are never sent." : "When you message us, we also receive an email with your message."}</p>
         <div className="scp-chat-thread" role="log" aria-label="Project messages">{project.messages?.length ? project.messages.map(m => <article key={m.id} className={`scp-chat-bubble ${m.sender_type === "creator" ? "from-client" : "from-team"}`}><b>{m.sender_type === "creator" ? "Client" : "Creator Automations"}</b><p>{m.message_text}</p><small>{m.created_at ? new Date(m.created_at).toLocaleString() : ""}</small></article>) : <p className="scp-empty">Start the project conversation here.</p>}</div>
         <form onSubmit={sendMessage} className="scp-chat-form"><label htmlFor="scp-message">Message</label><textarea id="scp-message" value={message} onChange={e => setMessage(e.target.value)} placeholder="Write a question, update, or feedback…" maxLength={10000} rows={3} /><button disabled={busy === "message" || !message.trim()}>{busy === "message" ? "Sending…" : "Send message"}</button></form>
       </section>
 
       <section className="scp-project-section scp-attachments">
         <div className="scp-panel-heading"><div><span className="scp-label">PROJECT MATERIALS</span><h2>Files, screenshots & links</h2></div></div>
-        <p className="scp-section-note">Add screenshots, approved photos, PDFs, or a link. Files remain private to this project.</p>
+        <p className="scp-section-note">{demo ? "Try a screenshot or link below. No files are uploaded or stored in this demo." : "Add screenshots, approved photos, PDFs, or a link. Files remain private to this project."}</p>
         <div className="scp-attachment-forms">
           <form onSubmit={uploadFile}><label htmlFor="workspace-file-input">Upload a file (up to 8 MB)</label><input id="workspace-file-input" type="file" accept=".png,.jpg,.jpeg,.webp,.gif,.pdf,.doc,.docx,.txt" onChange={e => setFile(e.target.files?.[0] || null)} /><button disabled={!file || busy === "file"}>{busy === "file" ? "Uploading…" : "Upload file"}</button></form>
           <form onSubmit={addLink}><label htmlFor="scp-link">Share a link</label><input id="scp-link" type="url" value={linkUrl} onChange={e => setLinkUrl(e.target.value)} placeholder="https://…" required /><input value={linkName} onChange={e => setLinkName(e.target.value)} placeholder="Link description (optional)" maxLength={160} /><button disabled={!linkUrl.trim() || busy === "link"}>Add link</button></form>
         </div>
-        {project.attachments?.length ? <ul className="scp-attachment-list">{project.attachments.map(a => <li key={a.id}><span>{a.kind === "link" ? "🔗" : "📎"} {a.name}</span>{a.kind === "link" && a.url ? <a href={a.url} target="_blank" rel="noopener noreferrer">Open link</a> : <button type="button" disabled={busy === "download-" + a.id} onClick={() => downloadFile(a.id, a.name)}>Download</button>}</li>)}</ul> : <p className="scp-empty">No materials shared yet.</p>}
+        {project.attachments?.length ? <ul className="scp-attachment-list">{project.attachments.map(a => <li key={a.id}><span>{a.kind === "link" ? "🔗" : "📎"} {a.name}</span>{a.kind === "link" && a.url ? <a href={a.url} target="_blank" rel="noopener noreferrer">Open link</a> : demo ? <span className="scp-demo-file">Sample file</span> : <button type="button" disabled={busy === "download-" + a.id} onClick={() => downloadFile(a.id, a.name)}>Download</button>}</li>)}</ul> : <p className="scp-empty">No materials shared yet.</p>}
         {project.drive_folder_url && /^https:\/\//.test(project.drive_folder_url) ? <p className="scp-drive-link"><a href={project.drive_folder_url} target="_blank" rel="noopener noreferrer">Open shared Google Drive folder</a></p> : null}
       </section>
+      {demo && <p className="scp-demo-disclaimer">Interactive demo only. Checkboxes, questions, and attachments are not saved or sent to anyone.</p>}
       {notice && <p className="scp-workspace-notice" role="status">{notice}</p>}
       <footer>One project. Two task lists. Everything moves forward together.</footer>
     </div>
