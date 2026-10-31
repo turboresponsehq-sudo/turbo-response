@@ -1,6 +1,6 @@
 /** Private Creator Portal uploads on the Render persistent disk, NEVER public /uploads. */
 import { randomUUID } from "node:crypto";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, statfs, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 const BASE = process.env.CREATOR_WORKSPACE_UPLOAD_DIR || "/data/creator-uploads";
@@ -25,6 +25,11 @@ export async function saveWorkspaceFile(portalId: number, data: Buffer) {
   const storageId = randomUUID();
   const folder = join(BASE, String(portalId));
   await mkdir(folder, { recursive: true, mode: 0o700 });
+  // Protect the existing 1GB persistent service disk from filling completely.
+  const space = await statfs(folder);
+  if (Number(space.bavail) * Number(space.bsize) - data.length < 150 * 1024 * 1024) {
+    throw new Error("Upload storage almost full");
+  }
   await writeFile(join(folder, storageId), data, { flag: "wx", mode: 0o600 });
   return storageId;
 }
