@@ -88,7 +88,7 @@ export default function CreatorWorkspace({ initial, mode, leadId, clientName }: 
     setBusy("invite"); setNotice("");
     try {
       const result = await send("/invite", "POST", { channel: "text" });
-      const smsText = String(result.smsText || result.invitationUrl || "");
+      const smsText = String(result.invitationUrl || "");
       try {
         await navigator.clipboard.writeText(smsText);
         setNotice("24-hour invitation copied. Paste it into a text to the correct client.");
