@@ -34,7 +34,7 @@ export default function CreatorPortalAccess({ mode = "preview" }: { mode?: Acces
   }
 
   return (
-    <main className="cap-shell">
+    <div className="cap-shell">
       <header className="cap-header">
         <Link className="cap-wordmark" href="/zakhybuildsai">CREATOR <span>AUTOMATIONS</span></Link>
         <div className="cap-header-right">
@@ -104,6 +104,6 @@ export default function CreatorPortalAccess({ mode = "preview" }: { mode?: Acces
         </>
       )}
       <footer className="cap-footer"><span>CREATOR AUTOMATIONS · ZAKHY BUILDS AI</span><a href="mailto:turboresponsehq@gmail.com?subject=Creator%20Portal%20Support">Contact support</a></footer>
-    </main>
+    </div>
   );
 }
