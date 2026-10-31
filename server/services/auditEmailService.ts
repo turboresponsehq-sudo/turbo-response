@@ -85,6 +85,8 @@ export async function sendRawEmail(opts: {
   to: string;
   subject: string;
   html: string;
+  /** Optional brand display name; legacy sends retain Turbo Response. */
+  fromName?: string;
 }): Promise<boolean> {
   const transport = getTransporter();
   if (!transport) {
@@ -93,7 +95,7 @@ export async function sendRawEmail(opts: {
   }
   try {
     await transport.sendMail({
-      from: `"Turbo Response" <${process.env.EMAIL_USER}>`,
+      from: `"${opts.fromName === "Creator Automations" ? "Creator Automations" : "Turbo Response"}" <${process.env.EMAIL_USER}>`,
       to: opts.to,
       subject: opts.subject,
       html: opts.html,

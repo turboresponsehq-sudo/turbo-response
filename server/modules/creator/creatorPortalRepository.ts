@@ -170,7 +170,7 @@ export async function getPortalForSession(portalId: number) {
            l.package_interest, l.submitted_at
     FROM creator_portals p
     JOIN creator_leads l ON l.id = p.creator_lead_id
-    WHERE p.id = ${portalId} AND p.status = 'active'
+    WHERE p.id = ${portalId} AND p.status = 'active' AND p.team_join_token_hash IS NULL
     LIMIT 1
   `);
   const portal = rowsOf(result)[0];

@@ -50,6 +50,7 @@ import CreatorIntake from "./features/creator/pages/CreatorIntake";
 import CreatorLeadsAdmin from "./features/creator/pages/CreatorLeadsAdmin";
 import CreatorOperationsDashboard from "./features/creator/pages/CreatorOperationsDashboard";
 import CreatorPortalPreview from "./features/creator/pages/CreatorPortalPreview";
+import CreatorTeamPortal from "./features/creator/pages/CreatorTeamPortal";
 import SimpleClientPortalPreview from "./features/creator/pages/SimpleClientPortalPreview";
 import AmaniReviewAdmin from "./features/creator/pages/AmaniReviewAdmin";
 import AiLearningIntakesAdmin from "./features/ai-learning/AiLearningIntakesAdmin";
@@ -220,6 +221,10 @@ function Router() {
       {/* Isolated Creator Business V1 routes */}
       <Route path="/creator/start" component={CreatorIntake} />
       <Route path="/admin/creator/portal-preview" component={ProtectedSimpleClientPortalPreview} />
+      <Route path="/creator/portal/join" component={() => <CreatorTeamPortal screen="join" />} />
+      <Route path="/creator/portal/verify" component={() => <CreatorTeamPortal screen="verify" />} />
+      <Route path="/creator/portal/login" component={() => <CreatorTeamPortal screen="login" />} />
+      <Route path="/creator/portal/team" component={() => <CreatorTeamPortal screen="home" />} />
       <Route path="/creator/portal/preview" component={() => <CreatorPortalPreviewRoute view="portal" />} />
       <Route path="/creator/portal/invite" component={() => <CreatorPortalPreviewRoute view="portal" />} />
       <Route path="/creator/portal" component={() => <CreatorPortalPreviewRoute view="portal" />} />
