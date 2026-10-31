@@ -1,6 +1,6 @@
 import type { Router, RequestHandler } from "express";
 import multer from "multer";
-import { addWorkspaceAttachment, addWorkspaceTask, findWorkspaceAttachment, setWorkspaceGoal, updateWorkspaceTask } from "./creatorWorkspaceRepository";
+import { addWorkspaceAttachment, addWorkspaceTask, findWorkspaceAttachment, getWorkspaceData, setWorkspaceGoal, updateWorkspaceTask } from "./creatorWorkspaceRepository";
 import { getCreatorPortalByLeadId, getPortalForSession, creatorPortalEnabled } from "./creatorPortalRepository";
 import { allowedWorkspaceMimes, getWorkspaceFile, MAX_WORKSPACE_FILE_BYTES, safeAttachmentName, saveWorkspaceFile } from "./creatorWorkspaceFiles";
 
@@ -57,6 +57,12 @@ async function saveUpload(req: any, res: any, portalId: number, actor: string) {
   const file = req.file as Express.Multer.File | undefined;
   if (!file?.buffer?.length || !allowedWorkspaceMimes.has(file.mimetype)) return res.status(400).json({ error: "Choose a supported file up to 8 MB" });
   try {
+    const existing = await getWorkspaceData(portalId, "Project");
+    const stored = existing.attachments.filter(item => item.kind === "file");
+    const totalBytes = stored.reduce((sum, item) => sum + (item.size || 0), 0);
+    if (stored.length >= 25 || totalBytes + file.size > 100 * 1024 * 1024) {
+      return res.status(400).json({ error: "Project file limit reached. Please share a Drive link instead." });
+    }
     const storageId = await saveWorkspaceFile(portalId, file.buffer);
     const attachment = await addWorkspaceAttachment(portalId, actor, {
       kind: "file", name: safeAttachmentName(file.originalname), size: file.size, mime: file.mimetype, storageId,
