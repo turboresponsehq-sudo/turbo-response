@@ -20,6 +20,7 @@ import { processCreatorLeadEmailWorkflow } from "./emailWorkflow";
 import { creatorLeadCaptureEnabled } from "./featureGate";
 import { syncContactToHubSpot } from "../../hubspotSync";
 import { registerCreatorTeamPortalRoutes } from "./teamPortalRoutes";
+import { notifyCreatorTeamActivity } from "./creatorTeamNotifications";
 import { getAmaniAdminOpportunity, listAmaniAdminOpportunities } from "../amani/adminRepository";
 import {
   acceptCreatorPortalToken,
@@ -224,6 +225,7 @@ creatorRouter.patch("/creator/admin/leads/:leadId/portal", requireCreatorAdmin, 
   const leadId = safeLeadId(req.params.leadId);
   if (!leadId) return res.status(400).json({ error: "Invalid lead identifier" });
   try {
+    const previous = await getCreatorPortalByLeadId(leadId);
     const portal = await saveCreatorPortalConfig({ creatorLeadId: leadId, actor: req.creatorAdmin.email, config: {
       status: req.body?.status,
       currentStatus: req.body?.currentStatus,
@@ -231,6 +233,16 @@ creatorRouter.patch("/creator/admin/leads/:leadId/portal", requireCreatorAdmin, 
       nextStep: req.body?.nextStep,
       driveFolderUrl: req.body?.driveFolderUrl,
     }});
+    const changes = !!portal && (
+      (previous?.next_step || "") !== (portal.next_step || "")
+      || (previous?.current_status || "") !== (portal.current_status || "")
+      || (previous?.current_phase || "") !== (portal.current_phase || "")
+    );
+    if (changes) {
+      try { await notifyCreatorTeamActivity({portalId:Number(portal.id),type:"project_update",
+        actorName:"Creator Automations",actorEmail:req.creatorAdmin.email,audience:"members"}); }
+      catch(err) { console.error("[Creator Team] Project update alert failed",err); }
+    }
     return res.json({ success: true, portal });
   } catch (error) {
     console.error("[Creator Portal] Admin save failed", error);
@@ -245,6 +257,20 @@ creatorRouter.post("/creator/admin/leads/:leadId/portal/invite", requireCreatorA
   try {
     const lead = await getCreatorLeadById(leadId);
     if (!lead?.email) return res.status(404).json({ error: "Creator Lead email is missing" });
+    const current = await getCreatorPortalByLeadId(leadId);
+    // Once group access is configured, legacy shared invites must not bypass
+    // individual email verification and admin approval.
+    if (current) {
+      const db = await getDb();
+      if (db) {
+        const group = await db.execute(sql`
+          SELECT 1 FROM creator_portals WHERE id = ${Number(current.id)}
+          AND team_join_token_hash IS NOT NULL LIMIT 1
+        `);
+        const records = Array.isArray(group) ? group : (group as {rows?: unknown[]}).rows || [];
+        if (records.length) return res.status(409).json({error:"Use Team Workspace Access for individual approved client logins."});
+      }
+    }
     const invitation = await inviteCreatorPortal({ creatorLeadId: leadId, actor: req.creatorAdmin.email });
     if (!invitation) return res.status(500).json({ error: "Invitation could not be created" });
     const invitationUrl = `${portalBaseUrl()}/creator/portal/invite?token=${encodeURIComponent(invitation.token)}`;
@@ -280,7 +306,17 @@ creatorRouter.post("/creator/admin/leads/:leadId/portal/updates", requireCreator
   const text = String(req.body?.text || "").trim();
   if (!leadId || !text || text.length > 5000) return res.status(400).json({ error: "A valid update is required" });
   try {
-    return res.status(201).json({ success: true, update: await createPortalUpdate({ creatorLeadId: leadId, text, visibleToCreator: req.body?.visibleToCreator === true, userId: req.creatorAdmin.id }) });
+    const update = await createPortalUpdate({ creatorLeadId: leadId, text,
+      visibleToCreator: req.body?.visibleToCreator === true, userId: req.creatorAdmin.id });
+    if (req.body?.visibleToCreator === true) {
+      const portal = await getCreatorPortalByLeadId(leadId);
+      if (portal) {
+        try { await notifyCreatorTeamActivity({portalId:Number(portal.id),type:"project_update",
+          actorName:"Creator Automations",actorEmail:req.creatorAdmin.email,audience:"members"}); }
+        catch(err) { console.error("[Creator Team] Portal update alert failed",err); }
+      }
+    }
+    return res.status(201).json({ success: true, update });
   } catch (error) {
     console.error("[Creator Portal] Update creation failed", error);
     return res.status(503).json({ error: "Unable to save Creator Portal update" });
@@ -305,7 +341,18 @@ creatorRouter.post("/creator/admin/leads/:leadId/portal/messages", requireCreato
   const text = String(req.body?.text || "").trim();
   if (!leadId || !text || text.length > 10000) return res.status(400).json({ error: "A valid portal message is required" });
   try {
-    return res.status(201).json({ success: true, message: await createCreatorPortalMessage({ creatorLeadId: leadId, senderType: "admin", text, visibleToCreator: req.body?.visibleToCreator !== false, userId: req.creatorAdmin.id }) });
+    const isVisible = req.body?.visibleToCreator !== false;
+    const message = await createCreatorPortalMessage({ creatorLeadId: leadId, senderType: "admin", text,
+      visibleToCreator: isVisible, userId: req.creatorAdmin.id });
+    if (isVisible) {
+      const portal = await getCreatorPortalByLeadId(leadId);
+      if (portal) {
+        try { await notifyCreatorTeamActivity({portalId:Number(portal.id),type:"message",
+          actorName:"Creator Automations",actorEmail:req.creatorAdmin.email,audience:"members"}); }
+        catch(err) { console.error("[Creator Team] Admin message alert failed",err); }
+      }
+    }
+    return res.status(201).json({ success: true, message });
   } catch (error) {
     console.error("[Creator Portal] Admin message failed", error);
     return res.status(503).json({ error: "Unable to save Creator Portal message" });
