@@ -83,6 +83,24 @@ export default function CreatorWorkspace({ initial, mode, leadId, clientName }: 
     return () => window.clearInterval(interval);
   }, [base, admin]);
 
+  async function createTextInvite() {
+    if (!admin || !leadId || !window.confirm("Create a 24-hour private link? The client must set a password, and any previous login or invitation for this client will be reset.")) return;
+    setBusy("invite"); setNotice("");
+    try {
+      const result = await send("/invite", "POST", { channel: "text" });
+      const smsText = String(result.smsText || result.invitationUrl || "");
+      try {
+        await navigator.clipboard.writeText(smsText);
+        setNotice("24-hour invitation copied. Paste it into a text to the correct client.");
+      } catch {
+        setNotice("Invitation created. Copy the text from the message box.");
+      }
+      window.prompt("Copy this private invitation to send by SMS. The link expires in 24 hours:", smsText);
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Could not generate an invitation.");
+    } finally { setBusy(""); }
+  }
+
   async function saveGoal(event: FormEvent) {
     event.preventDefault();
     const title = goalText.trim();
@@ -226,7 +244,7 @@ export default function CreatorWorkspace({ initial, mode, leadId, clientName }: 
 
   return <main className="scp-page scp-project-workspace">
     <div className="scp-workspace">
-      <header className="scp-header"><span className="scp-brand">⚡ CREATOR AUTOMATIONS</span><span>{admin ? "ADMIN PROJECT VIEW" : demo ? "SAMPLE PROJECT · NOT SAVED" : "CLIENT PROJECT"}</span></header>
+      <header className="scp-header"><span className="scp-brand">⚡ CREATOR AUTOMATIONS</span><div className="scp-header-actions">{admin && <button type="button" className="scp-text-invite" disabled={busy === "invite"} onClick={createTextInvite}>{busy === "invite" ? "Creating link…" : "Create text invite · 24h"}</button>}<span>{admin ? "ADMIN PROJECT VIEW" : demo ? "SAMPLE PROJECT · NOT SAVED" : "CLIENT PROJECT"}</span></div></header>
       <section className="scp-intro"><p className="scp-kicker">PROJECT WORKSPACE</p><h1>{clientName || project.brand_name || project.full_name || "Your project"}</h1><p>One project. Clear responsibilities. Everything in one place.</p></section>
       <section className="scp-project-hero">
         <span className="scp-label">THE PROJECT</span>
