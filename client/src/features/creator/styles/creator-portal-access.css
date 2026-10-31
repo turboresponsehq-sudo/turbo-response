@@ -1,0 +1,71 @@
+/* Self-contained public Creator Portal access and safe demo. */
+.cap-shell { min-height:100vh; box-sizing:border-box; background:#f5f5f1; color:#161718; font-family:Arial,Helvetica,sans-serif; }
+.cap-shell *, .cap-shell *::before, .cap-shell *::after { box-sizing:border-box; }
+.cap-header { min-height:88px; display:flex; align-items:center; justify-content:space-between; padding:18px max(24px, calc((100vw - 1180px)/2)); background:#0b0b0c; color:#fff; gap:18px; }
+.cap-wordmark { color:#fff; font-family:Impact,"Arial Black",sans-serif; text-decoration:none; font-size:25px; letter-spacing:.05em; }
+.cap-wordmark span { color:#ffdb3b; }
+.cap-header-right { display:flex; align-items:center; gap:18px; font-size:11px; letter-spacing:.10em; font-weight:800; }
+.cap-header-right > span { color:#a1a1a1; }
+.cap-header-right a { border:1px solid #5a5a5a; color:#fff; border-radius:5px; padding:10px 13px; text-decoration:none; letter-spacing:0; }
+.cap-header-right a:hover { border-color:#ffdb3b; }
+.cap-eyebrow { color:#a82029; font-weight:900; font-size:11px; letter-spacing:.16em; margin:0 0 14px; text-transform:uppercase; }
+.cap-hero { max-width:1180px; margin:auto; display:flex; justify-content:space-between; align-items:flex-end; gap:30px; padding:72px 24px 64px; border-bottom:1px solid #d3d4d1; }
+.cap-hero h1 { font-family:Impact,"Arial Black",sans-serif; font-size:clamp(48px,7.7vw,92px); line-height:.96; letter-spacing:-.018em; margin:0 0 25px; text-transform:uppercase; }
+.cap-hero h1 em { color:#d72230; font-style:normal; }
+.cap-hero p:not(.cap-eyebrow) { color:#53545a; max-width:570px; font-size:16px; line-height:1.65; margin:0 0 28px; }
+.cap-primary-link, .cap-access-form button { background:#e3212f; border:1px solid #e3212f; color:#fff; border-radius:4px; text-decoration:none; font-size:13px; font-weight:900; display:inline-block; padding:15px 20px; cursor:pointer; }
+.cap-primary-link:hover, .cap-access-form button:hover { background:#af1420; border-color:#af1420; }
+.cap-preview-label { font-size:12px; font-weight:900; color:#3c3c3e; letter-spacing:.08em; white-space:nowrap; }
+.cap-preview-label span { color:#929292; margin-left:12px; }
+.cap-demo-heading { max-width:1180px; margin:0 auto; padding:42px 24px 22px; display:flex; align-items:end; justify-content:space-between; gap:20px; }
+.cap-demo-heading h2 { font-family:Impact,"Arial Black",sans-serif; text-transform:uppercase; font-size:35px; margin:0 0 8px; }
+.cap-demo-heading p:last-child { color:#626369; font-size:14px; margin:0; }
+.cap-stage { display:inline-flex; gap:7px; align-items:center; padding:9px 12px; color:#17603f; background:#e4f6ec; border-radius:100px; font-size:11px; font-weight:900; white-space:nowrap; }
+.cap-stage i { width:7px; height:7px; background:#1b995a; border-radius:50%; }
+.cap-grid { max-width:1180px; margin:0 auto; padding:0 24px 54px; display:grid; gap:16px; grid-template-columns:repeat(2,minmax(0,1fr)); }
+.cap-tile { background:#fff; border:1px solid #dedfda; border-radius:10px; padding:28px; min-width:0; }
+.cap-tile-wide { grid-column:1/-1; background:#161718; color:#fff; }
+.cap-label { color:#a5202b; font-size:10px; font-weight:900; letter-spacing:.14em; display:block; margin-bottom:12px; }
+.cap-tile-wide .cap-label { color:#ffdb3b; }
+.cap-tile h3 { font-size:22px; line-height:1.2; letter-spacing:-.03em; margin:0 0 10px; }
+.cap-tile p { margin:0; color:#5e5f62; font-size:14px; line-height:1.65; }
+.cap-tile-wide p { color:#bfc2c6; }
+.cap-meter { height:7px; width:100%; border-radius:99px; background:#4a4b4d; overflow:hidden; margin:24px 0 11px; }
+.cap-meter span { display:block; width:60%; height:100%; background:#ffdb3b; }
+.cap-tile-wide small { font-size:10px; color:#b5b6b6; letter-spacing:.1em; }
+.cap-items { padding:0; margin:0; list-style:none; }
+.cap-items li { display:flex; justify-content:space-between; gap:12px; padding:11px 0; border-bottom:1px solid #eceeeb; font-size:13px; }
+.cap-items li:last-child { border:0; }
+.cap-items b { color:#167246; font-size:11px; }
+.cap-items b.cap-pending { color:#a65c0a; }
+.cap-demo-disclaimer { max-width:1180px; padding:0 24px 38px; margin:0 auto; font-size:12px; color:#797b7c; line-height:1.55; }
+.cap-footer { padding:24px max(24px, calc((100vw - 1180px)/2)); color:#a5a5a5; background:#101011; display:flex; justify-content:space-between; gap:20px; font-size:11px; font-weight:800; letter-spacing:.06em; }
+.cap-footer a { color:#fff; text-decoration:underline; }
+.cap-login-panel { max-width:640px; margin:10vh auto 12vh; padding:46px; background:#fff; border:1px solid #dedfda; border-top:5px solid #e3212f; border-radius:8px; box-shadow:0 16px 55px rgba(0,0,0,.06); }
+.cap-login-panel h1 { font-family:Impact,"Arial Black",sans-serif; text-transform:uppercase; line-height:1.05; font-size:47px; margin:0 0 22px; }
+.cap-login-panel > p:not(.cap-eyebrow) { color:#58595b; line-height:1.65; font-size:14px; margin:0 0 28px; }
+.cap-access-form { display:grid; gap:10px; }
+.cap-access-form label { font-size:12px; font-weight:800; }
+.cap-access-form input { padding:14px; border:1px solid #b7bbc0; border-radius:5px; background:#fff; color:#17181a; font:inherit; font-size:14px; width:100%; }
+.cap-access-form input:focus { outline:2px solid #e3212f; outline-offset:1px; }
+.cap-access-form button { margin-top:4px; text-align:center; }
+.cap-error { font-size:12px; color:#ad1823; margin:0; }
+.cap-footnote { border-top:1px solid #eaebe8; color:#67696a; margin-top:24px; padding-top:20px; font-size:13px; }
+.cap-footnote a, .cap-underlink { color:#b51e29; }
+.cap-underlink { display:inline-block; margin-top:24px; font-size:12px; font-weight:800; }
+@media(max-width:700px) {
+ .cap-header { padding:17px 18px; align-items:flex-start; }
+ .cap-wordmark { font-size:19px; line-height:1.25; }
+ .cap-header-right { flex-direction:column; align-items:end; gap:8px; font-size:9px; }
+ .cap-header-right a { padding:8px; }
+ .cap-hero { padding:52px 20px 40px; display:block; }
+ .cap-preview-label { margin-top:30px; }
+ .cap-demo-heading { padding:30px 20px 20px; }
+ .cap-demo-heading h2 { font-size:27px; }
+ .cap-grid { padding:0 20px 35px; grid-template-columns:1fr; }
+ .cap-tile { padding:23px; }
+ .cap-tile-wide { grid-column:auto; }
+ .cap-footer { padding:22px 20px; }
+ .cap-login-panel { padding:30px 23px; margin:40px 18px 55px; }
+ .cap-login-panel h1 { font-size:39px; }
+}
