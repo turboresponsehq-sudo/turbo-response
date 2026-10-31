@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import { sql } from "drizzle-orm";
 import { getDb } from "../../db";
+import { getWorkspaceData } from "./creatorWorkspaceRepository";
 
 export type CreatorPortalStatus = "disabled" | "invited" | "active";
 export type CreatorProjectStatus =
@@ -245,7 +246,7 @@ export async function getPortalForSession(portalId: number) {
   `);
   const portal = rowsOf(result)[0];
   if (!portal) return null;
-  const [items, updates, messages, step] = await Promise.all([
+  const [items, updates, messages, step, workspace] = await Promise.all([
     db.execute(sql`
       SELECT id, label, status, created_at, updated_at
       FROM creator_portal_items WHERE portal_id = ${portalId}
@@ -264,8 +265,9 @@ export async function getPortalForSession(portalId: number) {
       ORDER BY created_at ASC, id ASC LIMIT 200
     `),
     readNextStepState(db, portalId, portal.next_step),
+    getWorkspaceData(portalId, String(portal.package_interest || "Your project")),
   ]);
-  return { ...portal, ...step, items: rowsOf(items), updates: rowsOf(updates), messages: rowsOf(messages) };
+  return { ...portal, ...step, ...workspace, items: rowsOf(items), updates: rowsOf(updates), messages: rowsOf(messages) };
 }
 
 export async function getCreatorPortalMessages(creatorLeadId: number) {
