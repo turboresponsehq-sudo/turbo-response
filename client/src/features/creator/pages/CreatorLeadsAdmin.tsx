@@ -71,6 +71,7 @@ export default function CreatorLeadsAdmin() {
   const [portalEnabled, setPortalEnabled] = useState(true);
   const [portalForm, setPortalForm] = useState({ status: "disabled", currentStatus: "Intake Received", currentPhase: "Discovery", nextStep: "", driveFolderUrl: "" });
   const [portalSaving, setPortalSaving] = useState(false);
+  const [portalSaveNotice, setPortalSaveNotice] = useState("");
   const [portalMessages, setPortalMessages] = useState<PortalMessage[]>([]);
   const [portalMessagesReady, setPortalMessagesReady] = useState(false);
   const [portalMessage, setPortalMessage] = useState("");
@@ -96,7 +97,7 @@ export default function CreatorLeadsAdmin() {
   async function selectLead(id: number) {
     const version = ++selectionVersion.current;
     setSelected(null);
-    setSimpleView(true); setNotice(""); setError(""); setNote("");
+    setSimpleView(true); setNotice(""); setPortalSaveNotice(""); setError(""); setNote("");
     setPortal(null); setPortalMessages([]); setPortalEnabled(false); setPortalMessagesReady(false);
     try {
       const response = await request(`/api/creator/admin/leads/${id}`);
@@ -168,16 +169,49 @@ export default function CreatorLeadsAdmin() {
   }
 
   async function savePortal(event: React.FormEvent) {
-    event.preventDefault(); if (!selected) return;
-    setPortalSaving(true); setError("");
+    event.preventDefault();
+    if (!selected || portalSaving) return;
+    const leadId = selected.id;
+    const expected = { ...portalForm };
+    setPortalSaving(true);
+    setPortalSaveNotice("Saving project update…");
+    setError("");
     try {
-      const response = await request(`/api/creator/admin/leads/${selected.id}/portal`, { method: "PATCH", body: JSON.stringify(portalForm) });
+      const response = await request(`/api/creator/admin/leads/${leadId}/portal`, {
+        method: "PATCH",
+        body: JSON.stringify(expected),
+      });
       const body = await response.json();
       if (!response.ok) throw new Error(body.error || "Portal settings could not be saved.");
-      setPortal(body.portal); setPortalForm((current) => ({ ...current, status: body.portal.status }));
-      setNotice("Project update saved. It will appear in the client's portal when access is enabled.");
-    } catch (saveError) { setError(saveError instanceof Error ? saveError.message : "Portal settings could not be saved."); }
-    finally { setPortalSaving(false); }
+
+      // Read the value back instead of claiming success from the PATCH alone.
+      const checkResponse = await request(`/api/creator/admin/leads/${leadId}/portal`);
+      const checkBody = await checkResponse.json();
+      if (!checkResponse.ok || !checkBody.portal) {
+        throw new Error("The server accepted the update, but the saved value could not be verified.");
+      }
+      const saved = checkBody.portal as Portal;
+      if ((saved.next_step || "").trim() !== expected.nextStep.trim()
+        || (saved.current_phase || "").trim() !== expected.currentPhase.trim()
+        || saved.current_status !== expected.currentStatus) {
+        throw new Error("The saved project values do not match. Please refresh and try again.");
+      }
+      setPortal(saved);
+      setPortalForm({
+        status: saved.status,
+        currentStatus: saved.current_status,
+        currentPhase: saved.current_phase,
+        nextStep: saved.next_step || "",
+        driveFolderUrl: saved.drive_folder_url || "",
+      });
+      setPortalSaveNotice("Saved and verified. This next step will appear in the client's workspace when their access is active.");
+    } catch (saveError) {
+      const message = saveError instanceof Error ? saveError.message : "Portal settings could not be saved.";
+      setError(message);
+      setPortalSaveNotice(`Save not confirmed: ${message}`);
+    } finally {
+      setPortalSaving(false);
+    }
   }
 
   async function createInvitation() {
@@ -251,13 +285,13 @@ export default function CreatorLeadsAdmin() {
         {portalEnabled && !portalMessagesReady && <p role="status" className="creator-form-error">Portal setup is incomplete: messages are unavailable. Invitations are on hold. Status and internal notes still work.</p>}
         {simpleView ? <>
           <section className="creator-detail-section"><h3>At a glance</h3><div className="creator-detail-grid"><article><span>Service requested</span><strong>{selected.packageInterest || "Not recorded"}</strong></article><article><span>Portal access</span><strong>{portalEnabled ? portal?.status || "Not invited" : "Unavailable"}</strong></article></div><p>{selected.status === "converted" ? "Active client" : "Use the status selector above to move a lead to converted when they become a client."}</p></section>
-          <section className="creator-detail-section"><h3>What happens next?</h3>{portalEnabled ? <form className="creator-task-template-form" onSubmit={savePortal}><label>Project stage<select value={portalForm.currentStatus} onChange={(event) => setPortalForm({ ...portalForm, currentStatus: event.target.value })}>{["Intake Received", "Reviewing", "Awaiting Client", "Planning", "In Progress", "Ready for Review", "Completed"].map(status => <option key={status}>{status}</option>)}</select></label><label>Working on<input value={portalForm.currentPhase} onChange={(event) => setPortalForm({ ...portalForm, currentPhase: event.target.value })} /></label><label>Next step for the client<textarea value={portalForm.nextStep} onChange={(event) => setPortalForm({ ...portalForm, nextStep: event.target.value })} placeholder="For example: send your logo and product photos." /></label><p className="creator-task-safety">Visible in the client's portal when access is enabled. Saving does not send an email.</p><button disabled={portalSaving}>Save project update</button></form> : <p>Portal details are not available yet. You can still update status and save an internal note.</p>}</section>
+          <section className="creator-detail-section"><h3>What happens next?</h3>{portalEnabled ? <form className="creator-task-template-form" onSubmit={savePortal}><label>Project stage<select value={portalForm.currentStatus} onChange={(event) => setPortalForm({ ...portalForm, currentStatus: event.target.value })}>{["Intake Received", "Reviewing", "Awaiting Client", "Planning", "In Progress", "Ready for Review", "Completed"].map(status => <option key={status}>{status}</option>)}</select></label><label>Working on<input value={portalForm.currentPhase} onChange={(event) => setPortalForm({ ...portalForm, currentPhase: event.target.value })} /></label><label>Next step for the client<textarea value={portalForm.nextStep} onChange={(event) => setPortalForm({ ...portalForm, nextStep: event.target.value })} placeholder="For example: send your logo and product photos." /></label><p className="creator-task-safety">Visible in the client's portal when access is enabled. Saving does not send an email.</p><button disabled={portalSaving}>{portalSaving ? "Saving…" : "Save project update"}</button>{portalSaveNotice && <p role="status" className="creator-task-safety">{portalSaveNotice}</p>}</form> : <p>Portal details are not available yet. You can still update status and save an internal note.</p>}</section>
           <section className="creator-detail-section"><h3>Quick internal update</h3><form className="creator-task-template-form" onSubmit={addNote}><label>What changed?<textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder="Email recap, agreed scope, payment confirmed, or what you need next…" /></label><p className="creator-task-safety">Internal only. This does not message the client.</p><button disabled={saving || !note.trim()}>Save internal update</button></form>{selected.notes[0] && <p><strong>Latest update:</strong> {selected.notes[0].note}</p>}</section>
           <section className="creator-detail-section"><h3>Client portal</h3><p>{portal?.last_access_at ? `Last opened ${new Date(portal.last_access_at).toLocaleDateString()}.` : "No portal visit recorded."}</p><p>The client sees their project progress, next step, and shared messages. Internal notes stay private.</p><button type="button" disabled={portalSaving || !portalEnabled} onClick={createInvitation}>{portal?.status === "active" || portal?.status === "invited" ? "Send new portal invitation" : "Invite client to portal"}</button><p className="creator-task-safety">You will confirm the recipient before an invitation email is sent. A new invitation replaces the previous link.</p><button type="button" className="creator-secondary-button" onClick={() => setSimpleView(false)}>Messages, tasks & full details</button></section>
         </> : <>
         <div className="creator-detail-grid"><article><span>Package</span><strong>{selected.packageInterest || "Not sure yet"}</strong></article><article><span>Budget</span><strong>{selected.budgetRange || "Not provided"}</strong></article></div>
         <CreatorBusinessAssessment lead={selected} />
-        <section className="creator-detail-section creator-portal-access-panel"><div className="creator-section-heading"><div><p className="creator-eyebrow">CREATOR WORKSPACE</p><h3>Portal access</h3></div><span className={`creator-status ${portalForm.status}`}>{portalForm.status}</span></div>{!portalEnabled ? <p className="creator-task-safety">Portal storage is prepared but not enabled yet. Production migration and feature-flag activation are still required.</p> : <form onSubmit={savePortal}><div className="creator-task-fields"><label>Portal status<select value={portalForm.status} onChange={(event) => setPortalForm({ ...portalForm, status: event.target.value })}><option value="disabled">Disabled</option><option value="invited">Invited</option><option value="active">Active</option></select></label><label>Project status<select value={portalForm.currentStatus} onChange={(event) => setPortalForm({ ...portalForm, currentStatus: event.target.value })}>{["Intake Received", "Reviewing", "Awaiting Client", "Planning", "In Progress", "Ready for Review", "Completed"].map((status) => <option value={status} key={status}>{status}</option>)}</select></label></div><div className="creator-task-fields"><label>Current phase<input value={portalForm.currentPhase} onChange={(event) => setPortalForm({ ...portalForm, currentPhase: event.target.value })} /></label><label>Next step<input value={portalForm.nextStep} onChange={(event) => setPortalForm({ ...portalForm, nextStep: event.target.value })} placeholder="What happens next?" /></label></div><label>Dedicated Google Drive folder URL<input type="url" value={portalForm.driveFolderUrl} onChange={(event) => setPortalForm({ ...portalForm, driveFolderUrl: event.target.value })} placeholder="https://drive.google.com/drive/folders/..." /></label><p className="creator-task-safety">Only this dedicated folder link is stored. No Drive sync or permission changes are performed.</p><div className="creator-portal-actions"><button type="submit" disabled={portalSaving}>Save portal settings</button><button type="button" disabled={portalSaving} onClick={createInvitation}>Send invitation</button><button type="button" className="creator-secondary-button" disabled={portalSaving || !portal} onClick={revokePortal}>Revoke access</button></div></form>}</section>
+        <section className="creator-detail-section creator-portal-access-panel"><div className="creator-section-heading"><div><p className="creator-eyebrow">CREATOR WORKSPACE</p><h3>Portal access</h3></div><span className={`creator-status ${portalForm.status}`}>{portalForm.status}</span></div>{!portalEnabled ? <p className="creator-task-safety">Portal storage is prepared but not enabled yet. Production migration and feature-flag activation are still required.</p> : <form onSubmit={savePortal}><div className="creator-task-fields"><label>Portal status<select value={portalForm.status} onChange={(event) => setPortalForm({ ...portalForm, status: event.target.value })}><option value="disabled">Disabled</option><option value="invited">Invited</option><option value="active">Active</option></select></label><label>Project status<select value={portalForm.currentStatus} onChange={(event) => setPortalForm({ ...portalForm, currentStatus: event.target.value })}>{["Intake Received", "Reviewing", "Awaiting Client", "Planning", "In Progress", "Ready for Review", "Completed"].map((status) => <option value={status} key={status}>{status}</option>)}</select></label></div><div className="creator-task-fields"><label>Current phase<input value={portalForm.currentPhase} onChange={(event) => setPortalForm({ ...portalForm, currentPhase: event.target.value })} /></label><label>Next step<input value={portalForm.nextStep} onChange={(event) => setPortalForm({ ...portalForm, nextStep: event.target.value })} placeholder="What happens next?" /></label></div><label>Dedicated Google Drive folder URL<input type="url" value={portalForm.driveFolderUrl} onChange={(event) => setPortalForm({ ...portalForm, driveFolderUrl: event.target.value })} placeholder="https://drive.google.com/drive/folders/..." /></label><p className="creator-task-safety">Only this dedicated folder link is stored. No Drive sync or permission changes are performed.</p><div className="creator-portal-actions"><button type="submit" disabled={portalSaving}>{portalSaving ? "Saving…" : "Save portal settings"}</button><button type="button" disabled={portalSaving} onClick={createInvitation}>Send invitation</button><button type="button" className="creator-secondary-button" disabled={portalSaving || !portal} onClick={revokePortal}>Revoke access</button></div>{portalSaveNotice && <p role="status" className="creator-task-safety">{portalSaveNotice}</p>}</form>}</section>
         <section className="creator-detail-section creator-portal-message-card"><div className="creator-portal-message-card-head"><div><p className="creator-eyebrow">PROJECT RECORD</p><h3>Messages & important decisions</h3></div><span className="creator-portal-muted-action">{portalMessages.length} saved</span></div><div className="creator-portal-thread">{portalMessages.length ? portalMessages.map((item) => <article className={`creator-portal-message ${item.sender_type === "creator" ? "from-creator" : "from-zakhy"}`} key={item.id}><div className="creator-portal-message-meta"><strong>{item.sender_type === "creator" ? selected.fullName : "Zakhy Builds AI"}</strong><span>{new Date(item.created_at).toLocaleString()}</span>{!item.visible_to_creator && <em>Internal only</em>}</div><p>{item.message_text}</p></article>) : <p>No project messages yet.</p>}</div><form className="creator-portal-message-form" onSubmit={addPortalMessage}><label>Add an update or message<textarea value={portalMessage} onChange={(event) => setPortalMessage(event.target.value)} placeholder="Share a next step, decision, or request…" /></label><label className="creator-portal-checkbox"><input type="checkbox" checked={portalMessageVisible} onChange={(event) => setPortalMessageVisible(event.target.checked)} /> Visible to creator</label><button type="submit" disabled={portalSaving}>Save message</button></form></section>
         <section className="creator-detail-section"><h3>Project priority</h3><p>{selected.project_priority || "Not provided"}</p><h3>Goals</h3><p>{selected.goals || "Not provided"}</p><h3>Challenges</h3><p>{selected.challenges || "Not provided"}</p></section>
         <section className="creator-detail-section"><h3>Next actions</h3><div className="creator-mini-list">{selected.tasks.length ? selected.tasks.map((item) => <p key={item.id}><b>{label(item.status)}</b> · {item.task_detail || item.task_type}</p>) : <p>No follow-up scheduled.</p>}</div><form className="creator-task-template-form" onSubmit={addTask}><label className="creator-template-label">Task template<select aria-label="Task template" value={selectedTemplate} onChange={(event) => applyTaskTemplate(event.target.value)}><option value="">Manual task</option>{taskTemplates.map((template) => <option value={template.id} key={template.id}>{template.label}</option>)}</select></label><div className="creator-task-fields"><label>Task type<input value={taskType} onChange={(event) => setTaskType(event.target.value)} placeholder="Task type" /></label><label>Suggested due date<input type="datetime-local" value={taskDueAt} onChange={(event) => setTaskDueAt(event.target.value)} /></label></div><label>Task detail<textarea value={task} onChange={(event) => setTask(event.target.value)} placeholder="Add a manual follow-up action" /></label><p className="creator-task-safety">Templates only pre-fill a manual internal task. No customer message is sent automatically.</p><button type="submit" disabled={saving}>Create manual task</button></form></section>
