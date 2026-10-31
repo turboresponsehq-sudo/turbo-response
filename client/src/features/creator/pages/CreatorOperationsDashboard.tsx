@@ -234,6 +234,25 @@ export default function CreatorOperationsDashboard() {
           </article>
         </section>
 
+        <section className="zops-calendar-today" aria-label="Today's schedule">
+          <div className="zops-calendar-title">
+            <CalendarDays size={22} aria-hidden="true" />
+            <div>
+              <p className="zops-section-kicker">TODAY'S SCHEDULE</p>
+              <h2>Your Google Calendar</h2>
+              <p>Open your private day view to see today's meetings, calls and appointments.</p>
+            </div>
+          </div>
+          <a
+            className="zops-button zops-button-dark"
+            href="https://calendar.google.com/calendar/u/0/r/day"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View today's calendar
+          </a>
+        </section>
+
         <section className="zops-grid-primary">
           <article className="zops-panel">
             <div className="zops-panel-head">
