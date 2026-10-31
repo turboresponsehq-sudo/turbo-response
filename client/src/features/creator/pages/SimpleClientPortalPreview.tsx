@@ -35,7 +35,7 @@ export default function SimpleClientPortalPreview() {
   }, [leadId]);
   const dateLabel = dueDate ? new Date(`${dueDate}T12:00:00`).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" }) : "Not recorded yet";
   return <main className="scp-page">
-    <aside className="scp-review"><span><b>Private client-view preview</b> · Admin only · Nothing is saved or sent</span><Link href={leadId > 0 ? `/admin/creator/leads?lead=${leadId}` : "/admin/creator/leads"}>← Back to client</Link></aside>
+    <aside className="scp-review"><span><b>Private client-view preview</b> · Admin only · Nothing is saved or sent</span><div className="scp-review-links"><a href="https://calendar.google.com/calendar/u/0/r/day" target="_blank" rel="noopener noreferrer">Today’s calendar</a><Link href={leadId > 0 ? `/admin/creator/leads?lead=${leadId}` : "/admin/creator/leads"}>← Back to client</Link></div></aside>
     {error ? <p role="alert" className="scp-loading">{error}</p> : !project ? <p className="scp-loading">Loading project preview…</p> : <>
       <div className="scp-workspace">
         <header className="scp-header"><span className="scp-brand">⚡ CREATOR AUTOMATIONS</span><span>YOUR PROJECT</span></header>
