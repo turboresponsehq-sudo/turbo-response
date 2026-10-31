@@ -4,6 +4,8 @@ import crypto from "node:crypto";
 import jwt from "jsonwebtoken";
 import { sql } from "drizzle-orm";
 import { getDb } from "../../db";
+import multer from "multer";
+import { storagePut, storageGet } from "../../storage";
 import { sendRawEmail } from "../../services/auditEmailService";
 import { creatorPortalEnabled, ensureCreatorPortal } from "./creatorPortalRepository";
 
@@ -153,4 +155,99 @@ export function registerCreatorTeamPortalRoutes(router:Router,requireAdmin:Reque
   res.clearCookie("creator_team_session",{httpOnly:true,sameSite:"lax",secure:process.env.NODE_ENV==="production",path:"/"});
   return res.json({success:true});
  });
+
+ const memberFor=(req:any,res:any)=>memberFromTeamSession(req).then(m=>{
+  if(!m)res.status(401).json({error:"You must log in with an approved account."});return m;
+ });
+ router.get("/creator/portal/team/me",async(req:any,res)=>{
+  if(!creatorPortalEnabled())return gate(res);
+  const m=await memberFor(req,res);if(!m)return;
+  try{
+   const db=await getDb();if(!db)throw Error("DB");
+   const portal=rows(await db.execute(sql`SELECT p.current_status,p.current_phase,p.next_step,p.drive_folder_url,
+     l.brand_name,l.full_name FROM creator_portals p JOIN creator_leads l ON l.id=p.creator_lead_id
+     WHERE p.id=${Number(m.portal_id)} LIMIT 1`))[0];
+   const [messages,calendar,files,updates,items]=await Promise.all([
+    db.execute(sql`SELECT id,COALESCE(sender_name,CASE WHEN sender_type='admin' THEN 'Creator Automations' ELSE 'Team' END)
+       AS sender_name,message_text,created_at FROM creator_portal_messages
+       WHERE portal_id=${Number(m.portal_id)} AND visible_to_creator=TRUE ORDER BY id DESC LIMIT 100`),
+    db.execute(sql`SELECT id,title,starts_at,ends_at,description,created_by FROM creator_portal_calendar
+       WHERE portal_id=${Number(m.portal_id)} AND starts_at>NOW()-INTERVAL '30 days' ORDER BY starts_at LIMIT 100`),
+    db.execute(sql`SELECT id,file_name,mime_type,size_bytes,uploaded_by,created_at FROM creator_portal_files
+       WHERE portal_id=${Number(m.portal_id)} ORDER BY id DESC LIMIT 100`),
+    db.execute(sql`SELECT id,update_text,created_at FROM creator_portal_updates
+       WHERE portal_id=${Number(m.portal_id)} AND visible_to_creator=TRUE ORDER BY id DESC LIMIT 50`),
+    db.execute(sql`SELECT id,label,status FROM creator_portal_items
+       WHERE portal_id=${Number(m.portal_id)} ORDER BY id LIMIT 100`)
+   ]);
+   return res.json({portal,member:{name:m.display_name,email:m.email},messages:rows(messages).reverse(),
+     calendar:rows(calendar),files:rows(files),updates:rows(updates),items:rows(items)});
+  }catch(e){return unavailable(res,e);}
+ });
+ router.post("/creator/portal/team/messages",async(req:any,res)=>{
+  if(!creatorPortalEnabled())return gate(res);
+  const m=await memberFor(req,res);if(!m)return;
+  const value=String(req.body?.text||"").trim();
+  if(!value||value.length>5000)return res.status(400).json({error:"Enter a message of 1–5000 characters."});
+  try{
+   const db=await getDb();if(!db)throw Error("DB");
+   await db.execute(sql`INSERT INTO creator_portal_messages
+     (portal_id,sender_type,sender_member_id,sender_name,message_text,visible_to_creator)
+     VALUES(${Number(m.portal_id)},'creator',${Number(m.id)},${String(m.display_name)},${value},TRUE)`);
+   return res.status(201).json({success:true});
+  }catch(e){return unavailable(res,e);}
+ });
+ router.post("/creator/portal/team/calendar",async(req:any,res)=>{
+  if(!creatorPortalEnabled())return gate(res);
+  const m=await memberFor(req,res);if(!m)return;
+  const title=String(req.body?.title||"").trim(),description=String(req.body?.description||"").trim();
+  const start=new Date(String(req.body?.startsAt||"")),end=new Date(String(req.body?.endsAt||""));
+  if(!title||title.length>250||description.length>3000||!Number.isFinite(start.getTime())
+   ||!Number.isFinite(end.getTime())||end<=start)return res.status(400).json({error:"Enter a valid title, start, and later end time."});
+  try{
+   const db=await getDb();if(!db)throw Error("DB");
+   await db.execute(sql`INSERT INTO creator_portal_calendar
+    (portal_id,title,starts_at,ends_at,description,created_by)
+    VALUES(${Number(m.portal_id)},${title},${start.toISOString()},${end.toISOString()},${description},${String(m.display_name)})`);
+   return res.status(201).json({success:true});
+  }catch(e){return unavailable(res,e);}
+ });
+ const fileUpload=multer({storage:multer.memoryStorage(),limits:{fileSize:15*1024*1024},
+   fileFilter:(_req,file,callback)=>callback(null,[
+    "image/jpeg","image/png","image/webp","application/pdf","application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+   ].includes(file.mimetype))
+ });
+ router.post("/creator/portal/team/files",(req:any,res:any,next:any)=>{
+   fileUpload.single("file")(req,res,(err:any)=>err?res.status(400).json({error:"Upload failed: 15 MB max, images/PDF/Word only."}):next());
+ },async(req:any,res)=>{
+  if(!creatorPortalEnabled())return gate(res);
+  const m=await memberFor(req,res);if(!m)return;
+  const file=req.file;
+  if(!file||!file.buffer||file.size>15*1024*1024)return res.status(400).json({error:"Choose a supported file under 15 MB."});
+  try{
+   const db=await getDb();if(!db)throw Error("DB");
+   const safe=String(file.originalname).replace(/[^a-zA-Z0-9_.-]/g,"_").slice(0,160)||"file";
+   const key="creator-team/"+m.portal_id+"/"+crypto.randomUUID()+"-"+safe;
+   // No fallback to public uploads or base64 data URLs.
+   await storagePut(key,file.buffer,file.mimetype);
+   await db.execute(sql`INSERT INTO creator_portal_files(portal_id,storage_key,file_name,mime_type,size_bytes,uploaded_by)
+    VALUES(${Number(m.portal_id)},${key},${safe},${String(file.mimetype)},${Number(file.size)},${String(m.display_name)})`);
+   return res.status(201).json({success:true});
+  }catch(e){return unavailable(res,e);}
+ });
+ router.get("/creator/portal/team/files/:fileId",async(req:any,res)=>{
+  if(!creatorPortalEnabled())return gate(res);
+  const m=await memberFor(req,res);if(!m)return;
+  const id=Number(req.params.fileId);if(!Number.isSafeInteger(id)||id<=0)return res.status(400).json({error:"Invalid file"});
+  try{
+   const db=await getDb();if(!db)throw Error("DB");
+   const record=rows(await db.execute(sql`SELECT storage_key FROM creator_portal_files
+    WHERE id=${id} AND portal_id=${Number(m.portal_id)} LIMIT 1`))[0];
+   if(!record)return res.status(404).json({error:"File not found"});
+   const download=await storageGet(String(record.storage_key));
+   return res.json({url:download.url});
+  }catch(e){return unavailable(res,e);}
+ });
+
 }
