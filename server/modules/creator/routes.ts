@@ -4,6 +4,7 @@ import { sql } from "drizzle-orm";
 import { getDb } from "../../db";
 import { getWorkspaceData } from "./creatorWorkspaceRepository";
 import { registerCreatorWorkspaceRoutes } from "./creatorWorkspaceRoutes";
+import { workspaceEmailNotice } from "./creatorMessageNotification";
 import {
   addCreatorLeadNote,
   createCreatorFollowUpTask,
