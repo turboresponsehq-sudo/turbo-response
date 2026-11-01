@@ -54,6 +54,30 @@
   .hero .wrap{padding-top:480px;padding-bottom:32px}
   .hero h1{font-size:clamp(72px,18vw,94px);letter-spacing:-1px;line-height:.86;margin:12px 0 18px}
 }
+
+/* V5: keep the 4L pendant fully unobstructed — actual separation, not another title shrink */
+@media(min-width:801px){
+ .hero .wrap{max-width:1280px}
+ .hero h1{font-size:clamp(72px,7.8vw,112px)!important;max-width:430px!important;white-space:nowrap}
+ .hero-photo{left:43%!important;background-position:55% 43%!important}
+ .hero:before{background:linear-gradient(90deg,#09090bf0 0%,#09090bdf 27%,#09090b60 43%,transparent 68%),linear-gradient(0deg,#09090b4d,transparent 26%)!important}
+}
+@media(max-width:800px){
+ /* Photo gets its own clear area; title sits below the pendant, never across his chest */
+ .hero{display:block!important;min-height:0!important;padding-top:510px!important;overflow:hidden}
+ .hero-photo{top:0!important;left:0!important;right:0!important;bottom:auto!important;height:510px!important;background-size:cover!important;background-position:50% 48%!important;filter:brightness(1.19) saturate(1.13) contrast(1.01)!important}
+ .hero:before{top:0!important;bottom:auto!important;height:511px!important;background:linear-gradient(0deg,#0c0c0f 0%,rgba(12,12,15,.18) 15%,transparent 41%)!important}
+ .hero .wrap{padding-top:6px!important;padding-bottom:35px!important}
+ .hero h1{font-size:clamp(76px,19.8vw,96px)!important;line-height:.9!important;max-width:100%!important;white-space:nowrap;letter-spacing:-1.4px;margin:12px 0 20px!important}
+ .orbit-stage{top:15px!important;right:-12%!important;width:82vw!important;opacity:.14!important}
+ .label-hero{top:480px!important;right:15px!important;bottom:auto!important}
+}
+@media(max-width:390px){
+ .hero{padding-top:475px!important}
+ .hero-photo,.hero:before{height:475px!important}
+ .hero h1{font-size:19vw!important}
+ .label-hero{top:440px!important}
+}
 </style></head><body>
 <header><div class="wrap header-in"><a class="brand" href="#top">4L G5IVE<span>KING LICK</span></a><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button><nav class="nav" id="nav"><a href="#top">HOME</a><a href="#music">MUSIC</a><a href="#visuals">VISUALS</a><a href="#pde">PDE</a><a href="#bookings">BOOKINGS</a></nav><div class="social"><a href="https://www.instagram.com/4l_g5ive/" target="_blank" rel="noopener">INSTAGRAM</a><a href="https://www.youtube.com/@4lg5ive" target="_blank" rel="noopener">YOUTUBE</a></div></div></header>
 <main id="top"><section class="hero"><div class="hero-photo" aria-hidden="true"></div><div class="orbit-stage" aria-hidden="true"><div class="orbit-outer"></div><div class="orbit-second"></div></div><div class="label-hero">4L THE FAMILY&nbsp; / &nbsp; KING LICK</div><div class="wrap"><p class="eyebrow">KING LICK &nbsp; / &nbsp; ATLANTA, GA</p><h1>4L G5IVE</h1><span class="redline"></span><h2>PARADISE EAST (PDE)</h2><p>PLEASE DON'T ENTER</p><p class="lede">MUSIC / PDE / COMMUNITY / LIFESTYLE</p><div class="buttons"><a class="btn red" href="#visuals">▶ &nbsp; WATCH VISUALS</a><a class="btn black" href="#music">LISTEN NOW</a></div></div></section>
