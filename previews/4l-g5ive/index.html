@@ -44,6 +44,16 @@
 .hero:before{background:linear-gradient(0deg,#09090b 0%,rgba(9,9,11,.87) 25%,rgba(9,9,11,.1) 58%,transparent 90%)!important}
 .orbit-stage{opacity:.17}
 }
+
+/* Keep the entire 4L pendant visible: reduce and reposition hero title */
+@media(min-width:801px){
+  .hero h1{font-size:clamp(76px,8.2vw,124px);letter-spacing:-1.3px;max-width:510px;margin-top:19px;margin-bottom:23px}
+}
+@media(max-width:800px){
+  .hero{min-height:845px}
+  .hero .wrap{padding-top:480px;padding-bottom:32px}
+  .hero h1{font-size:clamp(72px,18vw,94px);letter-spacing:-1px;line-height:.86;margin:12px 0 18px}
+}
 </style></head><body>
 <header><div class="wrap header-in"><a class="brand" href="#top">4L G5IVE<span>KING LICK</span></a><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button><nav class="nav" id="nav"><a href="#top">HOME</a><a href="#music">MUSIC</a><a href="#visuals">VISUALS</a><a href="#pde">PDE</a><a href="#bookings">BOOKINGS</a></nav><div class="social"><a href="https://www.instagram.com/4l_g5ive/" target="_blank" rel="noopener">INSTAGRAM</a><a href="https://www.youtube.com/@4lg5ive" target="_blank" rel="noopener">YOUTUBE</a></div></div></header>
 <main id="top"><section class="hero"><div class="hero-photo" aria-hidden="true"></div><div class="orbit-stage" aria-hidden="true"><div class="orbit-outer"></div><div class="orbit-second"></div></div><div class="label-hero">4L THE FAMILY&nbsp; / &nbsp; KING LICK</div><div class="wrap"><p class="eyebrow">KING LICK &nbsp; / &nbsp; ATLANTA, GA</p><h1>4L G5IVE</h1><span class="redline"></span><h2>PARADISE EAST (PDE)</h2><p>PLEASE DON'T ENTER</p><p class="lede">MUSIC / PDE / COMMUNITY / LIFESTYLE</p><div class="buttons"><a class="btn red" href="#visuals">▶ &nbsp; WATCH VISUALS</a><a class="btn black" href="#music">LISTEN NOW</a></div></div></section>
