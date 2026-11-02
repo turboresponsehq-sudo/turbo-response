@@ -48,8 +48,10 @@ button,input{font:inherit}
 .art img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;filter:none}
 .art--website img{object-position:center top}
 .art--social img{object-position:center top}
-.art--ai img{object-position:center top}
-.art--portfolio img{object-position:center 30%}
+.art--ai img{object-position:center top;filter:grayscale(1) sepia(.8) saturate(2.2) hue-rotate(350deg) contrast(1.18) brightness(.95)}
+.art--portfolio img{object-position:100% center}
+.art--social{background:#141414}
+.art--social svg{width:100%;height:100%;display:block;max-width:none}
 .art svg{display:block;height:91px;width:100px;max-width:100%}
 
 
@@ -100,7 +102,27 @@ footer{border-top:1px solid var(--line);text-align:center;color:#858589;font-siz
   </a>
   <a class="action action--social" href="https://turboresponsehq.ai/zakhybuildsai/services" aria-label="Improve my social media - see social media services">
    <span class="action-copy"><span class="action-title">Improve my social media</span><span class="action-sub">Profiles, content & visibility</span></span>
-   <span class="action-row-end"><span class="action-arrow" aria-hidden="true">↗</span><span class="art art--social"><img src="/zakhy-assets/spillo-content-approved_37e00a75-mobile_50f2fe3c.webp" alt="Spillo branded content page" width="101" height="94" loading="lazy" decoding="async"></span></span>
+   <span class="action-row-end"><span class="action-arrow" aria-hidden="true">↗</span><span class="art art--social" role="img" aria-label="Social media analytics, audience growth chart and engagement trends"><svg viewBox="0 0 100 94" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+<rect width="100" height="94" rx="8" fill="#141414"/>
+<rect x="7" y="7" width="86" height="80" rx="6" fill="#FFFDF7"/>
+<rect x="7" y="7" width="86" height="14" rx="6" fill="#141414"/>
+<rect x="7" y="15" width="86" height="6" fill="#141414"/>
+<circle cx="17" cy="14" r="4" fill="#E32636"/>
+<path d="M15.5 12.5h3v3h-3z" fill="#fff"/>
+<rect x="25" y="12" width="38" height="4" rx="2" fill="#fff"/>
+<circle cx="82" cy="14" r="3" fill="#FFCB16"/>
+<path d="M15 74h70" stroke="#C6C0BB" stroke-width="1"/>
+<path d="M15 59h70M15 44h70" stroke="#EAE4DD" stroke-width="1"/>
+<rect x="20" y="57" width="10" height="17" rx="2" fill="#E32636"/>
+<rect x="36" y="46" width="10" height="28" rx="2" fill="#E32636"/>
+<rect x="52" y="51" width="10" height="23" rx="2" fill="#E32636"/>
+<rect x="68" y="35" width="10" height="39" rx="2" fill="#E32636"/>
+<path d="M21 50L40 41L55 43L74 30" fill="none" stroke="#111114" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M69 30h6v6" fill="none" stroke="#111114" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="74" cy="30" r="4" fill="#FFCB16" stroke="#111114" stroke-width="1.5"/>
+<rect x="17" y="79" width="33" height="3" rx="1.5" fill="#171717" opacity=".7"/>
+<rect x="56" y="79" width="24" height="3" rx="1.5" fill="#E32636"/>
+</svg></span></span>
   </a>
   <a class="action action--ai" href="https://turboresponsehq.ai/zakhybuildsai/automation-services" aria-label="Automate my business - explore automation services">
    <span class="action-copy"><span class="action-title">Automate my business</span><span class="action-sub">Leads, messages & follow-ups</span></span>
