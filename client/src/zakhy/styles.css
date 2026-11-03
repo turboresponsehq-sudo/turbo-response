@@ -1273,3 +1273,101 @@ h1 { font-size: clamp(62px, 6.25vw, 96px); max-width: 650px; }
 @media (max-width: 767px) {
   .miami-experience-hero-photo { background-image: var(--miami-experience-mobile); }
 }
+
+
+/* Ms. Pop It aka Ms. Atlanta landing refresh — home route only. */
+#top.popit-page {
+  --pop-navy: #061a36;
+  --pop-navy-deep: #020b19;
+  --pop-red: #e31b23;
+  --pop-red-bright: #ff2432;
+  --pop-white: #f7f8fb;
+  background: var(--pop-navy-deep);
+}
+#top .popit-hero {
+  min-height: clamp(780px, 54vw, 880px);
+  background:
+    radial-gradient(circle at 82% 20%, rgba(227,27,35,.26), transparent 28%),
+    linear-gradient(115deg, #020b19 0%, #061a36 52%, #0b2b55 100%);
+}
+#top .popit-portrait {
+  background-image: url("/zakhy-assets/ms-pop-it-hero-clean_63bafcfa.png");
+  background-position: 78% center;
+  background-size: auto 108%;
+  filter: saturate(1.12) contrast(1.04);
+}
+#top .popit-hero-shade {
+  background:
+    linear-gradient(90deg, rgba(2,11,25,.98) 0%, rgba(6,26,54,.92) 36%, rgba(6,26,54,.42) 58%, rgba(2,11,25,.08) 78%),
+    repeating-linear-gradient(0deg, transparent 0 59px, rgba(255,255,255,.028) 60px 61px);
+}
+#top .popit-header {
+  border-bottom: 1px solid rgba(255,255,255,.16);
+}
+#top .popit-mini-logo span,
+#top .popit-brand strong,
+#top .popit-brand svg,
+#top .popit-service svg,
+#top .popit-service span { color: var(--pop-red-bright); }
+#top .popit-mini-logo small {
+  margin-top: 10px;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .22em;
+  line-height: 1;
+}
+#top .popit-brand strong {
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  letter-spacing: -.035em;
+  text-shadow: 0 3px 0 rgba(0,0,0,.35);
+}
+#top .popit-aka {
+  width: max-content;
+  margin-top: 24px;
+  padding: 9px 14px;
+  border-left: 5px solid var(--pop-red);
+  background: rgba(255,255,255,.94);
+  color: #061a36;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: .2em;
+}
+#top .popit-aka b { color: var(--pop-red); }
+#top .popit-tagline {
+  margin-top: 18px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .28em;
+}
+#top .popit-primary {
+  background: linear-gradient(135deg, #ff2636, #c90f1c);
+}
+#top .popit-secondary {
+  border-color: rgba(255,255,255,.75);
+  background: rgba(6,26,54,.54);
+}
+#top .popit-featured > span { color: rgba(255,255,255,.66); }
+#top .popit-services {
+  border-top-color: rgba(255,255,255,.26);
+  background: linear-gradient(90deg, #020b19, #061a36, #020b19);
+}
+#top .popit-service { border-right-color: rgba(255,255,255,.2); }
+#top .popit-service:hover { background: rgba(227,27,35,.18); }
+
+@media (max-width: 767px) {
+  #top .popit-hero { min-height: 860px; background: linear-gradient(180deg, #020b19 0%, #061a36 55%, #020b19 100%); }
+  #top .popit-portrait { display: none; }
+  #top .popit-hero-shade { background: linear-gradient(180deg, rgba(2,11,25,.98) 0%, rgba(6,26,54,.88) 48%, rgba(2,11,25,.18) 72%, #020b19 100%); }
+  #top .popit-hero-copy { padding-top: 78px; }
+  #top .popit-brand span { font-size: 94px; }
+  #top .popit-brand strong { font-size: clamp(66px, 19vw, 88px); }
+  #top .popit-aka { margin-top: 17px; font-size: 10px; letter-spacing: .14em; }
+  #top .popit-tagline { max-width: 320px; font-size: 10px; line-height: 1.6; letter-spacing: .2em; }
+  #top .popit-actions { flex-direction: column; align-items: stretch; }
+  #top .popit-primary, #top .popit-secondary { width: 100%; }
+  #top .popit-featured { position: static; margin-top: 26px; }
+  #top .popit-mobile-portrait { display: block; margin-top: 24px; }
+  #top .popit-mobile-portrait img { width: 100%; max-height: 430px; object-fit: cover; object-position: center 22%; border-top: 1px solid rgba(255,255,255,.18); }
+}
