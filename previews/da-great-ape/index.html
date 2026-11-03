@@ -235,6 +235,20 @@ footer{background:#070708}
  .moment:first-child{height:360px}
 }
 @media(prefers-reduced-motion:reduce){.ape-ticker .track{animation:none}.moment img{transition:none}}
+
+/* Film-first hero: the verified official music video runs muted behind the copy,
+   with the approved studio portrait remaining visible when autoplay is blocked. */
+.hero-photo{isolation:isolate;}
+.ape-video-shell{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none;opacity:0;transition:opacity 700ms ease;}
+.ape-video-shell.is-playing{opacity:.93}
+.ape-video-shell iframe{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:0;pointer-events:none;max-width:none;max-height:none;}
+.hero-photo::after{z-index:2;pointer-events:none}
+.hero .btn.red{border-radius:0;cursor:pointer}
+@media(max-width:800px){
+ .ape-video-shell.is-playing{opacity:.88}
+ .hero .btn.red{max-width:100%;white-space:normal}
+}
+@media(prefers-reduced-motion:reduce){.ape-video-shell{display:none!important}}
 </style>
 </head>
 <body>
@@ -246,13 +260,13 @@ footer{background:#070708}
 </div></header>
 <main id="top">
   <section class="hero" aria-label="Artist introduction">
-    <div class="hero-photo" id="hero-photo" aria-hidden="true"></div><div class="template-photo-guide" aria-hidden="true">ARTIST PHOTO</div>
+    <div class="hero-photo" id="hero-photo" aria-hidden="true"><div class="ape-video-shell" id="ape-video-shell"><div id="ape-hero-player"></div></div></div><div class="template-photo-guide" aria-hidden="true">ARTIST PHOTO</div>
     <div class="orbit-stage" aria-hidden="true"><div class="orbit-outer"></div><div class="orbit-second"></div></div>
     <div class="wrap"><p class="eyebrow" id="eyebrow">JAPAN MUSIC GROUP / EAST POINT</p>
       <h1 id="hero-name">ARTIST NAME</h1><span class="redline"></span>
       <div class="subtitle-block"><h2 id="hero-origin">FROM THE BLOCK</h2><p id="hero-tagline">TO THE WORLD</p>
         <p class="lede" id="hero-categories">MUSIC / 1010 / EAST POINT</p></div>
-      <div class="buttons"><a class="btn red" href="#visuals">▶ &nbsp; WATCH VISUALS</a><a class="btn black" href="https://onerpm.link/cantbandaape" target="_blank" rel="noopener">STREAM THE ALBUM ↗</a></div>
+      <div class="buttons"><button class="btn red" type="button" id="hero-watch">▶ &nbsp; WATCH VIDEO + SOUND</button><a class="btn black" href="https://onerpm.link/cantbandaape" target="_blank" rel="noopener">STREAM THE ALBUM ↗</a></div>
     </div>
   </section>
   <div class="ape-ticker" aria-label="Da Great Ape music identity"><div class="track" aria-hidden="true">
@@ -387,6 +401,70 @@ footer{background:#070708}
  $('close').addEventListener('click',close);
  overlay.addEventListener('click',e=>{if(e.target===overlay)close()});
  window.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+
+ // The background clip is cinematic decoration. Sound only starts from a visitor's click.
+ // YouTube autoplay can be blocked on mobile, in which case the studio portrait remains.
+ const heroShell=$('ape-video-shell');
+ const heroWatch=$('hero-watch');
+ const heroVideoId=(y.musicId||'').trim();
+ let heroPlayer=null;
+ function pauseHero(){
+   if(heroPlayer && typeof heroPlayer.pauseVideo==='function') {
+     try{heroPlayer.pauseVideo()}catch(_){}
+   }
+ }
+ function resumeHero(){
+   if(heroPlayer && typeof heroPlayer.playVideo==='function' && heroShell && !overlay.classList.contains('open')){
+     try{heroPlayer.playVideo()}catch(_){}
+   }
+ }
+ if(heroWatch){
+   heroWatch.addEventListener('click',function(){pauseHero();$('video-music').click()});
+ }
+ document.querySelectorAll('.video-card').forEach(btn=>btn.addEventListener('click',pauseHero));
+ $('close').addEventListener('click',resumeHero);
+ overlay.addEventListener('click',e=>{if(e.target===overlay)resumeHero()});
+ window.addEventListener('keydown',e=>{if(e.key==='Escape')resumeHero()});
+ const reducedMotion=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const dataSaver=navigator.connection && navigator.connection.saveData;
+ if(heroVideoId && /^[A-Za-z0-9_-]{11}$/.test(heroVideoId) && !reducedMotion && !dataSaver && heroShell){
+   window.onYouTubeIframeAPIReady=function(){
+     if(!window.YT || !YT.Player)return;
+     heroPlayer=new YT.Player('ape-hero-player',{
+       videoId:heroVideoId,
+       playerVars:{autoplay:1,controls:0,playsinline:1,loop:1,playlist:heroVideoId,fs:0,rel:0,iv_load_policy:3,origin:window.location.origin},
+       events:{
+         onReady:function(e){e.target.mute();e.target.playVideo()},
+         onStateChange:function(e){
+           if(e.data===YT.PlayerState.PLAYING){
+             heroShell.classList.add('is-playing');
+           } else if(e.data===YT.PlayerState.ENDED || e.data===YT.PlayerState.PAUSED){
+             heroShell.classList.remove('is-playing');
+           }
+         },
+         onError:function(){heroShell.classList.remove('is-playing')}
+       }
+     });
+   };
+   const youtubeApi=document.createElement('script');
+   youtubeApi.src='https://www.youtube.com/iframe_api';
+   youtubeApi.async=true;
+   document.head.appendChild(youtubeApi);
+   const sizeVideo=()=>{
+     const rect=heroShell.getBoundingClientRect();
+     const iframe=heroShell.querySelector('iframe');
+     if(!iframe || !rect.width || !rect.height)return;
+     const w=Math.max(rect.width,rect.height*16/9);
+     const h=Math.max(rect.height,rect.width*9/16);
+     iframe.style.width=Math.ceil(w)+'px';
+     iframe.style.height=Math.ceil(h)+'px';
+   };
+   if(window.ResizeObserver)new ResizeObserver(sizeVideo).observe(heroShell);
+   window.addEventListener('resize',sizeVideo);
+   const videoObserver=new MutationObserver(sizeVideo);
+   videoObserver.observe(heroShell,{childList:true,subtree:false});
+ }
+
 })();
 </script>
 </body></html>
