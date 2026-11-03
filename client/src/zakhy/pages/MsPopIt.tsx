@@ -9,7 +9,7 @@ const navItems = [
 const serviceItems = [
   { label: "Music", caption: "New Releases", icon: Music2, href: "/ms-pop-it/content#music-heading" },
   { label: "Merch", caption: "Shop Now", icon: ShoppingBag, href: "/ms-pop-it/content#merch-heading" },
-  { label: "Features", caption: "Book Ms Pop It", icon: MicVocal, href: "/ms-pop-it/inquiries" },
+  { label: "Features", caption: "Book Ms. Pop It", icon: MicVocal, href: "/ms-pop-it/inquiries" },
   { label: "Collaborations", caption: "Let’s Work", icon: Handshake, href: "/ms-pop-it/inquiries" },
   { label: "Shows", caption: "Get Tickets", icon: Ticket, href: "/ms-pop-it/inquiries" },
   { label: "Events", caption: "Upcoming Dates", icon: CalendarDays, href: "/ms-pop-it/inquiries" },
@@ -22,10 +22,10 @@ export default function MsPopItPage() {
   return (
     <main className="popit-page" id="top">
       <section className="popit-hero" aria-labelledby="popit-title">
-        <div className="popit-portrait" role="img" aria-label="Ms Pop It in a red luxury editorial portrait" />
+        <div className="popit-portrait" role="img" aria-label="Ms. Pop It aka Ms. Atlanta in a red, navy and white Atlanta-inspired editorial portrait" />
         <div className="popit-hero-shade" />
         <header className="popit-header">
-          <a className="popit-mini-logo" href="/zakhybuildsai/portfolio/ms-pop-it" aria-label="Ms Pop It home"><span>Ms</span><strong>POP IT</strong></a>
+          <a className="popit-mini-logo" href="/zakhybuildsai/portfolio/ms-pop-it" aria-label="Ms. Pop It home"><span>Ms.</span><strong>POP IT</strong><small>AKA MS. ATLANTA</small></a>
           <nav className={`popit-nav ${menuOpen ? "popit-nav--open" : ""}`} aria-label="Ms Pop It navigation">
             {navItems.map((item) => <a className={item.label === "Home" ? "is-active" : ""} key={item.label} href={item.href} onClick={closeMenu}>{item.label}</a>)}
           </nav>
@@ -34,12 +34,13 @@ export default function MsPopItPage() {
         </header>
 
         <div className="popit-hero-copy">
-          <div className="popit-brand" aria-label="Ms Pop It"><span>Ms</span><strong>POP IT</strong><Crown aria-hidden="true" /></div>
-          <p className="popit-tagline">THE RAP QUEEN YOU CAN’T IGNORE.</p>
-          <div className="popit-actions"><a className="popit-primary" href="/zakhybuildsai/portfolio/ms-pop-it/content#music-heading">LISTEN NOW <Play size={16} fill="currentColor" /></a><a className="popit-secondary" href="/zakhybuildsai/portfolio/ms-pop-it/content#merch-heading">SHOP MERCH <span>→</span></a></div>
-          <div className="popit-featured"><span>FEATURED</span><div><b>● Spotify</b><b>● Apple Music</b><b>▶ YouTube</b></div></div>
+          <div className="popit-brand" aria-label="Ms. Pop It aka Ms. Atlanta"><span>Ms.</span><strong>POP IT</strong><Crown aria-hidden="true" /></div>
+          <p className="popit-aka">AKA <b>MS. ATLANTA</b></p>
+          <p className="popit-tagline">ATLANTA MADE. MUSIC. STYLE. ATTITUDE.</p>
+          <div className="popit-actions"><a className="popit-primary" href="/zakhybuildsai/portfolio/ms-pop-it/content#music-heading">LISTEN NOW <Play size={16} fill="currentColor" /></a><a className="popit-secondary" href="/zakhybuildsai/portfolio/ms-pop-it/inquiries">BOOK / FEATURES <span>→</span></a></div>
+          <div className="popit-featured"><span>LISTEN & WATCH</span><div><b>● Spotify</b><b>● Apple Music</b><b>▶ YouTube</b></div></div>
         </div>
-        <div className="popit-mobile-portrait"><img src="/zakhy-assets/ms-pop-it-hero-clean_63bafcfa.png" alt="Ms Pop It in a red luxury editorial portrait" /></div>
+        <div className="popit-mobile-portrait"><img src="/zakhy-assets/ms-pop-it-hero-clean_63bafcfa.png" alt="Ms. Pop It aka Ms. Atlanta" /></div>
       </section>
 
       <section className="popit-services" aria-label="Ms Pop It music and monetization paths">
