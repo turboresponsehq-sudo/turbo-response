@@ -24,12 +24,14 @@ window.RAPPER_SITE_CONFIG = {
     youtube: "",
     music: ""
   },
+  // Fill these when the new client's approved photos are ready.
+  // Example: hero: "images/hero.jpg" or hero: "https://example.com/artist.jpg"
   photos: {
-    hero: "images/hero.jpg",
-    neighborhood: "images/neighborhood.jpg",
-    release: "images/release.jpg",
-    interview: "images/interview.jpg",
-    story: "images/story.jpg"
+    hero: "",
+    neighborhood: "",
+    release: "",
+    interview: "",
+    story: ""
   },
   featuredRelease: {
     label: "FEATURED RELEASE",
