@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="description" content="Browse Creator Automations website projects by industry: artists, politics, fitness, brands, travel, and culture.">
+<meta property="og:title" content="Creator Automations | Website Showcase">
+<meta property="og:description" content="Choose an industry. See website examples.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://turboresponsehq.ai/zakhybuildsai/showcase/">
+<title>Website Showcase | Creator Automations</title>
+<link rel="canonical" href="https://turboresponsehq.ai/zakhybuildsai/showcase/">
+<style>
+:root{--red:#e32636;--gold:#ffcc19;--black:#121212;--white:#fff;--gray:#6b6b6b;--line:#ddddda}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#ededeb;color:var(--black);font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit}
+button{cursor:pointer}
+.shell{max-width:1180px;min-height:100vh;background:#fff;margin:auto;box-shadow:0 14px 65px #0000000c}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px clamp(20px,5vw,60px);border-bottom:2px solid #111}
+.brand{display:flex;align-items:center;gap:10px;line-height:.96;font-weight:1000;font-size:14px;letter-spacing:-.4px}
+.brand-icon{background:#111;color:var(--gold);border-radius:9px;box-shadow:inset -3px -3px 0 var(--red);width:39px;height:39px;display:grid;place-items:center;font-size:23px}
+.toplink{border:2px solid #111;border-radius:30px;padding:9px 12px;font-size:11px;font-weight:900;white-space:nowrap}
+.hero{padding:35px clamp(20px,5vw,60px) 26px;background:linear-gradient(115deg,#fff 48%,#fff4c7 125%);border-bottom:1px solid #e9e6df}
+.eyebrow{display:flex;align-items:center;gap:8px;color:var(--red);font-size:11px;font-weight:900;letter-spacing:1.2px;text-transform:uppercase}
+.eyebrow:before{content:"";width:27px;height:7px;border-left:7px solid var(--red);background:var(--gold)}
+.hero h1{font-size:clamp(43px,7vw,79px);font-weight:1000;line-height:.98;letter-spacing:-2.5px;margin:14px 0 11px}
+.hero h1 span{color:var(--red)}
+.hero p{font-size:clamp(15px,2vw,18px);margin:0;color:#444;line-height:1.45}
+.categories{padding:29px clamp(20px,5vw,60px) 25px}
+.sectionline{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px}
+.sectionline h2{margin:0;font-size:clamp(18px,3vw,25px);font-weight:1000;letter-spacing:-.7px}
+.sectionline small{font-weight:800;font-size:11px;color:#808080;white-space:nowrap}
+.cat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+.cat{display:flex;text-align:left;align-items:center;gap:12px;min-height:76px;border:2px solid #141414;border-radius:13px;background:#fff;color:#111;padding:12px;transition:background .15s,transform .15s}
+.cat:hover{transform:translateY(-2px)}
+.cat.active{background:var(--red);color:white;box-shadow:0 4px 0 #111}
+.cat:focus-visible,.card:focus-visible,.toplink:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.cat-num{width:35px;height:35px;flex-shrink:0;display:grid;place-items:center;border:2px solid currentColor;border-radius:10px;font-size:12px;font-weight:950}
+.cat-text{flex:1;min-width:0}
+.cat-name{display:block;font-weight:950;font-size:14px;line-height:1.14;letter-spacing:-.25px}
+.cat-count{display:block;margin-top:5px;font-size:11px;font-weight:700;opacity:.76}
+.all-btn{display:inline-flex;align-items:center;gap:7px;background:none;border:0;border-bottom:2px solid var(--red);padding:9px 1px 5px;margin-top:11px;font-size:12px;font-weight:900;color:#151515}
+.all-btn.active{color:var(--red)}
+.gallery{padding:24px clamp(20px,5vw,60px) 40px;background:#fafaf8;border-top:1px solid #e6e6e2}
+.gallery-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:18px}
+.gallery-head h2{font-size:clamp(26px,5vw,37px);letter-spacing:-1.1px;line-height:1;margin:0;font-weight:1000}
+.gallery-head p{margin:7px 0 0;color:#686868;font-size:13px;line-height:1.4}
+.gallery-head .counter{font-size:11px;font-weight:950;white-space:nowrap;border:2px solid #111;padding:7px 10px;border-radius:20px}
+.project-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{display:block;background:#fff;overflow:hidden;border:2px solid #111;border-radius:13px;box-shadow:0 4px 0 #111;min-width:0;transition:transform .16s}
+.card:hover{transform:translateY(-3px)}
+.card-media{height:190px;overflow:hidden;background:#151515;position:relative}
+.card-media img{width:100%;height:100%;object-fit:cover;object-position:var(--pos,center);display:block}
+.card-media:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(0deg,#0004,transparent 52%)}
+.card-media .overlay-title{position:absolute;inset:0;padding:16px;color:#fff;display:flex;flex-direction:column;justify-content:end;z-index:1;font-weight:1000;font-size:clamp(21px,3vw,28px);line-height:1.03;letter-spacing:-1px;text-shadow:0 2px 8px #0008}
+.card-media.poster-politics{background:linear-gradient(140deg,#0b3428,#17865b 50%,#f8b743 160%)}
+.card-media.poster-girls{background:linear-gradient(145deg,#0d0710,#7c1647 75%,#d94b4b)}
+.card-media.poster-amber{background:linear-gradient(145deg,#513127,#c6aa8c)}
+.card-media.poster-4l{background:linear-gradient(140deg,#161517,#28282b)}
+.card-body{padding:14px 14px 16px}
+.card-type{font-size:10px;color:#5b5b5b;font-weight:850;letter-spacing:.45px;text-transform:uppercase}
+.card-title{font-size:18px;font-weight:1000;line-height:1.09;letter-spacing:-.6px;margin:6px 0}
+.card-desc{font-size:12px;line-height:1.4;color:#5a5a5a;min-height:32px;margin:0 0 14px}
+.card-open{color:#fff;background:var(--red);border:2px solid #111;border-radius:8px;padding:9px 11px;display:flex;justify-content:space-between;gap:9px;align-items:center;font-weight:900;font-size:12px}
+.end{padding:26px clamp(20px,5vw,60px) 40px;border-top:1px solid #eee}
+.endbar{padding:22px;border-radius:15px;background:#111;color:white;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.endbar strong{font-size:20px;line-height:1.08;font-weight:1000;display:block}
+.endbar p{color:#cfcfcf;font-size:12px;margin:7px 0 0}
+.endbar a{background:var(--gold);border:2px solid #000;border-radius:8px;color:#111;font-size:12px;font-weight:950;padding:13px 14px;white-space:nowrap}
+.footer{text-align:center;color:#777;font-size:11px;font-weight:750;padding:20px}
+@media(max-width:800px){.cat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.project-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.card-media{height:180px}}
+@media(max-width:480px){.cat-grid{gap:9px}.cat{min-height:76px;padding:10px;gap:8px}.cat-num{width:29px;height:32px;font-size:10px}.cat-name{font-size:12.5px}.cat-count{font-size:10px}.gallery{padding-top:24px}.project-grid{gap:11px}.card-media{height:134px}.card-body{padding:11px}.card-title{font-size:15px}.card-desc{font-size:11px;min-height:48px;margin-bottom:10px}.card-open{font-size:11px;padding:8px 9px}.card-media .overlay-title{font-size:19px}.endbar{align-items:stretch;flex-direction:column}.endbar a{text-align:center}.hero h1{letter-spacing:-1.8px}}
+@media(max-width:345px){.cat-grid{grid-template-columns:1fr}.project-grid{grid-template-columns:1fr}.card-media{height:190px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="shell">
+<header class="top"><a class="brand" href="/zakhybuildsai/"><span class="brand-icon">↯</span><span>CREATOR<br>AUTOMATIONS</span></a><a class="toplink" href="/zakhybuildsai/links/">BIO HUB ↗</a></header>
+<section class="hero">
+<div class="eyebrow">WEBSITE SHOWCASE</div>
+<h1>PICK AN INDUSTRY.<br><span>SEE THE WORK.</span></h1>
+<p>Websites and concepts organized for quick viewing.</p>
+</section>
+<section class="categories" aria-labelledby="category-title">
+<div class="sectionline"><h2 id="category-title">CHOOSE A CATEGORY</h2><small>Tap to explore ↓</small></div>
+<div id="categories" class="cat-grid" role="group" aria-label="Website categories"></div>
+<button id="show-all" class="all-btn" type="button">VIEW ALL PROJECTS ↗</button>
+</section>
+<section id="gallery" class="gallery" aria-live="polite">
+<div class="gallery-head"><div><h2 id="gallery-title">ARTISTS & INFLUENCERS</h2><p id="gallery-note">Tap any project to view the example.</p></div><span id="count" class="counter">0 EXAMPLES</span></div>
+<div id="projects" class="project-grid"></div>
+</section>
+<section class="end"><div class="endbar"><div><strong>READY TO BUILD YOUR OWN?</strong><p>Websites, branding, social media and automation.</p></div><a href="/creator/start">START A PROJECT ↗</a></div></section>
+<footer class="footer">© CREATOR AUTOMATIONS · ATLANTA</footer>
+</main>
+<script>
+(function(){
+"use strict";
+const base="/zakhybuildsai/portfolio/";
+const assets="/zakhy-assets/";
+const categories=[
+{id:"artists",name:"Artists & Influencers"},
+{id:"political",name:"Politics & Campaigns"},
+{id:"fitness",name:"Fitness & Wellness"},
+{id:"business",name:"Business & Brands"},
+{id:"food",name:"Food & Travel"},
+{id:"culture",name:"Culture & Community"}
+];
+const projects=[
+{cat:"artists",title:"Ms Pop It",detail:"Artist brand and music platform",kind:"Website concept",url:base+"ms-pop-it",img:assets+"ms-pop-it-portfolio-thumbnail_7b95c943.jpg",pos:"84% center"},
+{cat:"artists",title:"Ralo / FAMGOON",detail:"Artist website and fan experience",kind:"Website concept",url:base+"ralo",img:assets+"ralo-famgoon-updated_541acd26.png"},
+{cat:"artists",title:"Spillo",detail:"Music, podcast and booking platform",kind:"Website concept",url:base+"spillo",img:assets+"spillo-home-approved-clear_88592015.png",pos:"center top"},
+{cat:"artists",title:"4L G5ive",detail:"Music, visuals and artist identity",kind:"Website preview",url:"https://fourl-g5ive-website-preview.onrender.com",img:"https://i.ytimg.com/vi/ZJu9Pn_E_50/hqdefault.jpg",poster:"poster-4l"},
+{cat:"artists",title:"Da Great Ape",detail:"Artist website and content",kind:"Website preview",url:"https://da-great-ape-artist-preview.onrender.com",img:"https://da-great-ape-artist-preview.onrender.com/images/hero-studio.webp"},
+{cat:"artists",title:"Amber All Real",detail:"Creator brand and affiliate offers",kind:"Client website",url:"https://crownedsilkhair.co",poster:"poster-amber"},
+{cat:"political",title:"Kenn Collier Sr.",detail:"Georgia House District 62 candidate",kind:"Campaign website concept",url:"https://kenn-collier-hd62-preview.onrender.com",poster:"poster-politics"},
+{cat:"political",title:"Political Girls of Atlanta",detail:"Georgia political media platform",kind:"Website preview",url:"https://gablackgirl-b5gu8hi2.manus.space",poster:"poster-girls"},
+{cat:"fitness",title:"CRUNK FIT",detail:"Fitness, training and community",kind:"Website concept",url:base+"crunk-fit",img:assets+"crunk-fit-home-approved-crisp_533f9b21.png"},
+{cat:"fitness",title:"Allah Souja",detail:"Fitness, coaching and lifestyle",kind:"Website demo",url:"https://zakhydemo-mpd8k29q.manus.space/allah-souja",img:assets+"allah-souja-portfolio.png",pos:"center top"},
+{cat:"business",title:"Amani Mansur",detail:"Marketing and brand systems",kind:"Client website",url:"https://amanimansur.info",img:assets+"amani-mansur-portfolio.png",pos:"center top"},
+{cat:"business",title:"Creator Automations",detail:"Our own creative and AI platform",kind:"Agency website",url:"/zakhybuildsai",img:assets+"creators-automation-mobile.png",pos:"center top"},
+{cat:"food",title:"Miami Trips & Restaurants",detail:"Food, travel and experiences",kind:"Website concept",url:base+"miami-trips-restaurants",img:assets+"miami-home-approved-exact-reference_8b1ed63e.png"},
+{cat:"culture",title:"The Story of Atlanta",detail:"Neighborhoods, people and culture",kind:"Culture platform",url:base+"story-of-atlanta",img:assets+"atlanta-culture-wall_44ca577d.jpg"}
+];
+let selected="artists";
+const $=id=>document.getElementById(id);
+function e(tag,klass,txt){const node=document.createElement(tag);if(klass)node.className=klass;if(txt!==undefined)node.textContent=txt;return node;}
+function renderCategories(){
+const host=$("categories");host.replaceChildren();
+categories.forEach((c,i)=>{
+const amount=projects.filter(p=>p.cat===c.id).length;
+const btn=e("button","cat"+(selected===c.id?" active":""),"");
+btn.type="button";btn.setAttribute("aria-pressed",String(selected===c.id));
+btn.append(e("span","cat-num",String(i+1).padStart(2,"0")));
+const wrap=e("span","cat-text");wrap.append(e("span","cat-name",c.name),e("span","cat-count",amount+" example"+(amount===1?"":"s")));
+btn.append(wrap);btn.addEventListener("click",()=>select(c.id,true));host.append(btn);
+});
+$("show-all").classList.toggle("active",selected==="all");
+}
+function renderProjects(){
+const found=selected==="all"?projects:projects.filter(p=>p.cat===selected);
+const selectedCat=categories.find(c=>c.id===selected);
+$("gallery-title").textContent=selected==="all"?"ALL WEBSITE EXAMPLES":selectedCat.name.toUpperCase();
+$("count").textContent=found.length+" EXAMPLE"+(found.length===1?"":"S");
+const host=$("projects");host.replaceChildren();
+found.forEach(p=>{
+const a=e("a","card");a.href=p.url;a.target="_blank";a.rel="noopener noreferrer";a.setAttribute("aria-label","Open "+p.title+" website example");
+const media=e("div","card-media"+(p.poster?" "+p.poster:""));
+if(p.img){const img=e("img");img.src=p.img;img.alt=p.title+" website project preview";img.loading="lazy";img.decoding="async";if(p.pos)img.style.setProperty("--pos",p.pos);media.append(img);}
+else {media.append(e("span","overlay-title",p.title.toUpperCase()));}
+const info=e("div","card-body");info.append(e("div","card-type",p.kind),e("div","card-title",p.title),e("p","card-desc",p.detail));
+const action=e("span","card-open");action.append(e("span","", "OPEN EXAMPLE"),e("span","","↗"));info.append(action);a.append(media,info);host.append(a);
+});
+}
+function select(id,scroll){
+selected=id;renderCategories();renderProjects();
+try{history.replaceState(null,"",id==="artists"?"#artists":"#"+id);}catch(e){}
+if(scroll)$("gallery").scrollIntoView({behavior:"smooth",block:"start"});
+}
+$("show-all").addEventListener("click",()=>select("all",true));
+const initial=location.hash.replace("#","");
+if(initial==="all"||categories.some(c=>c.id===initial)) selected=initial;
+renderCategories();renderProjects();
+})();
+</script>
+</body></html>
