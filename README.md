@@ -1,3 +1,3 @@
-# Kenn Collier Sr. — Compact Community Resource Preview
+# Kenn Collier — Community Assistant & Space Concept
 
-Static informational demonstration served from a standalone Render service and an isolated `preview/kenn-collier-2026` branch. No personal data captured. Eight verified external organization links across six selectable priorities. Mobile hero preserves the full official campaign poster. `site.zip` contains all website files and unpacks into the Render `public` directory. Primary source files and revision notes are stored in the Kenn Collier project Google Drive folder.
+This independent demonstration is hosted as a static Render preview from the dedicated `preview/kenn-collier-2026` branch. It contains six community resource categories, eight third-party public resource links, a fully local guided assistant, and a separately labeled independent program/venue example. No AI provider is called and no visitor questions are transmitted or stored. Kenn's relationship to any external organization or Legion Way venue is not verified. The Render build unpacks `site.zip` into `public` without modifying production services.
