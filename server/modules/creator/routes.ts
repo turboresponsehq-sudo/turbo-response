@@ -127,6 +127,133 @@ function requireRoles(allowedRoles: string[]): RequestHandler {
 export const requireCreatorAdmin: RequestHandler = requireRoles(["admin"]);
 export const requireAmaniAdmin: RequestHandler = requireRoles(["admin", "amani_admin"]);
 
+let networkStorageReady: Promise<void> | null = null;
+async function ensureNetworkStorage() {
+  if (networkStorageReady) return networkStorageReady;
+  networkStorageReady = (async () => {
+    const db = await getDb();
+    if (!db) throw new Error("Network contact storage is unavailable");
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS zakhy_network_contacts (
+        id BIGSERIAL PRIMARY KEY,
+        full_name TEXT NOT NULL,
+        phone TEXT NOT NULL,
+        where_met TEXT NOT NULL,
+        profession TEXT NOT NULL,
+        company TEXT NULL,
+        notes TEXT NULL,
+        follow_up_at TIMESTAMPTZ NULL,
+        follow_up_done BOOLEAN NOT NULL DEFAULT FALSE,
+        created_by_user_id BIGINT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_zakhy_network_contacts_follow_up ON zakhy_network_contacts (follow_up_done, follow_up_at)`);
+    await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_zakhy_network_contacts_phone ON zakhy_network_contacts (phone)`);
+    await db.execute(sql`
+      INSERT INTO schema_migrations (migration_name)
+      SELECT '0024_create_zakhy_network_contacts'
+      WHERE NOT EXISTS (
+        SELECT 1 FROM schema_migrations WHERE migration_name = '0024_create_zakhy_network_contacts'
+      )
+    `);
+  })().catch((error) => {
+    networkStorageReady = null;
+    throw error;
+  });
+  return networkStorageReady;
+}
+
+creatorRouter.get("/creator/admin/network", requireCreatorAdmin, async (_req: any, res) => {
+  try {
+    await ensureNetworkStorage();
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Network contact storage is unavailable" });
+    const result = await db.execute(sql`
+      SELECT id, full_name, phone, where_met, profession, company, notes,
+             follow_up_at, follow_up_done, created_at, updated_at
+      FROM zakhy_network_contacts
+      ORDER BY
+        CASE WHEN follow_up_done = FALSE AND follow_up_at IS NOT NULL THEN 0 ELSE 1 END,
+        follow_up_at ASC NULLS LAST,
+        created_at DESC
+      LIMIT 250
+    `);
+    const contacts = Array.isArray(result) ? result : ((result as { rows?: unknown[] }).rows ?? []);
+    return res.json({ success: true, contacts });
+  } catch (error) {
+    console.error("[ZAKHY Network] List failed", error);
+    return res.status(503).json({ error: "Unable to load network contacts" });
+  }
+});
+
+creatorRouter.post("/creator/admin/network", requireCreatorAdmin, async (req: any, res) => {
+  try {
+    await ensureNetworkStorage();
+    const fullName = String(req.body?.fullName || "").trim();
+    const phone = String(req.body?.phone || "").replace(/[^0-9+]/g, "").trim();
+    const whereMet = String(req.body?.whereMet || "").trim();
+    const profession = String(req.body?.profession || "").trim();
+    const company = String(req.body?.company || "").trim() || null;
+    const notes = String(req.body?.notes || "").trim() || null;
+    const followUpAtRaw = String(req.body?.followUpAt || "").trim();
+    const followUpAt = followUpAtRaw ? new Date(followUpAtRaw) : null;
+
+    if (!fullName || !phone || !whereMet || !profession) {
+      return res.status(400).json({ error: "Name, phone, where you met, and profession are required" });
+    }
+    if (phone.length > 30 || fullName.length > 180 || whereMet.length > 250 || profession.length > 180) {
+      return res.status(400).json({ error: "One or more fields are too long" });
+    }
+    if (followUpAt && Number.isNaN(followUpAt.getTime())) {
+      return res.status(400).json({ error: "Invalid follow-up date" });
+    }
+
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Network contact storage is unavailable" });
+    const result = await db.execute(sql`
+      INSERT INTO zakhy_network_contacts
+        (full_name, phone, where_met, profession, company, notes, follow_up_at, created_by_user_id)
+      VALUES
+        (${fullName}, ${phone}, ${whereMet}, ${profession}, ${company}, ${notes},
+         ${followUpAt ? followUpAt.toISOString() : null}, ${req.creatorAdmin.id})
+      RETURNING id, full_name, phone, where_met, profession, company, notes,
+                follow_up_at, follow_up_done, created_at, updated_at
+    `);
+    const rows = Array.isArray(result) ? result : ((result as { rows?: unknown[] }).rows ?? []);
+    return res.status(201).json({ success: true, contact: rows[0] });
+  } catch (error) {
+    console.error("[ZAKHY Network] Create failed", error);
+    return res.status(503).json({ error: "Unable to save network contact" });
+  }
+});
+
+creatorRouter.patch("/creator/admin/network/:contactId/follow-up", requireCreatorAdmin, async (req: any, res) => {
+  const contactId = Number(req.params.contactId);
+  if (!Number.isSafeInteger(contactId) || contactId < 1 || typeof req.body?.done !== "boolean") {
+    return res.status(400).json({ error: "Invalid follow-up update" });
+  }
+  try {
+    await ensureNetworkStorage();
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Network contact storage is unavailable" });
+    const result = await db.execute(sql`
+      UPDATE zakhy_network_contacts
+      SET follow_up_done = ${req.body.done}, updated_at = NOW()
+      WHERE id = ${contactId}
+      RETURNING id, full_name, phone, where_met, profession, company, notes,
+                follow_up_at, follow_up_done, created_at, updated_at
+    `);
+    const rows = Array.isArray(result) ? result : ((result as { rows?: unknown[] }).rows ?? []);
+    if (!rows[0]) return res.status(404).json({ error: "Contact not found" });
+    return res.json({ success: true, contact: rows[0] });
+  } catch (error) {
+    console.error("[ZAKHY Network] Follow-up update failed", error);
+    return res.status(503).json({ error: "Unable to update follow-up" });
+  }
+});
+
 function portalUnavailable(res: any) {
   return res.status(404).json({ error: "Creator Portal is not enabled" });
 }
