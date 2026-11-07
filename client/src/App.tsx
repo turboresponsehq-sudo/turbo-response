@@ -49,6 +49,7 @@ import CaseBrief from "./pages/CaseBrief";
 import CreatorIntake from "./features/creator/pages/CreatorIntake";
 import CreatorLeadsAdmin from "./features/creator/pages/CreatorLeadsAdmin";
 import CreatorOperationsDashboard from "./features/creator/pages/CreatorOperationsDashboard";
+import AddNetworkContactPage from "./features/creator/pages/AddNetworkContactPage";
 import CreatorPortalPreview from "./features/creator/pages/CreatorPortalPreview";
 import CreatorPortalAccess from "./features/creator/pages/CreatorPortalAccess";
 import SimpleClientPortalPreview from "./features/creator/pages/SimpleClientPortalPreview";
@@ -71,6 +72,14 @@ function ProtectedCreatorOperations() {
   return (
     <AdminSessionGate>
       <CreatorOperationsDashboard />
+    </AdminSessionGate>
+  );
+}
+
+function ProtectedAddNetworkContact() {
+  return (
+    <AdminSessionGate>
+      <AddNetworkContactPage />
     </AdminSessionGate>
   );
 }
@@ -239,6 +248,7 @@ function Router() {
       <Route path="/admin/login" component={AdminLogin} />
       {/* Admin workflow routes - restored to specification */}
       <Route path="/admin/command-center" component={AdminCommandCenter} />
+      <Route path="/admin/zakhy/add-contact" component={ProtectedAddNetworkContact} />
       <Route path="/admin/zakhy" component={ProtectedCreatorOperations} />
       <Route path="/admin/creator/leads" component={ProtectedCreatorLeads} />
       <Route path="/admin/creator/amani" component={ProtectedAmaniReview} />

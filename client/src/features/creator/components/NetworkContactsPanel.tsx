@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { Backspace, Check, Phone, Plus, Search, UserRoundPlus, X } from "lucide-react";
+import { Check, Phone, Plus, Search, UserRoundPlus, X } from "lucide-react";
 import { getAdminSessionAuthorizationHeader } from "@/lib/adminSession";
 
 type NetworkContact = {
@@ -160,12 +160,12 @@ export default function NetworkContactsPanel() {
                   <div className="zops-phone-display">
                     <Phone size={17}/>
                     <input required inputMode="tel" value={form.phone} onChange={(e)=>setForm({...form,phone:e.target.value.replace(/[^0-9+]/g,"")})} placeholder="(000) 000-0000"/>
-                    <button type="button" onClick={backspace} aria-label="Backspace"><Backspace size={20}/></button>
+                    <button type="button" onClick={backspace} aria-label="Backspace"><span aria-hidden="true">⌫</span></button>
                   </div>
                 </label>
                 <div className="zops-keypad">
                   {digits.map((digit) => <button type="button" key={digit} onClick={()=>dial(digit)}>{digit}</button>)}
-                  <button type="button" className="zops-keypad-back" onClick={backspace}><Backspace size={20}/></button>
+                  <button type="button" className="zops-keypad-back" onClick={backspace}><span aria-hidden="true">⌫</span></button>
                 </div>
               </div>
 
