@@ -16,6 +16,7 @@ import {
 import { getAdminLoginUrl } from "@/lib/adminLoginRedirect";
 import { getAdminSessionAuthorizationHeader } from "@/lib/adminSession";
 import TurboChatbot, { turboChatbotStyles } from "@/components/TurboChatbot";
+import NetworkContactsPanel from "../components/NetworkContactsPanel";
 import "../styles/creatorOperations.css";
 
 type LeadStatus = "new" | "reviewing" | "follow_up" | "converted" | "closed";
@@ -179,6 +180,7 @@ export default function CreatorOperationsDashboard() {
         <nav className="zops-nav">
           <a className="is-active" href="#overview"><BarChart3 size={18} />Overview</a>
           <Link href="/admin/creator/leads"><Users size={18} />Leads</Link>
+          <a href="#network"><Users size={18} />Network</a>
           <a href="#content"><CalendarDays size={18} />Content</a>
           <a href="#campaigns"><Megaphone size={18} />Campaigns</a>
           <a href="#reports"><FileBarChart size={18} />Reports</a>
@@ -233,6 +235,8 @@ export default function CreatorOperationsDashboard() {
             <small>creator clients</small>
           </article>
         </section>
+
+        <NetworkContactsPanel />
 
         <section className="zops-calendar-today" aria-label="Today's schedule">
           <div className="zops-calendar-title">
