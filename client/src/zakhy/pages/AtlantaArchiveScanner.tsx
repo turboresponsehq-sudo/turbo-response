@@ -9,6 +9,48 @@ const SLOTS = [
   { id: "3", name: "Archive 03 — Red Cap / Gold Chains" },
 ];
 
+const DB_NAME = "money-bosses-atlanta-archives";
+const DB_STORE = "targets";
+
+function openTargetDb(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, 1);
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains(DB_STORE)) db.createObjectStore(DB_STORE);
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function saveTarget(id: string, value: string) {
+  const db = await openTargetDb();
+  await new Promise<void>((resolve, reject) => {
+    const tx = db.transaction(DB_STORE, "readwrite");
+    tx.objectStore(DB_STORE).put(value, id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+  db.close();
+}
+
+async function loadTargets(): Promise<Record<string,string>> {
+  const db = await openTargetDb();
+  const result: Record<string,string> = {};
+  await Promise.all(SLOTS.map((slot) => new Promise<void>((resolve) => {
+    const tx = db.transaction(DB_STORE, "readonly");
+    const req = tx.objectStore(DB_STORE).get(slot.id);
+    req.onsuccess = () => {
+      if (typeof req.result === "string" && req.result) result[slot.id] = req.result;
+      resolve();
+    };
+    req.onerror = () => resolve();
+  })));
+  db.close();
+  return result;
+}
+
 export default function AtlantaArchiveScanner() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -20,12 +62,27 @@ export default function AtlantaArchiveScanner() {
   const busy = useRef(false);
 
   useEffect(() => {
-    const saved: Record<string,string> = {};
-    for (const s of SLOTS) {
-      const v = localStorage.getItem("mb-archive-target-" + s.id);
-      if (v) saved[s.id] = v;
-    }
-    setTargets(saved);
+    (async () => {
+      const saved = await loadTargets().catch(() => ({} as Record<string,string>));
+
+      // Migrate the first prototype's localStorage images into IndexedDB.
+      // iPhone Safari's small localStorage quota could hold two large photos
+      // but fail on the third one.
+      for (const s of SLOTS) {
+        const key = "mb-archive-target-" + s.id;
+        const legacy = localStorage.getItem(key);
+        if (legacy && !saved[s.id]) {
+          saved[s.id] = legacy;
+          try {
+            await saveTarget(s.id, legacy);
+            localStorage.removeItem(key);
+          } catch {
+            // Keep the in-memory target even if migration fails.
+          }
+        }
+      }
+      setTargets(saved);
+    })();
 
     const load = () => new Promise<void>((resolve, reject) => {
       if (window.cv?.ORB) return resolve();
@@ -100,13 +157,29 @@ export default function AtlantaArchiveScanner() {
 
   function onUpload(slotId: string, file?: File) {
     if (!file) return;
+    setStatus("Loading Archive " + slotId + "…");
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
       const value = String(reader.result || "");
-      localStorage.setItem("mb-archive-target-" + slotId, value);
+      if (!value) {
+        setStatus("That image could not be read. Try choosing it again.");
+        return;
+      }
+
+      // Show it immediately, then persist it in IndexedDB (much larger
+      // capacity than localStorage on iPhone Safari).
       setTargets((old) => ({ ...old, [slotId]: value }));
-      setStatus("Target saved. Load all three, then start the camera.");
+
+      try {
+        await saveTarget(slotId, value);
+        localStorage.removeItem("mb-archive-target-" + slotId);
+        setStatus("Archive " + slotId + " loaded. You can scan it now.");
+      } catch (error) {
+        console.error(error);
+        setStatus("Archive " + slotId + " is loaded for this session. Keep this page open and scan it now.");
+      }
     };
+    reader.onerror = () => setStatus("That image could not be read. Try choosing it again.");
     reader.readAsDataURL(file);
   }
 
