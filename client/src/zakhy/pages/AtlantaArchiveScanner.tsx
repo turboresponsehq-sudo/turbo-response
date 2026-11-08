@@ -51,6 +51,42 @@ async function loadTargets(): Promise<Record<string,string>> {
   return result;
 }
 
+async function normalizeImageFile(file: File): Promise<string> {
+  const raw = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(reader.error || new Error("Could not read image."));
+    reader.readAsDataURL(file);
+  });
+
+  if (!raw) throw new Error("Could not read image.");
+
+  try {
+    const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const element = new Image();
+      element.onload = () => resolve(element);
+      element.onerror = () => reject(new Error("Could not decode image."));
+      element.src = raw;
+    });
+
+    const maxSide = 1600;
+    const scale = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
+    canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return raw;
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    // JPEG is consistently supported by iPhone Safari and Android Chrome,
+    // and keeps the target small enough for mobile browser storage.
+    return canvas.toDataURL("image/jpeg", 0.9);
+  } catch {
+    // If the browser cannot transcode the selected format, keep the original.
+    return raw;
+  }
+}
+
 export default function AtlantaArchiveScanner() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -59,6 +95,7 @@ export default function AtlantaArchiveScanner() {
   const [targets, setTargets] = useState<Record<string,string>>({});
   const [matched, setMatched] = useState<string | null>(null);
   const targetDescriptors = useRef<any[]>([]);
+  const cameraStream = useRef<MediaStream | null>(null);
   const busy = useRef(false);
 
   useEffect(() => {
@@ -155,19 +192,12 @@ export default function AtlantaArchiveScanner() {
     rebuildDescriptors(targets).catch(() => {});
   }, [engineReady, targets]);
 
-  function onUpload(slotId: string, file?: File) {
+  async function onUpload(slotId: string, file?: File) {
     if (!file) return;
     setStatus("Loading Archive " + slotId + "…");
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const value = String(reader.result || "");
-      if (!value) {
-        setStatus("That image could not be read. Try choosing it again.");
-        return;
-      }
 
-      // Show it immediately, then persist it in IndexedDB (much larger
-      // capacity than localStorage on iPhone Safari).
+    try {
+      const value = await normalizeImageFile(file);
       setTargets((old) => ({ ...old, [slotId]: value }));
 
       try {
@@ -178,25 +208,65 @@ export default function AtlantaArchiveScanner() {
         console.error(error);
         setStatus("Archive " + slotId + " is loaded for this session. Keep this page open and scan it now.");
       }
-    };
-    reader.onerror = () => setStatus("That image could not be read. Try choosing it again.");
-    reader.readAsDataURL(file);
+    } catch (error) {
+      console.error(error);
+      setStatus("That image could not be read. Try choosing it again.");
+    }
   }
 
   async function startCamera() {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setStatus("This browser cannot use the camera. Open this page in Safari on iPhone or Chrome on Android.");
+      return;
+    }
+
+    cameraStream.current?.getTracks().forEach((track) => track.stop());
+    cameraStream.current = null;
+
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: "environment" } },
-        audio: false
-      });
-      if (!videoRef.current) return;
-      videoRef.current.srcObject = stream;
-      await videoRef.current.play();
+      let stream: MediaStream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { ideal: "environment" },
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          },
+          audio: false
+        });
+      } catch {
+        // Some Android devices reject facingMode constraints. Fall back to
+        // any available camera instead of failing the scanner.
+        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      }
+
+      cameraStream.current = stream;
+      video.setAttribute("playsinline", "true");
+      video.setAttribute("webkit-playsinline", "true");
+      video.muted = true;
+      video.autoplay = true;
+      video.srcObject = stream;
+      await video.play();
       setStatus("Scanning… keep the full garment image inside the frame.");
-    } catch {
-      setStatus("Camera access is required. Allow camera permission and try again.");
+    } catch (error: any) {
+      console.error(error);
+      if (error?.name === "NotAllowedError") {
+        setStatus("Camera permission is off. Allow camera access for this site, then tap START IMAGE SCANNER again.");
+      } else {
+        setStatus("The camera could not start. Use Safari on iPhone or Chrome on Android and try again.");
+      }
     }
   }
+
+  useEffect(() => {
+    return () => {
+      cameraStream.current?.getTracks().forEach((track) => track.stop());
+      targetDescriptors.current.forEach((target) => target.des?.delete?.());
+    };
+  }, []);
 
   useEffect(() => {
     if (!engineReady) return;
@@ -278,7 +348,7 @@ export default function AtlantaArchiveScanner() {
 
         <section style={{ background:"#151515", border:"1px solid #3a342d", borderRadius:16, padding:14, marginBottom:16 }}>
           <div style={{ fontWeight:800, marginBottom:6 }}>TEST SETUP — ONE TIME ON THIS PHONE</div>
-          <div style={{ fontSize:13, opacity:.72, marginBottom:12 }}>Load the same three exact images you sent the manufacturer. They stay saved on this device.</div>
+          <div style={{ fontSize:13, opacity:.72, marginBottom:12 }}>Works on iPhone Safari and Android Chrome. Load the same three exact images you sent the manufacturer. They stay saved on this device.</div>
           <div style={{ display:"grid", gap:10 }}>
             {SLOTS.map((slot) => (
               <label key={slot.id} style={{ display:"flex", gap:10, alignItems:"center", background:"#0f0f0f", borderRadius:12, padding:10, border:"1px solid #2b2b2b" }}>
@@ -287,7 +357,7 @@ export default function AtlantaArchiveScanner() {
                   <div style={{ fontWeight:700, fontSize:14 }}>{slot.name}</div>
                   <div style={{ fontSize:12, opacity:.6 }}>{targets[slot.id] ? "Loaded" : "Tap to load image"}</div>
                 </div>
-                <input type="file" accept="image/*" onChange={(e) => onUpload(slot.id, e.target.files?.[0])} style={{ maxWidth:115 }} />
+                <input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/*" onChange={(e) => onUpload(slot.id, e.target.files?.[0])} style={{ maxWidth:115 }} />
               </label>
             ))}
           </div>
