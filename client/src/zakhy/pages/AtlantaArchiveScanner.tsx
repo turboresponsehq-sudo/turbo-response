@@ -94,8 +94,11 @@ export default function AtlantaArchiveScanner() {
   const [status, setStatus] = useState("Loading image scanner…");
   const [targets, setTargets] = useState<Record<string,string>>({});
   const [matched, setMatched] = useState<string | null>(null);
+  const [unlocked, setUnlocked] = useState(false);
   const targetDescriptors = useRef<any[]>([]);
   const cameraStream = useRef<MediaStream | null>(null);
+  const audioContext = useRef<AudioContext | null>(null);
+  const lastTriggered = useRef<string | null>(null);
   const busy = useRef(false);
 
   useEffect(() => {
@@ -244,6 +247,13 @@ export default function AtlantaArchiveScanner() {
       }
 
       cameraStream.current = stream;
+
+      try {
+        const Ctx = window.AudioContext || (window as any).webkitAudioContext;
+        if (Ctx && !audioContext.current) audioContext.current = new Ctx();
+        await audioContext.current?.resume?.();
+      } catch {}
+
       video.setAttribute("playsinline", "true");
       video.setAttribute("webkit-playsinline", "true");
       video.muted = true;
@@ -317,11 +327,36 @@ export default function AtlantaArchiveScanner() {
         if (best?.good >= 16) {
           setMatched(best.id);
           setStatus("Recognized: " + best.name);
+
+          if (lastTriggered.current !== best.id) {
+            lastTriggered.current = best.id;
+            setUnlocked(true);
+
+            try {
+              const ctx = audioContext.current;
+              if (ctx) {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(520, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.22);
+                gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.22, ctx.currentTime + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.28);
+                osc.connect(gain).connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.3);
+              }
+            } catch {}
+
+            window.setTimeout(() => setUnlocked(false), 2200);
+          }
         } else if (best?.good >= 8) {
           setMatched(null);
           setStatus("Almost there… move closer and hold steady.");
         } else {
           setMatched(null);
+          if (lastTriggered.current) lastTriggered.current = null;
           setStatus("Scanning… point at the full printed image.");
         }
 
@@ -362,6 +397,19 @@ export default function AtlantaArchiveScanner() {
             ))}
           </div>
         </section>
+
+        {unlocked && matchedSlot && (
+          <div style={{
+            position:"fixed", inset:0, zIndex:9999, display:"flex", alignItems:"center", justifyContent:"center",
+            background:"rgba(0,0,0,.92)", color:"#f4eee2", textAlign:"center", padding:24
+          }}>
+            <div>
+              <div style={{ fontSize:13, letterSpacing:5, opacity:.7, marginBottom:12 }}>MONEY BOSSES</div>
+              <div style={{ fontSize:38, fontWeight:900, lineHeight:1 }}>ARCHIVE UNLOCKED</div>
+              <div style={{ marginTop:14, fontSize:18, fontWeight:700 }}>{matchedSlot.name}</div>
+            </div>
+          </div>
+        )}
 
         <section style={{ position:"relative", overflow:"hidden", borderRadius:18, border:"1px solid #51483d", background:"#111" }}>
           <video ref={videoRef} muted playsInline style={{ width:"100%", minHeight:320, display:"block", objectFit:"cover", background:"#111" }} />
