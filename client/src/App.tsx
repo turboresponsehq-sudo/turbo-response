@@ -58,6 +58,7 @@ import AiLearningIntakesAdmin from "./features/ai-learning/AiLearningIntakesAdmi
 import ZakhyBuildsAIHub, { ZakhyAutomationServicesRoute, ZakhyLearnAiRoute, ZakhyPortfolioRoute, ZakhyServicesRoute, ZakhyProjectRoute } from "./pages/ZakhyBuildsAIHub";
 import AtlantaExactPage from "./zakhy/pages/AtlantaExactPage";
 import AtlantaPlatformPreview from "./zakhy/pages/AtlantaPlatformPreview";
+import AtlantaArchiveScanner from "./zakhy/pages/AtlantaArchiveScanner";
 import ZakhyDigitalCard from "./zakhy/pages/ZakhyDigitalCard";
 
 function ProtectedCreatorLeads() {
@@ -191,6 +192,7 @@ function Router() {
       <Route path="/zakhybuildsai/automation-services" component={ZakhyAutomationServicesRoute} />
       <Route path="/zakhybuildsai/portfolio" component={ZakhyPortfolioRoute} />
       <Route path="/zakhybuildsai/portfolio/story-of-atlanta" component={AtlantaExactPage} />
+      <Route path="/atlanta-archives" component={AtlantaArchiveScanner} />
       <Route path="/zakhy/connect" component={ZakhyDigitalCard} />
       <Route path="/zakhybuildsai/portfolio/ralo" component={() => <ZakhyProjectRoute sourcePath="/ralo" />} />
       <Route path="/zakhybuildsai/portfolio/ralo/content" component={() => <ZakhyProjectRoute sourcePath="/ralo/content" />} />
