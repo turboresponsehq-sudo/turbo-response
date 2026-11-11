@@ -417,12 +417,14 @@ creatorRouter.post("/creator/admin/network", requireCreatorAdmin, async (req: an
         (${fullName}, ${phone}, ${email}, ${whereMet}, ${profession}, ${company}, ${notes}, ${photoUrl},
          ${JSON.stringify(socialLinks)}::jsonb, ${isFavorite}, ${isPriority},
          ${followUpAt ? followUpAt.toISOString() : null}, ${req.creatorAdmin.id})
-      RETURNING id
+      RETURNING id, full_name, phone, email, where_met, profession, company, notes, photo_url, social_links,
+                is_favorite, is_priority, follow_up_at, follow_up_done, created_at, updated_at
     `);
-    const contactId = Number(networkRows(result)[0]?.id);
+    const inserted = networkRows(result)[0];
+    const contactId = Number(inserted?.id);
     if (!contactId) throw new Error("Contact insert failed");
     await setNetworkCategories(db, contactId, categoryIds);
-    return res.status(201).json({ success: true, contactId });
+    return res.status(201).json({ success: true, contactId, contact: { ...inserted, categories: [] } });
   } catch (error) {
     console.error("[ZAKHY Network] Create failed", error);
     return res.status(503).json({ error: "Unable to save network contact" });
