@@ -8,6 +8,7 @@ on:
       - "client/src/features/creator/**"
       - "server/modules/creator/routes.ts"
       - "migrations/0024_create_zakhy_network_crm_phase1*"
+      - "migrations/0025_create_zakhy_data_connections*"
       - ".github/workflows/network-phase1-ci.yml"
 
 jobs:
