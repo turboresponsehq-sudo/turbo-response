@@ -68,10 +68,10 @@ export default function MyNetworkPage(){
     return rows;
   },[contacts,query,categoryId,mode]);
 
-  const grouped=useMemo(()=>{
+  const grouped=useMemo<[string, Contact[]][]>(()=>{
     const map=new Map<string,Contact[]>();
     for(const c of filtered){ const letter=(c.full_name?.[0]||"#").toUpperCase(); if(!map.has(letter)) map.set(letter,[]); map.get(letter)!.push(c); }
-    return [...map.entries()].sort(([a],[b])=>a.localeCompare(b));
+    return Array.from(map.entries()).sort(([a],[b])=>a.localeCompare(b));
   },[filtered]);
 
   return <main className="network-page">
@@ -112,10 +112,10 @@ export default function MyNetworkPage(){
       {loading?<div className="network-empty">Loading your network…</div>:grouped.length?grouped.map(([letter,rows])=>
         <section className="network-letter-group" key={letter}>
           <h2>{letter}</h2>
-          <div>{rows.map(contact=><article className="network-contact-row" key={contact.id}>
+          <div>{rows.map((contact: Contact)=><article className="network-contact-row" key={contact.id}>
             <Link href={"/admin/zakhy/network/"+contact.id} className="network-contact-main">
-              {contact.photo_url?<img src={contact.photo_url} alt=""/>:<span className="network-initials">{contact.full_name.split(" ").map(x=>x[0]).join("").slice(0,2).toUpperCase()}</span>}
-              <div><strong>{contact.full_name}{contact.is_favorite&&<Star size={13} fill="currentColor"/>}</strong><span>{contact.profession}{contact.company?" · "+contact.company:""}</span><small>{(contact.categories||[]).slice(0,2).map(c=>c.name).join(" • ")}</small></div>
+              {contact.photo_url?<img src={contact.photo_url} alt=""/>:<span className="network-initials">{contact.full_name.split(" ").map((x:string)=>x[0]).join("").slice(0,2).toUpperCase()}</span>}
+              <div><strong>{contact.full_name}{contact.is_favorite&&<Star size={13} fill="currentColor"/>}</strong><span>{contact.profession}{contact.company?" · "+contact.company:""}</span><small>{(contact.categories||[]).slice(0,2).map((c:Category)=>c.name).join(" • ")}</small></div>
             </Link>
             <div className="network-quick-actions">
               <a href={"tel:"+contact.phone} aria-label={"Call "+contact.full_name}><Phone size={17}/></a>
