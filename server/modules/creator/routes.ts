@@ -511,6 +511,157 @@ creatorRouter.patch("/creator/admin/network/:contactId/follow-up", requireCreato
   }
 });
 
+
+function networkQuestionTerms(question: string) {
+  return question
+    .toLowerCase()
+    .replace(/[^a-z0-9@&+.' -]/g, " ")
+    .split(/\s+/)
+    .map((value) => value.trim())
+    .filter((value) => value.length > 2 && !["who","what","when","where","which","this","that","with","from","about","tell","show","have","should","need","did","make","meet","met","follow","followup","follow-up","people","person","contact","contacts","network"].includes(value))
+    .slice(0, 8);
+}
+
+creatorRouter.post("/creator/admin/network/ask", requireCreatorAdmin, async (req: any, res) => {
+  const question = String(req.body?.question || "").trim().slice(0, 500);
+  if (!question) return res.status(400).json({ error: "Ask a question about your network." });
+
+  try {
+    await ensureNetworkStorage();
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Network storage unavailable" });
+
+    const q = question.toLowerCase();
+    const wantsWeek = /\b(this week|week|recently|recent|new people|new contacts|meet|met)\b/.test(q);
+    const wantsFollowUp = /\b(follow ?up|follow-up|call|reach out|contact next|should i contact|needs attention)\b/.test(q);
+    const wantsOverdue = /\b(overdue|late|missed)\b/.test(q);
+    const wantsPriority = /\b(priority|important|best opportunity|top people|top contacts)\b/.test(q);
+    const wantsFavorites = /\b(favorite|favorites)\b/.test(q);
+
+    let intent = "search";
+    if (wantsOverdue) intent = "overdue";
+    else if (wantsFollowUp) intent = "follow_up";
+    else if (wantsPriority) intent = "priority";
+    else if (wantsFavorites) intent = "favorites";
+    else if (wantsWeek) intent = "this_week";
+
+    const terms = networkQuestionTerms(question);
+    const searchText = terms.join(" ");
+
+    const result = await db.execute(sql`
+      SELECT c.id, c.full_name, c.phone, c.email, c.where_met, c.profession, c.company, c.notes,
+             c.is_favorite, c.is_priority, c.follow_up_at, c.follow_up_done, c.created_at,
+             COALESCE(
+               json_agg(json_build_object('id', cat.id, 'name', cat.name, 'slug', cat.slug) ORDER BY cat.sort_order, cat.name)
+               FILTER (WHERE cat.id IS NOT NULL), '[]'::json
+             ) AS categories
+      FROM zakhy_network_contacts c
+      LEFT JOIN zakhy_network_contact_categories cc ON cc.contact_id = c.id
+      LEFT JOIN zakhy_network_categories cat ON cat.id = cc.category_id AND cat.is_active = TRUE
+      WHERE
+        (
+          ${intent} = 'this_week' AND c.created_at >= date_trunc('week', NOW())
+        )
+        OR (
+          ${intent} = 'overdue' AND c.follow_up_done = FALSE AND c.follow_up_at IS NOT NULL AND c.follow_up_at < NOW()
+        )
+        OR (
+          ${intent} = 'follow_up' AND c.follow_up_done = FALSE AND (
+            c.follow_up_at IS NOT NULL
+            OR c.is_priority = TRUE
+          )
+        )
+        OR (
+          ${intent} = 'priority' AND c.is_priority = TRUE
+        )
+        OR (
+          ${intent} = 'favorites' AND c.is_favorite = TRUE
+        )
+        OR (
+          ${intent} = 'search' AND (
+            ${searchText} = ''
+            OR LOWER(c.full_name) LIKE ${"%" + searchText.toLowerCase() + "%"}
+            OR LOWER(COALESCE(c.company,'')) LIKE ${"%" + searchText.toLowerCase() + "%"}
+            OR LOWER(c.profession) LIKE ${"%" + searchText.toLowerCase() + "%"}
+            OR LOWER(COALESCE(c.notes,'')) LIKE ${"%" + searchText.toLowerCase() + "%"}
+            OR LOWER(COALESCE(cat.name,'')) LIKE ${"%" + searchText.toLowerCase() + "%"}
+          )
+        )
+      GROUP BY c.id
+      ORDER BY
+        CASE
+          WHEN c.follow_up_done = FALSE AND c.follow_up_at IS NOT NULL AND c.follow_up_at < NOW() THEN 0
+          WHEN c.follow_up_done = FALSE AND c.follow_up_at IS NOT NULL THEN 1
+          WHEN c.is_priority = TRUE THEN 2
+          ELSE 3
+        END,
+        c.follow_up_at ASC NULLS LAST,
+        c.created_at DESC
+      LIMIT 12
+    `);
+
+    let contacts = networkRows(result);
+
+    if (intent === "follow_up" && contacts.length === 0) {
+      const fallback = await db.execute(sql`
+        SELECT c.id, c.full_name, c.phone, c.email, c.where_met, c.profession, c.company, c.notes,
+               c.is_favorite, c.is_priority, c.follow_up_at, c.follow_up_done, c.created_at,
+               COALESCE(
+                 json_agg(json_build_object('id', cat.id, 'name', cat.name, 'slug', cat.slug) ORDER BY cat.sort_order, cat.name)
+                 FILTER (WHERE cat.id IS NOT NULL), '[]'::json
+               ) AS categories
+        FROM zakhy_network_contacts c
+        LEFT JOIN zakhy_network_contact_categories cc ON cc.contact_id = c.id
+        LEFT JOIN zakhy_network_categories cat ON cat.id = cc.category_id AND cat.is_active = TRUE
+        WHERE c.follow_up_done = FALSE
+        GROUP BY c.id
+        ORDER BY c.is_priority DESC, c.created_at DESC
+        LIMIT 8
+      `);
+      contacts = networkRows(fallback);
+    }
+
+    const count = contacts.length;
+    let answer = "";
+    if (intent === "this_week") {
+      answer = count
+        ? `You added ${count} contact${count === 1 ? "" : "s"} to My Network this week. I’m using the date you saved them as the current stand-in for when you met them.`
+        : "You have not added anyone to My Network this week yet.";
+    } else if (intent === "overdue") {
+      answer = count
+        ? `You have ${count} overdue follow-up${count === 1 ? "" : "s"}. I put the most overdue contacts first.`
+        : "You do not have any overdue follow-ups right now.";
+    } else if (intent === "follow_up") {
+      answer = count
+        ? `These are the ${count} people I would look at first for follow-up, based on your reminders and Priority flag.`
+        : "I do not see anyone marked for follow-up yet. Add a reminder or mark someone Priority and I’ll surface them here.";
+    } else if (intent === "priority") {
+      answer = count
+        ? `You currently have ${count} Priority contact${count === 1 ? "" : "s"}.`
+        : "You do not have any Priority contacts yet.";
+    } else if (intent === "favorites") {
+      answer = count
+        ? `You currently have ${count} Favorite contact${count === 1 ? "" : "s"}.`
+        : "You do not have any Favorite contacts yet.";
+    } else {
+      answer = count
+        ? `I found ${count} contact${count === 1 ? "" : "s"} that match what you asked.`
+        : "I could not find a strong match in My Network. Try a person’s name, company, profession, or industry.";
+    }
+
+    return res.json({
+      success: true,
+      intent,
+      answer,
+      contacts,
+      note: intent === "this_week" ? "Current version uses contact creation date because Date Met is not stored separately yet." : null,
+    });
+  } catch (error) {
+    console.error("[ZAKHY Network] Ask failed", error);
+    return res.status(503).json({ error: "Unable to answer from My Network right now." });
+  }
+});
+
 function portalUnavailable(res: any) {
   return res.status(404).json({ error: "Creator Portal is not enabled" });
 }
