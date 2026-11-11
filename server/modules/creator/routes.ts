@@ -230,7 +230,7 @@ async function ensureNetworkStorage() {
 }
 
 async function setNetworkCategories(db: any, contactId: number, categoryIds: number[]) {
-  const safeIds = [...new Set(categoryIds.filter((id) => Number.isSafeInteger(id) && id > 0))].slice(0, 12);
+  const safeIds = Array.from(new Set(categoryIds.filter((id) => Number.isSafeInteger(id) && id > 0))).slice(0, 12);
   await db.execute(sql`DELETE FROM zakhy_network_contact_categories WHERE contact_id = ${contactId}`);
   for (const categoryId of safeIds) {
     await db.execute(sql`
