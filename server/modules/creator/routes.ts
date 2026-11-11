@@ -662,6 +662,219 @@ creatorRouter.post("/creator/admin/network/ask", requireCreatorAdmin, async (req
   }
 });
 
+
+let dataConnectionsReady: Promise<void> | null = null;
+
+async function ensureDataConnectionsStorage() {
+  if (dataConnectionsReady) return dataConnectionsReady;
+  dataConnectionsReady = (async () => {
+    await ensureNetworkStorage();
+    const db = await getDb();
+    if (!db) throw new Error("Data connection storage is unavailable");
+
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS zakhy_data_sources (
+        id BIGSERIAL PRIMARY KEY,
+        provider TEXT NOT NULL,
+        display_name TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'pending',
+        external_account_id TEXT NULL,
+        account_label TEXT NULL,
+        metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+        last_sync_at TIMESTAMPTZ NULL,
+        sync_cursor TEXT NULL,
+        connected_at TIMESTAMPTZ NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    await db.execute(sql`
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_zakhy_data_sources_provider_account
+      ON zakhy_data_sources(provider, COALESCE(external_account_id, ''))
+    `);
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS zakhy_contact_external_ids (
+        id BIGSERIAL PRIMARY KEY,
+        contact_id BIGINT NOT NULL REFERENCES zakhy_network_contacts(id) ON DELETE CASCADE,
+        source_id BIGINT NOT NULL REFERENCES zakhy_data_sources(id) ON DELETE CASCADE,
+        external_person_id TEXT NOT NULL,
+        source_email TEXT NULL,
+        source_phone TEXT NULL,
+        source_metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+        first_seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        last_seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE(source_id, external_person_id)
+      )
+    `);
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS zakhy_contact_events (
+        id BIGSERIAL PRIMARY KEY,
+        contact_id BIGINT NULL REFERENCES zakhy_network_contacts(id) ON DELETE SET NULL,
+        source_id BIGINT NOT NULL REFERENCES zakhy_data_sources(id) ON DELETE CASCADE,
+        external_event_id TEXT NULL,
+        event_type TEXT NOT NULL,
+        occurred_at TIMESTAMPTZ NOT NULL,
+        amount_cents BIGINT NULL,
+        currency TEXT NULL,
+        metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS zakhy_contact_consents (
+        id BIGSERIAL PRIMARY KEY,
+        contact_id BIGINT NULL REFERENCES zakhy_network_contacts(id) ON DELETE SET NULL,
+        source_id BIGINT NOT NULL REFERENCES zakhy_data_sources(id) ON DELETE CASCADE,
+        channel TEXT NOT NULL,
+        status TEXT NOT NULL,
+        observed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        source_metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS zakhy_source_sync_runs (
+        id BIGSERIAL PRIMARY KEY,
+        source_id BIGINT NOT NULL REFERENCES zakhy_data_sources(id) ON DELETE CASCADE,
+        status TEXT NOT NULL,
+        records_seen INTEGER NOT NULL DEFAULT 0,
+        records_created INTEGER NOT NULL DEFAULT 0,
+        records_updated INTEGER NOT NULL DEFAULT 0,
+        error_message TEXT NULL,
+        started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        finished_at TIMESTAMPTZ NULL
+      )
+    `);
+    await db.execute(sql`
+      INSERT INTO schema_migrations (migration_name, applied_at)
+      SELECT '0025_create_zakhy_data_connections', NOW()
+      WHERE NOT EXISTS (
+        SELECT 1 FROM schema_migrations WHERE migration_name = '0025_create_zakhy_data_connections'
+      )
+    `);
+  })().catch((error) => {
+    dataConnectionsReady = null;
+    throw error;
+  });
+  return dataConnectionsReady;
+}
+
+const DATA_CONNECTION_CATALOG = [
+  { provider: "shopify", name: "Shopify", category: "Commerce", description: "Customers, orders, subscriptions, marketing consent, and lifetime value.", ready: true },
+  { provider: "manychat", name: "ManyChat", category: "Social / DM", description: "DM subscribers, tags, opt-ins, and lead-source context.", ready: false },
+  { provider: "email", name: "Email Platform", category: "Email", description: "Subscribers, campaigns, engagement, and email consent.", ready: false },
+  { provider: "calendly", name: "Calendly", category: "Scheduling", description: "Bookings, meeting history, and relationship activity.", ready: false },
+  { provider: "google_contacts", name: "Google Contacts", category: "Contacts", description: "Personal contacts and basic identity details.", ready: false },
+] as const;
+
+function normalizeShopifyStore(value: string) {
+  let input = value.trim().toLowerCase();
+  input = input.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  input = input.split("/")[0];
+  if (!input) return null;
+  if (/^[a-z0-9][a-z0-9-]*\.myshopify\.com$/.test(input)) return input;
+  if (/^[a-z0-9][a-z0-9.-]+\.[a-z]{2,}$/.test(input)) return input;
+  return null;
+}
+
+creatorRouter.get("/creator/admin/connections", requireCreatorAdmin, async (_req: any, res) => {
+  try {
+    await ensureDataConnectionsStorage();
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Data connection storage unavailable" });
+
+    const sourcesResult = await db.execute(sql`
+      SELECT s.id, s.provider, s.display_name, s.status, s.external_account_id, s.account_label,
+             s.metadata, s.last_sync_at, s.connected_at, s.created_at, s.updated_at,
+             COALESCE(i.people_count, 0)::int AS people_count,
+             COALESCE(e.event_count, 0)::int AS event_count,
+             COALESCE(e.revenue_cents, 0)::bigint AS revenue_cents
+      FROM zakhy_data_sources s
+      LEFT JOIN (
+        SELECT source_id, COUNT(*) AS people_count
+        FROM zakhy_contact_external_ids
+        GROUP BY source_id
+      ) i ON i.source_id = s.id
+      LEFT JOIN (
+        SELECT source_id, COUNT(*) AS event_count, COALESCE(SUM(amount_cents),0) AS revenue_cents
+        FROM zakhy_contact_events
+        GROUP BY source_id
+      ) e ON e.source_id = s.id
+      ORDER BY s.created_at DESC
+    `);
+
+    return res.json({
+      success: true,
+      catalog: DATA_CONNECTION_CATALOG,
+      sources: networkRows(sourcesResult),
+    });
+  } catch (error) {
+    console.error("[ZAKHY Connections] List failed", error);
+    return res.status(503).json({ error: "Unable to load data connections." });
+  }
+});
+
+creatorRouter.post("/creator/admin/connections/shopify/prepare", requireCreatorAdmin, async (req: any, res) => {
+  const storeDomain = normalizeShopifyStore(String(req.body?.storeDomain || ""));
+  const accountLabel = String(req.body?.accountLabel || "Money Bosses").trim().slice(0, 120) || "Shopify";
+  if (!storeDomain) return res.status(400).json({ error: "Enter a valid Shopify store domain." });
+
+  try {
+    await ensureDataConnectionsStorage();
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Data connection storage unavailable" });
+
+    const result = await db.execute(sql`
+      INSERT INTO zakhy_data_sources
+        (provider, display_name, status, external_account_id, account_label, metadata, updated_at)
+      VALUES
+        ('shopify', 'Shopify', 'setup_required', ${storeDomain}, ${accountLabel},
+         ${JSON.stringify({ storeDomain, intendedData: ["customers","orders","marketing_consent","customer_value"] })}::jsonb, NOW())
+      ON CONFLICT (provider, COALESCE(external_account_id, ''))
+      DO UPDATE SET account_label = EXCLUDED.account_label, metadata = EXCLUDED.metadata, status = 'setup_required', updated_at = NOW()
+      RETURNING id, provider, display_name, status, external_account_id, account_label, metadata, last_sync_at, connected_at, created_at, updated_at
+    `);
+
+    return res.status(201).json({
+      success: true,
+      source: networkRows(result)[0],
+      nextStep: "Create/authorize the Shopify app connection for this store. No access token is stored yet.",
+    });
+  } catch (error) {
+    console.error("[ZAKHY Connections] Shopify prepare failed", error);
+    return res.status(503).json({ error: "Unable to prepare Shopify connection." });
+  }
+});
+
+creatorRouter.patch("/creator/admin/connections/:sourceId/status", requireCreatorAdmin, async (req: any, res) => {
+  const sourceId = Number(req.params.sourceId);
+  const status = String(req.body?.status || "").trim();
+  const allowed = ["setup_required", "connected", "paused", "error"];
+  if (!Number.isSafeInteger(sourceId) || sourceId < 1 || !allowed.includes(status)) {
+    return res.status(400).json({ error: "Invalid connection update." });
+  }
+
+  try {
+    await ensureDataConnectionsStorage();
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Data connection storage unavailable" });
+    const result = await db.execute(sql`
+      UPDATE zakhy_data_sources
+      SET status = ${status},
+          connected_at = CASE WHEN ${status} = 'connected' THEN COALESCE(connected_at, NOW()) ELSE connected_at END,
+          updated_at = NOW()
+      WHERE id = ${sourceId}
+      RETURNING id, provider, display_name, status, external_account_id, account_label, metadata, last_sync_at, connected_at, created_at, updated_at
+    `);
+    const source = networkRows(result)[0];
+    if (!source) return res.status(404).json({ error: "Connection not found." });
+    return res.json({ success: true, source });
+  } catch (error) {
+    console.error("[ZAKHY Connections] Status update failed", error);
+    return res.status(503).json({ error: "Unable to update connection." });
+  }
+});
+
 function portalUnavailable(res: any) {
   return res.status(404).json({ error: "Creator Portal is not enabled" });
 }
