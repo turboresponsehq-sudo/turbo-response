@@ -1,18 +1,27 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { getAdminSessionAuthorizationHeader } from "@/lib/adminSession";
 import "../styles/creatorOperations.css";
 
 const digits = ["1","2","3","4","5","6","7","8","9","+","0"];
+type Category={id:number;name:string;slug:string};
 
 export default function AddNetworkContactPage() {
   const [, setLocation] = useLocation();
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
+  const [categories,setCategories]=useState<Category[]>([]);
   const [form, setForm] = useState({
-    fullName: "", phone: "", whereMet: "", profession: "", company: "", notes: "", followUpAt: "",
+    fullName: "", phone: "", email:"", whereMet: "", profession: "", company: "", notes: "", followUpAt: "",
+    categoryIds: [] as number[], isFavorite:false, isPriority:false,
   });
+
+  useEffect(()=>{
+    fetch("/api/creator/admin/network/categories",{headers:{...getAdminSessionAuthorizationHeader()}})
+      .then(async r=>{const b=await r.json(); if(!r.ok) throw new Error(b.error||"Unable to load categories"); setCategories(b.categories||[]);})
+      .catch(e=>setError(e.message));
+  },[]);
 
   function update(field: keyof typeof form, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
@@ -38,7 +47,7 @@ export default function AddNetworkContactPage() {
       });
       const body = await response.json();
       if (!response.ok) throw new Error(body.error || "Unable to save contact.");
-      setForm({ fullName:"", phone:"", whereMet:"", profession:"", company:"", notes:"", followUpAt:"" });
+      setForm({ fullName:"", phone:"", email:"", whereMet:"", profession:"", company:"", notes:"", followUpAt:"", categoryIds:[], isFavorite:false, isPriority:false });
       setSaved(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to save contact.");
@@ -87,6 +96,10 @@ export default function AddNetworkContactPage() {
             </div>
           </div>
 
+          <label>Email
+            <input type="email" value={form.email} onChange={(e)=>update("email",e.target.value)} placeholder="Optional" />
+          </label>
+
           <label>Where did you meet?
             <input required value={form.whereMet} onChange={(e)=>update("whereMet",e.target.value)} placeholder="Event, restaurant, studio..." />
           </label>
@@ -98,6 +111,15 @@ export default function AddNetworkContactPage() {
           <label>Company / Brand
             <input value={form.company} onChange={(e)=>update("company",e.target.value)} placeholder="Optional" />
           </label>
+
+          <fieldset className="zcontact-fieldset"><legend>Categories</legend><div className="zcontact-category-grid">
+            {categories.map(cat=><label key={cat.id}><input type="checkbox" checked={form.categoryIds.includes(Number(cat.id))} onChange={e=>setForm({...form,categoryIds:e.target.checked?[...form.categoryIds,Number(cat.id)]:form.categoryIds.filter(id=>id!==Number(cat.id))})}/><span>{cat.name}</span></label>)}
+          </div></fieldset>
+
+          <div className="zcontact-toggle-row">
+            <label><input type="checkbox" checked={form.isFavorite} onChange={e=>setForm({...form,isFavorite:e.target.checked})}/> Favorite</label>
+            <label><input type="checkbox" checked={form.isPriority} onChange={e=>setForm({...form,isPriority:e.target.checked})}/> Priority</label>
+          </div>
 
           <label>What did you talk about?
             <textarea rows={3} value={form.notes} onChange={(e)=>update("notes",e.target.value)} placeholder="Quick note so you remember them" />

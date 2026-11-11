@@ -180,7 +180,7 @@ export default function CreatorOperationsDashboard() {
         <nav className="zops-nav">
           <a className="is-active" href="#overview"><BarChart3 size={18} />Overview</a>
           <Link href="/admin/creator/leads"><Users size={18} />Leads</Link>
-          <a href="#network"><Users size={18} />Network</a>
+          <Link href="/admin/zakhy/network"><Users size={18} />My Network</Link>
           <a href="#content"><CalendarDays size={18} />Content</a>
           <a href="#campaigns"><Megaphone size={18} />Campaigns</a>
           <a href="#reports"><FileBarChart size={18} />Reports</a>
@@ -202,6 +202,9 @@ export default function CreatorOperationsDashboard() {
             <p>Manage leads, content, campaigns, reports and AI support from one place.</p>
           </div>
           <div className="zops-header-actions">
+            <Link href="/admin/zakhy/network" className="zops-button zops-button-dark">
+              <Users size={16} /> My Network
+            </Link>
             <Link href="/admin/creator/leads" className="zops-button zops-button-dark">
               Open Leads
             </Link>

@@ -50,6 +50,8 @@ import CreatorIntake from "./features/creator/pages/CreatorIntake";
 import CreatorLeadsAdmin from "./features/creator/pages/CreatorLeadsAdmin";
 import CreatorOperationsDashboard from "./features/creator/pages/CreatorOperationsDashboard";
 import AddNetworkContactPage from "./features/creator/pages/AddNetworkContactPage";
+import MyNetworkPage from "./features/creator/pages/MyNetworkPage";
+import NetworkContactDetailPage from "./features/creator/pages/NetworkContactDetailPage";
 import CreatorPortalPreview from "./features/creator/pages/CreatorPortalPreview";
 import CreatorPortalAccess from "./features/creator/pages/CreatorPortalAccess";
 import SimpleClientPortalPreview from "./features/creator/pages/SimpleClientPortalPreview";
@@ -83,6 +85,14 @@ function ProtectedAddNetworkContact() {
       <AddNetworkContactPage />
     </AdminSessionGate>
   );
+}
+
+function ProtectedMyNetwork() {
+  return <AdminSessionGate><MyNetworkPage /></AdminSessionGate>;
+}
+
+function ProtectedNetworkContactDetail({ params }: { params: { id: string } }) {
+  return <AdminSessionGate><NetworkContactDetailPage params={params} /></AdminSessionGate>;
 }
 
 function CreatorPortalPreviewRoute({ view }: { view: "admin" | "portal" }) {
@@ -251,6 +261,8 @@ function Router() {
       {/* Admin workflow routes - restored to specification */}
       <Route path="/admin/command-center" component={AdminCommandCenter} />
       <Route path="/admin/zakhy/add-contact" component={ProtectedAddNetworkContact} />
+      <Route path="/admin/zakhy/network/:id" component={ProtectedNetworkContactDetail} />
+      <Route path="/admin/zakhy/network" component={ProtectedMyNetwork} />
       <Route path="/admin/zakhy" component={ProtectedCreatorOperations} />
       <Route path="/admin/creator/leads" component={ProtectedCreatorLeads} />
       <Route path="/admin/creator/amani" component={ProtectedAmaniReview} />
@@ -290,7 +302,7 @@ function App() {
   });
 
   const [location] = useLocation();
-  const isCreatorChatPath = location === "/admin/zakhy" || location === "/admin/creator/portal-preview" || /^(\/zakhy\/connect|\/zakhybuildsai|\/ralo|\/ms-pop-it|\/spillo|\/miami|\/atlanta|\/crunk-fit)(\/|$)/.test(location);
+  const isCreatorChatPath = location.startsWith("/admin/zakhy") || location === "/admin/creator/portal-preview" || /^(\/zakhy\/connect|\/zakhybuildsai|\/ralo|\/ms-pop-it|\/spillo|\/miami|\/atlanta|\/crunk-fit)(\/|$)/.test(location);
 
   return (
     <ErrorBoundary>
