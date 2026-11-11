@@ -11,6 +11,7 @@ import {
   MessageSquareText,
   Sparkles,
   Users,
+  PlugZap,
   Zap,
 } from "lucide-react";
 import { getAdminLoginUrl } from "@/lib/adminLoginRedirect";
@@ -181,6 +182,7 @@ export default function CreatorOperationsDashboard() {
           <a className="is-active" href="#overview"><BarChart3 size={18} />Overview</a>
           <Link href="/admin/creator/leads"><Users size={18} />Leads</Link>
           <Link href="/admin/zakhy/network"><Users size={18} />My Network</Link>
+          <Link href="/admin/zakhy/connections"><PlugZap size={18} />Connections</Link>
           <a href="#content"><CalendarDays size={18} />Content</a>
           <a href="#campaigns"><Megaphone size={18} />Campaigns</a>
           <a href="#reports"><FileBarChart size={18} />Reports</a>
@@ -204,6 +206,9 @@ export default function CreatorOperationsDashboard() {
           <div className="zops-header-actions">
             <Link href="/admin/zakhy/network" className="zops-button zops-button-dark">
               <Users size={16} /> My Network
+            </Link>
+            <Link href="/admin/zakhy/connections" className="zops-button zops-button-dark">
+              <PlugZap size={16} /> Connections
             </Link>
             <Link href="/admin/creator/leads" className="zops-button zops-button-dark">
               Open Leads
