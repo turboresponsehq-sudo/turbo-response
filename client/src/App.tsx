@@ -52,6 +52,7 @@ import CreatorOperationsDashboard from "./features/creator/pages/CreatorOperatio
 import AddNetworkContactPage from "./features/creator/pages/AddNetworkContactPage";
 import MyNetworkPage from "./features/creator/pages/MyNetworkPage";
 import NetworkContactDetailPage from "./features/creator/pages/NetworkContactDetailPage";
+import DataConnectionsPage from "./features/creator/pages/DataConnectionsPage";
 import CreatorPortalPreview from "./features/creator/pages/CreatorPortalPreview";
 import CreatorPortalAccess from "./features/creator/pages/CreatorPortalAccess";
 import SimpleClientPortalPreview from "./features/creator/pages/SimpleClientPortalPreview";
@@ -93,6 +94,10 @@ function ProtectedMyNetwork() {
 
 function ProtectedNetworkContactDetail({ params }: { params: { id: string } }) {
   return <AdminSessionGate><NetworkContactDetailPage params={params} /></AdminSessionGate>;
+}
+
+function ProtectedDataConnections() {
+  return <AdminSessionGate><DataConnectionsPage /></AdminSessionGate>;
 }
 
 function CreatorPortalPreviewRoute({ view }: { view: "admin" | "portal" }) {
@@ -263,6 +268,7 @@ function Router() {
       <Route path="/admin/zakhy/add-contact" component={ProtectedAddNetworkContact} />
       <Route path="/admin/zakhy/network/:id" component={ProtectedNetworkContactDetail} />
       <Route path="/admin/zakhy/network" component={ProtectedMyNetwork} />
+      <Route path="/admin/zakhy/connections" component={ProtectedDataConnections} />
       <Route path="/admin/zakhy" component={ProtectedCreatorOperations} />
       <Route path="/admin/creator/leads" component={ProtectedCreatorLeads} />
       <Route path="/admin/creator/amani" component={ProtectedAmaniReview} />
