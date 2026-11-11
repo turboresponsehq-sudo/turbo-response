@@ -690,7 +690,8 @@ async function ensureDataConnectionsStorage() {
     `);
     await db.execute(sql`
       CREATE UNIQUE INDEX IF NOT EXISTS idx_zakhy_data_sources_provider_account
-      ON zakhy_data_sources(provider, COALESCE(external_account_id, ''))
+      ON zakhy_data_sources(provider, external_account_id)
+      WHERE external_account_id IS NOT NULL
     `);
     await db.execute(sql`
       CREATE TABLE IF NOT EXISTS zakhy_contact_external_ids (
@@ -830,7 +831,7 @@ creatorRouter.post("/creator/admin/connections/shopify/prepare", requireCreatorA
       VALUES
         ('shopify', 'Shopify', 'setup_required', ${storeDomain}, ${accountLabel},
          ${JSON.stringify({ storeDomain, intendedData: ["customers","orders","marketing_consent","customer_value"] })}::jsonb, NOW())
-      ON CONFLICT (provider, COALESCE(external_account_id, ''))
+      ON CONFLICT (provider, external_account_id) WHERE external_account_id IS NOT NULL
       DO UPDATE SET account_label = EXCLUDED.account_label, metadata = EXCLUDED.metadata, status = 'setup_required', updated_at = NOW()
       RETURNING id, provider, display_name, status, external_account_id, account_label, metadata, last_sync_at, connected_at, created_at, updated_at
     `);
