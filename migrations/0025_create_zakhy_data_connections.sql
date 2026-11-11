@@ -19,7 +19,8 @@ CREATE TABLE IF NOT EXISTS zakhy_data_sources (
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_zakhy_data_sources_provider_account
-  ON zakhy_data_sources(provider, COALESCE(external_account_id, ''));
+  ON zakhy_data_sources(provider, external_account_id)
+  WHERE external_account_id IS NOT NULL;
 
 CREATE TABLE IF NOT EXISTS zakhy_contact_external_ids (
   id BIGSERIAL PRIMARY KEY,
