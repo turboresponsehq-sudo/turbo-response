@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Mail, MessageCircle, Phone, Plus, Search, Star, Users } from "lucide-react";
+import { Mail, MessageCircle, Phone, Plus, Search, Send, Sparkles, Star, Users } from "lucide-react";
 import { getAdminSessionAuthorizationHeader } from "@/lib/adminSession";
 import "../styles/creatorOperations.css";
 
@@ -8,8 +8,10 @@ type Category={id:number;name:string;slug:string};
 type Contact={
   id:number; full_name:string; phone:string; email:string|null; profession:string; company:string|null;
   photo_url:string|null; is_favorite:boolean; is_priority:boolean; created_at:string;
+  where_met?:string; notes?:string|null; follow_up_at?:string|null; follow_up_done?:boolean;
   categories:Category[];
 };
+type NetworkAnswer={answer:string;intent:string;contacts:Contact[];note?:string|null};
 
 export default function MyNetworkPage(){
   const [,setLocation]=useLocation();
@@ -23,6 +25,9 @@ export default function MyNetworkPage(){
   const [manageCategories,setManageCategories]=useState(false);
   const [newCategory,setNewCategory]=useState("");
   const [categoryDrafts,setCategoryDrafts]=useState<Record<number,string>>({});
+  const [askText,setAskText]=useState("");
+  const [askLoading,setAskLoading]=useState(false);
+  const [askAnswer,setAskAnswer]=useState<NetworkAnswer|null>(null);
 
   async function load(){
     setLoading(true); setError("");
@@ -52,6 +57,17 @@ export default function MyNetworkPage(){
     const r=await fetch("/api/creator/admin/network/categories/"+category.id,{method:"PATCH",headers:{"Content-Type":"application/json",...getAdminSessionAuthorizationHeader()},body:JSON.stringify({name})});
     const b=await r.json(); if(!r.ok) throw new Error(b.error||"Unable to rename category");
     setCategoryDrafts(current=>{const next={...current}; delete next[category.id]; return next;}); await load();
+  }
+
+  async function askNetwork(question?:string){
+    const text=(question??askText).trim(); if(!text||askLoading) return;
+    setAskText(text); setAskLoading(true); setError("");
+    try{
+      const r=await fetch("/api/creator/admin/network/ask",{method:"POST",headers:{"Content-Type":"application/json",...getAdminSessionAuthorizationHeader()},body:JSON.stringify({question:text})});
+      const b=await r.json(); if(!r.ok) throw new Error(b.error||"Unable to answer right now.");
+      setAskAnswer(b);
+    }catch(e){setError(e instanceof Error?e.message:"Unable to answer right now.");}
+    finally{setAskLoading(false);}
   }
 
   const filtered=useMemo(()=>{
@@ -88,6 +104,31 @@ export default function MyNetworkPage(){
           <Link href="/admin/zakhy/add-contact" className="zops-button zops-button-red"><Plus size={16}/>Add Contact</Link>
         </div>
       </div>
+
+      <section className="network-ask-card">
+        <div className="network-ask-head"><span><Sparkles size={17}/></span><div><strong>Ask My Network</strong><small>Ask questions about the people you saved.</small></div></div>
+        <div className="network-ask-input">
+          <input value={askText} onChange={e=>setAskText(e.target.value)} onKeyDown={e=>{if(e.key==="Enter") askNetwork();}} placeholder='Try: "Who should I follow up with?"'/>
+          <button onClick={()=>askNetwork()} disabled={askLoading||!askText.trim()} aria-label="Ask My Network"><Send size={17}/></button>
+        </div>
+        <div className="network-ask-suggestions">
+          {["Who did I meet this week?","Who should I follow up with?","Show overdue follow-ups","Who are my priority contacts?"].map(text=><button key={text} onClick={()=>askNetwork(text)}>{text}</button>)}
+        </div>
+        {askAnswer&&<div className="network-ask-answer">
+          <p>{askAnswer.answer}</p>
+          {!!askAnswer.contacts?.length&&<div className="network-ask-results">
+            {askAnswer.contacts.slice(0,8).map(contact=><article key={contact.id}>
+              <Link href={"/admin/zakhy/network/"+contact.id}>
+                <strong>{contact.full_name}</strong>
+                <span>{contact.profession}{contact.company?" · "+contact.company:""}</span>
+                {contact.follow_up_at&&<small>{contact.follow_up_done?"Follow-up completed":"Follow up "+new Date(contact.follow_up_at).toLocaleDateString()}</small>}
+              </Link>
+              <div><a href={"tel:"+contact.phone} aria-label={"Call "+contact.full_name}><Phone size={15}/></a><a href={"sms:"+contact.phone} aria-label={"Text "+contact.full_name}><MessageCircle size={15}/></a></div>
+            </article>)}
+          </div>}
+          {askAnswer.note&&<small className="network-ask-note">{askAnswer.note}</small>}
+        </div>}
+      </section>
 
       <div className="network-search"><Search size={18}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search name, company, profession, or category"/></div>
 

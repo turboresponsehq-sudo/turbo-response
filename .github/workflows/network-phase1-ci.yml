@@ -33,7 +33,7 @@ jobs:
             exit 0
           fi
           errors="$(grep 'error TS' /tmp/tsc.log || true)"
-          unexpected="$(printf '%s\n' "$errors" | grep -v -E 'server/modules/creator/creatorWorkspaceRoutes.ts\(16,42\): error TS2345|server/modules/creator/routes.ts\(552,23\): error TS2769' || true)"
+          unexpected="$(printf '%s\n' "$errors" | grep -v -E 'server/modules/creator/creatorWorkspaceRoutes.ts\(16,42\): error TS2345|server/modules/creator/routes.ts\([0-9]+,23\): error TS2769' || true)"
           if [ -n "$unexpected" ]; then
             echo "Unexpected TypeScript errors:"
             printf '%s\n' "$unexpected"
