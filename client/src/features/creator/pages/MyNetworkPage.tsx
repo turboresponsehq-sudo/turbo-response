@@ -106,7 +106,7 @@ export default function MyNetworkPage(){
       {manageCategories&&<section className="network-category-manager">
         <div className="network-category-add"><input value={newCategory} onChange={e=>setNewCategory(e.target.value)} placeholder="New industry category"/><button onClick={()=>addCategory().catch(e=>setError(e.message))}>Add</button></div>
         <div className="network-category-edit-list">{categories.map(cat=><div key={cat.id}><input value={categoryDrafts[cat.id]??cat.name} onChange={e=>setCategoryDrafts({...categoryDrafts,[cat.id]:e.target.value})}/><button onClick={()=>renameCategory(cat).catch(e=>setError(e.message))}>Save</button></div>)}</div>
-      </section>
+      </section>}
 
       {error&&<div className="zops-alert">{error}</div>}
       {loading?<div className="network-empty">Loading your network…</div>:grouped.length?grouped.map(([letter,rows])=>
