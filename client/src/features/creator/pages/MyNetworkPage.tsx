@@ -20,6 +20,9 @@ export default function MyNetworkPage(){
   const [mode,setMode]=useState<"all"|"favorites"|"priority"|"recent">("all");
   const [loading,setLoading]=useState(true);
   const [error,setError]=useState("");
+  const [manageCategories,setManageCategories]=useState(false);
+  const [newCategory,setNewCategory]=useState("");
+  const [categoryDrafts,setCategoryDrafts]=useState<Record<number,string>>({});
 
   async function load(){
     setLoading(true); setError("");
@@ -36,6 +39,20 @@ export default function MyNetworkPage(){
     finally{setLoading(false);}
   }
   useEffect(()=>{load();},[]);
+
+  async function addCategory(){
+    const name=newCategory.trim(); if(!name) return;
+    const r=await fetch("/api/creator/admin/network/categories",{method:"POST",headers:{"Content-Type":"application/json",...getAdminSessionAuthorizationHeader()},body:JSON.stringify({name})});
+    const b=await r.json(); if(!r.ok) throw new Error(b.error||"Unable to add category");
+    setNewCategory(""); await load();
+  }
+
+  async function renameCategory(category:Category){
+    const name=(categoryDrafts[category.id]??category.name).trim(); if(!name||name===category.name) return;
+    const r=await fetch("/api/creator/admin/network/categories/"+category.id,{method:"PATCH",headers:{"Content-Type":"application/json",...getAdminSessionAuthorizationHeader()},body:JSON.stringify({name})});
+    const b=await r.json(); if(!r.ok) throw new Error(b.error||"Unable to rename category");
+    setCategoryDrafts(current=>{const next={...current}; delete next[category.id]; return next;}); await load();
+  }
 
   const filtered=useMemo(()=>{
     const q=query.trim().toLowerCase();
@@ -78,10 +95,18 @@ export default function MyNetworkPage(){
         {(["all","favorites","priority","recent"] as const).map(v=><button className={mode===v?"is-active":""} onClick={()=>setMode(v)} key={v}>{v==="all"?"All":v==="favorites"?"Favorites":v==="priority"?"Priority":"Recent"}</button>)}
       </div>
 
-      <div className="network-categories">
+      <div className="network-category-toolbar">
+        <div className="network-categories">
         <button className={categoryId===0?"is-active":""} onClick={()=>setCategoryId(0)}>All Industries</button>
         {categories.map(cat=><button className={categoryId===cat.id?"is-active":""} onClick={()=>setCategoryId(cat.id)} key={cat.id}>{cat.name}</button>)}
+        </div>
+        <button className="network-manage-categories" onClick={()=>setManageCategories(v=>!v)}>{manageCategories?"Done":"Manage categories"}</button>
       </div>
+
+      {manageCategories&&<section className="network-category-manager">
+        <div className="network-category-add"><input value={newCategory} onChange={e=>setNewCategory(e.target.value)} placeholder="New industry category"/><button onClick={()=>addCategory().catch(e=>setError(e.message))}>Add</button></div>
+        <div className="network-category-edit-list">{categories.map(cat=><div key={cat.id}><input value={categoryDrafts[cat.id]??cat.name} onChange={e=>setCategoryDrafts({...categoryDrafts,[cat.id]:e.target.value})}/><button onClick={()=>renameCategory(cat).catch(e=>setError(e.message))}>Save</button></div>)}</div>
+      </section>
 
       {error&&<div className="zops-alert">{error}</div>}
       {loading?<div className="network-empty">Loading your network…</div>:grouped.length?grouped.map(([letter,rows])=>
