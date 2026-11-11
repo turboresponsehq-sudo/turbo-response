@@ -302,7 +302,7 @@ function App() {
   });
 
   const [location] = useLocation();
-  const isCreatorChatPath = location === "/admin/zakhy" || location === "/admin/creator/portal-preview" || /^(\/zakhy\/connect|\/zakhybuildsai|\/ralo|\/ms-pop-it|\/spillo|\/miami|\/atlanta|\/crunk-fit)(\/|$)/.test(location);
+  const isCreatorChatPath = location.startsWith("/admin/zakhy") || location === "/admin/creator/portal-preview" || /^(\/zakhy\/connect|\/zakhybuildsai|\/ralo|\/ms-pop-it|\/spillo|\/miami|\/atlanta|\/crunk-fit)(\/|$)/.test(location);
 
   return (
     <ErrorBoundary>
