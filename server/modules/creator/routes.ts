@@ -128,6 +128,31 @@ export const requireCreatorAdmin: RequestHandler = requireRoles(["admin"]);
 export const requireAmaniAdmin: RequestHandler = requireRoles(["admin", "amani_admin"]);
 
 let networkStorageReady: Promise<void> | null = null;
+
+function networkSlug(value: string) {
+  return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
+}
+
+function normalizeNetworkPhone(value: string) {
+  return value.replace(/\D/g, "");
+}
+
+function networkRows(result: any): any[] {
+  return Array.isArray(result) ? result : ((result as { rows?: unknown[] }).rows ?? []);
+}
+
+function parseSocialLinks(value: unknown) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((entry: any) => ({
+      platform: String(entry?.platform || "").trim().slice(0, 40),
+      url: String(entry?.url || "").trim().slice(0, 1000),
+      handle: String(entry?.handle || "").trim().slice(0, 160),
+    }))
+    .filter((entry) => entry.url && /^https?:\/\//i.test(entry.url))
+    .slice(0, 12);
+}
+
 async function ensureNetworkStorage() {
   if (networkStorageReady) return networkStorageReady;
   networkStorageReady = (async () => {
@@ -149,13 +174,52 @@ async function ensureNetworkStorage() {
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `);
-    await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_zakhy_network_contacts_follow_up ON zakhy_network_contacts (follow_up_done, follow_up_at)`);
-    await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_zakhy_network_contacts_phone ON zakhy_network_contacts (phone)`);
+    await db.execute(sql`ALTER TABLE zakhy_network_contacts ADD COLUMN IF NOT EXISTS email TEXT NULL`);
+    await db.execute(sql`ALTER TABLE zakhy_network_contacts ADD COLUMN IF NOT EXISTS photo_url TEXT NULL`);
+    await db.execute(sql`ALTER TABLE zakhy_network_contacts ADD COLUMN IF NOT EXISTS is_favorite BOOLEAN NOT NULL DEFAULT FALSE`);
+    await db.execute(sql`ALTER TABLE zakhy_network_contacts ADD COLUMN IF NOT EXISTS is_priority BOOLEAN NOT NULL DEFAULT FALSE`);
+    await db.execute(sql`ALTER TABLE zakhy_network_contacts ADD COLUMN IF NOT EXISTS social_links JSONB NOT NULL DEFAULT '[]'::jsonb`);
     await db.execute(sql`
-      INSERT INTO schema_migrations (migration_name)
-      SELECT '0024_create_zakhy_network_contacts'
+      CREATE TABLE IF NOT EXISTS zakhy_network_categories (
+        id BIGSERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        slug TEXT NOT NULL UNIQUE,
+        sort_order INTEGER NOT NULL DEFAULT 100,
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS zakhy_network_contact_categories (
+        contact_id BIGINT NOT NULL REFERENCES zakhy_network_contacts(id) ON DELETE CASCADE,
+        category_id BIGINT NOT NULL REFERENCES zakhy_network_categories(id) ON DELETE CASCADE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        PRIMARY KEY (contact_id, category_id)
+      )
+    `);
+    await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_zakhy_network_contacts_follow_up ON zakhy_network_contacts (follow_up_done, follow_up_at)`);
+    await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_zakhy_network_contacts_created ON zakhy_network_contacts (created_at DESC)`);
+    await db.execute(sql`
+      INSERT INTO zakhy_network_categories (name, slug, sort_order)
+      VALUES
+        ('Music / Artists','music-artists',10),
+        ('Influencers / Content Creators','influencers-content-creators',20),
+        ('Restaurants / Hospitality','restaurants-hospitality',30),
+        ('Financial Services','financial-services',40),
+        ('Entrepreneurs / Business Owners','entrepreneurs-business-owners',50),
+        ('Politics / Community Leaders','politics-community-leaders',60),
+        ('Fashion / Streetwear','fashion-streetwear',70),
+        ('Real Estate','real-estate',80),
+        ('Technology','technology',90),
+        ('Other','other',100)
+      ON CONFLICT (slug) DO NOTHING
+    `);
+    await db.execute(sql`
+      INSERT INTO schema_migrations (migration_name, applied_at)
+      SELECT '0024_create_zakhy_network_crm_phase1', NOW()
       WHERE NOT EXISTS (
-        SELECT 1 FROM schema_migrations WHERE migration_name = '0024_create_zakhy_network_contacts'
+        SELECT 1 FROM schema_migrations WHERE migration_name = '0024_create_zakhy_network_crm_phase1'
       )
     `);
   })().catch((error) => {
@@ -165,26 +229,143 @@ async function ensureNetworkStorage() {
   return networkStorageReady;
 }
 
-creatorRouter.get("/creator/admin/network", requireCreatorAdmin, async (_req: any, res) => {
+async function setNetworkCategories(db: any, contactId: number, categoryIds: number[]) {
+  const safeIds = [...new Set(categoryIds.filter((id) => Number.isSafeInteger(id) && id > 0))].slice(0, 12);
+  await db.execute(sql`DELETE FROM zakhy_network_contact_categories WHERE contact_id = ${contactId}`);
+  for (const categoryId of safeIds) {
+    await db.execute(sql`
+      INSERT INTO zakhy_network_contact_categories (contact_id, category_id)
+      SELECT ${contactId}, id FROM zakhy_network_categories WHERE id = ${categoryId} AND is_active = TRUE
+      ON CONFLICT DO NOTHING
+    `);
+  }
+}
+
+creatorRouter.get("/creator/admin/network/categories", requireCreatorAdmin, async (_req: any, res) => {
+  try {
+    await ensureNetworkStorage();
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Network storage unavailable" });
+    const result = await db.execute(sql`
+      SELECT id, name, slug, sort_order, is_active
+      FROM zakhy_network_categories
+      WHERE is_active = TRUE
+      ORDER BY sort_order, name
+    `);
+    return res.json({ success: true, categories: networkRows(result) });
+  } catch (error) {
+    console.error("[ZAKHY Network] Category list failed", error);
+    return res.status(503).json({ error: "Unable to load categories" });
+  }
+});
+
+creatorRouter.post("/creator/admin/network/categories", requireCreatorAdmin, async (req: any, res) => {
+  const name = String(req.body?.name || "").trim().slice(0, 100);
+  const slug = networkSlug(name);
+  if (!name || !slug) return res.status(400).json({ error: "Category name is required" });
+  try {
+    await ensureNetworkStorage();
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Network storage unavailable" });
+    const result = await db.execute(sql`
+      INSERT INTO zakhy_network_categories (name, slug, sort_order, is_active)
+      VALUES (${name}, ${slug}, 100, TRUE)
+      ON CONFLICT (slug) DO UPDATE SET name = EXCLUDED.name, is_active = TRUE, updated_at = NOW()
+      RETURNING id, name, slug, sort_order, is_active
+    `);
+    return res.status(201).json({ success: true, category: networkRows(result)[0] });
+  } catch (error) {
+    console.error("[ZAKHY Network] Category create failed", error);
+    return res.status(503).json({ error: "Unable to save category" });
+  }
+});
+
+creatorRouter.patch("/creator/admin/network/categories/:categoryId", requireCreatorAdmin, async (req: any, res) => {
+  const categoryId = Number(req.params.categoryId);
+  const name = String(req.body?.name || "").trim().slice(0, 100);
+  if (!Number.isSafeInteger(categoryId) || categoryId < 1 || !name) return res.status(400).json({ error: "Valid category is required" });
+  try {
+    await ensureNetworkStorage();
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Network storage unavailable" });
+    const result = await db.execute(sql`
+      UPDATE zakhy_network_categories
+      SET name = ${name}, updated_at = NOW()
+      WHERE id = ${categoryId}
+      RETURNING id, name, slug, sort_order, is_active
+    `);
+    const category = networkRows(result)[0];
+    if (!category) return res.status(404).json({ error: "Category not found" });
+    return res.json({ success: true, category });
+  } catch (error) {
+    console.error("[ZAKHY Network] Category update failed", error);
+    return res.status(503).json({ error: "Unable to update category" });
+  }
+});
+
+creatorRouter.get("/creator/admin/network", requireCreatorAdmin, async (req: any, res) => {
   try {
     await ensureNetworkStorage();
     const db = await getDb();
     if (!db) return res.status(503).json({ error: "Network contact storage is unavailable" });
+    const query = String(req.query.q || "").trim().toLowerCase().slice(0, 120);
+    const categoryId = Number(req.query.categoryId || 0);
+    const favoritesOnly = req.query.favorites === "true";
+    const priorityOnly = req.query.priority === "true";
     const result = await db.execute(sql`
-      SELECT id, full_name, phone, where_met, profession, company, notes,
-             follow_up_at, follow_up_done, created_at, updated_at
-      FROM zakhy_network_contacts
-      ORDER BY
-        CASE WHEN follow_up_done = FALSE AND follow_up_at IS NOT NULL THEN 0 ELSE 1 END,
-        follow_up_at ASC NULLS LAST,
-        created_at DESC
-      LIMIT 250
+      SELECT c.id, c.full_name, c.phone, c.email, c.where_met, c.profession, c.company, c.notes,
+             c.photo_url, c.social_links, c.is_favorite, c.is_priority,
+             c.follow_up_at, c.follow_up_done, c.created_at, c.updated_at,
+             COALESCE(
+               json_agg(json_build_object('id', cat.id, 'name', cat.name, 'slug', cat.slug) ORDER BY cat.sort_order, cat.name)
+               FILTER (WHERE cat.id IS NOT NULL), '[]'::json
+             ) AS categories
+      FROM zakhy_network_contacts c
+      LEFT JOIN zakhy_network_contact_categories cc ON cc.contact_id = c.id
+      LEFT JOIN zakhy_network_categories cat ON cat.id = cc.category_id AND cat.is_active = TRUE
+      WHERE
+        (${query} = '' OR LOWER(c.full_name) LIKE ${"%" + query + "%"} OR LOWER(COALESCE(c.company,'')) LIKE ${"%" + query + "%"} OR LOWER(c.profession) LIKE ${"%" + query + "%"} OR LOWER(COALESCE(cat.name,'')) LIKE ${"%" + query + "%"})
+        AND (${favoritesOnly} = FALSE OR c.is_favorite = TRUE)
+        AND (${priorityOnly} = FALSE OR c.is_priority = TRUE)
+        AND (${Number.isSafeInteger(categoryId) && categoryId > 0 ? categoryId : 0} = 0 OR cat.id = ${Number.isSafeInteger(categoryId) && categoryId > 0 ? categoryId : 0})
+      GROUP BY c.id
+      ORDER BY LOWER(c.full_name), c.created_at DESC
+      LIMIT 500
     `);
-    const contacts = Array.isArray(result) ? result : ((result as { rows?: unknown[] }).rows ?? []);
-    return res.json({ success: true, contacts });
+    return res.json({ success: true, contacts: networkRows(result) });
   } catch (error) {
     console.error("[ZAKHY Network] List failed", error);
     return res.status(503).json({ error: "Unable to load network contacts" });
+  }
+});
+
+creatorRouter.get("/creator/admin/network/:contactId", requireCreatorAdmin, async (req: any, res) => {
+  const contactId = Number(req.params.contactId);
+  if (!Number.isSafeInteger(contactId) || contactId < 1) return res.status(400).json({ error: "Invalid contact" });
+  try {
+    await ensureNetworkStorage();
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Network storage unavailable" });
+    const result = await db.execute(sql`
+      SELECT c.id, c.full_name, c.phone, c.email, c.where_met, c.profession, c.company, c.notes,
+             c.photo_url, c.social_links, c.is_favorite, c.is_priority,
+             c.follow_up_at, c.follow_up_done, c.created_at, c.updated_at,
+             COALESCE(
+               json_agg(json_build_object('id', cat.id, 'name', cat.name, 'slug', cat.slug) ORDER BY cat.sort_order, cat.name)
+               FILTER (WHERE cat.id IS NOT NULL), '[]'::json
+             ) AS categories
+      FROM zakhy_network_contacts c
+      LEFT JOIN zakhy_network_contact_categories cc ON cc.contact_id = c.id
+      LEFT JOIN zakhy_network_categories cat ON cat.id = cc.category_id AND cat.is_active = TRUE
+      WHERE c.id = ${contactId}
+      GROUP BY c.id
+    `);
+    const contact = networkRows(result)[0];
+    if (!contact) return res.status(404).json({ error: "Contact not found" });
+    return res.json({ success: true, contact });
+  } catch (error) {
+    console.error("[ZAKHY Network] Contact load failed", error);
+    return res.status(503).json({ error: "Unable to load contact" });
   }
 });
 
@@ -193,12 +374,18 @@ creatorRouter.post("/creator/admin/network", requireCreatorAdmin, async (req: an
     await ensureNetworkStorage();
     const fullName = String(req.body?.fullName || "").trim();
     const phone = String(req.body?.phone || "").replace(/[^0-9+]/g, "").trim();
+    const email = String(req.body?.email || "").trim().toLowerCase().slice(0, 320) || null;
     const whereMet = String(req.body?.whereMet || "").trim();
     const profession = String(req.body?.profession || "").trim();
     const company = String(req.body?.company || "").trim() || null;
     const notes = String(req.body?.notes || "").trim() || null;
+    const photoUrl = String(req.body?.photoUrl || "").trim().slice(0, 1000) || null;
+    const socialLinks = parseSocialLinks(req.body?.socialLinks);
+    const categoryIds = Array.isArray(req.body?.categoryIds) ? req.body.categoryIds.map(Number) : [];
     const followUpAtRaw = String(req.body?.followUpAt || "").trim();
     const followUpAt = followUpAtRaw ? new Date(followUpAtRaw) : null;
+    const isFavorite = req.body?.isFavorite === true;
+    const isPriority = req.body?.isPriority === true;
 
     if (!fullName || !phone || !whereMet || !profession) {
       return res.status(400).json({ error: "Name, phone, where you met, and profession are required" });
@@ -206,26 +393,95 @@ creatorRouter.post("/creator/admin/network", requireCreatorAdmin, async (req: an
     if (phone.length > 30 || fullName.length > 180 || whereMet.length > 250 || profession.length > 180) {
       return res.status(400).json({ error: "One or more fields are too long" });
     }
-    if (followUpAt && Number.isNaN(followUpAt.getTime())) {
-      return res.status(400).json({ error: "Invalid follow-up date" });
-    }
+    if (followUpAt && Number.isNaN(followUpAt.getTime())) return res.status(400).json({ error: "Invalid follow-up date" });
 
     const db = await getDb();
     if (!db) return res.status(503).json({ error: "Network contact storage is unavailable" });
+
+    const normalizedPhone = normalizeNetworkPhone(phone);
+    const duplicate = await db.execute(sql`
+      SELECT id, full_name
+      FROM zakhy_network_contacts
+      WHERE (${normalizedPhone} <> '' AND regexp_replace(phone, '[^0-9]', '', 'g') = ${normalizedPhone})
+         OR (${email || ""} <> '' AND LOWER(COALESCE(email,'')) = ${email || ""})
+      LIMIT 1
+    `);
+    const existing = networkRows(duplicate)[0];
+    if (existing) return res.status(409).json({ error: "This person may already be in My Network", existingContactId: existing.id, existingName: existing.full_name });
+
     const result = await db.execute(sql`
       INSERT INTO zakhy_network_contacts
-        (full_name, phone, where_met, profession, company, notes, follow_up_at, created_by_user_id)
+        (full_name, phone, email, where_met, profession, company, notes, photo_url, social_links,
+         is_favorite, is_priority, follow_up_at, created_by_user_id)
       VALUES
-        (${fullName}, ${phone}, ${whereMet}, ${profession}, ${company}, ${notes},
+        (${fullName}, ${phone}, ${email}, ${whereMet}, ${profession}, ${company}, ${notes}, ${photoUrl},
+         ${JSON.stringify(socialLinks)}::jsonb, ${isFavorite}, ${isPriority},
          ${followUpAt ? followUpAt.toISOString() : null}, ${req.creatorAdmin.id})
-      RETURNING id, full_name, phone, where_met, profession, company, notes,
-                follow_up_at, follow_up_done, created_at, updated_at
+      RETURNING id
     `);
-    const rows = Array.isArray(result) ? result : ((result as { rows?: unknown[] }).rows ?? []);
-    return res.status(201).json({ success: true, contact: rows[0] });
+    const contactId = Number(networkRows(result)[0]?.id);
+    if (!contactId) throw new Error("Contact insert failed");
+    await setNetworkCategories(db, contactId, categoryIds);
+    return res.status(201).json({ success: true, contactId });
   } catch (error) {
     console.error("[ZAKHY Network] Create failed", error);
     return res.status(503).json({ error: "Unable to save network contact" });
+  }
+});
+
+creatorRouter.patch("/creator/admin/network/:contactId", requireCreatorAdmin, async (req: any, res) => {
+  const contactId = Number(req.params.contactId);
+  if (!Number.isSafeInteger(contactId) || contactId < 1) return res.status(400).json({ error: "Invalid contact" });
+  try {
+    await ensureNetworkStorage();
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Network storage unavailable" });
+
+    const fullName = String(req.body?.fullName || "").trim();
+    const phone = String(req.body?.phone || "").replace(/[^0-9+]/g, "").trim();
+    const email = String(req.body?.email || "").trim().toLowerCase().slice(0, 320) || null;
+    const whereMet = String(req.body?.whereMet || "").trim();
+    const profession = String(req.body?.profession || "").trim();
+    const company = String(req.body?.company || "").trim() || null;
+    const notes = String(req.body?.notes || "").trim() || null;
+    const photoUrl = String(req.body?.photoUrl || "").trim().slice(0, 1000) || null;
+    const socialLinks = parseSocialLinks(req.body?.socialLinks);
+    const categoryIds = Array.isArray(req.body?.categoryIds) ? req.body.categoryIds.map(Number) : [];
+    const followUpAtRaw = String(req.body?.followUpAt || "").trim();
+    const followUpAt = followUpAtRaw ? new Date(followUpAtRaw) : null;
+
+    if (!fullName || !phone || !whereMet || !profession) return res.status(400).json({ error: "Name, phone, where you met, and profession are required" });
+    if (followUpAt && Number.isNaN(followUpAt.getTime())) return res.status(400).json({ error: "Invalid follow-up date" });
+
+    const normalizedPhone = normalizeNetworkPhone(phone);
+    const duplicate = await db.execute(sql`
+      SELECT id FROM zakhy_network_contacts
+      WHERE id <> ${contactId}
+        AND ((${normalizedPhone} <> '' AND regexp_replace(phone, '[^0-9]', '', 'g') = ${normalizedPhone})
+          OR (${email || ""} <> '' AND LOWER(COALESCE(email,'')) = ${email || ""}))
+      LIMIT 1
+    `);
+    if (networkRows(duplicate)[0]) return res.status(409).json({ error: "Another contact already uses this phone or email" });
+
+    const result = await db.execute(sql`
+      UPDATE zakhy_network_contacts SET
+        full_name = ${fullName}, phone = ${phone}, email = ${email}, where_met = ${whereMet},
+        profession = ${profession}, company = ${company}, notes = ${notes}, photo_url = ${photoUrl},
+        social_links = ${JSON.stringify(socialLinks)}::jsonb,
+        is_favorite = ${req.body?.isFavorite === true},
+        is_priority = ${req.body?.isPriority === true},
+        follow_up_at = ${followUpAt ? followUpAt.toISOString() : null},
+        follow_up_done = ${req.body?.followUpDone === true},
+        updated_at = NOW()
+      WHERE id = ${contactId}
+      RETURNING id
+    `);
+    if (!networkRows(result)[0]) return res.status(404).json({ error: "Contact not found" });
+    await setNetworkCategories(db, contactId, categoryIds);
+    return res.json({ success: true, contactId });
+  } catch (error) {
+    console.error("[ZAKHY Network] Contact update failed", error);
+    return res.status(503).json({ error: "Unable to update contact" });
   }
 });
 
@@ -242,12 +498,11 @@ creatorRouter.patch("/creator/admin/network/:contactId/follow-up", requireCreato
       UPDATE zakhy_network_contacts
       SET follow_up_done = ${req.body.done}, updated_at = NOW()
       WHERE id = ${contactId}
-      RETURNING id, full_name, phone, where_met, profession, company, notes,
-                follow_up_at, follow_up_done, created_at, updated_at
+      RETURNING id, follow_up_done
     `);
-    const rows = Array.isArray(result) ? result : ((result as { rows?: unknown[] }).rows ?? []);
-    if (!rows[0]) return res.status(404).json({ error: "Contact not found" });
-    return res.json({ success: true, contact: rows[0] });
+    const contact = networkRows(result)[0];
+    if (!contact) return res.status(404).json({ error: "Contact not found" });
+    return res.json({ success: true, contact });
   } catch (error) {
     console.error("[ZAKHY Network] Follow-up update failed", error);
     return res.status(503).json({ error: "Unable to update follow-up" });
