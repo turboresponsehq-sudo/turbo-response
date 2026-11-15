@@ -33,6 +33,8 @@ describe("Money Bosses command-center migration contract", () => {
   });
 
   it("keeps member privacy and deletion controls explicit", () => {
+    expect(migration).toContain("tier TEXT NOT NULL DEFAULT 'premium_member'");
+    expect(migration).toContain("card_artwork_version TEXT NOT NULL DEFAULT 'premium-member-v1'");
     expect(migration).toContain("preferred_name TEXT");
     expect(migration).toContain("profile_photo_url TEXT");
     expect(migration).toContain("photo_consent BOOLEAN NOT NULL DEFAULT FALSE");

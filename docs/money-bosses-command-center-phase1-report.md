@@ -33,9 +33,11 @@ The UI is responsive for desktop and narrow mobile widths. It is intentionally o
 
 ### Preserved artwork
 
-The exact approved MB–001 Founding Member card artwork was copied into:
+The original approved MB–001 Founding Member artwork was copied into the branch as a preserved reference and is now archived. The current active admin-module card is the supplied Premium Member portrait design. See `docs/money-bosses-premium-member-card-follow-up.md` for both checksums and paths.
 
-`client/public/money-bosses/mb-001-founding-member-card.jpg`
+The archived MB–001 artwork is stored at:
+
+`client/public/money-bosses/archive/mb-001-founding-member-card-archived.jpg`
 
 SHA-256:
 

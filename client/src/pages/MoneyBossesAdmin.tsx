@@ -6,7 +6,7 @@ import "./MoneyBossesAdmin.css";
 const sections = [
   "Overview",
   "Members",
-  "Membership Cards",
+  "Premium Member Card",
   "Archive Content",
   "QR Destinations",
   "Wallets",
@@ -52,7 +52,7 @@ export default function MoneyBossesAdmin() {
     if (section === "Integrations") {
       return <IntegrationsPanel database={integrations.data?.database} integrations={integrations.data?.integrations ?? []} />;
     }
-    if (section === "Membership Cards") {
+    if (section === "Premium Member Card") {
       return <CardsPanel />;
     }
     if (section === "QR Destinations") {
@@ -117,7 +117,7 @@ function OverviewPanel({ overview, readiness }: { overview?: any; readiness: Arr
       <section className="mb-panel"><h3>Current boundary</h3><ul className="mb-checklist"><li>Existing admin authentication reused</li><li>Public Atlanta Archives scanner remains separate</li><li>Shopify source-of-truth connection is not activated</li><li>Wallet providers remain not configured</li></ul></section>
       <section className="mb-panel"><h3>Provider readiness</h3><div className="mb-provider-list">{readiness.map((provider) => <ProviderRow key={provider.provider} provider={provider} />)}</div></section>
     </div>
-    <section className="mb-panel mb-notice-panel"><strong>Approved artwork preserved</strong><p>The original MB–001 Founding Member card is stored unchanged in this branch for future provider adapters. No pass is generated from this dashboard.</p></section>
+    <section className="mb-panel mb-notice-panel"><strong>Premium Member artwork active</strong><p>The approved Money Bosses Premium Member portrait card is the active customer-facing design. The earlier MB–001 Founding Member artwork remains archived for reference. No pass is generated from this dashboard.</p></section>
   </>;
 }
 
@@ -126,7 +126,7 @@ function MembersPanel({ database, members }: { database?: string; members: any[]
 }
 
 function CardsPanel() {
-  return <PanelFrame title="Membership Cards" eyebrow="MB–001 FOUNDING MEMBER"><div className="mb-card-layout"><div><img className="mb-card-art" src="/money-bosses/mb-001-founding-member-card.jpg" alt="Approved MB–001 Founding Member membership card artwork" /></div><div className="mb-card-copy"><StatusBadge label="Artwork preserved" tone="green" /><h3>Digital card foundation</h3><p>This is the approved card artwork, preserved byte-for-byte. Future member-specific fields will be overlaid only by the secure pass-generation service after eligibility is verified.</p><dl><div><dt>Member name</dt><dd>Server-verified</dd></div><div><dt>Membership ID</dt><dd>Opaque reference only</dd></div><div><dt>Status</dt><dd>Active membership required</dd></div><div><dt>Photo</dt><dd>Optional, consent-controlled</dd></div></dl></div></div></PanelFrame>;
+  return <PanelFrame title="Premium Member Card" eyebrow="PREMIUM MEMBER"><div className="mb-card-layout"><div><img className="mb-card-art" src="/money-bosses/mb-001-founding-member-card-approved.png" alt="Approved Money Bosses Premium Member portrait card artwork" /></div><div className="mb-card-copy"><StatusBadge label="Approved active design" tone="green" /><h3>Digital card foundation</h3><p>This approved Premium Member portrait card is preserved byte-for-byte. Future member-specific fields will be overlaid only by the secure pass-generation service after eligibility is verified.</p><dl><div><dt>Preferred display name</dt><dd>Optional, server-verified</dd></div><div><dt>Status</dt><dd>Active membership required</dd></div><div><dt>Profile photo</dt><dd>Optional, consent-controlled</dd></div></dl></div></div></PanelFrame>;
 }
 
 function ArchivePanel({ database, artworks, videos }: { database?: string; artworks: any[]; videos: any[] }) {
