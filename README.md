@@ -97,6 +97,10 @@ Administrators upload screenshots through the `AdminBrainUpload` interface. The 
 
 A role-gated admin interface provides case management across both consumer defense cases and business audit leads. The Command Center (`/command-center`) serves as a navigation hub linking to the admin dashboard, client portal, intake forms, Brain System, Render backend, GitHub repository, and Google Drive. A CEO Home panel within the dashboard supports priority tracking, project management, and task management — all stored in the database.
 
+#### Money Bosses Command Center module
+
+The dedicated development branch `feature/money-bosses-command-center` adds a protected `/admin/money-bosses` module inside the existing command center. It reuses admin authentication and includes overview, member, MB–001 card, archive-content, QR, wallet-readiness, benefits, announcements, and integration sections. The implementation report is `docs/money-bosses-command-center-phase1-report.md`; no production deployment, wallet issuance, Shopify connection, or purchase verification is active.
+
 ### HubSpot CRM Integration
 
 Every intake submission (Defense, Offense, and Business Audit) triggers a contact upsert in HubSpot via the Contacts API. The sync searches for an existing contact by email before creating a new one to prevent duplicates. Fields synced include name, email, phone, website, description, lead status, and lifecycle stage. HubSpot sync failures are non-blocking — a CRM outage does not prevent form submissions from succeeding.

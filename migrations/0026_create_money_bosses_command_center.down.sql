@@ -1,0 +1,13 @@
+BEGIN;
+DROP TABLE IF EXISTS mb_integration_settings;
+DROP TABLE IF EXISTS mb_scan_events;
+DROP TABLE IF EXISTS mb_announcements;
+DROP TABLE IF EXISTS mb_benefits;
+DROP TABLE IF EXISTS mb_qr_destinations;
+DROP TABLE IF EXISTS mb_archive_artwork_videos;
+DROP TABLE IF EXISTS mb_archive_videos;
+DROP TABLE IF EXISTS mb_archive_artworks;
+DROP TABLE IF EXISTS mb_wallet_passes;
+DROP TABLE IF EXISTS mb_membership_events;
+DROP TABLE IF EXISTS mb_memberships;
+COMMIT;

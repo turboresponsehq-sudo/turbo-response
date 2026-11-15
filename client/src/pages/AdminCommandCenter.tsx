@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 
 // ── STYLES ────────────────────────────────────────────────────────────────────
@@ -34,12 +35,14 @@ type Tab = 'home' | 'signals' | 'pipeline' | 'workspaces' | 'tasks';
 
 export default function AdminCommandCenter() {
   const [tab, setTab] = useState<Tab>('home');
+  const [, setLocation] = useLocation();
 
   return (
     <div style={styles.page}>
       <div style={styles.header}>
         <div style={styles.logo}>⚡ TURBO MISSION CONTROL</div>
         <nav style={styles.nav}>
+          <button style={styles.navBtn(false)} onClick={() => setLocation('/admin/money-bosses')}>Money Bosses</button>
           {(['home', 'signals', 'pipeline', 'workspaces', 'tasks'] as Tab[]).map(t => (
             <button key={t} style={styles.navBtn(tab === t)} onClick={() => setTab(t)}>
               {t === 'home' ? 'Mission Control' : t === 'signals' ? 'Turbo Signals' : t.charAt(0).toUpperCase() + t.slice(1)}

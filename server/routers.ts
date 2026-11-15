@@ -13,6 +13,7 @@ import { missionControlRouter } from "./routers/missionControlRouter";
 import { workspacesRouter } from "./routers/workspacesRouter";
 import { aiBriefRouter } from "./routers/aiBriefRouter";
 import { aiAnalysisRouter } from "./routers/aiAnalysisRouter";
+import { moneyBossesRouter } from "./routers/moneyBossesRouter";
 
 
 
@@ -49,6 +50,7 @@ export const appRouter = router({
   workspaces: workspacesRouter,
   aiBrief: aiBriefRouter,
   aiAnalysis: aiAnalysisRouter,
+  moneyBosses: moneyBossesRouter,
 });
 
 export type AppRouter = typeof appRouter;
