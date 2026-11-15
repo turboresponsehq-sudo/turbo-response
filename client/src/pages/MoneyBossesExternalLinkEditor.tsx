@@ -42,10 +42,10 @@ export default function MoneyBossesExternalLinkEditor({ artworkId, savedUrl = ''
   }
   return <section className="mb-panel mb-external-link-editor" aria-labelledby="mb-link-editor-heading">
     <h3 id="mb-link-editor-heading">Artwork link destination</h3>
-    <p>Choose the artwork above, paste an Instagram, YouTube or other public HTTPS link, then save and publish. No video upload or QR replacement is needed.</p>
+    <p>Paste an Instagram, YouTube or other HTTPS link. No upload or QR replacement needed.</p>
     <form className="mb-draft-form" onSubmit={event => { event.preventDefault(); void run('save'); }}>
       <label>External destination URL<input type="url" value={url} maxLength={2000} disabled={!enabled || !artworkId || pending} placeholder="https://www.instagram.com/reel/…" onChange={event => { setUrl(event.target.value); setApproved(false); }} /></label>
-      <label>Link label<input value={label} maxLength={160} disabled={!enabled || !artworkId || pending} placeholder="Open the archive experience" onChange={event => { setLabel(event.target.value); setApproved(false); }} /></label>
+      <details><summary>Optional link label</summary><label>Link label<input value={label} maxLength={160} disabled={!enabled || !artworkId || pending} placeholder="Open the archive experience" onChange={event => { setLabel(event.target.value); setApproved(false); }} /></label></details>
       <button type="submit" disabled={!enabled || !artworkId || pending}>Save link draft</button>
       <label className="mb-check"><input type="checkbox" checked={approved} disabled={!enabled || !artworkId || pending || dirty || !savedUrl} onChange={event => setApproved(event.target.checked)} />Approved to use for artwork scans</label>
       <div className="mb-actions"><button type="button" disabled={!enabled || !artworkId || pending || dirty || !savedUrl || !approved} onClick={() => void run('publish')}>Publish link in development</button><button type="button" disabled={!enabled || !artworkId || pending} onClick={() => void run('remove')}>Unpublish artwork link</button></div>

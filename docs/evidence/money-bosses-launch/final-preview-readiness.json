@@ -1,0 +1,14 @@
+{
+  "https://3004-ikxczl2n4gl61dsmk7yof-a46ef21c.us5.manus.computer/admin/login": {
+    "status": 200,
+    "html": true
+  },
+  "https://3008-ikxczl2n4gl61dsmk7yof-a46ef21c.us5.manus.computer/archive-hub": {
+    "status": 200,
+    "html": true
+  },
+  "https://3008-ikxczl2n4gl61dsmk7yof-a46ef21c.us5.manus.computer/scan": {
+    "status": 200,
+    "html": true
+  }
+}

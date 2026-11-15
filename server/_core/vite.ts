@@ -1,6 +1,5 @@
 import express, { type Express } from "express";
 import fs from "fs";
-import { nanoid } from "nanoid";
 import path from "path";
 import { fileURLToPath } from "url";
 import { type Server } from "http";
@@ -13,6 +12,28 @@ const _dirname = typeof __dirname !== 'undefined'
   : path.dirname(fileURLToPath(import.meta.url));
 
 export async function setupVite(app: Express, server: Server) {
+  // Forwarded sandbox HTTPS can throttle Vite's large unbundled module graph.
+  // Opt in to the existing frontend build for launch QA only; API/auth routes
+  // are registered before this helper. Normal development still uses HMR.
+  if (process.env.NODE_ENV === "development" && process.env.MONEY_BOSSES_DEV_BUNDLED_FRONTEND === "1") {
+    const bundlePath = path.resolve(_dirname, "../..", "dist-frontend");
+    const indexPath = path.join(bundlePath, "index.html");
+    if (!fs.existsSync(indexPath)) {
+      throw new Error("Bundled development frontend is missing; run pnpm build:frontend before opting in.");
+    }
+    app.use(express.static(bundlePath, { index: false }));
+    app.get("*", (req, res, next) => {
+      // Missing assets or API routes must not silently receive SPA HTML.
+      if (req.path === "/api" || req.path.startsWith("/api/") || path.extname(req.path)) {
+        next();
+        return;
+      }
+      res.setHeader("Cache-Control", "no-store");
+      res.sendFile(indexPath);
+    });
+    console.log("Development frontend: existing dist-frontend bundle (HMR disabled by explicit QA opt-in)");
+    return;
+  }
   const serverOptions = {
     middlewareMode: true,
     hmr: { server },
@@ -38,14 +59,11 @@ export async function setupVite(app: Express, server: Server) {
         "index.html"
       );
 
-      // always reload the index.html file from disk incase it changes
-      let template = await fs.promises.readFile(clientTemplate, "utf-8");
-      template = template.replace(
-        `src="/src/main.tsx"`,
-        `src="/src/main.tsx?v=${nanoid()}"`
-      );
+      // Vite owns module invalidation and HMR timestamps. A per-request nonce
+      // creates a new entry-module identity on every refresh for no benefit.
+      const template = await fs.promises.readFile(clientTemplate, "utf-8");
       const page = await vite.transformIndexHtml(url, template);
-      res.status(200).set({ "Content-Type": "text/html" }).end(page);
+      res.status(200).set({ "Content-Type": "text/html", "Cache-Control": "no-store" }).end(page);
     } catch (e) {
       vite.ssrFixStacktrace(e as Error);
       next(e);

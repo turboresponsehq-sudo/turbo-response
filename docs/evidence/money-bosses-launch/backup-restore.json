@@ -1,0 +1,17 @@
+{
+  "database": "isolated local PostgreSQL 127.0.0.1:55432",
+  "backup_restore_counts_match": true,
+  "restored_counts": {
+    "stories": 3,
+    "snapshots": 34,
+    "publications": 3,
+    "draft_links": 3,
+    "artworks": 3
+  },
+  "latest_schema_down_up_on_disposable_restore": true,
+  "backup_bytes": 56865,
+  "backup_sha256": "3d5c5ffd469021e70af3b4c624e267f2d43e2642ed42136c759c60a54da7049c",
+  "backup_private_mode": "0o600",
+  "production_used": false,
+  "backup_schedule_configured": false
+}

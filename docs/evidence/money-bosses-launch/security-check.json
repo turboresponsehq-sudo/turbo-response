@@ -1,0 +1,6 @@
+{
+  "unauthorized_mutations_rejected": true,
+  "public_feed_no_private_member_or_admin_fields": true,
+  "published_count": 3,
+  "static_missing_asset_not_html": true
+}

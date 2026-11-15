@@ -298,21 +298,23 @@ export default function MoneyBossesArchivePanel({ database, artworks, videos, co
   return <>
     <div className="mb-section-heading"><div><p className="mb-admin-kicker">ATLANTA ARCHIVES</p><h2>Archive Content</h2></div><span className="mb-status mb-status-amber">{previewMode ? "Local preview only" : database === "ready" ? "Database ready" : "Database connection required"}</span></div>
     <section className="mb-panel mb-archive-panel">
-      <p className="mb-form-note">Edit saved drafts, review privately, then explicitly approve a development release. Draft saves never change the published snapshot. Recognition identity and membership workflows stay independent.</p>
+      <p className="mb-form-note">Select artwork → paste its link → save → approve → publish. Saved drafts never change the live destination until you publish.</p>
       {!previewMode && <div className="mb-archive-links"><a href="/api/money-bosses/content" target="_blank" rel="noreferrer">Open published content feed</a><a href="/money-bosses-experience/scan" target="_blank" rel="noreferrer">Test public scanner</a></div>}
       <div className="mb-preview-artworks">{availableArtworks.map((item) => <article key={item.id}>{item.image && <img src={item.image} alt={`Approved ${item.title} archive photograph`} />}<strong>{item.title}</strong><span>{item.stable_key}</span></article>)}</div>
       {!availableArtworks.length && <p>No artwork rows available. Database seeding has not been confirmed.</p>}
 
+      <div className="mb-draft-form"><label htmlFor="mb-selected-artwork">1. Select artwork</label><select id="mb-selected-artwork" aria-label="Artwork" value={selectedArtworkId} disabled={pending} onChange={(event) => chooseArtwork(event.target.value)}><option value="">Select artwork</option>{availableArtworks.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select></div>
+      <MoneyBossesExternalLinkEditor artworkId={selectedArtwork?.id} savedUrl={savedStory?.external_url} savedLabel={savedStory?.external_label} enabled={!previewMode && database === "ready"} />
+      <details className="mb-preserved-tools"><summary>Story editing — optional</summary>
       <form className="mb-draft-form" onSubmit={(event) => { event.preventDefault(); void persistStory(); }}>
         <h3>Artwork story</h3>
-        <label>Artwork<select value={selectedArtworkId} disabled={pending} onChange={(event) => chooseArtwork(event.target.value)}><option value="">Select artwork</option>{availableArtworks.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label>
         <label>Story title<input value={storyTitle} disabled={!selectedArtwork || pending} onChange={(event) => { setStoryTitle(event.target.value); setApprovedForRelease(false); }} required maxLength={160} /></label>
         <label>Story body<textarea className="mb-story-body" value={storyBody} disabled={!selectedArtwork || pending} onChange={(event) => { setStoryBody(event.target.value); setApprovedForRelease(false); }} required maxLength={20000} /></label>
         <button type="submit" disabled={!selectedArtwork || !canWrite || pending}>{previewMode ? "Save local story" : "Save story draft"}</button>
         {selectedArtwork && <p className="mb-form-note">{storyDirty ? "Unsaved story changes." : "Showing saved story draft."} {!previewMode && `Saved draft revision timestamp · ${displayTime(savedStory?.updated_at)}`}</p>}
       </form>
-
-      <MoneyBossesExternalLinkEditor artworkId={selectedArtwork?.id} savedUrl={savedStory?.external_url} savedLabel={savedStory?.external_label} enabled={!previewMode && database === "ready"} />
+      </details>
+      <details className="mb-preserved-tools"><summary>Video uploads and saved drafts — paused, preserved for later</summary>
       <form className="mb-draft-form" onSubmit={(event) => { event.preventDefault(); void persistVideo(); }}>
         <h3>Video draft</h3>
         <label>Video draft<select value={selectedVideoId} disabled={pending} onChange={(event) => chooseVideo(event.target.value)}><option value="">New video draft</option>{availableVideos.map((item) => <option key={item.id} value={item.id}>{item.label} · {item.status}</option>)}</select></label>
@@ -350,6 +352,7 @@ export default function MoneyBossesArchivePanel({ database, artworks, videos, co
       {!previewMode && !selectedFile && (uploadedMedia || selectedVideo?.media_id) && <div className="mb-assignment-panel"><button type="button" disabled={pending || !canWrite} onClick={() => { clearMessages(); void refreshPrivatePreview(String(uploadedMedia?.mediaId ?? selectedVideo?.media_id)); }}>Refresh private preview</button><p className="mb-form-note">Private preview links expire after five minutes. Refresh authorizes another short-lived preview using your current admin session.</p></div>}
       {previewUrl && <div className="mb-assignment-panel"><h3>Test playback</h3><video key={previewUrl} ref={video} className="mb-video-preview" src={previewUrl} controls playsInline preload="metadata" onError={() => setError("This preview could not be loaded. For private media, reselect the saved draft to refresh its signed preview URL, or retry the upload.")} /><button type="button" onClick={() => void playWithSound()}>Play with Sound</button><p className="mb-form-note">Playback is a private test, not a publication. Use native video controls or Play with Sound to authorize audio playback.</p></div>}
       {availableVideos.length > 0 && <div className="mb-mini-panel mb-archive-registry"><h3>Draft registry</h3><ul>{availableVideos.map((item) => <li key={item.id}>{item.label} · {item.status} · {item.release_at ? `release metadata ${displayTime(item.release_at)}` : "unscheduled"}{item.artworkKey ? ` · ${item.artworkKey}` : ""}{!previewMode && ` · saved ${displayTime(item.updated_at ?? item.created_at)}`}</li>)}</ul></div>}
+      </details>
       {feedback && <p className="mb-form-success mb-archive-feedback" role="status">{feedback}</p>}
       {error && <p className="mb-form-error mb-archive-feedback" role="alert">{error}</p>}
     </section>

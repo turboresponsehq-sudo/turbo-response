@@ -1,0 +1,50 @@
+{
+  "origins": "isolated loopback; earlier mobile-width external navigation verified separately over HTTPS",
+  "public_navigation": [
+    {
+      "width": 390,
+      "v4_layout": true,
+      "mobile_menu_escape": true,
+      "archive_link_hub": true,
+      "private_card_preserved": true
+    },
+    {
+      "width": 412,
+      "v4_layout": true,
+      "mobile_menu_escape": true,
+      "archive_link_hub": true,
+      "private_card_preserved": true
+    },
+    {
+      "width": 1440,
+      "v4_layout": true,
+      "mobile_menu_escape": false,
+      "archive_link_hub": true,
+      "private_card_preserved": true
+    }
+  ],
+  "fallbacks": [
+    {
+      "mode": "unpublished",
+      "genuine_recognition": true,
+      "no_unapproved_handoff": true,
+      "safe_hub_return": true
+    },
+    {
+      "mode": "offline",
+      "genuine_recognition": true,
+      "no_unapproved_handoff": true,
+      "safe_hub_return": true
+    }
+  ],
+  "simplified_admin": {
+    "existing_auth": true,
+    "select_url_save_approve_publish": true,
+    "approval_disabled_until_saved": true,
+    "changed_saved_draft_keeps_old_publication": true,
+    "published_change_takes_effect": true,
+    "old_destination_restored": true,
+    "mobile_no_overflow": true,
+    "optional_story_and_video_controls_preserved": true
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "/": {
+    "status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "cache_control": "no-store"
+  },
+  "/archive-hub": {
+    "status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "cache_control": "no-store"
+  },
+  "/scan": {
+    "status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "cache_control": "no-store"
+  },
+  "/private": {
+    "status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "cache_control": "no-store"
+  },
+  "/private/verify/sample": {
+    "status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "cache_control": "no-store"
+  },
+  "/manus-routes.json": {
+    "status": 200,
+    "content_type": "application/json; charset=utf-8",
+    "cache_control": "no-store"
+  },
+  "/api/money-bosses/content": {
+    "status": 200,
+    "content_type": "application/json; charset=utf-8",
+    "cache_control": "no-store, private, no-store"
+  },
+  "official_qr": {
+    "filename": "official-atlanta-archives-qr.png",
+    "sha256": "73195543e3dda4b84157da6a336c6525a5ac92cc89f3e7c42f592bbf487b7a75"
+  }
+}

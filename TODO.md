@@ -30,3 +30,12 @@
 - [x] Preserve original ORB/reference photographs and ARCHIVE UNLOCKED; open the assigned published URL in the same tab, no embed, download or popup. Keep uploaded MP4 features and safe no-destination fallback unchanged.
 - [x] Test isolated DB persistence/draft isolation and genuine recognition-to-exact-link navigation at iPhone/Android widths; distinguish this from physical phone, external provider login and video playback tests.
 - [x] Save existing development branches only. No production deployment, official QR or redirect changes, membership or wallet activation.
+
+## First-campaign launch readiness
+
+- [x] Audit the existing V4 website, scanner, Hub, Command Center content module, database and external-link publishing without rebuilding or new features.
+- [x] Diagnose and resolve the intermittent development blank page; verify repeated refresh/direct entry without weakening real admin authentication or modifying production serving.
+- [x] Make the existing artwork → paste URL → save → approve → publish controls clear and primary; preserve existing MP4 and membership work for later.
+- [x] Recheck all three original photograph recognitions, exact mobile-width link dispatch, safe missing/unpublished fallback, and isolation of changed drafts until explicit approval/publishing.
+- [x] Confirm isolated database persistence, backup/restore and production requirements; no paid service, production migration/deployment, official QR change or redirect activation.
+- [x] Deliver working development access, concise test/limitation evidence, exact blockers, conditional costs, short launch checklist and reversible rollback plan with GO/NOT READY recommendation.
