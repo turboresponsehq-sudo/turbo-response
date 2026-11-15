@@ -3,9 +3,9 @@ import { sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { adminProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
-import { archiveContent, saveStory, createVideo, updateVideo, assignVideo, publishStory, unpublishStory } from "../modules/moneyBosses/service";
+import { archiveContent, saveStory, saveArchiveDestination, publishArchiveDestination, createVideo, updateVideo, assignVideo, publishStory, unpublishStory } from "../modules/moneyBosses/service";
 import { contentDb, pending, ready, rows } from "../modules/moneyBosses/database";
-import { flags, idSchema, mediaIdSchema, mediaPath, storySchema, videoCreateSchema, videoUpdateSchema, publishSchema } from "../modules/moneyBosses/validation";
+import { flags, idSchema, mediaIdSchema, mediaPath, storySchema, videoCreateSchema, videoUpdateSchema, publishSchema, saveArchiveDestinationSchema, publishArchiveDestinationSchema } from "../modules/moneyBosses/validation";
 import { signPreviewTicket } from "../modules/moneyBosses/media";
 
 const emptyOverview = {
@@ -48,6 +48,8 @@ export const moneyBossesRouter = router({
   archiveContent: adminProcedure.input(z.object({ limit: z.number().int().min(1).max(100).default(50) }).optional()).query(({ input }) => archiveContent(input?.limit ?? 50)),
   saveArchiveStoryDraft: adminProcedure.input(storySchema).mutation(({ input, ctx }) => saveStory(input, ctx.user.id)),
   saveArchiveStory: adminProcedure.input(z.object({ artworkId: idSchema, storyTitle: z.string().trim().min(1).max(160), storyBody: z.string().trim().max(20000) })).mutation(({ input, ctx }) => saveStory(input, ctx.user.id, true)),
+  saveArchiveDestination: adminProcedure.input(saveArchiveDestinationSchema).mutation(({ input, ctx }) => saveArchiveDestination(input, ctx.user.id)),
+  publishArchiveDestination: adminProcedure.input(publishArchiveDestinationSchema).mutation(({ input, ctx }) => publishArchiveDestination(input, ctx.user.id)),
   createArchiveVideoDraft: adminProcedure.input(videoCreateSchema).mutation(({ input }) => createVideo(input)),
   updateArchiveVideoDraft: updateVideoProcedure,
   updateArchiveVideo: updateVideoProcedure,

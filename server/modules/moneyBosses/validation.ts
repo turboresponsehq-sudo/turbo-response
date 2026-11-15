@@ -13,6 +13,36 @@ export const idSchema = z.number().int().positive().max(Number.MAX_SAFE_INTEGER)
 export const dateSchema = z.string().datetime({ offset: true });
 export const mediaIdSchema = z.string().uuid();
 export const mediaPath = (id: string) => `/api/money-bosses/media/${id}`;
+export const DEFAULT_EXTERNAL_DESTINATION_LABEL = "Open archive link";
+// External handoffs are links, not downloaded/embedded media. No network lookup is performed.
+export function isSafeArchiveDestinationUrl(value: string): boolean {
+  try {
+    if (!/^https:\/\//i.test(value) || /[\s\\<>\u0000-\u001f\u007f]/.test(value)) return false;
+    if (/^https:\/\/[^/?#]*@/i.test(value) || /%(?![0-9a-f]{2})/i.test(value)) return false;
+    let decoded = value;
+    for (let i = 0; i < 3; i++) {
+      if (/[<>\u0000-\u001f\u007f]|(?:javascript|vbscript|data)\s*:/i.test(decoded)) return false;
+      let next: string;
+      try { next = decodeURIComponent(decoded); } catch { break; }
+      if (next === decoded) break;
+      decoded = next;
+    }
+    if (/[<>\u0000-\u001f\u007f]|(?:javascript|vbscript|data)\s*:/i.test(decoded)) return false;
+    const u = new URL(value), h = u.hostname.toLowerCase().replace(/\.$/, "");
+    return u.protocol === "https:" && !u.username && !u.password &&
+      (!u.port || u.port === "443") && !isIP(h.replace(/^\[|\]$/g, "")) &&
+      h.length <= 253 && h.includes(".") && h.split(".").every(part => /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i.test(part)) &&
+      !/^\d+$/.test(h.split(".").at(-1)!) &&
+      !/(^|\.)(localhost|local|internal|private|test|invalid|example|localdomain|lan|home|arpa|onion)$/.test(h);
+  } catch { return false; }
+}
+export const archiveDestinationUrlSchema = z.string().max(2000).refine(isSafeArchiveDestinationUrl, "Use a public HTTPS link without credentials, script tokens, or local/private/IP hosts");
+export const externalDestinationSchema = z.object({
+  url: archiveDestinationUrlSchema,
+  label: z.string().trim().max(160).transform(value => value || DEFAULT_EXTERNAL_DESTINATION_LABEL).default(DEFAULT_EXTERNAL_DESTINATION_LABEL),
+});
+export const saveArchiveDestinationSchema = z.object({ artworkId: idSchema, url: archiveDestinationUrlSchema.nullable(), label: externalDestinationSchema.shape.label.optional() }).strict();
+export const publishArchiveDestinationSchema = z.object({ artworkId: idSchema, approval: z.literal(true) }).strict();
 export function isSafeExternalVideoUrl(value: string): boolean {
   try {
     const u = new URL(value);

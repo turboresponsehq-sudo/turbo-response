@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { getAdminSessionAuthorizationHeader } from "@/lib/adminSession";
 import { previewArtworks, releaseTimeToUtc, validDraftMediaUrl, type LocalVideoDraft } from "./moneyBossesPreviewData";
+import MoneyBossesExternalLinkEditor from "./MoneyBossesExternalLinkEditor";
 
 // Archive query rows are additive while the protected backend contract is upgraded.
 type RegistryRow = Record<string, any>;
@@ -311,6 +312,7 @@ export default function MoneyBossesArchivePanel({ database, artworks, videos, co
         {selectedArtwork && <p className="mb-form-note">{storyDirty ? "Unsaved story changes." : "Showing saved story draft."} {!previewMode && `Saved draft revision timestamp · ${displayTime(savedStory?.updated_at)}`}</p>}
       </form>
 
+      <MoneyBossesExternalLinkEditor artworkId={selectedArtwork?.id} savedUrl={savedStory?.external_url} savedLabel={savedStory?.external_label} enabled={!previewMode && database === "ready"} />
       <form className="mb-draft-form" onSubmit={(event) => { event.preventDefault(); void persistVideo(); }}>
         <h3>Video draft</h3>
         <label>Video draft<select value={selectedVideoId} disabled={pending} onChange={(event) => chooseVideo(event.target.value)}><option value="">New video draft</option>{availableVideos.map((item) => <option key={item.id} value={item.id}>{item.label} · {item.status}</option>)}</select></label>

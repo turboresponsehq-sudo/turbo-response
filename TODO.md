@@ -23,3 +23,10 @@
 - [ ] Store validated uploaded video bytes server-side outside Git/static directories, protect unpublished media, provide safe byte-range playback and clean failed uploads; document production durable object storage and backup requirements honestly.
 - [ ] Existing public scanner consumes published feed at runtime using unchanged artwork IDs/references and QR. Genuine ORB recognition → ARCHIVE UNLOCKED → published video → tap Play with Sound → close to same Hub. Published stories shown at the Hub; missing/removed/offline content falls back safely.
 - [ ] Test existing admin permissions, upload validation, drafts/private media exclusion, snapshot isolation, persistence, range playback, mobile layout and full scan/video workflow. Preserve membership features for later. Save only development branches; no production deployment/official QR/redirect changes.
+
+## Per-artwork external link scanning
+
+- [x] Small existing-admin extension: assign Instagram, YouTube and other public HTTPS external URLs per original artwork; persist drafts, explicitly publish, edit and republish without code/artwork/QR replacement.
+- [x] Preserve original ORB/reference photographs and ARCHIVE UNLOCKED; open the assigned published URL in the same tab, no embed, download or popup. Keep uploaded MP4 features and safe no-destination fallback unchanged.
+- [x] Test isolated DB persistence/draft isolation and genuine recognition-to-exact-link navigation at iPhone/Android widths; distinguish this from physical phone, external provider login and video playback tests.
+- [x] Save existing development branches only. No production deployment, official QR or redirect changes, membership or wallet activation.

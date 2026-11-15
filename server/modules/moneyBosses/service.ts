@@ -1,8 +1,15 @@
 import { randomUUID } from "node:crypto";
 import { sql } from "drizzle-orm";
-import { ARTWORK_REFERENCES, flags, mediaIdSchema, mediaPath, isSafeExternalVideoUrl, type StableKey } from "./validation";
+import { ARTWORK_REFERENCES, flags, mediaIdSchema, mediaPath, isSafeExternalVideoUrl, externalDestinationSchema, saveArchiveDestinationSchema, publishArchiveDestinationSchema, type StableKey } from "./validation";
 import { badRequest, contentDb, normalizeStory, normalizeVideo, notFound, pending, ready, rows } from "./database";
 
+const archiveStory = (story: any) => ({ ...normalizeStory(story), external_url: story.external_url ?? null, external_label: story.external_label ?? null });
+async function archiveDestinationDb() {
+  const db = await contentDb();
+  if (!db) return null;
+  const r = rows(await db.execute(sql`SELECT COUNT(*)=2 AS destinations_ready FROM information_schema.columns WHERE table_schema='public' AND table_name='mb_content_story_drafts' AND column_name IN ('external_url','external_label')`))[0];
+  return r?.destinations_ready ? db : null;
+}
 async function requireArtwork(db: any, artworkId: number) {
   const a = rows(await db.execute(sql`SELECT id, stable_key FROM mb_archive_artworks WHERE id=${artworkId} AND deleted_at IS NULL`))[0];
   if (!a || !Object.hasOwn(ARTWORK_REFERENCES, a.stable_key)) notFound("Original archive artwork not found");
@@ -34,7 +41,8 @@ export async function archiveContent(limit = 50) {
   if (!db) return { ...pending, ...flags, artworks: [], videos: [], stories: [], releases: [] };
   const artworks = rows(await db.execute(sql`
     SELECT a.id,a.stable_key,a.title,a.source_asset_id,a.source_checksum,a.recognition_enabled,a.approved,a.updated_at,
-      d.title AS story_title,d.subtitle AS story_subtitle,d.body AS story_body,d.era AS story_era,d.location AS story_location
+      d.title AS story_title,d.subtitle AS story_subtitle,d.body AS story_body,d.era AS story_era,d.location AS story_location,
+      to_jsonb(d)->>'external_url' AS external_url,to_jsonb(d)->>'external_label' AS external_label
     FROM mb_archive_artworks a LEFT JOIN mb_content_story_drafts d ON d.artwork_id=a.id
     WHERE a.deleted_at IS NULL ORDER BY a.updated_at DESC LIMIT ${limit}
   `)).map(a => ({ ...a, id: Number(a.id) }));
@@ -44,7 +52,7 @@ export async function archiveContent(limit = 50) {
     FROM mb_content_story_drafts d JOIN mb_archive_artworks a ON a.id=d.artwork_id
     LEFT JOIN mb_content_publications p ON p.artwork_id=d.artwork_id LEFT JOIN mb_content_snapshots s ON s.id=p.snapshot_id
     WHERE a.deleted_at IS NULL ORDER BY d.display_order,a.stable_key
-  `)).map(normalizeStory);
+  `)).map(archiveStory);
   const releases = rows(await db.execute(sql`SELECT s.id AS snapshot_id,s.artwork_id,s.version,s.published_at,s.release_at,s.expires_at,(p.snapshot_id=s.id AND p.enabled) AS active FROM mb_content_snapshots s LEFT JOIN mb_content_publications p ON p.artwork_id=s.artwork_id ORDER BY s.published_at DESC LIMIT ${limit}`)).map(r => ({ ...r, artwork_id: Number(r.artwork_id) }));
   const assignments = rows(await db.execute(sql`SELECT artwork_id,video_id,is_default FROM mb_archive_artwork_videos ORDER BY artwork_id,video_id`)).map(a => ({...a, artwork_id:Number(a.artwork_id),video_id:Number(a.video_id)}));
   return { ...ready, ...flags, artworks, videos, stories, releases, assignments };
@@ -59,7 +67,18 @@ export async function saveStory(input: any, actorId: number, minimal = false) {
       UPDATE mb_content_story_drafts SET title=${value.title},subtitle=${value.subtitle},body=${value.body},era=${value.era},location=${value.location},display_order=${value.display_order},recognition_enabled=${value.recognition_enabled},updated_by_user_id=${actorId},updated_at=NOW()
       WHERE artwork_id=${input.artworkId} RETURNING *
     `))[0];
-    return { ...ready, saved: true, story: normalizeStory({ ...r, stable_key: artwork.stable_key }) };
+    return { ...ready, saved: true, story: archiveStory({ ...r, stable_key: artwork.stable_key }) };
+  });
+}
+export async function saveArchiveDestination(input: any, actorId: number) {
+  const value = saveArchiveDestinationSchema.parse(input);
+  const db = await archiveDestinationDb();
+  if (!db) return { ...pending, saved: false };
+  const destination = value.url === null ? null : externalDestinationSchema.parse({ url: value.url, label: value.label });
+  return db.transaction(async tx => {
+    const { artwork } = await lockStory(tx, value.artworkId);
+    const r = rows(await tx.execute(sql`UPDATE mb_content_story_drafts SET external_url=${destination?.url ?? null},external_label=${destination?.label ?? null},updated_by_user_id=${actorId},updated_at=NOW() WHERE artwork_id=${value.artworkId} RETURNING *`))[0];
+    return { ...ready, saved: true, story: archiveStory({ ...r, stable_key: artwork.stable_key }) };
   });
 }
 export async function createVideo(input: any) {
@@ -101,27 +120,36 @@ export async function assignVideo(input: any, remove = false) {
   return remove ? { ...ready, removed: true } : { ...ready, assigned: true };
 }
 export async function publishStory(input: any, actorId: number) {
-  const db = await contentDb();
+  return publishContent(input, actorId);
+}
+export async function publishArchiveDestination(input: any, actorId: number) {
+  return publishContent(publishArchiveDestinationSchema.parse(input), actorId, true);
+}
+// Private branch: callers cannot opt existing MP4 publication into bypassing its approvals.
+async function publishContent(input: any, actorId: number, externalOnly = false) {
+  const db = await (externalOnly ? archiveDestinationDb() : contentDb());
   if (!db) return { ...pending, published: false };
   if (input.approval !== true) badRequest("Explicit publication approval is required");
   const releaseAt = input.releaseAt ?? null, expiresAt = input.expiresAt ?? null;
   if (expiresAt && new Date(expiresAt).getTime() <= (releaseAt ? new Date(releaseAt).getTime() : Date.now())) badRequest("Expiry must be after release time");
   return db.transaction(async tx => {
     const { artwork, story } = await lockStory(tx, input.artworkId);
-    if (!story.title.trim() || !story.body.trim()) badRequest("Save a story title and body before publishing");
-    const selected = rows(await tx.execute(sql`
+    if (!story.title.trim() || (!externalOnly && !story.body.trim())) badRequest(externalOnly ? "Save a story title before publishing" : "Save a story title and body before publishing");
+    const destination = externalOnly ? externalDestinationSchema.safeParse({ url: story.external_url, label: story.external_label ?? undefined }) : null;
+    if (destination && !destination.success) badRequest("Save a valid public HTTPS destination before publishing");
+    const selected = externalOnly ? [] : rows(await tx.execute(sql`
       SELECT v.*,av.is_default FROM mb_archive_videos v JOIN mb_archive_artwork_videos av ON av.video_id=v.id
       WHERE av.artwork_id=${input.artworkId} ${input.videoId ? sql`AND v.id=${input.videoId}` : sql``}
       ORDER BY av.is_default DESC,v.id FOR UPDATE OF v
     `));
-    if (!selected.length) badRequest("Assign at least one video before publishing");
+    if (!externalOnly && !selected.length) badRequest("Assign at least one video before publishing");
     if (selected.some(v => v.status === "retired" || !v.content_approved || v.audio_rights_status !== "approved")) badRequest("Every selected video needs saved content and audio-rights approval");
     const videos = [];
     for (const v of selected) {
       const source = await resolveMedia(tx, { mediaId: v.media_id || undefined, mediaUrl: v.media_id ? undefined : v.media_url });
       videos.push({ id: Number(v.id), label: v.label, url: source.mediaUrl, mediaId: source.mediaId, isDefault: v.is_default, releaseAt: v.release_at ? new Date(v.release_at).toISOString() : null });
     }
-    const payload = { stableKey: artwork.stable_key, title: story.title, subtitle: story.subtitle, body: story.body, era: story.era, location: story.location, displayOrder: story.display_order, recognitionEnabled: story.recognition_enabled, videos };
+    const payload = { stableKey: artwork.stable_key, title: story.title, subtitle: story.subtitle, body: story.body, era: story.era, location: story.location, displayOrder: story.display_order, recognitionEnabled: story.recognition_enabled, videos, ...(destination?.success ? { externalDestination: destination.data } : {}) };
     const version = Number(rows(await tx.execute(sql`SELECT COALESCE(MAX(version),0)+1 AS version FROM mb_content_snapshots WHERE artwork_id=${input.artworkId}`))[0].version);
     const snapshotId = randomUUID();
     const publication = rows(await tx.execute(sql`INSERT INTO mb_content_snapshots(id,artwork_id,version,payload,approved_by_user_id,release_at,expires_at) VALUES(${snapshotId},${input.artworkId},${version},${JSON.stringify(payload)}::jsonb,${actorId},${releaseAt},${expiresAt}) RETURNING id,version,published_at,release_at,expires_at`))[0];
@@ -150,7 +178,9 @@ export function snapshotToPublic(row: any, now: Date) {
   // Explicit allowlist: draft notes, actor IDs, filesystem paths, members never leave here.
   const videos = (Array.isArray(p.videos) ? p.videos : []).filter((v: any) => !v.releaseAt || new Date(v.releaseAt).getTime() <= now.getTime())
     .map((v: any) => ({ id: Number(v.id), label: v.label, url: v.mediaId ? mediaPath(v.mediaId) : v.url, mediaId: v.mediaId ?? null, isDefault: Boolean(v.isDefault), releaseAt: v.releaseAt ?? null }));
-  return { id: p.stableKey, artworkId: Number(row.artwork_id), snapshotId: row.id, version: Number(row.version), ...ARTWORK_REFERENCES[p.stableKey as StableKey], title: p.title, subtitle: p.subtitle, body: p.body, era: p.era, location: p.location, displayOrder: p.displayOrder, recognitionEnabled: p.recognitionEnabled, publishedAt: row.published_at, releaseAt: row.release_at, expiresAt: row.expires_at, videos };
+  const external = externalDestinationSchema.safeParse(p.externalDestination);
+  const destination = external.success ? { type: "external" as const, url: external.data.url, label: external.data.label } : null;
+  return { id: p.stableKey, artworkId: Number(row.artwork_id), snapshotId: row.id, version: Number(row.version), ...ARTWORK_REFERENCES[p.stableKey as StableKey], title: p.title, subtitle: p.subtitle, body: p.body, era: p.era, location: p.location, displayOrder: p.displayOrder, recognitionEnabled: p.recognitionEnabled, publishedAt: row.published_at, releaseAt: row.release_at, expiresAt: row.expires_at, videos, ...(destination ? { destination } : {}) };
 }
 export async function publicContent() {
   const db = await contentDb();
@@ -163,7 +193,7 @@ export async function publicContent() {
   const items = artworks.map(a => {
     const first = a.videos.find((v: any) => v.isDefault) ?? a.videos[0];
     if (first) videoDestinations[a.id] = { url: first.url, label: first.label, status: "approved" };
-    return { artworkId: a.id, version: a.version, story: { title: a.title, body: a.body }, video: first ? { url: first.url, label: first.label } : null };
+    return { artworkId: a.id, version: a.version, story: { title: a.title, body: a.body }, video: first ? { url: first.url, label: first.label } : null, ...(a.destination ? { destination: a.destination } : {}) };
   });
   return { ...envelope, ...ready, artworks, items, videoDestinations };
 }

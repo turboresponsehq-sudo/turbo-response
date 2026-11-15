@@ -1,0 +1,53 @@
+{
+  "database_save_and_reopen_readback": true,
+  "draft_isolation": true,
+  "change_and_republish_without_code_or_qr": true,
+  "external_response_stubbing": "Destination documents are stubbed only after the real same-tab navigation request; no recognition result is injected. Provider login/playback is not claimed.",
+  "mobile_browser_tests": [
+    {
+      "width": 390,
+      "artwork": "tony-tripp",
+      "destination": "https://www.instagram.com/reel/DeE8HqPRvEI/?xtok=d2s1ZGJzN3VoeHh2",
+      "genuine_orb": true,
+      "same_tab": true
+    },
+    {
+      "width": 390,
+      "artwork": "rod-tre",
+      "destination": "https://www.youtube.com/",
+      "genuine_orb": true,
+      "same_tab": true
+    },
+    {
+      "width": 390,
+      "artwork": "cow-pac",
+      "destination": "https://mbosses-mpcsahwt.manus.space/archive-hub",
+      "genuine_orb": true,
+      "same_tab": true
+    },
+    {
+      "width": 412,
+      "artwork": "tony-tripp",
+      "destination": "https://www.instagram.com/reel/DeE8HqPRvEI/?xtok=d2s1ZGJzN3VoeHh2",
+      "genuine_orb": true,
+      "same_tab": true
+    },
+    {
+      "width": 412,
+      "artwork": "rod-tre",
+      "destination": "https://www.youtube.com/",
+      "genuine_orb": true,
+      "same_tab": true
+    },
+    {
+      "width": 412,
+      "artwork": "cow-pac",
+      "destination": "https://mbosses-mpcsahwt.manus.space/archive-hub",
+      "genuine_orb": true,
+      "same_tab": true
+    }
+  ],
+  "unpublish_removes_link": true,
+  "production_deployed": false,
+  "physical_phone_tests": false
+}
