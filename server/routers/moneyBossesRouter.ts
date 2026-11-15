@@ -81,6 +81,21 @@ export const moneyBossesRouter = router({
       return { database: "ready" as const, created: true, video: rows(result)[0] || null };
     }),
 
+  assignArchiveVideo: adminProcedure
+    .input(z.object({ artworkId: z.number().int().positive(), videoId: z.number().int().positive(), isDefault: z.boolean().default(true) }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db || !(await tableExists(db, "mb_archive_artwork_videos"))) {
+        return { database: "migration_pending" as const, assigned: false };
+      }
+      await db.execute(sql`
+        INSERT INTO mb_archive_artwork_videos(artwork_id, video_id, is_default)
+        VALUES (${input.artworkId}, ${input.videoId}, ${input.isDefault})
+        ON CONFLICT (artwork_id, video_id) DO UPDATE SET is_default = EXCLUDED.is_default
+      `);
+      return { database: "ready" as const, assigned: true };
+    }),
+
   integrations: adminProcedure.query(async () => {
     const db = await getDb();
     if (!db || !(await tableExists(db, "mb_integration_settings"))) return { database: "migration_pending" as const, integrations: emptyOverview.walletProviders };
