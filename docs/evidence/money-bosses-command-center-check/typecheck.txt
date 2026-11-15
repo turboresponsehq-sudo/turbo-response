@@ -1,0 +1,16 @@
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.patchedDependencies", "pnpm.overrides", "pnpm.onlyBuiltDependencies". See https://pnpm.io/settings for the new home of each setting.
+ WARN  Unsupported engine: wanted: {"node":"20.x"} (current: {"node":"v22.23.4","pnpm":"10.4.1"})
+
+> turbo-response-live@1.0.0 check /home/ubuntu/command-center-audit/turbo-response
+> tsc --noEmit
+
+server/modules/creator/creatorWorkspaceRoutes.ts(16,42): error TS2345: Argument of type 'Error | null' is not assignable to parameter of type 'Error'.
+  Type 'null' is not assignable to type 'Error'.
+server/modules/creator/routes.ts(917,23): error TS2769: No overload matches this call.
+  Overload 1 of 5, '(payload: string | object | Buffer<ArrayBufferLike>, secretOrPrivateKey: null, options?: (SignOptions & { algorithm: "none"; }) | undefined): string', gave the following error.
+    Argument of type 'string' is not assignable to parameter of type 'null'.
+  Overload 2 of 5, '(payload: string | object | Buffer<ArrayBufferLike>, secretOrPrivateKey: Secret | Buffer<ArrayBufferLike> | JsonWebKeyInput | PrivateKeyInput, options?: SignOptions | undefined): string', gave the following error.
+    Type 'string' is not assignable to type 'number | StringValue | undefined'.
+  Overload 3 of 5, '(payload: string | object | Buffer<ArrayBufferLike>, secretOrPrivateKey: Secret | Buffer<ArrayBufferLike> | JsonWebKeyInput | PrivateKeyInput, callback: SignCallback): void', gave the following error.
+    Object literal may only specify known properties, and 'expiresIn' does not exist in type 'SignCallback'.
+ ELIFECYCLE  Command failed with exit code 2.

@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import { moneyBossesDevelopmentOrigins } from "./moneyBossesDevelopmentOrigins";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { createServer } from "http";
@@ -83,6 +84,7 @@ async function startServer() {
 	    "https://www.amanimansur.info",
 	    "http://localhost:3000",
     "http://localhost:3001",
+    ...moneyBossesDevelopmentOrigins(process.env.NODE_ENV, process.env.PORT, process.env.MONEY_BOSSES_DEV_ORIGIN),
     ...amaniOrigins,
   ]);
   // -------------------------

@@ -58,15 +58,19 @@ export const moneyBossesRouter = router({
       if (!db || !(await tableExists(db, "mb_archive_artworks"))) return { database: "migration_pending" as const, artworks: [], videos: [] };
       const limit = input?.limit ?? 50;
       const artworkResult = await db.execute(sql`SELECT id, stable_key, title, source_asset_id, source_checksum, recognition_enabled, approved, updated_at FROM mb_archive_artworks WHERE deleted_at IS NULL ORDER BY updated_at DESC LIMIT ${limit}`);
-      const videoResult = await db.execute(sql`SELECT id, label, media_url, status, audio_rights_status, updated_at FROM mb_archive_videos ORDER BY updated_at DESC LIMIT ${limit}`);
+      const videoResult = await db.execute(sql`SELECT id, label, media_url, status, audio_rights_status, release_at, updated_at FROM mb_archive_videos ORDER BY updated_at DESC LIMIT ${limit}`);
       return { database: "ready" as const, artworks: rows(artworkResult), videos: rows(videoResult) };
     }),
 
   createArchiveVideoDraft: adminProcedure
     .input(z.object({
       label: z.string().trim().min(1).max(160),
-      mediaUrl: z.string().url().max(2000),
+      mediaUrl: z.string().url().max(2000).refine((value) => {
+        const url = new URL(value);
+        return url.protocol === "https:" && !url.username && !url.password && !/(^|\.)instagram\.com$/i.test(url.hostname);
+      }, "Use an independently hosted HTTPS video URL"),
       sourceNote: z.string().trim().max(1000).optional(),
+      releaseAt: z.string().datetime({ offset: true }).optional(),
     }))
     .mutation(async ({ input }) => {
       const db = await getDb();
@@ -74,9 +78,9 @@ export const moneyBossesRouter = router({
         return { database: "migration_pending" as const, created: false };
       }
       const result = await db.execute(sql`
-        INSERT INTO mb_archive_videos(label, media_url, status, audio_rights_status, source_note)
-        VALUES (${input.label}, ${input.mediaUrl}, 'draft', 'pending_review', ${input.sourceNote || null})
-        RETURNING id, label, media_url, status, audio_rights_status, source_note, created_at
+        INSERT INTO mb_archive_videos(label, media_url, status, audio_rights_status, source_note, release_at)
+        VALUES (${input.label}, ${input.mediaUrl}, 'draft', 'pending_review', ${input.sourceNote || null}, ${input.releaseAt ? new Date(input.releaseAt).toISOString() : null})
+        RETURNING id, label, media_url, status, audio_rights_status, source_note, release_at, created_at
       `);
       return { database: "ready" as const, created: true, video: rows(result)[0] || null };
     }),

@@ -1,0 +1,271 @@
+{
+  "routes": [
+    {
+      "path": "/"
+    },
+    {
+      "path": "/consumer-solutions"
+    },
+    {
+      "path": "/black-future"
+    },
+    {
+      "path": "/case-brief"
+    },
+    {
+      "path": "/services"
+    },
+    {
+      "path": "/contact"
+    },
+    {
+      "path": "/privacy-policy"
+    },
+    {
+      "path": "/intake-defense"
+    },
+    {
+      "path": "/intake"
+    },
+    {
+      "path": "/consumer/confirmation"
+    },
+    {
+      "path": "/payment"
+    },
+    {
+      "path": "/turbo"
+    },
+    {
+      "path": "/intake-offense"
+    },
+    {
+      "path": "/turbo-intake"
+    },
+    {
+      "path": "/zakhybuildsai"
+    },
+    {
+      "path": "/zakhybuildsai/atlanta"
+    },
+    {
+      "path": "/zakhybuildsai/services"
+    },
+    {
+      "path": "/zakhybuildsai/automation-services"
+    },
+    {
+      "path": "/zakhybuildsai/portfolio"
+    },
+    {
+      "path": "/zakhybuildsai/portfolio/story-of-atlanta"
+    },
+    {
+      "path": "/atlanta-archives"
+    },
+    {
+      "path": "/zakhy/connect"
+    },
+    {
+      "path": "/zakhybuildsai/portfolio/ralo"
+    },
+    {
+      "path": "/zakhybuildsai/portfolio/ralo/content"
+    },
+    {
+      "path": "/zakhybuildsai/portfolio/ralo/inquiries"
+    },
+    {
+      "path": "/zakhybuildsai/portfolio/ms-pop-it"
+    },
+    {
+      "path": "/zakhybuildsai/portfolio/ms-pop-it/content"
+    },
+    {
+      "path": "/zakhybuildsai/portfolio/ms-pop-it/inquiries"
+    },
+    {
+      "path": "/zakhybuildsai/portfolio/miami-trips-restaurants"
+    },
+    {
+      "path": "/zakhybuildsai/portfolio/miami-trips-restaurants/experiences"
+    },
+    {
+      "path": "/zakhybuildsai/portfolio/miami-trips-restaurants/inquiries"
+    },
+    {
+      "path": "/zakhybuildsai/portfolio/spillo"
+    },
+    {
+      "path": "/zakhybuildsai/portfolio/spillo/content"
+    },
+    {
+      "path": "/zakhybuildsai/portfolio/spillo/inquiries"
+    },
+    {
+      "path": "/zakhybuildsai/portfolio/crunk-fit"
+    },
+    {
+      "path": "/zakhybuildsai/portfolio/crunk-fit/content"
+    },
+    {
+      "path": "/zakhybuildsai/portfolio/crunk-fit/inquiries"
+    },
+    {
+      "path": "/ralo"
+    },
+    {
+      "path": "/ralo/content"
+    },
+    {
+      "path": "/ralo/inquiries"
+    },
+    {
+      "path": "/ms-pop-it"
+    },
+    {
+      "path": "/ms-pop-it/content"
+    },
+    {
+      "path": "/ms-pop-it/inquiries"
+    },
+    {
+      "path": "/spillo"
+    },
+    {
+      "path": "/spillo/content"
+    },
+    {
+      "path": "/spillo/inquiries"
+    },
+    {
+      "path": "/miami"
+    },
+    {
+      "path": "/miami/experiences"
+    },
+    {
+      "path": "/miami/inquiries"
+    },
+    {
+      "path": "/crunk-fit"
+    },
+    {
+      "path": "/crunk-fit/content"
+    },
+    {
+      "path": "/crunk-fit/inquiries"
+    },
+    {
+      "path": "/zakhybuildsai/about"
+    },
+    {
+      "path": "/zakhybuildsai/learn-ai"
+    },
+    {
+      "path": "/creator/start"
+    },
+    {
+      "path": "/admin/creator/portal-preview"
+    },
+    {
+      "path": "/creator/portal/preview"
+    },
+    {
+      "path": "/creator/portal/login"
+    },
+    {
+      "path": "/creator/portal/invite"
+    },
+    {
+      "path": "/creator/portal"
+    },
+    {
+      "path": "/client/login"
+    },
+    {
+      "path": "/client/case/:id"
+    },
+    {
+      "path": "/sign-contract/:caseId"
+    },
+    {
+      "path": "/pay/:caseId"
+    },
+    {
+      "path": "/admin/login"
+    },
+    {
+      "path": "/admin/command-center"
+    },
+    {
+      "path": "/admin/money-bosses/preview"
+    },
+    {
+      "path": "/admin/money-bosses"
+    },
+    {
+      "path": "/admin/zakhy/add-contact"
+    },
+    {
+      "path": "/admin/zakhy/network/:id"
+    },
+    {
+      "path": "/admin/zakhy/network"
+    },
+    {
+      "path": "/admin/zakhy/connections"
+    },
+    {
+      "path": "/admin/zakhy"
+    },
+    {
+      "path": "/admin/creator/leads"
+    },
+    {
+      "path": "/admin/creator/amani"
+    },
+    {
+      "path": "/admin/ai-learning-intakes"
+    },
+    {
+      "path": "/admin/knowledge-base/import"
+    },
+    {
+      "path": "/admin/knowledge-base"
+    },
+    {
+      "path": "/admin/brain"
+    },
+    {
+      "path": "/admin/case-upload"
+    },
+    {
+      "path": "/admin/cases/:id"
+    },
+    {
+      "path": "/admin/cases"
+    },
+    {
+      "path": "/admin"
+    },
+    {
+      "path": "/admin/consumer/case/:id"
+    },
+    {
+      "path": "/admin/consumer/cases"
+    },
+    {
+      "path": "/client-contract"
+    },
+    {
+      "path": "/service-agreement"
+    },
+    {
+      "path": "/disclaimer"
+    },
+    {
+      "path": "/terms-of-service"
+    }
+  ]
+}

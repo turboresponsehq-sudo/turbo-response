@@ -10,4 +10,5 @@ DROP TABLE IF EXISTS mb_archive_artworks;
 DROP TABLE IF EXISTS mb_wallet_passes;
 DROP TABLE IF EXISTS mb_membership_events;
 DROP TABLE IF EXISTS mb_memberships;
+DELETE FROM schema_migrations WHERE migration_name = '0026_create_money_bosses_command_center';
 COMMIT;

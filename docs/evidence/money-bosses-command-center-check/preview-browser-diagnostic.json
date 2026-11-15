@@ -1,0 +1,19 @@
+{
+  "development_preview": "https://3004-ikxczl2n4gl61dsmk7yof-a46ef21c.us5.manus.computer/admin/money-bosses/preview",
+  "local_draft_assignment": "Tony Tripp -> existing labeled development MP4",
+  "release_metadata": "2030-01-01T12:00 browser-local time converted to UTC",
+  "playback": {
+    "paused": false,
+    "muted": false,
+    "currentTime": 0.021302,
+    "readyState": 4
+  },
+  "mobile": {
+    "width": 390,
+    "scrollWidth": 390
+  },
+  "qr_unchanged_notice": true,
+  "preview_money_bosses_api_requests": [],
+  "actual_admin_unauthenticated_result": "https://3004-ikxczl2n4gl61dsmk7yof-a46ef21c.us5.manus.computer/admin/login?next=%2Fadmin%2Fmoney-bosses",
+  "issues": []
+}

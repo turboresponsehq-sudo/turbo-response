@@ -274,6 +274,7 @@ function Router() {
       <Route path="/admin/login" component={AdminLogin} />
       {/* Admin workflow routes - restored to specification */}
       <Route path="/admin/command-center" component={AdminCommandCenter} />
+      {import.meta.env.DEV && <Route path="/admin/money-bosses/preview" component={() => <MoneyBossesAdmin previewMode />} />}
       <Route path="/admin/money-bosses" component={ProtectedMoneyBosses} />
       <Route path="/admin/zakhy/add-contact" component={ProtectedAddNetworkContact} />
       <Route path="/admin/zakhy/network/:id" component={ProtectedNetworkContactDetail} />

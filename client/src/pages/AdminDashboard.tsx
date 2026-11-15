@@ -10,7 +10,7 @@ import { useLocation } from "wouter";
 import axios from "axios";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || "https://turboresponsehq.ai";
+const API_URL = import.meta.env.DEV ? "" : (import.meta.env.VITE_BACKEND_URL || "https://turboresponsehq.ai");
 
 interface CaseItem {
   id: number;
@@ -164,7 +164,13 @@ export default function AdminDashboard() {
         <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 'bold', color: '#f3f4f6' }}>
           ⚡ Admin Dashboard ({cases.length} cases)
         </h1>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => setLocation('/admin/money-bosses')}
+            style={{ padding: '8px 16px', backgroundColor: '#a32226', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', fontWeight: '500' }}
+          >
+            Money Bosses
+          </button>
           <button
             onClick={() => setLocation('/admin/command-center')}
             style={{

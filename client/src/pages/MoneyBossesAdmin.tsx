@@ -1,6 +1,8 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
+import ArchivePanel from "./MoneyBossesArchivePanel";
+import { previewArtworks, previewProviders } from "./moneyBossesPreviewData";
 import "./MoneyBossesAdmin.css";
 
 const sections = [
@@ -23,16 +25,16 @@ const providerRequirements: Record<string, string> = {
   "Samsung Wallet": "Partner onboarding, card ID, CSR/encryption and certification",
 };
 
-export default function MoneyBossesAdmin() {
+export default function MoneyBossesAdmin({ previewMode = false }: { previewMode?: boolean }) {
   const [, setLocation] = useLocation();
   const [section, setSection] = useState<Section>("Overview");
-  const overview = trpc.moneyBosses.overview.useQuery(undefined, { retry: false });
-  const members = trpc.moneyBosses.members.useQuery({ limit: 25 }, { retry: false, enabled: section === "Members" });
-  const archive = trpc.moneyBosses.archiveContent.useQuery({ limit: 25 }, { retry: false, enabled: section === "Archive Content" });
-  const integrations = trpc.moneyBosses.integrations.useQuery(undefined, { retry: false, enabled: section === "Integrations" || section === "Wallets" });
+  const overview = trpc.moneyBosses.overview.useQuery(undefined, { retry: false, enabled: !previewMode });
+  const members = trpc.moneyBosses.members.useQuery({ limit: 25 }, { retry: false, enabled: !previewMode && section === "Members" });
+  const archive = trpc.moneyBosses.archiveContent.useQuery({ limit: 25 }, { retry: false, enabled: !previewMode && section === "Archive Content" });
+  const integrations = trpc.moneyBosses.integrations.useQuery(undefined, { retry: false, enabled: !previewMode && (section === "Integrations" || section === "Wallets") });
 
   const readiness = useMemo(() => {
-    const providers = overview.data?.walletProviders ?? [];
+    const providers = overview.data?.walletProviders ?? previewProviders;
     return providers.map((provider) => ({
       ...provider,
       requirement: providerRequirements[provider.provider] || provider.requirement,
@@ -44,7 +46,7 @@ export default function MoneyBossesAdmin() {
       return <MembersPanel database={members.data?.database} members={members.data?.members ?? []} />;
     }
     if (section === "Archive Content") {
-      return <ArchivePanel database={archive.data?.database} artworks={archive.data?.artworks ?? []} videos={archive.data?.videos ?? []} />;
+      return <ArchivePanel previewMode={previewMode} database={archive.data?.database} artworks={archive.data?.artworks ?? []} videos={archive.data?.videos ?? []} />;
     }
     if (section === "Wallets") {
       return <WalletsPanel providers={readiness} />;
@@ -56,7 +58,7 @@ export default function MoneyBossesAdmin() {
       return <CardsPanel />;
     }
     if (section === "QR Destinations") {
-      return <RegistryPlaceholder title="QR Destinations" copy="Manage the official garment QR destination and future reversible handoffs without changing scanner code." />;
+      return <PanelFrame title="QR Destinations" eyebrow="OFFICIAL GARMENT QR"><p>The unchanged official QR encodes <code>https://turboresponsehq.ai/atlanta-archives</code>. It still opens the old scanner; no redirect is active.</p><p>Approved handoff target: <a href="https://mbosses-mpcsahwt.manus.space/archive-hub" target="_blank" rel="noreferrer">Money Bosses Archive Hub</a>. Photograph recognition remains available at <a href="https://mbosses-mpcsahwt.manus.space/scan" target="_blank" rel="noreferrer">the public Money Bosses scanner</a>.</p><p>The exact-route reversible HTTP 302 proposal is saved, but deployment approval is still required.</p><button className="mb-quiet-button" disabled>Activate redirect — disabled</button><p className="mb-form-note">Remote scan analytics and editable destination persistence are not connected.</p></PanelFrame>;
     }
     if (section === "Benefits") {
       return <RegistryPlaceholder title="Benefits" copy="Prepare member benefits and partner offers as content records. No offers or events are activated by this preview." />;
@@ -64,7 +66,7 @@ export default function MoneyBossesAdmin() {
     if (section === "Announcements") {
       return <RegistryPlaceholder title="Announcements" copy="Prepare a controlled publishing queue for MB Private announcements. Nothing is published from this development module." />;
     }
-    return <OverviewPanel overview={overview.data} readiness={readiness} />;
+    return <OverviewPanel overview={previewMode ? { database: "preview_only", archiveArtworks: previewArtworks.length } : overview.data} readiness={readiness} />;
   }
 
   return (
@@ -81,17 +83,20 @@ export default function MoneyBossesAdmin() {
         </div>
       </header>
 
+      {previewMode && <section className="mb-preview-notice" role="status"><strong>Development preview of the existing Command Center module.</strong><p>Only approved public assets and in-memory drafts are shown. No admin API requests, member data, database writes or production changes occur. The actual /admin/money-bosses route remains authenticated.</p></section>}
+      {!previewMode && (overview.error || members.error || archive.error || integrations.error) && <section className="mb-preview-notice" role="alert"><strong>Admin data could not be loaded.</strong><p>Check your admin session and staging database. No records are being presented as successfully loaded.</p></section>}
+
       <div className="mb-admin-layout">
         <aside className="mb-admin-sidebar" aria-label="Money Bosses sections">
           <p className="mb-sidebar-label">MONEY BOSSES</p>
           <nav>
             {sections.map((item) => (
-              <button key={item} className={section === item ? "is-active" : ""} onClick={() => setSection(item)}>{item}</button>
+              <button key={item} aria-current={section === item ? "page" : undefined} className={section === item ? "is-active" : ""} onClick={() => setSection(item)}>{item}</button>
             ))}
           </nav>
           <div className="mb-sidebar-note">
-            <strong>Protected module</strong>
-            <span>Uses the existing Turbo Response admin session. Public customers never enter this area.</span>
+            <strong>{previewMode ? "Preview, not a live admin session" : "Protected module"}</strong>
+            <span>{previewMode ? "In-memory demonstration only. Member records are never loaded." : "Uses the existing Turbo Response admin session. Public customers never enter this area."}</span>
           </div>
         </aside>
         <section className="mb-admin-content" aria-live="polite">
@@ -137,19 +142,6 @@ function PremiumMemberProfileEditor() {
 
 function CardsPanel() {
   return <PanelFrame title="Premium Member Card" eyebrow="PREMIUM MEMBER"><div className="mb-card-layout"><div><img className="mb-card-art" src="/money-bosses/mb-001-founding-member-card-approved.png" alt="Approved Money Bosses Premium Member portrait card artwork" /></div><div className="mb-card-copy"><StatusBadge label="Approved active design" tone="green" /><h3>Digital card foundation</h3><p>This approved Premium Member portrait card is preserved byte-for-byte. Future member-specific fields will be overlaid only by the secure pass-generation service after eligibility is verified.</p><dl><div><dt>Preferred display name</dt><dd>Optional, server-verified</dd></div><div><dt>Status</dt><dd>Active membership required</dd></div><div><dt>Profile photo</dt><dd>Optional, consent-controlled</dd></div></dl></div></div></PanelFrame>;
-}
-
-function ArchivePanel({ database, artworks, videos }: { database?: string; artworks: any[]; videos: any[] }) {
-  const utils = trpc.useUtils();
-  const createDraft = trpc.moneyBosses.createArchiveVideoDraft.useMutation({ onSuccess: () => utils.moneyBosses.archiveContent.invalidate() });
-  const assignVideo = trpc.moneyBosses.assignArchiveVideo.useMutation();
-  const [label, setLabel] = useState("");
-  const [mediaUrl, setMediaUrl] = useState("");
-  const [sourceNote, setSourceNote] = useState("");
-  const [localVideoUrl, setLocalVideoUrl] = useState("");
-  const [selectedArtworkId, setSelectedArtworkId] = useState("");
-  const [selectedVideoId, setSelectedVideoId] = useState("");
-  return <PanelFrame title="Archive Content" eyebrow="APPROVED CONTENT REGISTRY" database={database}><div className="mb-panel-intro"><p>Assign approved videos to recognized artwork through records, not scanner-code edits. New entries are draft-only and remain pending review.</p><StatusBadge label="Scanner independent" tone="green" /></div><div className="mb-grid-two"><RegistryList title="Artwork references" rows={artworks.map((artwork) => `${artwork.stable_key} · ${artwork.title}`)} empty="No artwork registry records yet." /><RegistryList title="Video destinations" rows={videos.map((video) => `${video.label} · ${video.status}`)} empty="No approved video records yet." /></div><form className="mb-draft-form" onSubmit={(event) => { event.preventDefault(); if (!mediaUrl) return; createDraft.mutate({ label, mediaUrl, sourceNote: sourceNote || undefined }); setLabel(""); setMediaUrl(""); setSourceNote(""); }}><div><p className="mb-admin-kicker">DRAFT REGISTRATION</p><h3>Add an approved video destination</h3><p className="mb-form-note">File selection is a local preview until approved storage is connected. No file is uploaded by this development module.</p></div><label>Label<input required value={label} onChange={(event) => setLabel(event.target.value)} placeholder="Atlanta Archives film" /></label><label>Choose local MP4 for preview<input type="file" accept="video/mp4,video/webm,video/quicktime" onChange={(event) => { const file = event.target.files?.[0]; if (file) { setLocalVideoUrl(URL.createObjectURL(file)); setLabel((current) => current || file.name); } }} /></label><label>HTTPS media URL<input required type="url" value={mediaUrl} onChange={(event) => setMediaUrl(event.target.value)} placeholder="https://…/video.mp4" /></label><label>Source note (optional)<textarea value={sourceNote} onChange={(event) => setSourceNote(event.target.value)} placeholder="Provenance or review note" /></label><button type="submit" disabled={createDraft.isPending || database !== "ready"}>{createDraft.isPending ? "Saving…" : database === "ready" ? "Save draft" : "Migration required"}</button>{localVideoUrl && <video className="mb-video-preview" src={localVideoUrl} controls playsInline preload="metadata" />}{createDraft.error && <p className="mb-form-error">{createDraft.error.message}</p>}{createDraft.data?.created === false && <p className="mb-form-error">Migration pending — no record was written.</p>}</form><div className="mb-assignment-panel"><div><p className="mb-admin-kicker">ARTWORK ASSIGNMENT</p><h3>Connect one destination to recognized artwork</h3><p className="mb-form-note">The assignment is stored separately from recognition code. Playback can include sound after a visitor presses play.</p></div><label>Artwork<select value={selectedArtworkId} onChange={(event) => setSelectedArtworkId(event.target.value)}><option value="">Select artwork</option>{artworks.map((artwork) => <option key={artwork.id} value={artwork.id}>{artwork.title}</option>)}</select></label><label>Video<select value={selectedVideoId} onChange={(event) => setSelectedVideoId(event.target.value)}><option value="">Select video</option>{videos.map((video) => <option key={video.id} value={video.id}>{video.label}</option>)}</select></label><button disabled={!selectedArtworkId || !selectedVideoId || assignVideo.isPending || database !== "ready"} onClick={() => assignVideo.mutate({ artworkId: Number(selectedArtworkId), videoId: Number(selectedVideoId), isDefault: true })}>{assignVideo.isPending ? "Assigning…" : "Assign destination"}</button>{assignVideo.data?.assigned && <p className="mb-form-success">Destination assigned. The scanner remains unchanged.</p>}</div></PanelFrame>;
 }
 
 function WalletsPanel({ providers }: { providers: Array<{ provider: string; state: string; requirement: string }> }) {
