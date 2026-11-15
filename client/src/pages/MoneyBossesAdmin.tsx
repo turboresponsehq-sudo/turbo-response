@@ -46,7 +46,7 @@ export default function MoneyBossesAdmin({ previewMode = false }: { previewMode?
       return <MembersPanel database={members.data?.database} members={members.data?.members ?? []} />;
     }
     if (section === "Archive Content") {
-      return <ArchivePanel previewMode={previewMode} database={archive.data?.database} artworks={archive.data?.artworks ?? []} videos={archive.data?.videos ?? []} />;
+      return <ArchivePanel previewMode={previewMode} database={archive.data?.database} artworks={archive.data?.artworks ?? []} videos={archive.data?.videos ?? []} content={archive.data} />;
     }
     if (section === "Wallets") {
       return <WalletsPanel providers={readiness} />;

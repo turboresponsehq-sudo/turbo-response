@@ -1,0 +1,12 @@
+{
+  "database": "Isolated local PostgreSQL",
+  "host": "127.0.0.1",
+  "port": 55432,
+  "production_used": false,
+  "baseline_0026": "forward/rollback/forward passed",
+  "release_0027": "forward/rollback/forward passed",
+  "remaining_mb_tables_after_rollback": 0,
+  "publishing_0028": "forward/rollback/forward passed",
+  "baseline_artworks_retained_after_extension_rollback": 3,
+  "remaining_content_tables_after_extension_rollback": 0
+}

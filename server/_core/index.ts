@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import { moneyBossesDevelopmentOrigins } from "./moneyBossesDevelopmentOrigins";
+import { registerMoneyBossesContentRoutes } from "../modules/moneyBosses/routes";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { createServer } from "http";
@@ -601,6 +602,19 @@ async function startServer() {
     }
   });
   
+  registerMoneyBossesContentRoutes(app);
+  // This helper exists only in development; it does not alter any garment-QR route.
+  if (process.env.NODE_ENV !== "production" && process.env.MB_ARCHIVE_PUBLIC_PREVIEW_ORIGIN) {
+    const publicPreview = new URL(process.env.MB_ARCHIVE_PUBLIC_PREVIEW_ORIGIN);
+    if (publicPreview.protocol === "https:" && !publicPreview.username && !publicPreview.password) {
+      app.get("/money-bosses-experience/:page", (req, res) => {
+        if (!["scan", "archive-hub"].includes(req.params.page)) { res.status(404).end(); return; }
+        res.setHeader("Cache-Control", "no-store");
+        res.redirect(302, new URL(`/${req.params.page}`, publicPreview).toString());
+      });
+    }
+  }
+
   // tRPC API
   app.use(
     "/api/trpc",

@@ -1,0 +1,16 @@
+{
+  "database": "local PostgreSQL",
+  "existing_admin_login": "passed",
+  "invalid_and_anonymous_upload_rejected": true,
+  "uploaded_bytes_sha256": "a6291235649eb26b488e440120ce8d823cb0b68f4be927cebd2015135a8b3ad6",
+  "server_media_id": "89d97177-3c1d-4933-b089-bde81eb76205",
+  "persisted_story_and_video_readback": true,
+  "draft_snapshot_isolation": true,
+  "public_byte_range_status": 206,
+  "unpublish_removed_feed_and_public_media": true,
+  "final_snapshot_id": "c98eedf3-3557-4456-a390-24293f10ce68",
+  "artwork_id": 1,
+  "video_id": 12,
+  "official_qr_changed": false,
+  "production_used": false
+}
