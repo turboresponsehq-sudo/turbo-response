@@ -1,115 +1,136 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#08030e" />
-  <meta name="description" content="2K Baby — music, gaming, lifestyle, bookings and fan updates." />
-  <title>2K Baby | Music • Gaming • Lifestyle</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,800;1,900&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet" />
-  <style>
-    :root { --pink:#f51a87; --yellow:#ffd21f; --ink:#090511; --cream:#f6eee6; }
-    * { box-sizing:border-box; }
-    html { scroll-behavior:smooth; }
-    body { margin:0; background:var(--ink); color:#fff; font-family:Inter,Arial,sans-serif; }
-    a { color:inherit; text-decoration:none; }
-    button,input { font:inherit; }
-    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
-    .landing { width:min(1200px,100%); margin:0 auto; position:relative; line-height:0; background:#16091d; }
-    .landing-art { width:100%; height:auto; display:block; }
-    .hotspot { position:absolute; z-index:2; display:block; border-radius:9px; line-height:1; outline:none; }
-    .hotspot:hover,.hotspot:focus-visible { background:#ff2a9130; outline:2px solid #ff8bc5; outline-offset:2px; }
-    .nav-music{left:22.5%;top:0;width:10%;height:5.5%}.nav-videos{left:31%;top:0;width:11%;height:5.5%}.nav-gaming{left:41%;top:0;width:12%;height:5.5%}.nav-merch{left:51.5%;top:0;width:10%;height:5.5%}.nav-tour{left:62%;top:0;width:9%;height:5.5%}.nav-about{left:70%;top:0;width:9%;height:5.5%}.nav-contact{left:77%;top:0;width:13%;height:5.5%}
-    .listen{left:11%;top:55.3%;width:25%;height:6.2%}.watch{left:39%;top:55.3%;width:25%;height:6.2%}.shop{left:66%;top:55.3%;width:24%;height:6.2%}
-    .card-music{left:0;top:64.2%;width:25%;height:13.3%}.card-videos{left:25%;top:64.2%;width:25%;height:13.3%}.card-gaming{left:50%;top:64.2%;width:25%;height:13.3%}.card-merch{left:75%;top:64.2%;width:25%;height:13.3%}
-    .hero-email { position:absolute; z-index:3; left:42.5%; top:84.3%; width:35%; height:4.2%; border:0; border-radius:8px; padding:0 16px; background:#120d18e8; color:#fff; font-size:clamp(10px,1.5vw,17px); line-height:1; outline:0; }
-    .hero-email::placeholder { color:#eee; opacity:.9; }
-    .hero-email:focus { outline:2px solid #fff; outline-offset:2px; }
-    .subscribe { left:77.8%; top:84%; width:19%; height:5.5%; }
-    .below { width:min(1200px,100%); margin:0 auto; padding:32px 22px 70px; background:linear-gradient(180deg,#190c21,#08040d); }
-    .fallback-nav { display:none; }
-    .section { max-width:920px; margin:0 auto; padding:70px 0 10px; scroll-margin-top:25px; }
-    .eyebrow { color:#ff72b8; font:italic 900 14px 'Barlow Condensed',Impact,sans-serif; letter-spacing:.18em; text-transform:uppercase; }
-    h2 { margin:12px 0 18px; font:italic 900 clamp(52px,9vw,110px)/.82 'Barlow Condensed',Impact,sans-serif; text-transform:uppercase; text-shadow:4px 4px #000,7px 7px var(--pink); }
-    p { max-width:680px; color:#ead9e7; line-height:1.65; }
-    .youtube-feature { max-width:920px; margin:34px auto 10px; padding:24px; border:2px solid #f82a93; background:linear-gradient(120deg,#260b2c,#110919); box-shadow:0 14px 42px #0008; }
-    .youtube-feature h2 { margin-bottom:10px; font-size:clamp(46px,7vw,82px); }
-    .youtube-feature p { margin-top:0; }
-    .youtube-square { width:min(100%,560px); aspect-ratio:1/1; margin:22px auto 0; position:relative; overflow:hidden; background:#000; border:3px solid #fff; box-shadow:0 8px 0 #650a42; }
-    .youtube-square iframe { width:100%; height:100%; display:block; border:0; }
-    .youtube-link { display:flex; align-items:center; justify-content:center; gap:8px; min-height:50px; margin:16px auto 0; width:min(100%,560px); padding:12px 18px; border:2px solid #ffd7ed; border-radius:7px; background:linear-gradient(#ff37a0,#e9006b); color:#fff; box-shadow:0 5px 0 #650a42; font:italic 900 20px 'Barlow Condensed',Impact,sans-serif; text-transform:uppercase; }
-    .cta-row { display:flex; flex-wrap:wrap; gap:12px; margin-top:24px; }
-    .cta { display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:12px 20px; border:2px solid #ffd7ed; border-radius:7px; background:linear-gradient(#ff37a0,#e9006b); color:#fff; box-shadow:0 5px 0 #650a42; font:italic 900 19px 'Barlow Condensed',Impact,sans-serif; text-transform:uppercase; }
-    .cta.alt { background:#100916; }
-    .signup { max-width:920px; margin:70px auto 0; padding:28px; border:2px solid #f82a93; background:linear-gradient(120deg,#260b2c,#110919); }
-    .signup h3 { margin:0 0 8px; font:italic 900 clamp(36px,6vw,70px)/.85 'Barlow Condensed'; text-transform:uppercase; }
-    .signup form { display:flex; gap:10px; flex-wrap:wrap; margin-top:20px; }
-    .signup input { flex:1 1 240px; min-height:48px; padding:12px 14px; border:1px solid #bd5a91; border-radius:7px; background:#0c0711; color:#fff; }
-    .signup button { min-height:48px; padding:12px 20px; border:0; border-radius:7px; background:var(--pink); color:#fff; font-weight:900; cursor:pointer; }
-    .note { margin:12px 0 0; font-size:12px; color:#cbb4c7; }
-    .chat-launch { position:fixed; right:18px; bottom:18px; z-index:10; border:2px solid #fff; border-radius:999px; padding:12px 18px; background:var(--pink); color:#fff; box-shadow:0 5px 0 #650a42; font-weight:900; cursor:pointer; }
-    .chat-panel { position:fixed; right:18px; bottom:72px; z-index:11; width:min(360px,calc(100vw - 36px)); display:none; background:#110919; border:2px solid var(--pink); box-shadow:0 15px 50px #000c; }
-    .chat-panel.open { display:block; }
-    .chat-head { display:flex; justify-content:space-between; align-items:center; padding:13px 15px; background:#b80e62; font-weight:900; }
-    .chat-head button { border:0; background:none; color:#fff; font-size:24px; cursor:pointer; }
-    .messages { max-height:230px; overflow:auto; padding:14px; font-size:13px; line-height:1.45; }
-    .message { margin:0 0 10px; padding:9px 11px; border-radius:10px; background:#2b1734; }
-    .message.user { background:#67134d; }
-    .chat-choices { display:flex; gap:6px; flex-wrap:wrap; padding:0 14px 10px; }
-    .chat-choices button { border:1px solid #d785af; border-radius:999px; padding:6px 9px; background:#180c20; color:#fff; cursor:pointer; font-size:11px; }
-    .chat-form { display:flex; gap:7px; padding:12px; border-top:1px solid #542143; }
-    .chat-form input { min-width:0; flex:1; padding:9px; border:1px solid #9f4b7b; background:#0c0711; color:#fff; }
-    .chat-form button { border:0; padding:9px 12px; background:var(--pink); color:#fff; font-weight:900; cursor:pointer; }
-    footer { padding:25px 20px 35px; text-align:center; color:#bd9cb7; font-size:12px; letter-spacing:.12em; }
-    @media (max-width:700px) {
-      .landing { padding-top:42px; }
-      .fallback-nav { position:absolute; top:0; left:0; right:0; z-index:4; display:flex; justify-content:space-around; padding:11px 6px; background:#08050c; font:italic 900 14px 'Barlow Condensed'; text-transform:uppercase; }
-      .fallback-nav a { padding:4px 5px; }
-      .hero-email { left:42%; width:35%; padding:0 5px; font-size:9px; }
-      .below { padding:20px 16px 55px; }
-      .section { padding-top:48px; }
-      .signup { margin-top:45px; padding:20px; }
-      .chat-launch { right:12px; bottom:12px; }
-    }
-  </style>
-</head>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#110719">
+<meta name="description" content="Enter the 2KBABY World. Music, gaming, Miami missions, livestream updates and the latest releases.">
+<meta property="og:title" content="2KBABY WORLD — Enter the Game">
+<meta property="og:description" content="Music. Gaming. Miami. New missions unlock here.">
+<title>2KBABY WORLD | Music • Gaming • Miami</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,800;1,900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#ff299b;--cyan:#24d9e6;--orange:#f9a34a;--black:#100719;--deep:#0a0411;--ink:#13081e;--white:#fff;--soft:#efdef5}*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:95px}body{margin:0;background:var(--deep);color:var(--white);font-family:Inter,Arial,sans-serif;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 10% 0%,#83196238,transparent 39%),radial-gradient(circle at 88% 18%,#14526b22,transparent 34%),repeating-linear-gradient(90deg,transparent 0,transparent 72px,#ffffff03 73px)}
+a{color:inherit;text-decoration:none}button,input,select,textarea{font:inherit}button{cursor:pointer}img{max-width:100%}
+.skip{position:absolute;top:-80px;left:12px;background:#fff;color:#000;padding:12px;z-index:50}.skip:focus{top:12px}
+.topline{background:#ff299b;min-height:31px;display:flex;align-items:center;justify-content:center;text-align:center;padding:7px 14px;font-size:10px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#130719}
+.site-head{position:sticky;top:0;z-index:50;background:#0b0511f4;border-bottom:2px solid #ff299b99;backdrop-filter:blur(16px)}
+.nav-inner{max-width:1420px;margin:auto;min-height:75px;padding:0 4%;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.wordmark{font:italic 900 44px/.83 "Barlow Condensed",Impact,sans-serif;letter-spacing:-1px;text-transform:uppercase;text-shadow:3px 3px 0 #000,5px 5px 0 var(--pink);white-space:nowrap}.wordmark span{color:var(--pink)}
+.nav{display:flex;align-items:center;gap:clamp(12px,1.7vw,28px)}
+.nav a{font:800 13px "Inter",sans-serif;letter-spacing:.045em;text-transform:uppercase;transition:color .2s}.nav a:hover,.nav a:focus-visible{color:var(--cyan)}
+.nav .nav-live{border:2px solid var(--cyan);padding:12px 14px;color:var(--cyan);box-shadow:3px 3px 0 #16434c}
+.hamburger{display:none;background:transparent;color:#fff;border:1px solid #ff299b;padding:8px 13px;font-weight:900}
+.frame{max-width:1420px;margin:0 auto;padding:0 4%}.hero{max-width:1500px;margin:0 auto;position:relative;background:#170920}
+.hero-visual{position:relative;border-bottom:5px solid var(--pink);overflow:hidden}.hero-visual:after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,#100719e5);pointer-events:none}
+.hero-art{display:block;width:100%;height:clamp(390px,51vw,680px);object-fit:cover;object-position:center center}
+.hero-copy{position:absolute;z-index:2;bottom:clamp(20px,5vw,74px);left:clamp(20px,5vw,70px);width:min(680px,88%);filter:drop-shadow(1px 3px 6px #000b)}
+.micro{color:var(--cyan);letter-spacing:.22em;text-transform:uppercase;font-size:11px;font-weight:900}.mission-chip{display:inline-block;padding:6px 10px;margin-bottom:13px;background:#14091ddc;border:1px solid var(--pink);color:#fff;font-size:11px;font-weight:900;letter-spacing:.14em}
+.hero-copy h1{font:italic 900 clamp(50px,8.8vw,133px)/.74 "Barlow Condensed",Impact,sans-serif;text-transform:uppercase;letter-spacing:-.025em;margin:0 0 18px;text-shadow:5px 5px 0 #08030a,9px 9px 0 #bd0e67}
+.hero-copy h1 em{color:var(--pink);font-style:inherit}.hero-copy p{font-size:clamp(12px,1.5vw,16px);line-height:1.5;max-width:425px;margin:5px 0 22px}
+.actions{display:flex;flex-wrap:wrap;gap:10px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:49px;padding:11px 20px;border:2px solid #fff;background:var(--pink);color:#fff;box-shadow:5px 5px 0 #05010a;font:italic 900 20px/1 "Barlow Condensed",Impact,sans-serif;letter-spacing:.045em;text-transform:uppercase;transition:transform .18s,box-shadow .18s}.btn:hover,.btn:focus-visible{transform:translate(-2px,-2px);box-shadow:7px 7px 0 #05010a}.btn.alt{background:#140a20e9}.btn.cyan{background:var(--cyan);color:#160822}.btn.small{font-size:16px;padding:10px 14px;min-height:42px}
+.hero-tags{position:absolute;right:30px;bottom:30px;display:flex;gap:6px;z-index:3;transform:rotate(-4deg)}.tag{background:#150a21e9;border:1px solid #ffc7ed;padding:8px 11px;font:900 12px "Barlow Condensed";letter-spacing:.12em}.tag b{color:var(--cyan)}
+.ticker{display:flex;justify-content:center;gap:25px;flex-wrap:wrap;padding:13px 16px;background:#210b2c;border-bottom:1px solid #ff299b70;font:900 13px "Barlow Condensed";letter-spacing:.15em;text-transform:uppercase}.ticker i{font-style:normal;color:var(--pink)}
+.content{max-width:1420px;margin:auto;padding:25px 4% 100px}
+.kicker{font:900 12px Inter,sans-serif;letter-spacing:.2em;color:var(--cyan);text-transform:uppercase;margin-bottom:10px}
+.section-heading{display:flex;align-items:end;justify-content:space-between;gap:20px;margin:0 0 22px}.section-heading h2,h2.huge{margin:0;font:italic 900 clamp(46px,7vw,94px)/.85 "Barlow Condensed",Impact,sans-serif;letter-spacing:-.02em;text-transform:uppercase;text-shadow:4px 4px 0 #000,7px 7px 0 #d51170}.section-heading p{max-width:420px;font-size:14px;line-height:1.55;color:#e1c9e4}
+.zone{margin-top:70px;scroll-margin-top:95px}
+.missions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.mission{border:2px solid #f05ab4;position:relative;overflow:hidden;background:#21102d;min-height:335px;isolation:isolate}.mission:before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,transparent 22%,#0a0511f0 87%)}
+.mission img{width:100%;height:100%;position:absolute;inset:0;object-fit:cover;object-position:center 25%;transition:transform .35s}.mission:hover img{transform:scale(1.045)}
+.mission .top-badge{position:absolute;z-index:3;top:12px;left:12px;padding:6px 9px;background:#120713e8;border:1px solid #fff8;font-size:10px;font-weight:900;letter-spacing:.12em}
+.mission .mission-body{position:absolute;z-index:3;bottom:0;left:0;right:0;padding:18px}.mission .mission-number{font:900 16px "Barlow Condensed";color:var(--cyan);letter-spacing:.12em}.mission h3{font:italic 900 clamp(30px,3.8vw,54px)/.9 "Barlow Condensed";text-transform:uppercase;margin:6px 0}.mission p{font-size:12px;line-height:1.4;margin:8px 0 15px;color:#f6e4f4}
+.mission .mini-action{font:900 13px "Inter";color:var(--cyan);text-decoration:underline;text-underline-offset:4px}
+.split{display:grid;grid-template-columns:1.05fr .95fr;gap:22px;align-items:stretch}
+.panel{position:relative;border:2px solid #a12f79;background:linear-gradient(135deg,#341442,#14091e 64%);padding:clamp(20px,3.5vw,46px);box-shadow:8px 8px 0 #210827}
+.panel.cyan-line{border-color:var(--cyan);box-shadow:8px 8px 0 #103c45}
+.panel h3{font:italic 900 clamp(39px,6vw,80px)/.85 "Barlow Condensed";margin:10px 0 17px;text-transform:uppercase;text-shadow:4px 4px 0 #000,6px 6px 0 #af146e}
+.panel p{line-height:1.65;color:#ead9e8;font-size:14px}.panel ul{padding-left:18px;line-height:1.9;color:#ead9e8;font-size:14px}
+.signal{display:inline-flex;gap:8px;align-items:center;color:var(--cyan);font-size:12px;letter-spacing:.13em;text-transform:uppercase;font-weight:900}.signal:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+.photo-frame{border:2px solid #ff299b;overflow:hidden;background:#250f38;min-height:350px;position:relative}.photo-frame img{width:100%;height:100%;object-fit:cover;object-position:center 36%;position:absolute;inset:0;filter:saturate(1.08)}.photo-frame:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#120719e8,transparent 36%)}
+.photo-label{position:absolute;z-index:3;bottom:20px;left:20px;font:900 12px Inter;letter-spacing:.17em;text-transform:uppercase;background:#120719c9;padding:9px 12px;border:1px solid #fff8}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.step{padding:22px;border:1px solid #ff299b70;background:#190b26}.step .num{font:italic 900 42px "Barlow Condensed";color:var(--pink)}.step h4{font:italic 900 30px "Barlow Condensed";margin:8px 0;text-transform:uppercase}.step p{font-size:13px;color:#d9c5de;line-height:1.55}
+.video-embed{position:relative;min-height:310px;background:#100719;border:2px solid #fba34a;display:flex;justify-content:center}.video-embed iframe{width:100%;min-height:420px;border:0;background:#140719}.note{font-size:12px!important;color:#d2b9d1!important}
+.mini-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.tile{background:#1c0c29;border:1px solid #ff299b70;padding:25px}.tile h4{font:italic 900 35px "Barlow Condensed";margin:0 0 8px;text-transform:uppercase}.tile p{font-size:13px;color:#dcc7e0;line-height:1.6}
+.linkline{display:flex;flex-wrap:wrap;gap:9px}
+.info-banner{padding:17px 20px;border:1px solid #ffbd75;background:#402010;color:#f7e7d9;font-size:13px;line-height:1.6}
+.signup-wrap{padding:35px;border:2px solid var(--cyan);background:linear-gradient(100deg,#2f123b,#120919);display:grid;grid-template-columns:1fr 1fr;gap:25px}.signup-wrap h3{margin:10px 0 15px;font:italic 900 clamp(46px,5.8vw,82px)/.86 "Barlow Condensed";text-transform:uppercase}.signup-wrap p{color:#d8c7df;line-height:1.6}
+.signup-wrap form{display:grid;gap:12px;align-content:center}.signup-wrap input{min-width:0;padding:15px;border:1px solid #ff71c0;border-radius:0;background:#0b0512;color:#fff}.signup-wrap label{font-size:12px;color:#eee}.signup-wrap button{width:100%}.signup-wrap small{line-height:1.5;color:#d2b9d1}
+.site-foot{border-top:3px solid var(--pink);padding:32px 4%;background:#090510;text-align:center}.site-foot p{margin:11px 0;font-size:11px;color:#bfaac1;line-height:1.5}
+@media(max-width:960px){.missions{grid-template-columns:repeat(2,minmax(0,1fr))}.nav{gap:12px}.nav a{font-size:11px}.hero-tags{display:none}.split{grid-template-columns:1fr 1fr}}
+@media(max-width:720px){.nav-inner{min-height:64px}.wordmark{font-size:37px}.hamburger{display:block}.nav{display:none;position:absolute;top:100%;left:0;right:0;background:#100719;padding:20px;flex-direction:column;align-items:stretch;border-bottom:2px solid var(--pink)}.nav.open{display:flex}.nav a{padding:10px 6px;font-size:14px}.hero-art{height:520px;object-position:54% center}.hero-copy{bottom:25px;left:20px}.hero-copy h1{font-size:clamp(52px,14vw,80px);line-height:.78}.hero-copy p{max-width:320px}.ticker{gap:10px;font-size:11px}.section-heading{display:block}.section-heading p{margin-top:15px}.content{padding:18px 5% 70px}.zone{margin-top:52px}.split,.signup-wrap{grid-template-columns:1fr}.photo-frame{min-height:430px}.three{grid-template-columns:1fr}.mission{min-height:290px}.panel{padding:24px}.signup-wrap{padding:22px}.mini-grid{grid-template-columns:1fr}}
+@media(max-width:440px){.hero-art{height:470px;object-position:49% center}.hero-copy h1{font-size:61px}.missions{gap:9px}.mission{min-height:250px}.mission .mission-body{padding:11px}.mission h3{font-size:28px}.mission p{font-size:10px}.mission .mini-action{font-size:11px}.wordmark{font-size:32px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important;animation:none!important}}
+</style></head>
 <body>
-  <main>
-    <section class="landing" id="home" aria-labelledby="landing-title">
-      <h1 id="landing-title" class="sr-only">2K Baby — Music, Gaming, Lifestyle</h1>
-      <nav class="fallback-nav" aria-label="Mobile navigation"><a href="#music">Music</a><a href="#videos">Videos</a><a href="#gaming">Gaming</a><a href="intake.html">Contact</a></nav>
-      <img class="landing-art" src="./19495.png" alt="Approved 2K Baby homepage artwork featuring 2K Baby in a red jacket, Atlanta, a helicopter, a car and GTA-inspired typography" />
-      <a class="hotspot nav-music" href="#music" aria-label="Music"></a><a class="hotspot nav-videos" href="#featured-video" aria-label="Videos"></a><a class="hotspot nav-gaming" href="#gaming" aria-label="Gaming"></a><a class="hotspot nav-merch" href="#merch" aria-label="Merch"></a><a class="hotspot nav-tour" href="#tour" aria-label="Tour"></a><a class="hotspot nav-about" href="#about" aria-label="About"></a><a class="hotspot nav-contact" href="intake.html" aria-label="Contact and booking"></a>
-      <a class="hotspot listen" href="https://youtube.com/@the2kbaby" target="_blank" rel="noopener" aria-label="Listen now on YouTube"></a><a class="hotspot watch" href="#featured-video" aria-label="Watch the official video"></a><a class="hotspot shop" href="#merch" aria-label="Shop merch demo section"></a>
-      <a class="hotspot card-music" href="#music" aria-label="New music"></a><a class="hotspot card-videos" href="#featured-video" aria-label="Videos"></a><a class="hotspot card-gaming" href="#gaming" aria-label="Gaming"></a><a class="hotspot card-merch" href="#merch" aria-label="Merch"></a>
-      <label class="sr-only" for="hero-email">Enter your email</label><input class="hero-email" id="hero-email" type="email" placeholder="ENTER YOUR EMAIL" autocomplete="email" />
-      <a class="hotspot subscribe" href="#fan-club" aria-label="Subscribe to the 2K Baby Nation" onclick="document.getElementById('fan-email').value=document.getElementById('hero-email').value"></a>
-    </section>
+<a href="#main" class="skip">Skip to content</a>
+<div class="topline">New missions loading · Music / Gaming / Miami / Community</div>
+<header class="site-head"><div class="nav-inner">
+<a class="wordmark" href="#home" aria-label="2KBABY World homepage">2K<span>BABY</span> ★</a>
+<button class="hamburger" id="menu-button" aria-controls="main-nav" aria-expanded="false">☰ MENU</button>
+<nav class="nav" id="main-nav" aria-label="Main navigation">
+<a href="#world">The World</a><a href="#music">Music</a><a href="#gaming">Gaming</a><a href="#miami">Miami</a><a href="#giveaway">Giveaway</a><a href="#nation">Community</a><a href="intake.html">Bookings</a><a class="nav-live" href="#gaming">● 9 PM LIVE</a>
+</nav></div></header>
+<main id="main">
+<section class="hero" id="home" aria-label="Welcome to the 2KBABY World">
+<div class="hero-visual">
+<img class="hero-art" src="assets/vice-world-hero.png" alt="Client-provided GTA-inspired 2KBABY poster with multiple portraits, tropical Miami backdrop, cars and neon pink graphics" fetchpriority="high">
+<div class="hero-copy"><span class="mission-chip">PLAYER CONNECTED: 2KBABY · MISSION 001</span>
+<h1>ENTER<br>THE <em>WORLD.</em></h1><p>New music. Miami missions. Gaming. Real life. Every move unlocks a new chapter.</p>
+<div class="actions"><a class="btn" href="#world">▶ Enter the World</a><a class="btn alt" href="#gaming">◉ Watch Live Updates</a></div>
+</div>
+<div class="hero-tags"><span class="tag">LOCATION: <b>VICE CITY</b></span><span class="tag">PLAYER: <b>2KBABY</b></span></div>
+</div>
+<div class="ticker"><span><i>✦</i> NEW MUSIC</span><span><i>✦</i> DAILY 9 PM STREAM PLANNED</span><span><i>✦</i> MIAMI TAKEOVER</span><span><i>✦</i> FAN MISSIONS</span></div>
+</section>
+<div class="content">
+<section class="zone" id="world"><div class="section-heading"><div><div class="kicker">01 / Select a mission</div><h2>MISSION BOARD</h2></div><p>This isn't a standard artist website. Explore what 2KBABY is building, choose a mission, and discover what's next.</p></div>
+<div class="missions">
+<a class="mission" href="#music"><img src="assets/artist-camo.png" loading="lazy" alt="Approved 2KBABY portrait in camouflage sleeves"><span class="top-badge">MISSION 01 · MUSIC</span><div class="mission-body"><span class="mission-number">NOW PLAYING</span><h3>HIGH TIDE</h3><p>Explore releases and the visual world around the music.</p><span class="mini-action">OPEN MISSION →</span></div></a>
+<a class="mission" href="#gaming"><img src="assets/artist-live.png" loading="lazy" alt="Approved 2KBABY photo in white tank top with sunglasses"><span class="top-badge">MISSION 02 · GAMING</span><div class="mission-body"><span class="mission-number">9 PM SCHEDULE</span><h3>THE LIVE</h3><p>Gaming streams, replays, and fan conversations.</p><span class="mini-action">OPEN MISSION →</span></div></a>
+<a class="mission" href="#miami"><img src="assets/artist-redcap.png" loading="lazy" alt="Approved 2KBABY photograph wearing a red cap"><span class="top-badge">MISSION 03 · MIAMI</span><div class="mission-body"><span class="mission-number">NEXT CITY</span><h3>MIAMI<br>TAKEOVER</h3><p>Follow public appearances and trip highlights.</p><span class="mini-action">OPEN MISSION →</span></div></a>
+<a class="mission" href="#giveaway"><img src="assets/artist-orange.png" loading="lazy" alt="Approved 2KBABY studio portrait in an orange outfit"><span class="top-badge">MISSION 04 · COMMUNITY</span><div class="mission-body"><span class="mission-number">COMING SOON</span><h3>GAMING<br>GIVEAWAY</h3><p>Watch the announcement and check campaign updates.</p><span class="mini-action">OPEN MISSION →</span></div></a>
+</div></section>
 
-    <section class="below">
-      <section class="youtube-feature" id="featured-video" aria-labelledby="youtube-title"><div class="eyebrow">Official 2K Baby YouTube</div><h2 id="youtube-title">Watch the video.</h2><p>Click the square player to watch <strong>“Novacane”</strong>, the official music video from 2KBABY.</p><div class="youtube-square"><iframe src="https://www.youtube-nocookie.com/embed/bcoUeTCCloU?rel=0" title="2KBABY - Novacane Official Music Video" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div><a class="youtube-link" href="https://www.youtube.com/watch?v=bcoUeTCCloU" target="_blank" rel="noopener">Open this video on YouTube ↗</a></section>
-      <section class="section" id="music"><div class="eyebrow">01 / The Sound</div><h2>New music.</h2><p>Listen to official 2K Baby releases, visuals and new drops through his verified YouTube channel.</p><div class="cta-row"><a class="cta" href="https://youtube.com/@the2kbaby" target="_blank" rel="noopener">Listen now ↗</a></div></section>
-      <section class="section" id="videos"><div class="eyebrow">02 / Watch</div><h2>Official videos.</h2><p>Watch the latest music videos and follow the official channel for new releases and artist moments.</p><div class="cta-row"><a class="cta" href="https://youtube.com/@the2kbaby/videos" target="_blank" rel="noopener">Watch on YouTube ↗</a></div></section>
-      <section class="section" id="gaming"><div class="eyebrow">03 / The Live World</div><h2>Gaming.</h2><p>Gaming streams and live moments are coming soon. This prototype does not invent an official Twitch account; fans can join the list for confirmed stream alerts.</p><div class="cta-row"><a class="cta" href="#fan-club">Get stream alerts</a><a class="cta alt" href="https://youtube.com/@the2kbaby" target="_blank" rel="noopener">Watch videos ↗</a></div></section>
-      <section class="section" id="merch"><div class="eyebrow">04 / The Drop</div><h2>Merch.</h2><p>Merch storefront links can be connected once the official shop destination is confirmed. This presentation button is a demo.</p></section>
-      <section class="section" id="tour"><div class="eyebrow">On stage / In the city</div><h2>Tour updates.</h2><p>Confirmed performances, campus appearances and event dates will be posted here when announced by the team.</p><div class="cta-row"><a class="cta" href="https://www.instagram.com/2kbaby/" target="_blank" rel="noopener">Follow updates ↗</a><a class="cta alt" href="intake.html">Book 2K Baby</a></div></section>
-      <section class="section" id="about"><div class="eyebrow">Music / Gaming / Lifestyle</div><h2>The world.</h2><p>2K Baby’s official presentation concept for fans, opportunities and the next era.</p></section>
-      <section class="signup" id="fan-club"><div class="eyebrow">Join the 2K Baby Nation</div><h3>Don't miss the next drop.</h3><p>Exclusive music, gaming streams, merch drops and tour updates. Preview only — no email address will be stored or sent.</p><form id="fan-signup"><label class="sr-only" for="fan-email">Your email address</label><input id="fan-email" name="email" type="email" placeholder="Your email address" autocomplete="email" required /><button type="submit">Subscribe →</button></form><p class="note" id="signup-feedback" role="status">Demo signup — no data is saved.</p></section>
-    </section>
-  </main>
-  <button class="chat-launch" id="chat-launch" aria-expanded="false" aria-controls="chat-panel">✦ Ask 2K Baby</button>
-  <aside class="chat-panel" id="chat-panel" aria-label="2K Baby website assistant"><div class="chat-head"><span>2K BABY · SITE ASSISTANT</span><button id="chat-close" aria-label="Close assistant">×</button></div><div class="messages" id="messages" aria-live="polite"><div class="message">I can help with music, videos, gaming, bookings and collaborations.</div></div><div class="chat-choices"><button data-q="Music">Music</button><button data-q="Videos">Videos</button><button data-q="Booking">Booking</button><button data-q="Collaborations">Collaborations</button></div><form class="chat-form" id="chat-form"><label class="sr-only" for="chat-question">Ask a question</label><input id="chat-question" placeholder="Ask a question…" required /><button type="submit">Send</button></form></aside>
-  <footer>2K BABY · MUSIC / GAMING / LIFESTYLE · PRESENTATION PROTOTYPE</footer>
-  <script>
-    const signup = document.querySelector('#fan-signup');
-    signup.addEventListener('submit', (event) => { event.preventDefault(); if (!signup.reportValidity()) return; document.querySelector('#signup-feedback').textContent = "You're on the preview list! Demo only — your email was not saved or sent."; signup.reset(); });
-    const panel = document.querySelector('#chat-panel'), launch = document.querySelector('#chat-launch'), messages = document.querySelector('#messages');
-    const toggleChat = (open) => { panel.classList.toggle('open', open); launch.setAttribute('aria-expanded', String(open)); if (open) document.querySelector('#chat-question').focus(); };
-    launch.addEventListener('click', () => toggleChat(!panel.classList.contains('open'))); document.querySelector('#chat-close').addEventListener('click', () => toggleChat(false));
-    function reply(question) { const user = document.createElement('div'); user.className='message user'; user.textContent=question; messages.appendChild(user); const text=question.toLowerCase(); const answer = /book|hire|event|concert|feature|brand|collab/.test(text) ? 'Use the four-question intake page for performances, features and brand partnership ideas.' : /video|watch|music|song|listen/.test(text) ? 'Visit the official YouTube channel for music and videos.' : 'Confirmed gaming and tour links will appear here when the team shares them.'; const bot=document.createElement('div'); bot.className='message'; bot.textContent=answer; messages.appendChild(bot); messages.scrollTop=messages.scrollHeight; }
-    document.querySelectorAll('[data-q]').forEach((button) => button.addEventListener('click', () => reply(button.dataset.q))); document.querySelector('#chat-form').addEventListener('submit', (event) => { event.preventDefault(); const input=document.querySelector('#chat-question'); if(input.value.trim()) reply(input.value.trim()); input.value=''; });
-  </script>
-</body>
-</html>
+<section class="zone split" id="gaming"><div class="panel cyan-line"><span class="signal">Stream status: schedule pending confirmation</span><div class="kicker" style="margin-top:20px">02 / Gaming & livestreams</div><h3>WATCH LIVE<br>AT <span style="color:var(--cyan)">9 PM.</span></h3><p>The team has proposed a daily 9 PM livestream. The streaming platform, timezone, and next confirmed start time will appear here once approved.</p><div class="actions"><a href="#nation" class="btn cyan">Get Stream Updates</a><a href="#giveaway" class="btn alt">Gaming Giveaway</a></div><p class="note">This preview does not show a false “LIVE NOW” indicator or an unverified countdown.</p></div>
+<div class="photo-frame"><img src="assets/artist-live.png" loading="lazy" alt="2KBABY inside a gaming-inspired setting"><span class="photo-label">🎮 2KBABY GAMING / MORE TO UNLOCK</span></div></section>
+
+<section class="zone" id="miami"><div class="section-heading"><div><div class="kicker">03 / Location unlocked: Miami</div><h2>MIAMI TAKEOVER</h2></div><p>New city. New missions. Same 2KBABY. Only confirmed public activities and dates will be published here.</p></div>
+<div class="three"><div class="step"><div class="num">01</div><h4>Touchdown</h4><p>Arrival clips, behind-the-scenes footage and the first official mission. Date pending confirmation.</p></div>
+<div class="step"><div class="num">02</div><h4>Go Live</h4><p>Stream updates, community challenges and exclusive moments from Miami. Stream details pending.</p></div>
+<div class="step"><div class="num">03</div><h4>City Missions</h4><p>Public appearances, official content drops and post-trip highlights. Events will be listed when verified.</p></div></div></section>
+
+<section class="zone split" id="giveaway"><div class="panel"><div class="kicker">04 / Community mission</div><h3>GAMING<br><span style="color:var(--pink)">GIVEAWAY.</span></h3><p>2KBABY's team shared a giveaway announcement video and wants it featured on the website. Watch the original promotion below.</p><div class="actions"><a class="btn" href="https://www.instagram.com/reel/DfvBcSGgq0H/" target="_blank" rel="noopener noreferrer">Watch the Giveaway Reel ↗</a><a class="btn alt" href="#nation">Join The Nation</a></div><div class="info-banner" style="margin-top:25px"><strong>Entries not open on this preview.</strong> Prize details, eligibility, dates, official rules and approval must be confirmed before an entry form is activated.</div></div>
+<div><div class="video-embed"><iframe title="2KBABY giveaway announcement on Instagram" loading="lazy" src="https://www.instagram.com/reel/DfvBcSGgq0H/embed/" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div><p class="note">If Instagram blocks embedding, use the “Watch the Giveaway Reel” button to view the original post.</p></div></section>
+
+<section class="zone split" id="music"><div class="photo-frame"><img src="assets/artist-camo.png" loading="lazy" alt="2KBABY approved portrait in camouflage outfit"><span class="photo-label">2KBABY / MUSIC / VISUALS</span></div><div class="panel"><div class="kicker">05 / Soundtrack to the world</div><h3>NEW<br><span style="color:var(--pink)">MUSIC.</span></h3><p>From “High Tide” to the wider catalog, the music powers every mission. New releases, official visualizers and verified streaming destinations will be linked here as they are supplied.</p><div class="actions"><a class="btn cyan" href="https://youtube.com/@the2kbaby" target="_blank" rel="noopener noreferrer">Explore the YouTube Channel ↗</a><a class="btn alt" href="#videos">Watch Videos</a></div><p class="note">Release artwork and platform links are pending final verification.</p></div></section>
+
+<section class="zone" id="videos"><div class="section-heading"><div><div class="kicker">06 / The cinematic archive</div><h2>OFFICIAL VISUALS</h2></div><p>Music videos, Miami content, and behind-the-scenes clips live together in one place.</p></div>
+<div class="split"><div class="panel"><h3>PRESS<br>PLAY.</h3><p>See the existing official music-video feature, with more releases and Miami visual content to be added.</p><a class="btn" href="https://www.youtube.com/watch?v=bcoUeTCCloU" target="_blank" rel="noopener noreferrer">Open Novacane on YouTube ↗</a></div><div class="video-embed" style="min-height:280px;border-color:var(--cyan)"><iframe src="https://www.youtube-nocookie.com/embed/bcoUeTCCloU?rel=0" title="2KBABY - Novacane official music video" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div></div></section>
+
+<section class="zone mini-grid" id="merch"><div class="tile"><div class="kicker">07 / Lifestyle</div><h4>NEW DROPS</h4><p>Limited merchandise and collectible drops belong in 2KBABY's world. Shop links will appear after products, inventory and checkout are approved.</p><a class="btn alt small" href="#nation">Drop Updates</a></div><div class="tile" id="tour"><div class="kicker">08 / Appearances</div><h4>ON THE MAP</h4><p>Confirmed shows, tour dates and public appearances will be posted when the team provides official event details.</p><a class="btn alt small" href="intake.html">Book 2KBABY</a></div></section>
+
+<section class="zone signup-wrap" id="nation"><div><div class="kicker">09 / Join the community</div><h3>JOIN THE<br>2KBABY <span style="color:var(--cyan)">NATION.</span></h3><p>Be first to hear about music, livestreams, Miami missions, drops and upcoming appearances.</p></div>
+<form id="signup" aria-label="Fan community interest form"><label for="fan-email">EMAIL ADDRESS</label><input id="fan-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required><label style="display:flex;align-items:flex-start;gap:8px;line-height:1.55"><input type="checkbox" id="consent" style="width:auto;margin-top:2px" required> I agree to receive marketing updates if the fan signup is activated. I can unsubscribe at any time.</label><button class="btn cyan" type="submit">REQUEST FAN UPDATES →</button><small id="signup-status" aria-live="polite">Preview mode: this form opens an email draft. It does not store your email in a database or subscribe you to automated messages.</small></form></section>
+<section class="zone" id="about"><div class="section-heading"><div><div class="kicker">10 / Behind the player</div><h2>THE ARTIST.</h2></div><p>Music, gaming, fashion and community meet here. The team's approved full artist biography and press kit will be added in Phase 2.</p></div></section>
+<section class="zone" id="contact"><div class="panel"><div class="kicker">11 / Business mission</div><h3>LET'S<br>CONNECT.</h3><p>Booking, performance, features, interviews, brand partnerships and media requests go through the inquiry page.</p><div class="actions"><a class="btn" href="intake.html">Start an Inquiry →</a><a class="btn alt" href="mailto:connect@realchillmarketing.com?subject=2KBABY%20Website%20Inquiry">Email the Team ↗</a></div></div></section>
+</div></main>
+<footer class="site-foot"><a class="wordmark" href="#home" aria-label="Back to top">2K<span>BABY</span> ★</a><p>THE 2KBABY WORLD · MUSIC / GAMING / MIAMI / COMMUNITY</p><p>Original game-inspired creative concept. Not affiliated with or endorsed by Rockstar Games or Grand Theft Auto. Stream, event and giveaway details subject to team approval.</p></footer>
+<script>
+(function(){
+  const button=document.getElementById('menu-button'),nav=document.getElementById('main-nav');
+  button.addEventListener('click',()=>{const open=nav.classList.toggle('open');button.setAttribute('aria-expanded',String(open));});
+  nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{nav.classList.remove('open');button.setAttribute('aria-expanded','false');}));
+  document.getElementById('signup').addEventListener('submit',function(e){
+    e.preventDefault(); const email=document.getElementById('fan-email').value.trim(),consent=document.getElementById('consent').checked;
+    if(!this.reportValidity()||!consent)return;
+    document.getElementById('signup-status').textContent='Opening an email draft for the team. Your information has not been stored or enrolled automatically.';
+    const subject=encodeURIComponent('2KBABY Nation — Fan Updates Interest');
+    const body=encodeURIComponent('Fan email: '+email+'\nInterested in 2KBABY Nation updates.\nI agree to be contacted about music, streaming and events. Please confirm official subscription details.');
+    location.href='mailto:connect@realchillmarketing.com?subject='+subject+'&body='+body;
+  });
+})();
+</script>
+</body></html>
