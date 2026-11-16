@@ -181,6 +181,19 @@ a,button{-webkit-tap-highlight-color:rgba(228,164,186,.2)}
  .step{padding:13px 11px}
  .ticker{gap:9px}
 }
+
+/* Small-screen polish verified against 375, 390 and 440 px phone viewports */
+@media(max-width:900px){
+ .wordmark{display:inline-flex;align-items:center;min-height:44px}
+ .topline{padding-top:calc(8px + env(safe-area-inset-top))}
+}
+@media(min-width:721px) and (max-width:900px){
+ .nav-inner{min-height:70px}
+ .hamburger{display:inline-flex;align-items:center;justify-content:center;min-width:95px;min-height:44px;border:1px solid #d7a8c6;border-radius:5px;background:#27223a;color:#fff;font-size:14px}
+ .nav{display:none;position:absolute;top:100%;left:0;right:0;max-height:75svh;overflow-y:auto;flex-direction:column;align-items:stretch;gap:0;background:#191727;padding:16px 5%;border-bottom:1px solid #d7a8c6;box-shadow:0 14px 32px #0008}
+ .nav.open{display:flex}
+ .nav a,.nav .nav-live{display:flex;align-items:center;min-height:46px;padding:12px;font-size:14px;border-bottom:1px solid #ffffff1b}
+}
 </style></head>
 <body>
 <a href="#main" class="skip">Skip to content</a>
