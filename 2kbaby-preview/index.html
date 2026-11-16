@@ -6,6 +6,8 @@
 <meta property="og:title" content="2KBABY WORLD — Enter the Game">
 <meta property="og:description" content="Music. Gaming. Miami. New missions unlock here.">
 <title>2KBABY WORLD | Music • Gaming • Miami</title>
+<link rel="icon" type="image/png" sizes="180x180" href="./assets/2k-heart-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./assets/2k-heart-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -194,12 +196,33 @@ a,button{-webkit-tap-highlight-color:rgba(228,164,186,.2)}
  .nav.open{display:flex}
  .nav a,.nav .nav-live{display:flex;align-items:center;min-height:46px;padding:12px;font-size:14px;border-bottom:1px solid #ffffff1b}
 }
+
+/* Official 2K Heart mark: brand signature. Original PDF retained in client Drive. */
+.brand-lockup,.footer-lockup{display:inline-flex;align-items:center;justify-content:flex-start;gap:10px;white-space:nowrap;min-height:48px;flex:0 0 auto}
+.brand-lockup .heart-mark{display:block;width:46px;height:auto;aspect-ratio:620/530;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 2px 5px #07030a55)}
+.brand-lockup .wordmark{display:inline-block;font-size:clamp(28px,3vw,37px);line-height:1;white-space:nowrap}
+.footer-lockup{justify-content:center;gap:13px}
+.footer-heart{display:block;width:65px;height:auto;aspect-ratio:620/530;object-fit:contain}
+.footer-lockup .wordmark{display:inline-block;font-size:43px;line-height:1}
+@media(max-width:900px){.brand-lockup{min-height:48px}}
+@media(max-width:720px){
+ .brand-lockup{gap:7px;min-height:44px;max-width:calc(100vw - 125px)}
+ .brand-lockup .heart-mark{width:39px;height:auto}
+ .brand-lockup .wordmark{font-size:28px;line-height:1}
+ .footer-heart{width:50px}
+ .footer-lockup .wordmark{font-size:33px}
+}
+@media(max-width:375px){
+ .brand-lockup{gap:6px}
+ .brand-lockup .heart-mark{width:35px}
+ .brand-lockup .wordmark{font-size:25px}
+}
 </style></head>
 <body>
 <a href="#main" class="skip">Skip to content</a>
 <div class="topline">New missions loading · Music / Gaming / Miami / Community</div>
 <header class="site-head"><div class="nav-inner">
-<a class="wordmark" href="#home" aria-label="2KBABY World homepage">2K<span>BABY</span> ★</a>
+<a class="brand-lockup" href="#home" aria-label="2KBABY World homepage"><img class="heart-mark" src="./assets/2k-heart-mark.png" width="46" height="40" alt="" decoding="async"><span class="wordmark">2K<span>BABY</span></span></a>
 <button class="hamburger" id="menu-button" aria-controls="main-nav" aria-expanded="false">☰ MENU</button>
 <nav class="nav" id="main-nav" aria-label="Main navigation">
 <a href="#world">The World</a><a href="#music">Music</a><a href="#gaming">Gaming</a><a href="#miami">Miami</a><a href="#giveaway">Giveaway</a><a href="#nation">Community</a><a href="intake.html">Bookings</a><a class="nav-live" href="#gaming">● 9 PM LIVE</a>
@@ -248,7 +271,7 @@ a,button{-webkit-tap-highlight-color:rgba(228,164,186,.2)}
 <section class="zone" id="about"><div class="section-heading"><div><div class="kicker">10 / Behind the player</div><h2>THE ARTIST.</h2></div><p>Music, gaming, fashion and community meet here. The team's approved full artist biography and press kit will be added in Phase 2.</p></div></section>
 <section class="zone" id="contact"><div class="panel"><div class="kicker">11 / Business mission</div><h3>LET'S<br>CONNECT.</h3><p>Booking, performance, features, interviews, brand partnerships and media requests go through the inquiry page.</p><div class="actions"><a class="btn" href="intake.html">Start an Inquiry →</a><a class="btn alt" href="mailto:connect@realchillmarketing.com?subject=2KBABY%20Website%20Inquiry">Email the Team ↗</a></div></div></section>
 </div></main>
-<footer class="site-foot"><a class="wordmark" href="#home" aria-label="Back to top">2K<span>BABY</span> ★</a><p>THE 2KBABY WORLD · MUSIC / GAMING / MIAMI / COMMUNITY</p><p>Original game-inspired creative concept. Not affiliated with or endorsed by Rockstar Games or Grand Theft Auto. Stream, event and giveaway details subject to team approval.</p></footer>
+<footer class="site-foot"><a class="footer-lockup" href="#home" aria-label="2KBABY World — back to top"><img class="footer-heart" src="./assets/2k-heart-mark.png" width="65" height="57" alt="" loading="lazy" decoding="async"><span class="wordmark">2K<span>BABY</span></span></a><p>THE 2KBABY WORLD · MUSIC / GAMING / MIAMI / COMMUNITY</p><p>Original game-inspired creative concept. Not affiliated with or endorsed by Rockstar Games or Grand Theft Auto. Stream, event and giveaway details subject to team approval.</p></footer>
 <script>
 (function(){
   const button=document.getElementById('menu-button'),nav=document.getElementById('main-nav');
