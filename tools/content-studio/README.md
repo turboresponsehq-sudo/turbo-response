@@ -92,3 +92,16 @@ python3 extended_test.py /path/to/authorized-video.mp4 /path/to/captions.json /p
 ```
 
 The extended test starts/stops its own loopback server and cleans its temporary state.
+
+## Full 50 Cent podcast benchmark
+
+See LONGFORM_BENCHMARK.md and LONGFORM_BENCHMARK.json. The entire 58:57 supplied
+CC BY 3.0 file was analyzed, and five real MP4s with paired artwork and editable
+caption files were exported. The benchmark CLI, not a new dashboard, runs the test.
+Automatic cut suggestions needed transcript-guided boundary review. Captions remain
+listening-review drafts; model disagreement is not an accuracy measurement.
+
+The test scripts are longform_test.py, caption_audit.py, caption_turbo_pass.py,
+validate_longform.py and package_longform.py. Run each stage explicitly; source
+download and license verification are separate authorized steps. No YouTube
+downloader or paid generation provider is included.

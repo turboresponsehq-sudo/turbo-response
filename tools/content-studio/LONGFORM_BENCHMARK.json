@@ -1,0 +1,99 @@
+{
+  "source": "50 CENT: MILLION DOLLAZ WORTH OF GAME EPISODE 289",
+  "source_duration_seconds": 3537.228,
+  "source_sha1": "2719e1aae083d9c14fa26a2e4f7443ce4cf7872b",
+  "scope": "Full recording, not a short sample",
+  "metrics": {
+    "source": {
+      "duration": 3537.228,
+      "width": 1920,
+      "height": 1080,
+      "audio": true,
+      "mime": "video/webm"
+    },
+    "stages": {
+      "transcription_seconds": 541.291,
+      "selection_seconds": 24.287,
+      "selected_caption_second_pass_seconds": 124.93,
+      "final_caption_pass_seconds": 108.631,
+      "caption_model_preflight_setup_and_first_clip_seconds": 68.47736919500039,
+      "initial_render_before_caption_packing_seconds": 107.048,
+      "five_reels_and_graphics_seconds": 108.339,
+      "output_validation_seconds": 9.403
+    },
+    "caption_count": 2285,
+    "words": 10223,
+    "flagged_captions": 686,
+    "model": "small.en / int8 / CPU 4 threads",
+    "full_source_analyzed": true,
+    "selection_topic": "Specific stories and lessons about building a music career, business deals, independence, branding, film and television, and overcoming setbacks.",
+    "render_caption_source": "captions-final-draft.json",
+    "measured_processing_total_seconds": 1144.682
+  },
+  "outputs": [
+    {
+      "number": 1,
+      "duration": 54.5,
+      "bytes": 27858386,
+      "captions": 30,
+      "caption_flags": 5,
+      "decode": "passed",
+      "srt_vtt_json_roundtrip": "passed",
+      "title_thumbnail": "1080x360",
+      "reel_cover": "1080x1920",
+      "cues_below_150ms": 0
+    },
+    {
+      "number": 2,
+      "duration": 79.166667,
+      "bytes": 41414270,
+      "captions": 43,
+      "caption_flags": 9,
+      "decode": "passed",
+      "srt_vtt_json_roundtrip": "passed",
+      "title_thumbnail": "1080x360",
+      "reel_cover": "1080x1920",
+      "cues_below_150ms": 0
+    },
+    {
+      "number": 3,
+      "duration": 26.1,
+      "bytes": 13286460,
+      "captions": 16,
+      "caption_flags": 4,
+      "decode": "passed",
+      "srt_vtt_json_roundtrip": "passed",
+      "title_thumbnail": "1080x360",
+      "reel_cover": "1080x1920",
+      "cues_below_150ms": 1
+    },
+    {
+      "number": 4,
+      "duration": 32.633333,
+      "bytes": 16016662,
+      "captions": 23,
+      "caption_flags": 4,
+      "decode": "passed",
+      "srt_vtt_json_roundtrip": "passed",
+      "title_thumbnail": "1080x360",
+      "reel_cover": "1080x1920",
+      "cues_below_150ms": 0
+    },
+    {
+      "number": 5,
+      "duration": 54.566667,
+      "bytes": 27861746,
+      "captions": 27,
+      "caption_flags": 6,
+      "decode": "passed",
+      "srt_vtt_json_roundtrip": "passed",
+      "title_thumbnail": "1080x360",
+      "reel_cover": "1080x1920",
+      "cues_below_150ms": 0
+    }
+  ],
+  "client_readiness": "Operator-reviewed prototype. Caption accuracy unverified without ground truth. Automatic boundaries required transcript-guided edits.",
+  "production_modified": false,
+  "deployed": false,
+  "paid_api_calls": 0
+}

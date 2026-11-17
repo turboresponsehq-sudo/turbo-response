@@ -28,7 +28,7 @@ def sentences(captions):
         if re.search(r'[.!?]["\u201d\u2019\']?$',c['text'].strip()): flush()
     flush(); return result
 
-def rank(captions,duration,count=5,min_seconds=12,max_seconds=45,topic='',method='semantic'):
+def rank(captions,duration,count=5,min_seconds=12,max_seconds=45,topic='',method='semantic',exclude_patterns=None):
     count=int(count); lo=float(min_seconds); hi=float(max_seconds)
     if not 1<=count<=10 or not all(math.isfinite(x) for x in [lo,hi]) or not 5<=lo<=hi<=90: raise ValueError('Choose 1–10 clips, length between 5 and 90 seconds')
     if method not in ['semantic','editorial']: raise ValueError('Unknown ranking method')
@@ -46,6 +46,7 @@ def rank(captions,duration,count=5,min_seconds=12,max_seconds=45,topic='',method
         ideal=(lo+hi)/2
         end_index=min(choices,key=lambda j:abs(units[j]['end']-start['start']-ideal))
         selected=units[i:end_index+1]; text=' '.join(u['text'] for u in selected)
+        if any(re.search(pattern,text,re.I) for pattern in (exclude_patterns or [])):continue
         a=max(0,start['start']-.12); b=min(duration,units[end_index]['end']+.15)
         if b-a>hi+.3: continue
         spoken=sum(max(0,min(c['end'],b)-max(c['start'],a)) for c in captions if c['start']<b and c['end']>a)
@@ -60,7 +61,7 @@ def rank(captions,duration,count=5,min_seconds=12,max_seconds=45,topic='',method
                            'transcript':text,'coverage':round(coverage,3),'reasons':reasons,'context_warning':warning,
                            'score':score,'method':method,'review_required':True})
     if not candidates:return []
-    if len(candidates)>1500: raise ValueError('Too many candidates; narrow the transcript range')
+    if len(candidates)>10000: raise ValueError('Too many candidates; narrow the transcript range')
     if method=='semantic':
         import numpy as np
         labels=list(ANCHORS); anchors=list(ANCHORS.values())

@@ -24,7 +24,7 @@ def parse(text):
     def seconds(value):
         h,m,s,ms=map(int,re.split('[:,.]',value))
         if m>59 or s>59:raise ValueError('Invalid subtitle clock')
-        return h*3600+m*60+s+ms/1000
+        return round(h*3600+m*60+s+ms/1000,3)
     for block in re.split(r'\n\s*\n',text.replace('\r','').strip()):
         lines=block.splitlines()
         for i,line in enumerate(lines):

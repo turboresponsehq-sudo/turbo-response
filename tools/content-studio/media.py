@@ -20,13 +20,32 @@ def probe(path):
     return {'duration':duration,'width':v['width'],'height':v['height'],'audio':any(s['codec_type']=='audio' for s in data['streams']),'mime':'video/webm' if 'webm' in data['format'].get('format_name','') else 'video/mp4'}
 
 def segments(value, duration):
-    if not isinstance(value,list) or len(value)>2000: raise ValueError('Captions must be a list, up to 2000 segments')
+    if not isinstance(value,list) or len(value)>10000: raise ValueError('Captions must be a list, up to 10000 segments')
     result=[]
     for s in value:
         a,b=float(s['start']),float(s['end']); t=str(s['text']).strip()
         if not all(math.isfinite(x) for x in [a,b]) or not 0<=a<b<=duration+.1 or len(t)>500: raise ValueError('Invalid caption timing or text')
         if t: result.append({'start':a,'end':b,'text':t})
     return sorted(result,key=lambda s:s['start'])
+
+def readable_captions(rows):
+    """Join very short adjacent cues without extending into silence or changing words."""
+    result=[];i=0
+    def short(c):return c['end']-c['start']<.45
+    def combine(a,b):
+        return {**a,'end':b['end'],'text':a['text']+' '+b['text'],
+                'words':a.get('words',[])+b.get('words',[]),
+                'review':bool(a.get('review',False) or b.get('review',False)),
+                'confidence':min(a.get('confidence',1),b.get('confidence',1))}
+    while i<len(rows):
+        row=rows[i].copy()
+        if short(row) and result and 0<=row['start']-result[-1]['end']<=.15 and len(result[-1]['text'])+len(row['text'])<70:
+            result[-1]=combine(result[-1],row)
+        elif short(row) and i+1<len(rows) and 0<=rows[i+1]['start']-row['end']<=.15 and len(row['text'])+len(rows[i+1]['text'])<70:
+            row=combine(row,rows[i+1]);result.append(row);i+=1
+        else:result.append(row)
+        i+=1
+    return result
 
 def stamp(t):
     t=round(t*100); return f'{t//360000}:{t//6000%60:02}:{t//100%60:02}.{t%100:02}'
@@ -53,10 +72,13 @@ def faces(image):
         return [tuple(float(v)/factor for v in box) for box in found]
     except ImportError:return []
 
-def fitted_photo(image,size):
+def fitted_photo(image,size,subject_focus=None):
     found=faces(image);centering=(.5,.35)
-    if found:
-        x,y,w,h=max(found,key=lambda box:box[2]*box[3]);cx,cy=x+w/2,y+h/2
+    if subject_focus is not None or found:
+        if subject_focus is not None:
+            cx,cy=float(subject_focus[0])*image.width,float(subject_focus[1])*image.height
+        else:
+            x,y,w,h=max(found,key=lambda box:box[2]*box[3]);cx,cy=x+w/2,y+h/2
         ratio=size[0]/size[1];cw=min(image.width,image.height*ratio);ch=min(image.height,image.width/ratio)
         center_x=max(0,min(1,(cx-cw/2)/(image.width-cw))) if image.width>cw else .5
         center_y=max(0,min(1,(cy-ch*.4)/(image.height-ch))) if image.height>ch else .35
@@ -75,7 +97,7 @@ def choose_frame(source,work,start,end):
     best=max(candidates,key=lambda c:(c[0],c[1]))
     return best[2],{'time':round(best[3],3),'faces_detected':best[4],'method':'frontal-face sampling; review required'}
 
-def thumbnail(photo, output, preset, title, accent='#d8272f'):
+def thumbnail(photo, output, preset, title, accent='#d8272f',subject_focus=None):
     if preset not in PRESETS: raise ValueError('Unknown graphics preset')
     if not title.strip() or len(title)>110: raise ValueError('Title must have 1–110 characters')
     if not re.fullmatch('#[0-9a-fA-F]{6}',accent): raise ValueError('Use a hex accent color')
@@ -85,9 +107,9 @@ def thumbnail(photo, output, preset, title, accent='#d8272f'):
         with Image.open(photo) as source:
             source=ImageOps.exif_transpose(source).convert('RGB')
             if preset=='title-thumbnail':
-                pw=360; crop=fitted_photo(source,(pw,h)); im.paste(crop,((w-pw)//2,0))
+                pw=360; crop=fitted_photo(source,(pw,h),subject_focus); im.paste(crop,((w-pw)//2,0))
             else:
-                ph=int(h*.68); im.paste(fitted_photo(source,(w,ph)),(0,0))
+                ph=int(h*.68); im.paste(fitted_photo(source,(w,ph),subject_focus),(0,0))
     d=ImageDraw.Draw(im); d.rectangle((0,0,w,12),fill=accent)
     if preset=='title-thumbnail':
         # A centered subject stays clear; text is balanced in the side panels.
@@ -127,7 +149,12 @@ def export(source, output, workdir, spec):
     args=['ffmpeg','-v','error','-nostdin','-y','-threads','2','-protocol_whitelist','file,pipe','-ss',str(a),'-i',str(source)]
     last='base'
     if spec.get('title'):
-        banner=workdir/'banner.png';thumbnail(None,banner,'title-thumbnail',spec['title'],spec.get('accent','#d8272f'))
+        banner=workdir/'banner.png'
+        if spec.get('use_prepared_banner') and banner.is_file():
+            with Image.open(banner) as prepared:
+                if prepared.size!=PRESETS['title-thumbnail']:raise ValueError('Prepared Title Thumbnail must be 1080x360')
+        else:
+            thumbnail(None,banner,'title-thumbnail',spec['title'],spec.get('accent','#d8272f'))
         args+=['-i',str(banner)];vf+=';[base][1:v]overlay=0:0[branded]';last='branded'
     filters=[]
     if caps:filters.append(f'subtitles={ass.as_posix()}')
@@ -139,12 +166,12 @@ def export(source, output, workdir, spec):
     args+=['-t',str(b-a),'-r','30','-c:v','libx264','-preset','fast','-crf','20','-pix_fmt','yuv420p','-c:a','aac','-b:a','192k','-movflags','+faststart',str(output)]
     run(args,600); return probe(output)
 
-def transcribe(source, model_name='small.en', vocabulary=''):
+def transcribe(source, model_name='small.en', vocabulary='', progress=None, threads=2):
     try: from faster_whisper import WhisperModel
     except ImportError: raise ValueError('Install optional faster-whisper dependency, or import timed captions')
-    if model_name not in ['tiny.en','base.en','small.en']: raise ValueError('Unknown transcription model')
+    if model_name not in ['tiny.en','base.en','small.en','distil-large-v3','large-v3-turbo']: raise ValueError('Unknown transcription model')
     if len(vocabulary)>500: raise ValueError('Vocabulary limit is 500 characters')
-    model=WhisperModel(model_name,device='cpu',compute_type='int8',cpu_threads=2)
+    model=WhisperModel(model_name,device='cpu',compute_type='int8',cpu_threads=max(1,min(8,int(threads))))
     import numpy as np
     pcm=subprocess.run(['ffmpeg','-v','error','-nostdin','-protocol_whitelist','file,pipe','-i',str(source),'-vn','-ac','1','-ar','16000','-f','s16le','pipe:1'],capture_output=True,timeout=180,check=True).stdout
     audio=np.frombuffer(pcm,dtype=np.int16).astype(np.float32)/32768.0
@@ -152,6 +179,7 @@ def transcribe(source, model_name='small.en', vocabulary=''):
     # Break on punctuation, a pause or a short readable phrase; retain word confidence for review.
     result=[]
     for row in rows:
+        if progress: progress(float(row.end))
         chunk=[]
         def flush():
             if not chunk: return
