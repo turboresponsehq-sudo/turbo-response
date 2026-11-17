@@ -1,0 +1,50 @@
+{
+  "caption_revision_persistence": "passed",
+  "stale_edit_guard": "passed",
+  "srt_vtt_roundtrip": "passed",
+  "youtube_reference_without_download": "passed",
+  "unsafe_source_url": "rejected",
+  "semantic_candidate_count": 2,
+  "package_render_seconds": 15.966,
+  "ranking_seconds": 1.301,
+  "outputs": [
+    {
+      "clip": 1,
+      "start": 24.38,
+      "end": 35.93,
+      "title": "Look Celia, we have to follow our passions",
+      "media": {
+        "duration": 11.566667,
+        "width": 1080,
+        "height": 1920,
+        "audio": true,
+        "mime": "video/mp4"
+      }
+    },
+    {
+      "clip": 2,
+      "start": 37.18,
+      "end": 44.99,
+      "title": "Alright fine, I'm freaked out",
+      "media": {
+        "duration": 7.833333,
+        "width": 1080,
+        "height": 1920,
+        "audio": true,
+        "mime": "video/mp4"
+      }
+    }
+  ],
+  "regression": {
+    "automatic_small_en_transcription_job": "passed",
+    "speech_test_transcription_seconds": 8.038,
+    "vertical_landscape_square_exports": "passed",
+    "manual_crop": "passed",
+    "original_photo_and_video_frame_graphics": "passed",
+    "invalid_ranges_and_host": "rejected",
+    "python_compile": "passed",
+    "javascript_parse": "passed",
+    "ui_element_references": "passed",
+    "git_diff_whitespace": "passed"
+  }
+}

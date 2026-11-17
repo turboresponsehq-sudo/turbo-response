@@ -42,6 +42,39 @@ def ass_file(path, captions, start, end, width, height):
         rows.append(f'Dialogue: 0,{stamp(a-start)},{stamp(b-start)},Default,,0,0,0,,{{\\fad(90,90)}}{clean}\n')
     path.write_text(header+''.join(rows))
 
+def faces(image):
+    try:
+        import cv2, numpy as np
+        array=np.asarray(image.convert('RGB'));factor=min(1,960/image.width)
+        gray=cv2.cvtColor(array,cv2.COLOR_RGB2GRAY)
+        if factor<1:gray=cv2.resize(gray,None,fx=factor,fy=factor)
+        detector=cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
+        found=detector.detectMultiScale(gray,scaleFactor=1.1,minNeighbors=5,minSize=(25,25))
+        return [tuple(float(v)/factor for v in box) for box in found]
+    except ImportError:return []
+
+def fitted_photo(image,size):
+    found=faces(image);centering=(.5,.35)
+    if found:
+        x,y,w,h=max(found,key=lambda box:box[2]*box[3]);cx,cy=x+w/2,y+h/2
+        ratio=size[0]/size[1];cw=min(image.width,image.height*ratio);ch=min(image.height,image.width/ratio)
+        center_x=max(0,min(1,(cx-cw/2)/(image.width-cw))) if image.width>cw else .5
+        center_y=max(0,min(1,(cy-ch*.4)/(image.height-ch))) if image.height>ch else .35
+        centering=(center_x,center_y)
+    return ImageOps.fit(image,size,centering=centering)
+
+def choose_frame(source,work,start,end):
+    candidates=[]
+    for i,fraction in enumerate([.25,.5,.75]):
+        at=start+(end-start)*fraction;path=work/f'frame{i}.png'
+        run(['ffmpeg','-v','error','-nostdin','-y','-protocol_whitelist','file,pipe','-ss',str(at),'-i',str(source),'-frames:v','1',str(path)])
+        with Image.open(path) as im:
+            found=faces(im);score=max((box[2]*box[3] for box in found),default=0)
+        # Prefer a face-containing frame; midpoint is the fallback.
+        candidates.append((score,1 if i==1 else 0,path,at,len(found)))
+    best=max(candidates,key=lambda c:(c[0],c[1]))
+    return best[2],{'time':round(best[3],3),'faces_detected':best[4],'method':'frontal-face sampling; review required'}
+
 def thumbnail(photo, output, preset, title, accent='#d8272f'):
     if preset not in PRESETS: raise ValueError('Unknown graphics preset')
     if not title.strip() or len(title)>110: raise ValueError('Title must have 1–110 characters')
@@ -52,9 +85,9 @@ def thumbnail(photo, output, preset, title, accent='#d8272f'):
         with Image.open(photo) as source:
             source=ImageOps.exif_transpose(source).convert('RGB')
             if preset=='title-thumbnail':
-                pw=360; crop=ImageOps.fit(source,(pw,h),centering=(.5,.35)); im.paste(crop,((w-pw)//2,0))
+                pw=360; crop=fitted_photo(source,(pw,h)); im.paste(crop,((w-pw)//2,0))
             else:
-                ph=int(h*.68); im.paste(ImageOps.fit(source,(w,ph),centering=(.5,.35)),(0,0))
+                ph=int(h*.68); im.paste(fitted_photo(source,(w,ph)),(0,0))
     d=ImageDraw.Draw(im); d.rectangle((0,0,w,12),fill=accent)
     if preset=='title-thumbnail':
         # A centered subject stays clear; text is balanced in the side panels.
@@ -83,40 +116,59 @@ def export(source, output, workdir, spec):
     fmt=spec.get('format','vertical'); sizes={'vertical':(1080,1920),'landscape':(1920,1080),'square':(1080,1080)}
     if fmt not in sizes: raise ValueError('Unknown export format')
     w,h=sizes[fmt]; mode=spec.get('fit','contain'); focus=float(spec.get('focus',.5))
-    if not math.isfinite(focus) or not 0<=focus<=1 or mode not in ['contain','crop']: raise ValueError('Invalid framing')
+    if not math.isfinite(focus) or not 0<=focus<=1 or mode not in ['contain','crop','blur']: raise ValueError('Invalid framing')
     caps=segments(spec.get('captions',[]),meta['duration']); ass=workdir/'captions.ass'; ass_file(ass,caps,a,b,w,h)
     # All filter paths are generated server-side UUID directories, not user text.
-    vf=(f'scale={w}:{h}:force_original_aspect_ratio=decrease,pad={w}:{h}:(ow-iw)/2:(oh-ih)/2:color=black' if mode=='contain' else f'scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h}:(iw-ow)*{focus}:(ih-oh)/2')
-    vf+=',setsar=1'
-    if spec.get('title'):
-        banner=workdir/'banner.png'; thumbnail(None,banner,'title-thumbnail',spec['title'],spec.get('accent','#d8272f'))
-        vf=f'[0:v]{vf}[base];[base][1:v]overlay=0:0'
-        vf+=f',subtitles={ass.as_posix()}' if caps else ''
-        vf+='[out]'
+    if mode=='blur':
+        vf=f'[0:v]split[bg][fg];[bg]scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},boxblur=24:2[blur];[fg]scale={w}:{h}:force_original_aspect_ratio=decrease[fgfit];[blur][fgfit]overlay=(W-w)/2:(H-h)/2,setsar=1[base]'
     else:
-        vf+=f',subtitles={ass.as_posix()}' if caps else ''
+        framing=(f'scale={w}:{h}:force_original_aspect_ratio=decrease,pad={w}:{h}:(ow-iw)/2:(oh-ih)/2:color=black' if mode=='contain' else f'scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h}:(iw-ow)*{focus}:(ih-oh)/2')
+        vf=f'[0:v]{framing},setsar=1[base]'
     args=['ffmpeg','-v','error','-nostdin','-y','-threads','2','-protocol_whitelist','file,pipe','-ss',str(a),'-i',str(source)]
-    if spec.get('title'): args+=['-i',str(banner),'-filter_complex_threads','1','-filter_complex',vf,'-map','[out]','-map','0:a?']
-    else: args+=['-vf',vf,'-map','0:v:0','-map','0:a?']
+    last='base'
+    if spec.get('title'):
+        banner=workdir/'banner.png';thumbnail(None,banner,'title-thumbnail',spec['title'],spec.get('accent','#d8272f'))
+        args+=['-i',str(banner)];vf+=';[base][1:v]overlay=0:0[branded]';last='branded'
+    filters=[]
+    if caps:filters.append(f'subtitles={ass.as_posix()}')
+    if spec.get('attribution'):
+        credit=workdir/'credit.txt';credit.write_text(str(spec['attribution'])[:150].replace('\n',' '))
+        filters.append(f"drawtext=fontfile={FONT}:textfile={credit.as_posix()}:fontsize=24:fontcolor=white:box=1:boxcolor=black@0.75:x=(w-tw)/2:y=h-65")
+    vf+=f';[{last}]'+(','.join(filters) if filters else 'null')+'[out]'
+    args+=['-filter_complex_threads','1','-filter_complex',vf,'-map','[out]','-map','0:a?']
     args+=['-t',str(b-a),'-r','30','-c:v','libx264','-preset','fast','-crf','20','-pix_fmt','yuv420p','-c:a','aac','-b:a','192k','-movflags','+faststart',str(output)]
     run(args,600); return probe(output)
 
-def transcribe(source):
+def transcribe(source, model_name='small.en', vocabulary=''):
     try: from faster_whisper import WhisperModel
     except ImportError: raise ValueError('Install optional faster-whisper dependency, or import timed captions')
-    model=WhisperModel('tiny.en',device='cpu',compute_type='int8',cpu_threads=2)
+    if model_name not in ['tiny.en','base.en','small.en']: raise ValueError('Unknown transcription model')
+    if len(vocabulary)>500: raise ValueError('Vocabulary limit is 500 characters')
+    model=WhisperModel(model_name,device='cpu',compute_type='int8',cpu_threads=2)
     import numpy as np
     pcm=subprocess.run(['ffmpeg','-v','error','-nostdin','-protocol_whitelist','file,pipe','-i',str(source),'-vn','-ac','1','-ar','16000','-f','s16le','pipe:1'],capture_output=True,timeout=180,check=True).stdout
     audio=np.frombuffer(pcm,dtype=np.int16).astype(np.float32)/32768.0
-    rows,info=model.transcribe(audio,beam_size=5,vad_filter=True,word_timestamps=True)
-    # Short phrase grouping for legibility; review remains necessary.
+    rows,info=model.transcribe(audio,beam_size=5,vad_filter=True,word_timestamps=True,initial_prompt=vocabulary or None,condition_on_previous_text=False)
+    # Break on punctuation, a pause or a short readable phrase; retain word confidence for review.
     result=[]
     for row in rows:
-        words=list(row.words or [])
-        for i in range(0,len(words),6):
-            chunk=words[i:i+6]
-            result.append({'start':round(chunk[0].start,3),'end':round(chunk[-1].end,3),'text':''.join(w.word for w in chunk).strip()})
+        chunk=[]
+        def flush():
+            if not chunk: return
+            confidence=sum(w.probability for w in chunk)/len(chunk)
+            a,b=round(chunk[0].start,3),round(chunk[-1].end,3)
+            if b>a:
+                result.append({'start':a,'end':b,'text':''.join(w.word for w in chunk).strip(),
+                               'confidence':float(round(confidence,3)),'review':bool(confidence<.8),
+                               'words':[{'start':round(w.start,3),'end':round(w.end,3),'text':w.word.strip(),'confidence':float(round(w.probability,3))} for w in chunk]})
+            chunk.clear()
+        for w in row.words or []:
+            if chunk and w.start-chunk[-1].end>.6: flush()
+            chunk.append(w)
+            if len(chunk)>=6 or re.search(r'[.!?]$',w.word.strip()): flush()
+        flush()
     return result
+
 
 def suggestions(captions, duration):
     # Transparent baseline heuristic, not a semantic or virality model.

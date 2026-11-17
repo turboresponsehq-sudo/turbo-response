@@ -2,9 +2,9 @@
 import json, mimetypes, os, sqlite3, threading, time, uuid
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, parse_qs
 from concurrent.futures import ThreadPoolExecutor
-import media
+import media, captions, highlights, zipfile
 BASE=Path(__file__).resolve().parent
 STATE=Path(os.environ.get('STUDIO_STATE',BASE/'.state')).resolve(); STATE.mkdir(parents=True,exist_ok=True)
 POOL=ThreadPoolExecutor(max_workers=1)
@@ -15,11 +15,23 @@ def sql(query,args=(),one=False):
     return (rows[0] if rows else None) if one else rows
 sql('CREATE TABLE IF NOT EXISTS assets(id TEXT PRIMARY KEY,name TEXT,path TEXT,kind TEXT,meta TEXT)')
 sql('CREATE TABLE IF NOT EXISTS jobs(id TEXT PRIMARY KEY,asset TEXT,kind TEXT,status TEXT,result TEXT,error TEXT,seconds REAL)')
+sql('CREATE TABLE IF NOT EXISTS caption_revisions(asset TEXT,revision INTEGER,rows TEXT,model TEXT,reviewed INTEGER, PRIMARY KEY(asset,revision))')
+sql('CREATE TABLE IF NOT EXISTS source_notes(asset TEXT PRIMARY KEY,url TEXT)')
 sql("UPDATE jobs SET status='failed',error='Process restarted. Review and retry.' WHERE status IN ('queued','running')")
 def asset(a):
     row=sql('SELECT * FROM assets WHERE id=?',(a,),True)
     if not row: raise ValueError('Asset not found')
     return row
+
+def save_captions(a,rows,model,reviewed=False,expected=None):
+    with sqlite3.connect(DB) as c:
+        c.execute('BEGIN IMMEDIATE')
+        previous=c.execute('SELECT max(revision) FROM caption_revisions WHERE asset=?',(a,)).fetchone()[0]
+        previous=previous or 0
+        if expected is not None and expected!=previous: raise ValueError('Captions changed. Reload before saving.')
+        revision=previous+1
+        c.execute('INSERT INTO caption_revisions VALUES (?,?,?,?,?)',(a,revision,json.dumps(rows),model,int(reviewed)))
+    return revision
 
 def execute(job,kind,a,spec):
     started=time.monotonic(); folder=STATE/job; folder.mkdir(exist_ok=True)
@@ -38,8 +50,38 @@ def execute(job,kind,a,spec):
             result={'download':f'/files/{job}/graphic.png','preset':spec['preset'],'size':media.PRESETS[spec['preset']]}
         elif kind=='transcribe':
             if not json.loads(asset(a)['meta']).get('audio'): raise ValueError('Video contains no audio')
-            result={'captions':media.transcribe(source),'model':'faster-whisper tiny.en CPU; review required'}
+            model=spec.get('model','small.en')
+            result={'captions':media.transcribe(source,model,spec.get('vocabulary','')),'model':model,'review_required':True}
+            result['revision']=save_captions(a,result['captions'],model)
             (folder/'captions.json').write_text(json.dumps(result,indent=2)); result['download']=f'/files/{job}/captions.json'
+        elif kind=='highlights':
+            rows=media.segments(spec.get('captions',[]),media.probe(source)['duration'])
+            result={'clips':highlights.rank(rows,media.probe(source)['duration'],spec.get('count',5),spec.get('min_seconds',12),spec.get('max_seconds',45),spec.get('topic',''),spec.get('method','semantic')),'warning':'Editorial suggestions, not predicted views. Review source and boundaries.'}
+            (folder/'highlights.json').write_text(json.dumps(result,indent=2));result['download']=f'/files/{job}/highlights.json'
+        elif kind=='package':
+            clips=spec.get('clips',[])
+            if not isinstance(clips,list) or not 1<=len(clips)<=5:raise ValueError('Choose 1–5 clips')
+            result={'outputs':[],'source':spec.get('source_url',''),'attribution':str(spec.get('attribution',''))[:1000]}
+            for i,clip in enumerate(clips,1):
+                work=folder/f'work{i}';work.mkdir()
+                title=str(clip.get('title','Selected moment'))[:110]
+                recipe={**spec,**clip,'title':title if spec.get('overlay',True) else ''}
+                target=folder/f'clip{i}.mp4';meta=media.export(source,target,work,recipe)
+                frame,frame_review=media.choose_frame(source,work,float(clip['start']),float(clip['end']))
+                for preset,suffix in [('title-thumbnail','title'),('reel-cover','cover')]:
+                    media.thumbnail(frame,folder/f'clip{i}-{suffix}.png',preset,title,spec.get('accent','#d8272f'))
+                rows=media.segments(spec.get('captions',[]),media.probe(source)['duration'])
+                (folder/f'clip{i}.srt').write_text(captions.serialize(rows,'srt',float(clip['start']),float(clip['end'])))
+                result['outputs'].append({'clip':i,'thumbnail_frame':frame_review,'start':clip['start'],'end':clip['end'],'title':title,'video':f'/files/{job}/clip{i}.mp4','title_thumbnail':f'/files/{job}/clip{i}-title.png','reel_cover':f'/files/{job}/clip{i}-cover.png','subtitles':f'/files/{job}/clip{i}.srt','media':meta})
+            archive_manifest=json.loads(json.dumps(result))
+            for item in archive_manifest['outputs']:
+                for key in ['video','title_thumbnail','reel_cover','subtitles']:
+                    item[key]=item[key].rsplit('/',1)[-1]
+            (folder/'manifest.json').write_text(json.dumps(archive_manifest,indent=2))
+            with zipfile.ZipFile(folder/'package.zip','w',zipfile.ZIP_DEFLATED) as z:
+                for f in sorted(folder.iterdir()):
+                    if f.is_file() and f.name!='package.zip':z.write(f,f.name)
+            result['download']=f'/files/{job}/package.zip'
         else: raise ValueError('Unknown job type')
         sql("UPDATE jobs SET status='completed',result=?,seconds=? WHERE id=?",(json.dumps(result),round(time.monotonic()-started,3),job))
     except Exception as e:
@@ -58,6 +100,15 @@ class Handler(BaseHTTPRequestHandler):
         if not self.safe(): return self.reply(403,{'error':'Local origin required'})
         path=urlsplit(self.path).path
         if path=='/api/assets': return self.reply(200,sql('SELECT id,name,kind,meta FROM assets ORDER BY rowid DESC'))
+        if path=='/api/captions':
+            a=parse_qs(urlsplit(self.path).query).get('asset',[''])[0]
+            try:asset(a)
+            except ValueError:return self.reply(404,{'error':'Asset not found'})
+            row=sql('SELECT * FROM caption_revisions WHERE asset=? ORDER BY revision DESC LIMIT 1',(a,),True)
+            if row:row['captions']=json.loads(row.pop('rows'))
+            data=row or {'captions':[],'revision':0}
+            note=sql('SELECT url FROM source_notes WHERE asset=?',(a,),True);data['source_url']=note['url'] if note else ''
+            return self.reply(200,data)
         if path=='/api/jobs':
             rows=sql('SELECT * FROM jobs ORDER BY rowid DESC LIMIT 50')
             for r in rows: r['result']=json.loads(r['result']) if r['result'] else None
@@ -65,7 +116,7 @@ class Handler(BaseHTTPRequestHandler):
         content_type=None
         if path.startswith('/files/'):
             parts=path.split('/')
-            if len(parts)!=4 or not __import__('re').fullmatch('[a-f0-9]{32}',parts[2]) or parts[3] not in ['clip.mp4','graphic.png','captions.json']: return self.reply(404,{'error':'Not found'})
+            if len(parts)!=4 or not __import__('re').fullmatch('[a-f0-9]{32}',parts[2]) or not __import__('re').fullmatch(r'(clip\.mp4|graphic\.png|captions\.json|highlights\.json|manifest\.json|package\.zip|clip[1-5](?:-(?:title|cover))?\.(?:mp4|png|srt))',parts[3]): return self.reply(404,{'error':'Not found'})
             file=STATE/parts[2]/parts[3]
         elif path.startswith('/asset/'):
             try:
@@ -126,7 +177,17 @@ class Handler(BaseHTTPRequestHandler):
             if not 0<length<=1024*1024: raise ValueError('Request limit 1 MB')
             spec=json.loads(self.rfile.read(length)); a=spec['asset']; row=asset(a)
             if path=='/api/suggestions': return self.reply(200,media.suggestions(media.segments(spec['captions'],json.loads(row['meta'])['duration']),json.loads(row['meta'])['duration']))
-            kind={'/api/export':'export','/api/thumbnail':'thumbnail','/api/transcribe':'transcribe'}.get(path)
+            if path=='/api/captions':
+                rows=captions.parse(spec['subtitle_text']) if 'subtitle_text' in spec else spec.get('captions',[])
+                rows=media.segments(rows,json.loads(row['meta'])['duration'])
+                revision=save_captions(a,rows,'edited/imported',bool(spec.get('reviewed')),spec.get('expected_revision'))
+                return self.reply(200,{'captions':rows,'revision':revision})
+            if path=='/api/source':
+                parsed=urlsplit(str(spec.get('url','')))
+                if parsed.scheme!='https' or parsed.hostname not in ['youtube.com','www.youtube.com','youtu.be','m.youtube.com']:raise ValueError('Enter an HTTPS YouTube source URL')
+                sql('INSERT OR REPLACE INTO source_notes VALUES (?,?)',(a,spec['url']))
+                return self.reply(200,{'saved':True,'note':'Reference only; upload your authorized original or Studio export.'})
+            kind={'/api/highlights':'highlights','/api/package':'package','/api/export':'export','/api/thumbnail':'thumbnail','/api/transcribe':'transcribe'}.get(path)
             if not kind: return self.reply(404,{'error':'Not found'})
             if kind!='thumbnail' and row['kind']!='video': raise ValueError('Choose a video')
             if sql("SELECT count(*) n FROM jobs WHERE status IN ('running','queued')",one=True)['n']>=3: raise ValueError('Queue full; wait for exports to finish')

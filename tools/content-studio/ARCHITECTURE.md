@@ -1,5 +1,10 @@
 # Creator Automations production studio — implementation decision
 
+**Current update:** See V2_REVIEW.md and RENDER_AUDIT.json. The workspace audit is
+now complete and the prototype has local semantic ranking, saved caption revisions,
+SRT/VTT interchange, package rendering and improved thumbnail selection. The
+sections below preserve the initial audit and planning assumptions for context.
+
 Audit and research: November 17, 2026. Recommended direction: own the project,
 editing recipes, brand templates, approvals, exports and billing controls; buy
 specialized inference by API when a real output test justifies it. Start with
@@ -223,6 +228,5 @@ internal incremental development can proceed in smaller validated steps.
 6. Introduce package proposals (five reels + banners + covers + trailer + longer
    highlight), revisions/approvals and actual cost ledgers. No automatic publishing.
 
-Next required user decision: select Demarcus's Render workspace for read-only
-inventory. No selected workspace was assumed. No paid services are necessary to
-review the current outputs and code.
+The subsequent Render audit and next review decision are recorded in V2_REVIEW.md.
+No paid services are necessary to review the current outputs and code.

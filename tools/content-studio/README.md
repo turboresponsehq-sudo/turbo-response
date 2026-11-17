@@ -5,6 +5,9 @@ production config, dependencies, database migrations, or Render services change.
 Do not mount this local server publicly. It is single-operator software without
 client authentication or tenant isolation.
 
+Read V2_REVIEW.md for the current features, completed Render audit and review outputs.
+The initial architecture notes document the earlier baseline.
+
 ## Run locally
 
 Requires Python 3.11+, Node only for JS syntax checking, FFmpeg/ffprobe with
@@ -14,7 +17,7 @@ libx264 and libass, and DejaVu Sans fonts at the path in media.py. On Linux:
 cd tools/content-studio
 python3 -m pip install -r requirements.txt
 # Optional local speech recognition. Initial use downloads tiny.en model weights.
-python3 -m pip install faster-whisper socksio
+python3 -m pip install -r requirements-ai.txt
 python3 server.py
 ```
 
@@ -39,11 +42,11 @@ there is no drag-and-drop design canvas yet.
 
 - No YouTube downloader. Upload your authorized original/Studio export. Pasted
   YouTube URLs are not an ingestion feature in this proof.
-- No semantic clip ranking: suggestions are explicitly labeled keyword heuristics.
+- Semantic ranking is local and experimental; suggestions are not virality predictions.
 - No speaker tracking, background removal, joining multiple sources, audio mix,
   transitions, client approvals, object storage, or paid generation integration.
-- Tiny English Whisper proved the transcription path. It is not an agency-grade
-  accuracy claim. Benchmark a stronger model/API with ATL slang and artist names.
+- Small English Whisper is the current default. Tiny/base remain draft options.
+  Accuracy still needs testing with ATL slang and artist names.
 - One background thread, SQLite job states, queue cap 3, asset cap 50, source
   duration cap 2 hours, export cap 5 minutes. Jobs interrupted by restart fail
   explicitly and can be submitted again. No distributed leases or automatic retries.
@@ -72,3 +75,20 @@ tracking, fashion generation or lip sync.
 The thumbnail photo is the existing public site asset
 `client/public/zakhy-assets/zakhy-card-avatar-current.jpg`; no face was regenerated.
 See ARCHITECTURE.md for audit, phased design, verified pricing sources and gates.
+
+## Round 2 workflow
+
+Transcribe with small.en, load captions, edit rows and save a reviewed revision.
+You can import/export SRT/VTT. Add a YouTube link as a reference beside your upload.
+Choose clip duration limits and optional topic, then find semantic candidate moments.
+Review candidates, adjust a range and apply the editor changes to that candidate.
+Render selected clips as a package with MP4, SRT, Title Thumbnails and Reel Covers.
+Original images remain authentic; optional face detection only chooses crops.
+
+For the extended integration test:
+
+```sh
+python3 extended_test.py /path/to/authorized-video.mp4 /path/to/captions.json /path/to/output
+```
+
+The extended test starts/stops its own loopback server and cleans its temporary state.
