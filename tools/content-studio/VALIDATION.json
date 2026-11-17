@@ -1,0 +1,54 @@
+{
+  "transcription": 4.006,
+  "outputs": [
+    {
+      "format": "vertical",
+      "seconds": 3.609,
+      "result": {
+        "duration": 9.0,
+        "width": 1080,
+        "height": 1920,
+        "audio": true
+      }
+    },
+    {
+      "format": "landscape",
+      "seconds": 3.54,
+      "result": {
+        "duration": 9.0,
+        "width": 1920,
+        "height": 1080,
+        "audio": true
+      }
+    },
+    {
+      "format": "square",
+      "seconds": 2.179,
+      "result": {
+        "duration": 9.0,
+        "width": 1080,
+        "height": 1080,
+        "audio": true
+      }
+    }
+  ],
+  "crop_export": {
+    "duration": 2.0,
+    "width": 1080,
+    "height": 1920,
+    "audio": true
+  },
+  "video_frame_thumbnail": {
+    "preset": "title-thumbnail",
+    "size": [
+      1080,
+      360
+    ]
+  },
+  "invalid_range": "rejected",
+  "dns_rebinding": "rejected",
+  "missing_asset": "rejected",
+  "permission_required": "passed",
+  "byte_range_and_mime": "passed",
+  "live_action_dialogue": "6-second vertical export completed; human review required"
+}
