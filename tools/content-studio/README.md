@@ -106,3 +106,32 @@ The test scripts are longform_test.py, caption_audit.py, caption_turbo_pass.py,
 validate_longform.py and package_longform.py. Run each stage explicitly; source
 download and license verification are separate authorized steps. No YouTube
 downloader or paid generation provider is included.
+
+
+## Optional Groq transcription (isolated development only)
+
+A new opt-in **Transcription provider** selector supports **Groq Whisper Large v3 Turbo** alongside the existing local Whisper. Groq receives compressed audio chunks (not the source video); source video remains local. It may consume GroqCloud usage/credits and must only be used with permission for the source recording. Automatic captions remain review drafts.
+
+The development Studio does **not** inherit environment variables from the existing production Render backend. Having `GROQ_API_KEY` on the live backend does not connect this isolated local tool.
+
+For a local test, set the key in the Studio process environment, **never inside source code, GitHub, a browser field, or a chat message**. For example, in a local Linux/macOS shell:
+
+```sh
+read -rs GROQ_API_KEY
+export GROQ_API_KEY
+python3 server.py
+```
+
+The shell's prompt is silent; paste the GroqCloud key into that shell only, then press Enter. Select **Groq Whisper Large v3 Turbo** in the local Studio UI, load an authorized video, and click **Transcribe video**. Switch back to **Local Whisper** if Groq is not desired. Do not publicly expose the local server.
+
+The adapter converts audio to 16kHz mono compressed MP3, chunks long recordings in overlapping 15-minute blocks, asks Groq for word timestamps, and merges timed captions. Chunks are deleted after a response, including failures. Transcripts use separate cache identities for local and Groq providers; a correction to a caption does not require another Groq call. The current prototype supports English speech and requires human checks on names, slang, overlapping speakers, and cuts.
+
+**Offline tests (no API usage):**
+
+```sh
+python3 -m unittest -v test_groq.py
+python3 -m py_compile groq_transcribe.py quick_clip.py server.py test_groq.py
+node --check web/app.js
+```
+
+No real request has been submitted to Groq by this change. A controlled, authorized short-audio A/B test and cost/latency measurement are still needed before declaring a performance improvement. Keep all changes isolated from production.
