@@ -24,7 +24,7 @@ $('outBtn').onclick=()=>{$('end').value=$('source').currentTime.toFixed(2)};
 $('previewBtn').onclick=()=>action(async()=>{const a=Number($('start').value),b=Number($('end').value);if(!(b>a))throw Error('End must follow start');$('source').currentTime=a;await $('source').play();});
 $('source').ontimeupdate=()=>{if($('source').currentTime>=Number($('end').value))$('source').pause()};
 async function queue(path,body){const j=await api(path,body);activeJob=j.id;status('Job queued. Review and downloads appear below when finished.');await jobs();}
-$('transcribeBtn').onclick=()=>action(()=>queue('/api/transcribe',{asset:$('assets').value,model:$('model').value,vocabulary:$('vocabulary').value,mode:$('productionMode').value}));
+$('transcribeBtn').onclick=()=>action(()=>queue('/api/transcribe',{asset:$('assets').value,model:$('model').value,provider:$('transcriptionProvider').value,vocabulary:$('vocabulary').value,mode:$('productionMode').value}));
 $('saveCaptionsBtn').onclick=()=>action(async()=>{const r=await api('/api/captions',{asset:$('assets').value,captions:rows(),expected_revision:revision,reviewed:true});revision=r.revision;renderCaptions(r.captions);status('Reviewed captions saved as revision '+revision)});
 $('importCaptionsBtn').onclick=()=>action(async()=>{const f=$('subtitleFile').files[0];if(!f||f.size>1024*1024)throw Error('Choose an SRT/VTT file up to 1 MB');const r=await api('/api/captions',{asset:$('assets').value,subtitle_text:await f.text(),expected_revision:revision,reviewed:false});revision=r.revision;renderCaptions(r.captions);status('Subtitles imported. Review before export.')});
 function clock(t,sep){const ms=Math.round(t*1000),pad=(n,s=2)=>String(n).padStart(s,'0');return `${pad(Math.floor(ms/3600000))}:${pad(Math.floor(ms/60000)%60)}:${pad(Math.floor(ms/1000)%60)}${sep}${pad(ms%1000,3)}`}
@@ -40,4 +40,18 @@ $('finalPackageBtn').onclick=()=>action(()=>createPackage(true));
 async function jobs(){const rows=await api('/api/jobs');for(const r of rows){if(completed.has(r.id))continue;let card=document.getElementById('job-'+r.id);if(!card){card=document.createElement('div');card.id='job-'+r.id;card.className='job';$('jobs').prepend(card)}card.replaceChildren();const label=document.createElement('b');label.textContent=`${r.kind} / ${r.status}${r.seconds?' · '+r.seconds+'s processing':''}`;card.append(label);if(r.error){const p=document.createElement('pre');p.textContent=r.error;card.append(p)}if(r.result){const a=document.createElement('a');a.href=r.result.download;a.textContent='Download finished file';a.download='';card.append(document.createElement('br'),a);if(r.kind==='export'){const v=document.createElement('video');v.src=r.result.download;v.controls=true;v.preload='metadata';card.append(v)}if(r.kind==='thumbnail'){const im=document.createElement('img');im.src=r.result.download;im.alt='Rendered '+r.result.preset;card.append(im)}if(r.kind==='transcribe')card.append(button('Load saved captions for review',async()=>{$('assets').value=r.asset;await selectAsset();status('Saved captions loaded. Check text and timings before export.')}));if(r.kind==='highlights')card.append(button(`Review ${r.result.clips.length} candidates`,async()=>{if($('assets').value!==r.asset){$('assets').value=r.asset;await selectAsset()}candidates=r.result.clips;renderCandidates();status(r.result.warning)}));if(r.kind==='package')for(const out of r.result.outputs){const v=document.createElement('video');v.src=out.video;v.controls=true;v.preload='metadata';card.append(v)}}if(['failed','completed'].includes(r.status)){completed.add(r.id);if(activeJob===r.id)status(r.status==='failed'?'Job failed. See error below.':'Finished. Review and download below.')}}}
 action(async()=>{await loadAssets();await jobs()});setInterval(()=>action(jobs),2000);
 
-$('productionMode').onchange=()=>{$('includeGraphics').checked=$('productionMode').value==='full';$('model').disabled=$('productionMode').value==='quick';$('exportBtn').textContent=$('productionMode').value==='quick'?'Render lightweight preview':'Render final MP4';status($('productionMode').value==='quick'?'Quick: batched small English transcript, lightweight previews, optional graphics. Review before final export.':'Full Package: final quality and artwork.');};$('model').disabled=true;$('exportBtn').textContent='Render lightweight preview';
+function refreshSpeechControls(){
+  const quick=$('productionMode').value==='quick';
+  const groq=$('transcriptionProvider').value==='groq';
+  $('model').disabled=quick||groq;
+  $('includeGraphics').checked=$('productionMode').value==='full';
+  $('exportBtn').textContent=quick?'Render lightweight preview':'Render final MP4';
+  status(groq
+    ?'Groq selected: speech audio will be sent to GroqCloud when you transcribe. API usage may incur charges.'
+    :(quick?'Quick: local batched Whisper, lightweight previews; choose final export after review.'
+            :'Full Package: local Whisper, final-quality exports and artwork.'));
+}
+$('productionMode').onchange=refreshSpeechControls;
+$('transcriptionProvider').onchange=refreshSpeechControls;
+$('model').disabled=true;
+$('exportBtn').textContent='Render lightweight preview';
