@@ -137,14 +137,25 @@ def export(source, output, workdir, spec):
     if not all(math.isfinite(x) for x in [a,b]) or not 0<=a<b<=meta['duration']+.05 or b-a>300: raise ValueError('Choose a valid range, maximum 5 minutes per export')
     fmt=spec.get('format','vertical'); sizes={'vertical':(1080,1920),'landscape':(1920,1080),'square':(1080,1080)}
     if fmt not in sizes: raise ValueError('Unknown export format')
-    w,h=sizes[fmt]; mode=spec.get('fit','contain'); focus=float(spec.get('focus',.5))
+    profile=spec.get('profile','final')
+    if profile not in ['preview','final']:raise ValueError('Choose preview or final quality')
+    w,h=sizes[fmt]
+    if profile=='preview':w,h={'vertical':(360,640),'landscape':(640,360),'square':(480,480)}[fmt]
+    encoder_threads=int(spec.get('encoder_threads',2))
+    if not 1<=encoder_threads<=4:raise ValueError('Encoder threads must be 1–4')
+    mode=spec.get('fit','contain'); focus=float(spec.get('focus',.5))
     if not math.isfinite(focus) or not 0<=focus<=1 or mode not in ['contain','crop','blur']: raise ValueError('Invalid framing')
     caps=segments(spec.get('captions',[]),meta['duration']); ass=workdir/'captions.ass'; ass_file(ass,caps,a,b,w,h)
     # All filter paths are generated server-side UUID directories, not user text.
     if mode=='blur':
         vf=f'[0:v]split[bg][fg];[bg]scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},boxblur=24:2[blur];[fg]scale={w}:{h}:force_original_aspect_ratio=decrease[fgfit];[blur][fgfit]overlay=(W-w)/2:(H-h)/2,setsar=1[base]'
     else:
-        framing=(f'scale={w}:{h}:force_original_aspect_ratio=decrease,pad={w}:{h}:(ow-iw)/2:(oh-ih)/2:color=black' if mode=='contain' else f'scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h}:(iw-ow)*{focus}:(ih-oh)/2')
+        if mode=='contain':framing=f'scale={w}:{h}:force_original_aspect_ratio=decrease,pad={w}:{h}:(ow-iw)/2:(oh-ih)/2:color=black'
+        else:
+            # Crop original pixels first; avoid scaling thousands of pixels that will be discarded.
+            cw=max(2,int(min(meta['width'],meta['height']*w/h))//2*2)
+            ch=max(2,int(min(meta['height'],meta['width']*h/w))//2*2)
+            framing=f'crop={cw}:{ch}:(iw-ow)*{focus}:(ih-oh)/2,scale={w}:{h}'
         vf=f'[0:v]{framing},setsar=1[base]'
     args=['ffmpeg','-v','error','-nostdin','-y','-threads','2','-protocol_whitelist','file,pipe','-ss',str(a),'-i',str(source)]
     last='base'
@@ -155,15 +166,15 @@ def export(source, output, workdir, spec):
                 if prepared.size!=PRESETS['title-thumbnail']:raise ValueError('Prepared Title Thumbnail must be 1080x360')
         else:
             thumbnail(None,banner,'title-thumbnail',spec['title'],spec.get('accent','#d8272f'))
-        args+=['-i',str(banner)];vf+=';[base][1:v]overlay=0:0[branded]';last='branded'
+        args+=['-i',str(banner)];vf+=f';[1:v]scale={w}:{round(w/3)}[bannerfit];[base][bannerfit]overlay=0:0[branded]';last='branded'
     filters=[]
     if caps:filters.append(f'subtitles={ass.as_posix()}')
     if spec.get('attribution'):
         credit=workdir/'credit.txt';credit.write_text(str(spec['attribution'])[:150].replace('\n',' '))
-        filters.append(f"drawtext=fontfile={FONT}:textfile={credit.as_posix()}:fontsize=24:fontcolor=white:box=1:boxcolor=black@0.75:x=(w-tw)/2:y=h-65")
+        filters.append(f"drawtext=fontfile={FONT}:textfile={credit.as_posix()}:fontsize={max(7,round(w*.022))}:fontcolor=white:box=1:boxcolor=black@0.75:x=(w-tw)/2:y=h-{round(h*.034)}")
     vf+=f';[{last}]'+(','.join(filters) if filters else 'null')+'[out]'
     args+=['-filter_complex_threads','1','-filter_complex',vf,'-map','[out]','-map','0:a?']
-    args+=['-t',str(b-a),'-r','30','-c:v','libx264','-preset','fast','-crf','20','-pix_fmt','yuv420p','-c:a','aac','-b:a','192k','-movflags','+faststart',str(output)]
+    args+=['-t',str(b-a),'-r','20' if profile=='preview' else '30','-c:v','libx264','-threads',str(encoder_threads),'-preset','ultrafast' if profile=='preview' else 'fast','-crf','30' if profile=='preview' else '20','-pix_fmt','yuv420p','-c:a','aac','-b:a','64k' if profile=='preview' else '192k','-movflags','+faststart',str(output)]
     run(args,600); return probe(output)
 
 def transcribe(source, model_name='small.en', vocabulary='', progress=None, threads=2):

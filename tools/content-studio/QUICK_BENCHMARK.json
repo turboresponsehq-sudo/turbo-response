@@ -1,0 +1,144 @@
+{
+  "fresh": {
+    "download_seconds": 0,
+    "source_reused": true,
+    "source_hash_seconds": 0.452,
+    "transcription": {
+      "seconds": 350.766,
+      "decode_seconds": 8.635,
+      "model_load_seconds": 5.792,
+      "inference_seconds": 336.283,
+      "model": "small.en",
+      "precision": "int8",
+      "beam_size": 5,
+      "threads": 8,
+      "batch_size": 8,
+      "word_timestamps": true,
+      "captions": 2162,
+      "words": 9712,
+      "last_caption_end": 3536.47,
+      "peak_process_rss_MiB": 3454.4,
+      "transcript_cache_hit": false,
+      "whole_source_seconds": 3537.2118125
+    },
+    "highlights": {
+      "seconds": 15.546,
+      "cache_hit": false,
+      "cache_key": "0020a929de81b98d0cd51f51059126301485da3dec59050e24566b77243aa938"
+    },
+    "previews": {
+      "profile": "preview",
+      "workers": 2,
+      "wall_seconds": 10.821,
+      "first_clip_seconds": 3.287,
+      "graphics_enabled": false,
+      "graphics_job_seconds_sum": 0,
+      "render_job_seconds_sum": 18.821,
+      "bytes_total": 25761732,
+      "note": "Per-job seconds overlap when workers=2; use wall_seconds for elapsed time."
+    },
+    "time_to_first_preview_seconds": 370.051,
+    "time_to_all_previews_seconds": 377.585
+  },
+  "transcription_comparison": {
+    "baseline_words": 10272,
+    "quick_words": 9759,
+    "word_disagreement": 0.1593,
+    "note": "Different decoding batches can change output. This is model-to-model disagreement, not ground-truth word error rate. No independent reference exists."
+  },
+  "controlled": {
+    "preview-1workers": {
+      "profile": "preview",
+      "workers": 1,
+      "wall_seconds": 16.363,
+      "first_clip_seconds": 4.108,
+      "graphics_enabled": false,
+      "graphics_job_seconds_sum": 0,
+      "render_job_seconds_sum": 16.231,
+      "bytes_total": 28050058,
+      "note": "Per-job seconds overlap when workers=2; use wall_seconds for elapsed time."
+    },
+    "preview-2workers": {
+      "profile": "preview",
+      "workers": 2,
+      "wall_seconds": 10.378,
+      "first_clip_seconds": 4.443,
+      "graphics_enabled": false,
+      "graphics_job_seconds_sum": 0,
+      "render_job_seconds_sum": 19.01,
+      "bytes_total": 28050058,
+      "note": "Per-job seconds overlap when workers=2; use wall_seconds for elapsed time."
+    },
+    "final-1workers": {
+      "profile": "final",
+      "workers": 1,
+      "wall_seconds": 254.577,
+      "first_clip_seconds": 54.831,
+      "graphics_enabled": false,
+      "graphics_job_seconds_sum": 0,
+      "render_job_seconds_sum": 254.495,
+      "bytes_total": 130493629,
+      "note": "Per-job seconds overlap when workers=2; use wall_seconds for elapsed time."
+    },
+    "final-2workers": {
+      "profile": "final",
+      "workers": 2,
+      "wall_seconds": 150.004,
+      "first_clip_seconds": 62.285,
+      "graphics_enabled": false,
+      "graphics_job_seconds_sum": 0,
+      "render_job_seconds_sum": 273.921,
+      "bytes_total": 130490804,
+      "note": "Per-job seconds overlap when workers=2; use wall_seconds for elapsed time."
+    }
+  },
+  "full_package_compatibility": {
+    "profile": "final",
+    "workers": 2,
+    "wall_seconds": 52.506,
+    "first_clip_seconds": 52.505,
+    "graphics_enabled": true,
+    "graphics_job_seconds_sum": 1.711,
+    "render_job_seconds_sum": 50.721,
+    "bytes_total": 27716869,
+    "note": "Per-job seconds overlap when workers=2; use wall_seconds for elapsed time."
+  },
+  "warm": {
+    "transcript_cache": {
+      "elapsed_seconds": 0.603,
+      "source_hash_seconds": 0.591,
+      "inference_seconds": 0,
+      "cache_hit": true,
+      "cache_key": "39ec34a7c82c24d8b2e6b63a219b23fd5e9dd676324e07d614ab6214dafa96b3",
+      "source_sha256": "0e74c4341f3503e329edcd97eef116f9aaa116666cb3a744ffc702dbe1c6884f"
+    },
+    "highlight_cache": {
+      "seconds": 0.013,
+      "cache_hit": true,
+      "cache_key": "0020a929de81b98d0cd51f51059126301485da3dec59050e24566b77243aa938"
+    },
+    "previews": {
+      "profile": "preview",
+      "workers": 2,
+      "wall_seconds": 11.083,
+      "first_clip_seconds": 3.352,
+      "graphics_enabled": false,
+      "graphics_job_seconds_sum": 0,
+      "render_job_seconds_sum": 19.767,
+      "bytes_total": 25761732,
+      "note": "Per-job seconds overlap when workers=2; use wall_seconds for elapsed time."
+    },
+    "end_to_end_seconds": 11.7
+  },
+  "final_sample": {
+    "profile": "final",
+    "workers": 2,
+    "wall_seconds": 27.052,
+    "first_clip_seconds": 27.051,
+    "graphics_enabled": false,
+    "graphics_job_seconds_sum": 0,
+    "render_job_seconds_sum": 26.953,
+    "bytes_total": 13648004,
+    "note": "Per-job seconds overlap when workers=2; use wall_seconds for elapsed time."
+  }
+}

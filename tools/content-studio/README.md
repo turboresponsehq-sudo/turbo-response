@@ -5,7 +5,8 @@ production config, dependencies, database migrations, or Render services change.
 Do not mount this local server publicly. It is single-operator software without
 client authentication or tenant isolation.
 
-Read V2_REVIEW.md for the current features, completed Render audit and review outputs.
+Read QUICK_MODE.md for preview-first Quick Clip Mode and QUICK_BENCHMARK.md for the speed retest.
+Read V2_REVIEW.md for the earlier features, completed Render audit and review outputs.
 The initial architecture notes document the earlier baseline.
 
 ## Run locally
@@ -47,7 +48,7 @@ there is no drag-and-drop design canvas yet.
   transitions, client approvals, object storage, or paid generation integration.
 - Small English Whisper is the current default. Tiny/base remain draft options.
   Accuracy still needs testing with ATL slang and artist names.
-- One background thread, SQLite job states, queue cap 3, asset cap 50, source
+- One background job with up to two parallel package render slots, SQLite job states, queue cap 3, asset cap 50, source
   duration cap 2 hours, export cap 5 minutes. Jobs interrupted by restart fail
   explicitly and can be submitted again. No distributed leases or automatic retries.
 - Local storage is for the proof only. No media bytes belong in production SQL.

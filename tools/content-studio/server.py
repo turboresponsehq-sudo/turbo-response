@@ -4,7 +4,7 @@ from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
 from urllib.parse import urlsplit, parse_qs
 from concurrent.futures import ThreadPoolExecutor
-import media, captions, highlights, zipfile
+import media, captions, highlights, zipfile, quick_clip, shutil
 BASE=Path(__file__).resolve().parent
 STATE=Path(os.environ.get('STUDIO_STATE',BASE/'.state')).resolve(); STATE.mkdir(parents=True,exist_ok=True)
 POOL=ThreadPoolExecutor(max_workers=1)
@@ -51,32 +51,44 @@ def execute(job,kind,a,spec):
         elif kind=='transcribe':
             if not json.loads(asset(a)['meta']).get('audio'): raise ValueError('Video contains no audio')
             model=spec.get('model','small.en')
-            result={'captions':media.transcribe(source,model,spec.get('vocabulary','')),'model':model,'review_required':True}
+            if spec.get('mode')=='quick':
+                rows,cache_metrics=quick_clip.load_or_transcribe(source,folder,STATE/'transcript-cache',spec.get('vocabulary',''))
+                model='small.en batched CPU'
+                result={'captions':rows,'model':model,'review_required':True,'timing':cache_metrics}
+            else:
+                result={'captions':media.transcribe(source,model,spec.get('vocabulary','')),'model':model,'review_required':True}
             result['revision']=save_captions(a,result['captions'],model)
             (folder/'captions.json').write_text(json.dumps(result,indent=2)); result['download']=f'/files/{job}/captions.json'
         elif kind=='highlights':
             rows=media.segments(spec.get('captions',[]),media.probe(source)['duration'])
-            result={'clips':highlights.rank(rows,media.probe(source)['duration'],spec.get('count',5),spec.get('min_seconds',12),spec.get('max_seconds',45),spec.get('topic',''),spec.get('method','semantic')),'warning':'Editorial suggestions, not predicted views. Review source and boundaries.'}
+            if spec.get('mode')=='quick' and spec.get('method','semantic')=='semantic':
+                clips,timing=quick_clip.select_cached(rows,media.probe(source)['duration'],STATE/'highlight-cache',spec.get('topic',''),spec.get('count',5),spec.get('min_seconds',12),spec.get('max_seconds',45))
+                result={'clips':clips,'timing':timing}
+            else:result={'clips':highlights.rank(rows,media.probe(source)['duration'],spec.get('count',5),spec.get('min_seconds',12),spec.get('max_seconds',45),spec.get('topic',''),spec.get('method','semantic'))}
+            result['warning']='Editorial suggestions, not predicted views. Review source and boundaries.'
             (folder/'highlights.json').write_text(json.dumps(result,indent=2));result['download']=f'/files/{job}/highlights.json'
         elif kind=='package':
-            clips=spec.get('clips',[])
-            if not isinstance(clips,list) or not 1<=len(clips)<=5:raise ValueError('Choose 1–5 clips')
-            result={'outputs':[],'source':spec.get('source_url',''),'attribution':str(spec.get('attribution',''))[:1000]}
-            for i,clip in enumerate(clips,1):
-                work=folder/f'work{i}';work.mkdir()
-                title=str(clip.get('title','Selected moment'))[:110]
-                recipe={**spec,**clip,'title':title if spec.get('overlay',True) else ''}
-                target=folder/f'clip{i}.mp4';meta=media.export(source,target,work,recipe)
-                frame,frame_review=media.choose_frame(source,work,float(clip['start']),float(clip['end']))
-                for preset,suffix in [('title-thumbnail','title'),('reel-cover','cover')]:
-                    media.thumbnail(frame,folder/f'clip{i}-{suffix}.png',preset,title,spec.get('accent','#d8272f'))
-                rows=media.segments(spec.get('captions',[]),media.probe(source)['duration'])
-                (folder/f'clip{i}.srt').write_text(captions.serialize(rows,'srt',float(clip['start']),float(clip['end'])))
-                result['outputs'].append({'clip':i,'thumbnail_frame':frame_review,'start':clip['start'],'end':clip['end'],'title':title,'video':f'/files/{job}/clip{i}.mp4','title_thumbnail':f'/files/{job}/clip{i}-title.png','reel_cover':f'/files/{job}/clip{i}-cover.png','subtitles':f'/files/{job}/clip{i}.srt','media':meta})
+            mode=spec.get('mode','full')
+            if mode not in ['quick','full']:raise ValueError('Choose Quick Clip or Full Package mode')
+            graphics=spec.get('graphics',mode=='full');profile=spec.get('profile','preview' if mode=='quick' else 'final')
+            if not isinstance(graphics,bool):raise ValueError('Graphics must be enabled or disabled')
+            rows=media.segments(spec.get('captions',[]),media.probe(source)['duration'])
+            rendered,timing=quick_clip.render_batch(source,spec.get('clips',[]),rows,folder/'renders',profile=profile,workers=spec.get('workers',2),graphics=graphics,overlay=mode=='full' and spec.get('overlay',True),fit=spec.get('fit','contain'),focus=float(spec.get('focus',.5)),attribution=spec.get('attribution',''))
+            result={'outputs':[],'mode':mode,'profile':profile,'graphics':graphics,'timing':timing,'source':spec.get('source_url',''),'attribution':str(spec.get('attribution',''))[:1000]}
+            for item in rendered:
+                i=item['number'];generated=Path(item['video']).parent
+                def copy_to_flat(src,name):
+                    shutil.copyfile(src,folder/name)
+                    return f'/files/{job}/{name}'
+                output={'clip':i,'start':item['start'],'end':item['end'],'title':item['title'],'profile':profile,'video':copy_to_flat(item['video'],f'clip{i}.mp4'),'subtitles':copy_to_flat(generated/'captions.srt',f'clip{i}.srt'),'vtt':copy_to_flat(generated/'captions.vtt',f'clip{i}.vtt'),'captions':copy_to_flat(generated/'captions-editable.json',f'clip{i}-captions.json'),'media':item['media']}
+                if graphics:
+                    output['title_thumbnail']=copy_to_flat(generated/'title-thumbnail.png',f'clip{i}-title.png')
+                    output['reel_cover']=copy_to_flat(generated/'reel-cover.png',f'clip{i}-cover.png')
+                result['outputs'].append(output)
             archive_manifest=json.loads(json.dumps(result))
             for item in archive_manifest['outputs']:
-                for key in ['video','title_thumbnail','reel_cover','subtitles']:
-                    item[key]=item[key].rsplit('/',1)[-1]
+                for key in ['video','title_thumbnail','reel_cover','subtitles','vtt','captions']:
+                    if key in item:item[key]=item[key].rsplit('/',1)[-1]
             (folder/'manifest.json').write_text(json.dumps(archive_manifest,indent=2))
             with zipfile.ZipFile(folder/'package.zip','w',zipfile.ZIP_DEFLATED) as z:
                 for f in sorted(folder.iterdir()):
@@ -116,7 +128,7 @@ class Handler(BaseHTTPRequestHandler):
         content_type=None
         if path.startswith('/files/'):
             parts=path.split('/')
-            if len(parts)!=4 or not __import__('re').fullmatch('[a-f0-9]{32}',parts[2]) or not __import__('re').fullmatch(r'(clip\.mp4|graphic\.png|captions\.json|highlights\.json|manifest\.json|package\.zip|clip[1-5](?:-(?:title|cover))?\.(?:mp4|png|srt))',parts[3]): return self.reply(404,{'error':'Not found'})
+            if len(parts)!=4 or not __import__('re').fullmatch('[a-f0-9]{32}',parts[2]) or not __import__('re').fullmatch(r'(clip\.mp4|graphic\.png|captions\.json|highlights\.json|manifest\.json|package\.zip|clip[1-5](?:-(?:title|cover|captions))?\.(?:mp4|png|srt|vtt|json))',parts[3]): return self.reply(404,{'error':'Not found'})
             file=STATE/parts[2]/parts[3]
         elif path.startswith('/asset/'):
             try:
@@ -174,7 +186,7 @@ class Handler(BaseHTTPRequestHandler):
                     return self.reply(201,{'id':a,'name':name,'kind':kind,'meta':meta})
                 except Exception:
                     target.unlink(missing_ok=True); raise
-            if not 0<length<=1024*1024: raise ValueError('Request limit 1 MB')
+            if not 0<length<=8*1024*1024: raise ValueError('Request limit 8 MB')
             spec=json.loads(self.rfile.read(length)); a=spec['asset']; row=asset(a)
             if path=='/api/suggestions': return self.reply(200,media.suggestions(media.segments(spec['captions'],json.loads(row['meta'])['duration']),json.loads(row['meta'])['duration']))
             if path=='/api/captions':

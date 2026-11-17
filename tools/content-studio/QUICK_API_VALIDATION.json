@@ -1,0 +1,21 @@
+{
+  "quick": {
+    "passed": true,
+    "width": 360,
+    "height": 640,
+    "graphics": false
+  },
+  "quick-final": {
+    "passed": true,
+    "width": 1080,
+    "height": 1920,
+    "graphics": false
+  },
+  "legacy-full": {
+    "passed": true,
+    "width": 1080,
+    "height": 1920,
+    "graphics": true
+  },
+  "cache_identity_vocabulary_model_corruption": "passed"
+}
