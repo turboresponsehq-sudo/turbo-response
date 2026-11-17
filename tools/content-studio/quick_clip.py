@@ -15,20 +15,47 @@ def fingerprint(path):
  return h.hexdigest()
 def atomic_json(path,value):
  temp=path.with_name(path.name+'.'+uuid.uuid4().hex+'.tmp');temp.write_text(json.dumps(value,indent=2));temp.replace(path)
-def transcript_key(source_hash,vocabulary=''):
- return digest({'schema':CACHE_SCHEMA,'source_sha256':source_hash,'settings':TRANSCRIBE_SETTINGS,'vocabulary':vocabulary,'engine_version':importlib.metadata.version('faster-whisper')})
-def load_or_transcribe(source,work,cache,vocabulary=''):
- from quick_transcribe import batched
+def transcript_key(source_hash,vocabulary='',provider='local'):
+ if provider not in ('local','groq'):raise ValueError('Unknown transcription provider')
+ if provider=='local':
+  settings=TRANSCRIBE_SETTINGS
+  engine_version=importlib.metadata.version('faster-whisper')
+ else:
+  from groq_transcribe import MODEL, CHUNK_SECONDS, OVERLAP_SECONDS
+  settings={'backend':'groq-api','model':MODEL,'chunk_seconds':CHUNK_SECONDS,
+            'overlap_seconds':OVERLAP_SECONDS,'word_timestamps':True,'language':'en'}
+  engine_version='studio-groq-adapter-v1'
+ return digest({'schema':CACHE_SCHEMA,'source_sha256':source_hash,'settings':settings,
+                'vocabulary':vocabulary,'engine_version':engine_version})
+
+def load_or_transcribe(source,work,cache,vocabulary='',provider='local'):
+ if provider not in ('local','groq'):raise ValueError('Unknown transcription provider')
  start=time.monotonic();work=Path(work);work.mkdir(parents=True,exist_ok=True);cache=Path(cache);cache.mkdir(parents=True,exist_ok=True)
- t=time.monotonic();source_hash=fingerprint(source);hash_seconds=time.monotonic()-t;key=transcript_key(source_hash,vocabulary);path=cache/(key+'.json')
+ t=time.monotonic();source_hash=fingerprint(source);hash_seconds=time.monotonic()-t
+ key=transcript_key(source_hash,vocabulary,provider);path=cache/(key+'.json')
  if path.is_file():
   data=json.loads(path.read_text())
   if data.get('key')!=key or data.get('source_sha256')!=source_hash:raise ValueError('Transcript cache integrity mismatch')
-  rows=data['captions'];cache_hit=True;inference=0
+  rows=data['captions'];cache_hit=True;inference=0;provider_metrics=None
  else:
-  measured=batched(source,work,threads=8,batch_size=8,vocabulary=vocabulary);rows=json.loads((work/'captions-batched.json').read_text());inference=measured['seconds'];cache_hit=False
-  atomic_json(path,{'schema':CACHE_SCHEMA,'key':key,'source_sha256':source_hash,'settings':TRANSCRIBE_SETTINGS,'captions':rows})
- return rows,{'elapsed_seconds':round(time.monotonic()-start,3),'source_hash_seconds':round(hash_seconds,3),'inference_seconds':inference,'cache_hit':cache_hit,'cache_key':key,'source_sha256':source_hash}
+  if provider=='groq':
+   from groq_transcribe import transcribe
+   rows,provider_metrics=transcribe(source,work,vocabulary)
+   inference=provider_metrics['seconds']
+  else:
+   from quick_transcribe import batched
+   provider_metrics=batched(source,work,threads=8,batch_size=8,vocabulary=vocabulary)
+   rows=json.loads((work/'captions-batched.json').read_text())
+   inference=provider_metrics['seconds']
+  cache_hit=False
+  atomic_json(path,{'schema':CACHE_SCHEMA,'key':key,'source_sha256':source_hash,
+                    'provider':provider,'captions':rows})
+ return rows,{'elapsed_seconds':round(time.monotonic()-start,3),
+              'source_hash_seconds':round(hash_seconds,3),
+              'inference_seconds':inference,'cache_hit':cache_hit,
+              'cache_key':key,'source_sha256':source_hash,
+              'provider':provider,'provider_metrics':provider_metrics}
+
 def select_cached(rows,duration,cache,topic='',count=5,min_seconds=35,max_seconds=70):
  start=time.monotonic();cache=Path(cache);cache.mkdir(parents=True,exist_ok=True)
  settings={'schema':CACHE_SCHEMA,'algorithm':'semantic-candidates-v2','captions_sha256':digest(rows),'duration':duration,'topic':topic,'count':count,'min_seconds':min_seconds,'max_seconds':max_seconds,'embedding_model':'BAAI/bge-small-en-v1.5','embedding_engine_version':importlib.metadata.version('fastembed')}
