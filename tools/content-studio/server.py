@@ -50,15 +50,21 @@ def execute(job,kind,a,spec):
             result={'download':f'/files/{job}/graphic.png','preset':spec['preset'],'size':media.PRESETS[spec['preset']]}
         elif kind=='transcribe':
             if not json.loads(asset(a)['meta']).get('audio'): raise ValueError('Video contains no audio')
+            provider=spec.get('provider','local')
+            if provider not in ('local','groq'):raise ValueError('Unknown transcription provider')
             model=spec.get('model','small.en')
-            if spec.get('mode')=='quick':
-                rows,cache_metrics=quick_clip.load_or_transcribe(source,folder,STATE/'transcript-cache',spec.get('vocabulary',''))
-                model='small.en batched CPU'
-                result={'captions':rows,'model':model,'review_required':True,'timing':cache_metrics}
+            if provider=='groq' or spec.get('mode')=='quick':
+                rows,cache_metrics=quick_clip.load_or_transcribe(
+                    source,folder,STATE/'transcript-cache',
+                    spec.get('vocabulary',''),provider=provider)
+                model='Groq Whisper Large v3 Turbo' if provider=='groq' else 'small.en batched CPU'
+                result={'captions':rows,'model':model,'provider':provider,'review_required':True,'timing':cache_metrics}
             else:
-                result={'captions':media.transcribe(source,model,spec.get('vocabulary','')),'model':model,'review_required':True}
+                result={'captions':media.transcribe(source,model,spec.get('vocabulary','')),
+                        'model':model,'provider':'local','review_required':True}
             result['revision']=save_captions(a,result['captions'],model)
-            (folder/'captions.json').write_text(json.dumps(result,indent=2)); result['download']=f'/files/{job}/captions.json'
+            (folder/'captions.json').write_text(json.dumps(result,indent=2))
+            result['download']=f'/files/{job}/captions.json'
         elif kind=='highlights':
             rows=media.segments(spec.get('captions',[]),media.probe(source)['duration'])
             if spec.get('mode')=='quick' and spec.get('method','semantic')=='semantic':
