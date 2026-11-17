@@ -23,9 +23,13 @@ class GroqTests(unittest.TestCase):
         self.assertEqual(rows[0]["text"], "Hello world!")
         self.assertEqual(rows[0]["start"], 10)
         self.assertTrue(rows[0]["review"])
+        overlapping = {"words": [
+            {"start": 0, "end": 0.5, "word": " duplicate"},
+            {"start": 1.2, "end": 1.9, "word": " keep"},
+        ]}
         self.assertEqual(
-            groq_transcribe.normalized_words(response, 9, 10),
-            [{"start": 10, "end": 10.5, "text": "world!"}],
+            groq_transcribe.normalized_words(overlapping, 9, 10),
+            [{"start": 10.2, "end": 10.9, "text": "keep"}],
         )
 
     def test_multipart_does_not_log_key(self):
