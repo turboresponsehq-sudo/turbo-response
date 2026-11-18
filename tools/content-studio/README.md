@@ -5,6 +5,9 @@ production config, dependencies, database migrations, or Render services change.
 Do not mount this local server publicly. It is single-operator software without
 client authentication or tenant isolation.
 
+Read GROQ_VERIFICATION.md for current Groq fixes, tests and the live-verification gap.
+Read BUILD_VERSUS_RENT.md for the current integration recommendation and milestones.
+
 Read QUICK_MODE.md for preview-first Quick Clip Mode and QUICK_BENCHMARK.md for the speed retest.
 Read V2_REVIEW.md for the earlier features, completed Render audit and review outputs.
 The initial architecture notes document the earlier baseline.

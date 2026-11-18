@@ -19,16 +19,18 @@ def transcript_key(source_hash,vocabulary='',provider='local'):
  if provider not in ('local','groq'):raise ValueError('Unknown transcription provider')
  if provider=='local':
   settings=TRANSCRIBE_SETTINGS
-  engine_version=importlib.metadata.version('faster-whisper')
+  try:engine_version=importlib.metadata.version('faster-whisper')
+  except importlib.metadata.PackageNotFoundError:
+   raise ValueError('Local Whisper is unavailable; install requirements-ai.txt in the isolated worker') from None
  else:
-  from groq_transcribe import MODEL, CHUNK_SECONDS, OVERLAP_SECONDS
+  from groq_transcribe import MODEL, CHUNK_SECONDS, OVERLAP_SECONDS, ADAPTER_VERSION
   settings={'backend':'groq-api','model':MODEL,'chunk_seconds':CHUNK_SECONDS,
             'overlap_seconds':OVERLAP_SECONDS,'word_timestamps':True,'language':'en'}
-  engine_version='studio-groq-adapter-v1'
+  engine_version=ADAPTER_VERSION
  return digest({'schema':CACHE_SCHEMA,'source_sha256':source_hash,'settings':settings,
                 'vocabulary':vocabulary,'engine_version':engine_version})
 
-def load_or_transcribe(source,work,cache,vocabulary='',provider='local'):
+def load_or_transcribe(source,work,cache,vocabulary='',provider='local',fallback_to_local=False):
  if provider not in ('local','groq'):raise ValueError('Unknown transcription provider')
  start=time.monotonic();work=Path(work);work.mkdir(parents=True,exist_ok=True);cache=Path(cache);cache.mkdir(parents=True,exist_ok=True)
  t=time.monotonic();source_hash=fingerprint(source);hash_seconds=time.monotonic()-t
@@ -39,8 +41,16 @@ def load_or_transcribe(source,work,cache,vocabulary='',provider='local'):
   rows=data['captions'];cache_hit=True;inference=0;provider_metrics=None
  else:
   if provider=='groq':
-   from groq_transcribe import transcribe
-   rows,provider_metrics=transcribe(source,work,vocabulary)
+   from groq_transcribe import transcribe,GroqTranscriptionError
+   try:rows,provider_metrics=transcribe(source,work,vocabulary)
+   except GroqTranscriptionError:
+    if not fallback_to_local:raise
+    # Preserve provider-specific caches. Never store local rows under a Groq key.
+    rows,timing=load_or_transcribe(source,work,cache,vocabulary,provider='local')
+    return rows,{**timing,'requested_provider':'groq','fallback_to_local':True,
+                 'fallback_reason':'Groq unavailable; selected local fallback',
+                 'elapsed_seconds':round(time.monotonic()-start,3),
+                 'cloud_attempt_may_have_been_billed':True}
    inference=provider_metrics['seconds']
   else:
    from quick_transcribe import batched

@@ -1,0 +1,94 @@
+{
+  "transcription": {
+    "status": "not_run",
+    "reason": "No isolated Groq credential; local runtime not installed. Existing benchmark transcript reused."
+  },
+  "source": "Authorized 58:57 50 Cent episode",
+  "human_review": "Not performed; output captions remain review drafts",
+  "source_probe_seconds": 0.307,
+  "highlight_method": "Editorial rules only; semantic model unavailable in this workspace",
+  "render_cutlist": "Earlier transcript-reviewed ranges, reused; not newly human approved",
+  "render": {
+    "profile": "final",
+    "workers": 2,
+    "wall_seconds": 252.414,
+    "first_clip_seconds": 103.635,
+    "graphics_enabled": false,
+    "graphics_job_seconds_sum": 0,
+    "render_job_seconds_sum": 469.859,
+    "bytes_total": 130492167,
+    "note": "Per-job seconds overlap when workers=2; use wall_seconds for elapsed time."
+  },
+  "stages": {
+    "highlight_selection_seconds": 0.027,
+    "caption_preparation_seconds": 0.022,
+    "five_1080p_exports_seconds": 252.414,
+    "verification_seconds": 14.129,
+    "packaging_seconds": 4.151
+  },
+  "verification": [
+    {
+      "clip": 1,
+      "decode": "passed",
+      "subtitles": "SRT/VTT match",
+      "media": {
+        "duration": 54.5,
+        "width": 1080,
+        "height": 1920,
+        "audio": true,
+        "mime": "video/mp4"
+      }
+    },
+    {
+      "clip": 2,
+      "decode": "passed",
+      "subtitles": "SRT/VTT match",
+      "media": {
+        "duration": 79.166667,
+        "width": 1080,
+        "height": 1920,
+        "audio": true,
+        "mime": "video/mp4"
+      }
+    },
+    {
+      "clip": 3,
+      "decode": "passed",
+      "subtitles": "SRT/VTT match",
+      "media": {
+        "duration": 26.1,
+        "width": 1080,
+        "height": 1920,
+        "audio": true,
+        "mime": "video/mp4"
+      }
+    },
+    {
+      "clip": 4,
+      "decode": "passed",
+      "subtitles": "SRT/VTT match",
+      "media": {
+        "duration": 32.633333,
+        "width": 1080,
+        "height": 1920,
+        "audio": true,
+        "mime": "video/mp4"
+      }
+    },
+    {
+      "clip": 5,
+      "decode": "passed",
+      "subtitles": "SRT/VTT match",
+      "media": {
+        "duration": 54.566667,
+        "width": 1080,
+        "height": 1920,
+        "audio": true,
+        "mime": "video/mp4"
+      }
+    }
+  ],
+  "continuous_from_transcript_to_zip_seconds": 271.052,
+  "delivery_upload_seconds": 23.61,
+  "delivery_note": "Separate API upload clock after export test; not a continuous source-to-delivery measurement; device playback/Google processing not verified."
+}

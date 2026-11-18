@@ -56,7 +56,9 @@ def execute(job,kind,a,spec):
             if provider=='groq' or spec.get('mode')=='quick':
                 rows,cache_metrics=quick_clip.load_or_transcribe(
                     source,folder,STATE/'transcript-cache',
-                    spec.get('vocabulary',''),provider=provider)
+                    spec.get('vocabulary',''),provider=provider,
+                    fallback_to_local=spec.get('fallback_to_local') is True)
+                provider=cache_metrics['provider']
                 model='Groq Whisper Large v3 Turbo' if provider=='groq' else 'small.en batched CPU'
                 result={'captions':rows,'model':model,'provider':provider,'review_required':True,'timing':cache_metrics}
             else:
