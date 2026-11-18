@@ -217,6 +217,23 @@ a,button{-webkit-tap-highlight-color:rgba(228,164,186,.2)}
  .brand-lockup .heart-mark{width:35px}
  .brand-lockup .wordmark{font-size:25px}
 }
+
+/* Artist-approved 2KBABY image: adaptive cinematic layout */
+.artist-hero-2026{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,.97fr)!important;align-items:stretch;min-height:clamp(560px,48vw,680px);isolation:isolate;position:relative;overflow:hidden;border-bottom:3px solid #e4a4ba;background:radial-gradient(ellipse at 10% 10%,#c13d8755,transparent 47%),radial-gradient(ellipse at 52% 93%,#ec8c9a55,transparent 48%),linear-gradient(148deg,#26213b,#4a2752 45%,#1b1a2d)!important}
+.artist-hero-2026::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.12;background:repeating-linear-gradient(0deg,transparent 0,transparent 42px,#ffffff55 43px,#ffffff55 44px)}
+.artist-hero-2026::after{display:none!important}
+.artist-hero-2026 .hero-photo-panel{grid-column:2;grid-row:1;position:relative;min-width:0;min-height:560px;overflow:hidden;clip-path:polygon(8% 0,100% 0,100% 100%,0 100%);background:#14131b}
+.artist-hero-2026 .hero-photo-panel::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#341d3b66,transparent 25%),linear-gradient(0deg,#17112036,transparent 34%)}
+.artist-hero-2026 .artist-hero-photo{display:block;width:100%!important;height:100%!important;min-height:560px!important;max-height:none!important;aspect-ratio:auto!important;object-fit:cover!important;object-position:50% 31%!important;filter:none!important}
+.artist-hero-2026 .artist-hero-copy{grid-column:1;grid-row:1;position:relative!important;inset:auto!important;z-index:3;align-self:center;width:auto!important;max-width:100%;padding:70px clamp(26px,5vw,76px)!important;background:transparent!important;filter:none!important;text-align:left}
+.artist-hero-2026 .artist-hero-copy h1{font-size:clamp(58px,6.8vw,99px)!important;line-height:1.08!important;margin:17px 0 24px!important;letter-spacing:-.02em!important;text-shadow:3px 4px #120e1c,6px 7px #9d3d74!important}
+.artist-hero-2026 .artist-hero-copy h1 em{color:#f3bdd4}
+.artist-hero-2026 .artist-hero-copy p{max-width:440px;line-height:1.65;font-size:clamp(14px,1.4vw,17px);color:#f6eaf3;margin-bottom:26px}
+.artist-hero-2026 .artist-hero-copy .actions{display:flex;flex-wrap:wrap;gap:12px}
+.artist-hero-2026 .artist-hero-copy .actions .btn{min-height:51px;display:inline-flex;align-items:center;justify-content:center;padding:13px 18px}
+@media(min-width:760px) and (max-width:1040px){.artist-hero-2026{grid-template-columns:minmax(0,1fr) minmax(0,.9fr)!important;min-height:560px}.artist-hero-2026 .artist-hero-copy{padding:48px 25px!important}.artist-hero-2026 .artist-hero-copy h1{font-size:clamp(51px,6.4vw,73px)!important}.artist-hero-2026 .artist-hero-photo{object-position:50% 24%!important}}
+@media(max-width:759px){.artist-hero-2026{display:flex!important;flex-direction:column!important;min-height:0;overflow:hidden}.artist-hero-2026 .hero-photo-panel{order:0;display:block;flex:none;width:100%;height:clamp(360px,104vw,600px);min-height:0!important;clip-path:none!important;overflow:hidden}.artist-hero-2026 .artist-hero-photo{width:100%!important;height:100%!important;min-height:0!important;object-fit:cover!important;object-position:50% 24%!important}.artist-hero-2026 .artist-hero-copy{order:1;display:block;padding:26px 20px 32px!important;width:100%!important;background:linear-gradient(165deg,#332644,#1a1729)!important}.artist-hero-2026 .artist-hero-copy h1{font-size:clamp(45px,12.2vw,72px)!important;line-height:1.07!important;margin:14px 0 18px!important;text-shadow:2px 3px #110c17,4px 5px #723055!important}.artist-hero-2026 .artist-hero-copy p{font-size:14px;line-height:1.55;max-width:35em;margin:0 0 20px}.artist-hero-2026 .artist-hero-copy .actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.artist-hero-2026 .artist-hero-copy .actions .btn{font-size:13px!important;padding:12px 8px;min-height:49px}}
+@media(max-width:360px){.artist-hero-2026 .hero-photo-panel{height:380px}.artist-hero-2026 .artist-hero-copy{padding:22px 16px 28px!important}.artist-hero-2026 .artist-hero-copy h1{font-size:43px!important}.artist-hero-2026 .artist-hero-copy .actions{grid-template-columns:1fr}}
 </style></head>
 <body>
 <a href="#main" class="skip">Skip to content</a>
@@ -228,17 +245,7 @@ a,button{-webkit-tap-highlight-color:rgba(228,164,186,.2)}
 <a href="#world">The World</a><a href="#music">Music</a><a href="#gaming">Gaming</a><a href="#miami">Miami</a><a href="#giveaway">Giveaway</a><a href="#nation">Community</a><a href="intake.html">Bookings</a><a class="nav-live" href="#gaming">● 9 PM LIVE</a>
 </nav></div></header>
 <main id="main">
-<section class="hero" id="home" aria-label="Welcome to the 2KBABY World">
-<div class="hero-visual">
-<img class="hero-art" src="assets/vice-world-hero.png" alt="Client-provided GTA-inspired 2KBABY poster with multiple portraits, tropical Miami backdrop, cars and neon pink graphics" fetchpriority="high">
-<div class="hero-copy"><span class="mission-chip">PLAYER CONNECTED: 2KBABY · MISSION 001</span>
-<h1>ENTER<br>THE <em>WORLD.</em></h1><p>New music. Miami missions. Gaming. Real life. Every move unlocks a new chapter.</p>
-<div class="actions"><a class="btn" href="#world">▶ Enter the World</a><a class="btn alt" href="#gaming">◉ Watch Live Updates</a></div>
-</div>
-<div class="hero-tags"><span class="tag">LOCATION: <b>VICE CITY</b></span><span class="tag">PLAYER: <b>2KBABY</b></span></div>
-</div>
-<div class="ticker"><span><i>✦</i> NEW MUSIC</span><span><i>✦</i> DAILY 9 PM STREAM PLANNED</span><span><i>✦</i> MIAMI TAKEOVER</span><span><i>✦</i> FAN MISSIONS</span></div>
-</section>
+<section class="hero" id="home" aria-label="Welcome to the 2KBABY World"><div class="hero-visual artist-hero-2026"><div class="hero-photo-panel"><img class="hero-art artist-hero-photo" src="assets/2kbaby-approved-hero-rolls-royce.webp" alt="Original photograph of 2KBABY in a red cap and gray denim, seated inside a Rolls-Royce with cream leather seats" width="1107" height="1536" fetchpriority="high" decoding="async"></div><div class="hero-copy artist-hero-copy"><span class="mission-chip">2KBABY WORLD · MUSIC / GAMING / CULTURE</span><h1>ENTER<br>THE <em>WORLD.</em></h1><p>New music. Real moments. Gaming. Fan missions. Tap in and stay connected to every move.</p><div class="actions"><a class="btn" href="#world">▶ ENTER THE WORLD</a><a class="btn alt" href="#gaming">◉ GAMING & LIVE</a></div></div></div><div class="ticker"><span><i>✦</i> NEW MUSIC</span><span><i>✦</i> FAN CONNECTION</span><span><i>✦</i> LIVE & GAMING</span><span><i>✦</i> EXCLUSIVE DROPS</span></div></section>
 <div class="content">
 <section class="zone" id="world"><div class="section-heading"><div><div class="kicker">01 / Select a mission</div><h2>MISSION BOARD</h2></div><p>This isn't a standard artist website. Explore what 2KBABY is building, choose a mission, and discover what's next.</p></div>
 <div class="missions">
