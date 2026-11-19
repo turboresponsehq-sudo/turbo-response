@@ -114,7 +114,7 @@ def post_audio(audio_path, vocabulary='', *, opener=None, key=None):
         body.extend(('--'+boundary+'\r\nContent-Disposition: form-data; name="'+name+'"\r\n\r\n'+value+'\r\n').encode())
     body.extend(('--'+boundary+'\r\nContent-Disposition: form-data; name="file"; filename="audio.mp3"\r\nContent-Type: audio/mpeg\r\n\r\n').encode())
     body.extend(path.read_bytes());body.extend(('\r\n--'+boundary+'--\r\n').encode())
-    request = urllib.request.Request(ENDPOINT, data=bytes(body), headers={'Authorization': 'Bearer '+key, 'Content-Type': 'multipart/form-data; boundary='+boundary}, method='POST')
+    request = urllib.request.Request(ENDPOINT, data=bytes(body), headers={'Authorization': 'Bearer '+key, 'User-Agent': 'CreatorAutomations/1.0', 'Content-Type': 'multipart/form-data; boundary='+boundary}, method='POST')
     try:
         transport = opener or urllib.request.build_opener(NoRedirect()).open
         with transport(request, timeout=90) as stream:
