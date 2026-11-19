@@ -51,6 +51,7 @@ class GroqTests(unittest.TestCase):
             request, timeout = recorded[0]
             self.assertEqual(timeout, 90)
             self.assertIn("Bearer private-test-token", request.get_header("Authorization"))
+            self.assertEqual(request.get_header("User-agent"), "CreatorAutomations/1.0")
             self.assertIn(b'name="timestamp_granularities[]"', request.data)
             self.assertIn(b"verbose_json", request.data)
             self.assertIn(b"LL Cool J", request.data)
