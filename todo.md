@@ -40,7 +40,7 @@
 - [x] Investigate HTTP 401 error on admin login
 - [x] Check admin account exists in database
 - [x] Verify password hash is correct
-- [x] Update seed file to use Turbo1234! password
+- [x] Update seed file to use [REDACTED: retired administrator password] password
 - [x] Deploy and test login on mobile
 - [x] Verified working on Samsung Internet Android
 

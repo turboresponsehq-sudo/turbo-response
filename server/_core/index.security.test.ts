@@ -23,10 +23,17 @@ describe("retired emergency admin bypass", () => {
     expect(entrySource).not.toContain("Token generated successfully for:");
   });
 
-  it("does not keep development bootstrap credentials in tracked source", () => {
-    expect(entrySource).toContain("DEV_BOOTSTRAP_ADMIN_EMAIL");
-    expect(entrySource).toContain("DEV_BOOTSTRAP_ADMIN_PASSWORD");
-    expect(entrySource).not.toContain("Turbo123!");
-    expect(entrySource).not.toContain("Admin123!");
+  it("makes the deprecated administrator bootstrap endpoint unavailable", () => {
+    expect(entrySource).toContain('app.all("/api/setup-admin"');
+    expect(entrySource).not.toContain("DEV_BOOTSTRAP_ADMIN_EMAIL");
+    expect(entrySource).not.toContain("DEV_BOOTSTRAP_ADMIN_PASSWORD");
+    expect(entrySource).not.toContain("ALTER TABLE users ADD COLUMN IF NOT EXISTS password");
   });
+
+  it("validates administrator passwords against stored bcrypt hashes", () => {
+    expect(entrySource).toContain("await bcrypt.compare(password, user.password!)");
+    expect(entrySource).toContain("!user || !allowedRole || !passwordMatches");
+    expect(entrySource).toContain("where(eq(usersTable.email, email))");
+  });
+
 });

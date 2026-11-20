@@ -13,7 +13,12 @@ function unavailable(res: any) { return res.status(404).json({ error: "Creator P
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: MAX_WORKSPACE_FILE_BYTES, files: 1 },
-  fileFilter: (_req, file, done) => done(allowedWorkspaceMimes.has(file.mimetype) ? null : new Error("Allowed: image, screenshot, PDF, Word, or text")),
+  fileFilter: (_req, file, done) => {
+    if (!allowedWorkspaceMimes.has(file.mimetype)) {
+      return done(new Error("Allowed: image, screenshot, PDF, Word, or text"));
+    }
+    return done(null, true);
+  },
 });
 const singleUpload: RequestHandler = (req, res, next) => {
   upload.single("file")(req, res, (err: any) => {

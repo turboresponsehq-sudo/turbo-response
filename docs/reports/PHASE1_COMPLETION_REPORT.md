@@ -1,3 +1,5 @@
+> Historical document — passwords previously shown here have been redacted. Do not use historical credentials; rotate them through a secure administrator recovery process.
+
 # 🎯 PHASE 1 COMPLETION REPORT
 ## Finalize Core MVP - Turbo Response HQ
 
@@ -358,7 +360,7 @@ psql $DATABASE_URL -f /opt/render/project/src/backend/migrations/restore_admin_w
 
 ### 5. Test on Production
 - [ ] Admin login: https://turboresponsehq.ai/admin/login
-- [ ] Credentials: turboresponsehq@gmail.com / admin123
+- [ ] Credentials: turboresponsehq@gmail.com / [REDACTED: retired administrator password]
 - [ ] Test on desktop Chrome, Firefox, Safari
 - [ ] Test on iPhone Safari
 - [ ] Test on Android Chrome

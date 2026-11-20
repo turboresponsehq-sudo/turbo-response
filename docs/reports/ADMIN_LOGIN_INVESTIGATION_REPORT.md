@@ -1,3 +1,5 @@
+> Historical document — passwords previously shown here have been redacted. Do not use historical credentials; rotate them through a secure administrator recovery process.
+
 # 🔍 Admin Login 401 Error - Investigation Report
 
 **Date:** November 18, 2025  
@@ -11,7 +13,7 @@
 
 **Current Status:** BLOCKED - Render auto-deploy is not pulling latest code from GitHub
 
-**Root Cause Identified:** Admin user exists in production database, but the password hash does NOT match "admin123". This indicates the bcrypt hash was created in a different environment or with different parameters.
+**Root Cause Identified:** Admin user exists in production database, but the password hash does NOT match "[REDACTED: retired administrator password]". This indicates the bcrypt hash was created in a different environment or with different parameters.
 
 **Blocker:** Multiple code deployments to GitHub (commits f9dab64, 029ec43, 0a857f9) are NOT being deployed by Render. The production server still shows version `2738b46-fix` from an earlier deployment.
 
@@ -214,13 +216,13 @@ curl -X POST https://turbo-response-backend.onrender.com/api/reset-admin-user
    🌱 Checking admin account...
    🔧 Creating admin account...
    ✅ Admin account created successfully
-   🔑 Admin credentials: { email: '...', password: 'admin123' }
+   🔑 Admin credentials: { email: '...', password: '[REDACTED: retired administrator password]' }
    ```
 
 #### Step 5: Test Login
 1. Visit https://turboresponsehq.ai/admin/login
 2. Email: `turboresponsehq@gmail.com`
-3. Password: `admin123`
+3. Password: `[REDACTED: retired administrator password]`
 4. Should succeed with 200 OK and JWT token
 
 ---
@@ -258,7 +260,7 @@ If manual deploy still shows old version `2738b46-fix`:
 **Credentials:**
 ```javascript
 const adminEmail = 'turboresponsehq@gmail.com';
-const adminPassword = 'admin123';
+const adminPassword = '[REDACTED: retired administrator password]';
 const passwordHash = await bcrypt.hash(adminPassword, 10);
 ```
 

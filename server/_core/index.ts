@@ -145,75 +145,11 @@ async function startServer() {
   app.use("/api/case", caseExtrasRouter);
   app.use("/api/upload", uploadsRouter);
   
-	  // Deprecated one-time setup route. It is unavailable in production and
-	  // requires explicit local-only configuration in development.
-  if (process.env.NODE_ENV !== "production") {
-    app.get("/api/setup-admin", async (req, res) => {
-    try {
-      const bcrypt = await import("bcrypt");
-      const db = await getDb();
-      
-      if (!db) {
-        return res.status(500).send('Database not available');
-      }
-
-	      const email = process.env.DEV_BOOTSTRAP_ADMIN_EMAIL?.trim();
-	      const password = process.env.DEV_BOOTSTRAP_ADMIN_PASSWORD;
-	      if (!email || !password) {
-	        return res.status(404).send('Not found');
-	      }
-	      const hashedPassword = await bcrypt.default.hash(password, 10);
-
-      // Add password column if needed
-      try {
-        await db.execute('ALTER TABLE users ADD COLUMN IF NOT EXISTS password VARCHAR(255)');
-        console.log('✅ Password column added');
-      } catch (error: any) {
-        console.log('✅ Password column exists');
-      }
-
-      // Check if admin exists
-      const result: any = await db.execute(`SELECT id FROM users WHERE email = '${email}'`);
-      const exists = result.rows?.length > 0 || result.length > 0;
-
-      if (exists) {
-        await db.execute(`UPDATE users SET password = '${hashedPassword}', role = 'admin' WHERE email = '${email}'`);
-      } else {
-        await db.execute(`
-          INSERT INTO users (email, password_hash, password, role, full_name, created_at, updated_at)
-          VALUES ('${email}', '${hashedPassword}', '${hashedPassword}', 'admin', 'Admin', NOW(), NOW())
-        `);
-      }
-
-      res.send(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Admin Setup Complete</title>
-          <style>
-            body { font-family: Arial; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #FFFFFF; color: #0A1A3F; }
-            .container { text-align: center; padding: 40px; background: #FFFFFF; border-radius: 20px; border: 1px solid #4285F4; }
-            h1 { color: #4285F4; }
-            .credentials { background: rgba(30, 41, 59, 0.6); padding: 20px; border-radius: 10px; margin: 20px 0; }
-            .value { color: #4285F4; font-weight: bold; font-size: 18px; }
-            a { display: inline-block; margin-top: 20px; padding: 15px 30px; background: #4285F4; color: #0A1A3F; text-decoration: none; border-radius: 10px; font-weight: bold; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <h1>✅ Admin Setup Complete!</h1>
-	            <p>Administrator bootstrap completed using local development configuration.</p>
-            <a href="/admin/login">Go to Admin Login →</a>
-          </div>
-        </body>
-        </html>
-      `);
-    } catch (error: any) {
-      console.error('❌ Setup error:', error);
-      res.status(500).send(`Error: ${error.message}`);
-    }
-    });
-  }
+  // Explicitly retire the administrator bootstrap endpoint in every environment.
+  // Admin accounts must be managed through an authenticated, audited recovery process.
+  app.all("/api/setup-admin", (_req, res) => {
+    res.status(404).json({ message: "Not found" });
+  });
 
   // JWT verification middleware
   const verifyAdminToken = async (req: any, res: any, next: any) => {

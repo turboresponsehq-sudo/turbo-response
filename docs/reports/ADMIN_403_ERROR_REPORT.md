@@ -1,3 +1,5 @@
+> Historical document — passwords previously shown here have been redacted. Do not use historical credentials; rotate them through a secure administrator recovery process.
+
 # 🚨 ADMIN DASHBOARD 403 ERROR - TROUBLESHOOTING REPORT
 
 **Date:** December 8, 2025  
@@ -252,7 +254,7 @@ Full URL: https://turboresponsehq.ai/api/cases/admin/all
 ## 📝 ADMIN CREDENTIALS (For Testing)
 
 **Email:** turboresponsehq@gmail.com  
-**Password:** Turbo1234!
+**Password:** [REDACTED: retired administrator password]
 
 **Note:** Password is set by `seedAdminAccount()` in `src/services/database/seed.js` which runs on every server startup.
 

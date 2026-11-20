@@ -1,3 +1,5 @@
+> Historical document — passwords previously shown here have been redacted. Do not use historical credentials; rotate them through a secure administrator recovery process.
+
 # Admin Workflow Restoration - Deployment Instructions
 
 **Date:** November 12, 2025  
@@ -97,7 +99,7 @@ SELECT DISTINCT status FROM cases ORDER BY status;
 
 After deployment and migration:
 
-- [ ] Login at `/admin/login` (credentials: turboresponsehq@gmail.com / admin123)
+- [ ] Login at `/admin/login` (credentials: turboresponsehq@gmail.com / [REDACTED: retired administrator password])
 - [ ] Admin dashboard shows simple case list
 - [ ] Clicking case navigates to `/admin/case/:id`
 - [ ] Case detail page displays all information

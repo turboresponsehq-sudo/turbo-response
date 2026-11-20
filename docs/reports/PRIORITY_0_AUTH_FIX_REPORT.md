@@ -1,3 +1,5 @@
+> Historical document — passwords previously shown here have been redacted. Do not use historical credentials; rotate them through a secure administrator recovery process.
+
 # PRIORITY 0: Admin Auth 403 Token Issue - Technical Investigation & Fix
 
 **Status:** FIXED ✅  
@@ -201,7 +203,7 @@ Before deploying to Render, verify:
 
 ### Test 1: Fresh Login
 1. Go to https://turboresponsehq.ai/admin/login
-2. Enter credentials (turboresponsehq@gmail.com / Admin123!)
+2. Enter credentials (turboresponsehq@gmail.com / [REDACTED: retired administrator password])
 3. Should see admin dashboard with cases list
 4. Check browser console - should see: `[Auth] Token verified successfully for user: ...`
 
