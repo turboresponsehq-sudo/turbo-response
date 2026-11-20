@@ -914,7 +914,7 @@ const CREATOR_RENEW_THRESHOLD_SECONDS = (CREATOR_SESSION_DAYS - 1) * 24 * 60 * 6
 function setCreatorSession(res: any, portalId: number, authVersion: string) {
   const secret = process.env.JWT_SECRET;
   if (!secret) throw new Error("Portal signing is unavailable");
-  const session = jwt.sign({ portalId, purpose: "creator_portal", authVersion }, secret, { expiresIn: CREATOR_SESSION_DAYS + "d" });
+  const session = jwt.sign({ portalId, purpose: "creator_portal", authVersion }, secret, { expiresIn: CREATOR_SESSION_DAYS * 24 * 60 * 60 });
   res.cookie("creator_portal_session", session, { httpOnly: true, sameSite: "lax",
     secure: process.env.NODE_ENV === "production", maxAge: CREATOR_SESSION_MS, path: "/" });
 }
