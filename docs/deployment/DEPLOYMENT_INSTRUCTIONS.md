@@ -1,4 +1,6 @@
-> Historical document — passwords previously shown here have been redacted. Do not use historical credentials; rotate them through a secure administrator recovery process.\n\n# Admin Workflow Restoration - Deployment Instructions
+> Historical document — passwords previously shown here have been redacted. Do not use historical credentials; rotate them through a secure administrator recovery process.
+
+# Admin Workflow Restoration - Deployment Instructions
 
 **Date:** November 12, 2025  
 **Status:** Ready for deployment  

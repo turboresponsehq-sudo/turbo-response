@@ -1,4 +1,6 @@
-> Historical document — passwords previously shown here have been redacted. Do not use historical credentials; rotate them through a secure administrator recovery process.\n\n# 🔧 FIX ADMIN 403 ERROR - STEP-BY-STEP GUIDE
+> Historical document — passwords previously shown here have been redacted. Do not use historical credentials; rotate them through a secure administrator recovery process.
+
+# 🔧 FIX ADMIN 403 ERROR - STEP-BY-STEP GUIDE
 
 ## ✅ ROOT CAUSE IDENTIFIED (From Chief)
 

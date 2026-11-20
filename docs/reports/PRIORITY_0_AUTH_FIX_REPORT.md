@@ -1,4 +1,6 @@
-> Historical document — passwords previously shown here have been redacted. Do not use historical credentials; rotate them through a secure administrator recovery process.\n\n# PRIORITY 0: Admin Auth 403 Token Issue - Technical Investigation & Fix
+> Historical document — passwords previously shown here have been redacted. Do not use historical credentials; rotate them through a secure administrator recovery process.
+
+# PRIORITY 0: Admin Auth 403 Token Issue - Technical Investigation & Fix
 
 **Status:** FIXED ✅  
 **Checkpoint:** 7347aec1  

@@ -1,4 +1,6 @@
-> Historical document — passwords previously shown here have been redacted. Do not use historical credentials; rotate them through a secure administrator recovery process.\n\n# 🔍 Admin Login 401 Error - Investigation Report
+> Historical document — passwords previously shown here have been redacted. Do not use historical credentials; rotate them through a secure administrator recovery process.
+
+# 🔍 Admin Login 401 Error - Investigation Report
 
 **Date:** November 18, 2025  
 **Engineer:** Manus AI  
