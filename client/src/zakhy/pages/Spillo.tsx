@@ -42,7 +42,7 @@ const homeTiles = [
 ] as const;
 
 export function SpilloHome() {
-  return <main className="spillo-page spillo-home">
+  return <main id="top" className="spillo-page spillo-home">
     <section className="spillo-exact-desktop" aria-label="Spillo homepage">
       <SpilloHeader active="home" />
       <div className="spillo-exact-reference-frame">
@@ -82,7 +82,7 @@ const contentGroups = [
 ] as const;
 
 export function SpilloContent() {
-  return <main className="spillo-page spillo-content-page"><SpilloHeader active="content" />
+  return <main id="top" className="spillo-page spillo-content-page"><SpilloHeader active="content" />
     <section className="spillo-content-hero"><div className="spillo-content-hero-copy"><p>SPILLO / CONTENT SYSTEM</p><h1>Spill season.<br /><em>More than music.</em></h1><span>EVERYTHING MOVES THROUGH THE BRAND.</span></div><div className="spillo-content-hero-art" style={{ "--spillo-content-desktop": `url(${spilloContentDesktop})`, "--spillo-content-mobile": `url(${spilloContentMobile})` } as CSSProperties} /></section>
     <section className="spillo-content-grid-section"><div className="spillo-content-grid">{contentGroups.map(([title, copy, items, asset], index) => <article className={`spillo-content-card spillo-content-card--${index + 1}`} id={title.toLowerCase().replaceAll(" ", "-").replaceAll("&", "and")} key={title}><LazyBackground className="spillo-content-card-image" backgroundImage={`linear-gradient(0deg, rgba(5,5,5,.74), rgba(5,5,5,.04)), url(${spilloAssets[asset]})`} preloadSrc={spilloAssets[asset]} /><div className="spillo-content-card-copy"><p>0{index + 1} / {title}</p><h2>{title}</h2><span>{copy}</span><ul>{items.map((item) => <li key={item}>{item}</li>)}</ul>{index > 2 ? <a href="/zakhybuildsai/portfolio/spillo/inquiries">Work with Spillo <b>→</b></a> : <a href="#top">Explore <b>→</b></a>}</div></article>)}</div></section>
     <section className="spillo-work-band"><p>READY TO BUILD THE NEXT MOVE?</p><a className="spillo-button spillo-button--yellow" href="/zakhybuildsai/portfolio/spillo/inquiries">Work with Spillo <b>→</b></a></section>
