@@ -43,7 +43,7 @@ const pathways = [
 ] as const;
 
 export function CrunkFitHome() {
-  return <main className="cf-page cf-home">
+  return <main id="top" className="cf-page cf-home">
     <section className="cf-exact-desktop" aria-label="CRUNK FIT homepage">
       <img src="/zakhy-assets/crunk-fit-home-approved-crisp_533f9b21.png" alt="CRUNK FIT Fit Fun Atlanta homepage" />
       <a className="cf-reference-link cf-reference-link--logo" href="/zakhybuildsai/portfolio/crunk-fit" aria-label="CRUNK FIT Home" />
@@ -85,9 +85,9 @@ const monetization = [
 ] as const;
 
 export function CrunkFitContent() {
-  return <main className="cf-page cf-inner"><CrunkFitHeader active="content" />
+  return <main id="top" className="cf-page cf-inner"><CrunkFitHeader active="content" />
     <section className="cf-inner-hero"><div><p>CRUNK FIT / CONTENT & MONETIZATION</p><h1>Turn up<br /><em>the results.</em></h1><span>Every offer is built to move bodies, build confidence, and grow the movement.</span></div><div style={{ backgroundImage: `url(${visual.contentHero})` }} /></section>
-    <section className="cf-content-section"><div className="cf-section-heading"><p>THE CRUNK FIT ECOSYSTEM</p><h2>Built to <em>move.</em></h2><span>Programs, premium content, community, and high-energy Atlanta experiences.</span></div><div className="cf-content-grid">{monetization.map(([title, copy, label, asset], index) => <article className="cf-content-card" key={title}><div className="cf-content-image" style={{ backgroundImage: `linear-gradient(0deg, rgba(7,8,11,.68), rgba(7,8,11,.025)), url(${visual[asset]})` }} /><div><p>0{index + 1} / {label}</p><h3>{title}</h3><span>{copy}</span><a href={title === "Programs" || title === "Challenges" || title === "Merch" ? "#top" : "/crunk-fit/inquiries"}>{title === "Events" ? "Book a moment" : "Explore"} <b>→</b></a></div></article>)}</div></section>
+    <section className="cf-content-section"><div className="cf-section-heading"><p>THE CRUNK FIT ECOSYSTEM</p><h2>Built to <em>move.</em></h2><span>Programs, premium content, community, and high-energy Atlanta experiences.</span></div><div className="cf-content-grid">{monetization.map(([title, copy, label, asset], index) => <article className="cf-content-card" id={title === "Challenges" ? "challenges" : undefined} key={title}><div className="cf-content-image" style={{ backgroundImage: `linear-gradient(0deg, rgba(7,8,11,.68), rgba(7,8,11,.025)), url(${visual[asset]})` }} /><div><p>0{index + 1} / {label}</p><h3>{title}</h3><span>{copy}</span><a href={title === "Programs" || title === "Challenges" || title === "Merch" ? "#top" : "/crunk-fit/inquiries"}>{title === "Events" ? "Book a moment" : "Explore"} <b>→</b></a></div></article>)}</div></section>
     <section className="cf-inner-band"><p>HEALTHY WOMEN. HIGHER STANDARDS.</p><a href="/zakhybuildsai/portfolio/crunk-fit/inquiries" className="cf-red-button">Work with CRUNK FIT <b>→</b></a></section>
   </main>;
 }
