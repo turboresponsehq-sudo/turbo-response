@@ -1,5 +1,7 @@
-# ATL IMPACT — Independent community intelligence prototype
+# ATL IMPACT — Independent Intelligence Demonstration
 
-Isolated preview branch. Not associated with a political campaign or a government official. Node.js (zero external packages), source-backed statistics, economic stakeholders, funding stage tracker, illustrative scenario simulator, human ripple, and guided source assistant. No PII or sensitive records. Source package is inside `site.zip`.
+**Version 0.2 (November 22, 2026)**
 
-Render configuration: `unzip -oq site.zip -d app && test -f app/server.js` as build command, `node app/server.js` start command. Autodeploy disabled. Do not merge into main or deploy to existing production services.
+Isolated Render service and source branch. Site presents sourced data and transparent research models. Hero: “GUN VIOLENCE HAS A PRICE. WE ALL PAY.” A clearly labeled NICJR $512.4M long-run government-cost model is visible above the fold, followed by direct evidence and funding controls. Mobile hides decorative radar to bring navigation forward. Screenshot checks at desktop/390px/375px found no JS errors or overflow. Backend API tests pass.
+
+Deployed app source and data are packaged in `site.zip`. Render build command: `unzip -oq site.zip -d app && test -f app/server.js`; start command: `node app/server.js`. Auto deploy remains disabled. This preview is not endorsed or administered by any campaign, government body or nonprofit. Does not collect personal or victim information. Do not merge into production.
