@@ -1,3 +1,5 @@
-# ATL IMPACT — independent intelligence demonstration
+# Georgia Impact Intelligence — Map-First Prototype v1
 
-Version 0.3. Clean public sharing URLs by stripping inbound ChatGPT referral tracking query parameters with an HTTP 302 redirect to the canonical same-origin address. No changes to visual layout or data. Standalone Render application, `prototype/atl-impact-2026-v1`, auto-deploy disabled. Source and backend are in `site.zip` and unpack into the `app` directory on build. No connections to the main production app, to Kenn's site, or to Amber's site.
+This is the independent ATL IMPACT preview, evolved into a Georgia map-first experience. Hover/click/tap Georgia counties, district toggle with current authoritative Census 2026 geometries when available, fallback county map, funding/economic evidence, 7/14/30-day AI research prompt, stage/presentation mode. No live incident data, invented incident counts, or private victim records. Changes isolated to `prototype/atl-impact-2026-v1` and the standalone Render preview. Prior source remains in Git history.
+
+App package: `site.zip`, unpacks into `app/` at build with `unzip -oq site.zip -d app && test -f app/server.js`; start `node app/server.js`. Auto deploy disabled. 159 historical fallback county polygons render quickly. Official current 2026 Census geographic sources queried via server on demand, district geometry not fabricated when unavailable. Reporting must be human verified; do not assign entire county counts to district totals. Do not merge into main.
