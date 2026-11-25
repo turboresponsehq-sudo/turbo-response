@@ -1,0 +1,19 @@
+/* Small-business flagship adjustments; original Home.css is unchanged. */
+.hp-business-home .hp-hero-h1 { font-size: clamp(42px, 5.5vw, 78px); }
+.hp-business-home .hp-hero-tagline { font-weight: 800; letter-spacing: .01em; }
+.hp-business-home #capabilities, .hp-business-home #contact { scroll-margin-top: 88px; }
+.hp-business-home .hp-status-metrics-row { flex-wrap: wrap; }
+@media (max-width: 960px) {
+  .hp-business-home .hp-hero-content { max-width: 100%; }
+  .hp-business-home .hp-hero-inner { box-sizing: border-box; }
+}
+@media (max-width: 600px) {
+  .hp-business-home .hp-hero-h1 { font-size: clamp(42px, 11vw, 58px); }
+  .hp-business-home .hp-hero-inner { padding-bottom: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hp-business-home *, .hp-business-home *::before, .hp-business-home *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

@@ -11,6 +11,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { AdminAuthProvider } from "./contexts/AdminAuthContext";
 import { setupAxiosInterceptor } from "./lib/axiosInterceptor";
 import TurboSystems from "./pages/TurboSystems";
+import BusinessHome from "./pages/BusinessHome";
 import AdminDashboard from "./pages/AdminDashboard";
 import Payment from "./pages/Payment";
 import AdminLogin from "./pages/AdminLogin";
@@ -195,8 +196,8 @@ function Router() {
   return (
     <RoleScopedAdminBoundary>
       <Switch>
-      {/* Small-business Turbo Response relaunch: reuse the existing Turbo Systems page. */}
-      <Route path={"/"} component={TurboSystems} />
+      {/* Flagship homepage restores original cinematic design; services remain separate. */}
+      <Route path={"/"} component={BusinessHome} />
       <Route path="/turbo-systems" component={TurboSystems} />
       {/* Retired public pages: no new case solicitation; source retained. */}
       <Route path="/legacy-home" component={RetiredPublicPage} />

@@ -27,3 +27,9 @@ client/src/pages/TurboSystems.tsx and TurboSystems.css.
 - Suppressed the unverified shared floating chatbot on public business and retired pages; preserved prior chat behavior on existing Creator/client/admin routes and left Creator-specific chat components unchanged. Default search and social metadata now reflect the business brand.
 - No new intake endpoint or production service changes. Business audit, voice, CRM and other integrations require isolated acceptance testing before activation. Preview is static; a passing build is not a runtime verification of backend functionality.
 - Before production authorization: confirm existing-client navigation, review privacy/terms, verify server-side noindex/retirement behavior for legacy routes (implemented in production server fallback), verify business-only intake and mobile/browser appearance; review main-branch deployment impact.
+
+## Flagship homepage restoration
+- Restored original cinematic Home.tsx composition as BusinessHome.tsx, preserving Home.css, original founder/goggles image URL, orbital rings, particles, glow and motion. Original Home.tsx remains unchanged for archival purposes.
+- Homepage headline: The Future of Business. Outcome: Increase sales. Increase productivity. Three capability pillars: Capture More Business, Automate the Way You Work, Make Better Business Decisions.
+- /services and /turbo-systems keep the professional service catalog; homepage / is separate. Removed old unsupported portfolio counts from the public homepage. Inquiry CTA remains email-based; no old case API connected.
+- New scoped CSS addresses mobile width and reduced-motion preference. Verify actual hero image loads from original external CDN, desktop/mobile appearance and link behavior before production launch.

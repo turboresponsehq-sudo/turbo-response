@@ -90,7 +90,7 @@ export default function TurboSystems() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    document.title = "Turbo Response — AI Systems & Business Automation";
+    document.title = "Turbo Response — AI & Business Automation Services";
   }, []);
 
   return (
@@ -120,6 +120,7 @@ export default function TurboSystems() {
             <span /><span /><span />
           </button>
           <nav className={`ts-nav-links${menuOpen ? " ts-mobile-open" : ""}`}>
+            <Link href="/" className="ts-nav-link" onClick={() => setMenuOpen(false)}>Home</Link>
             <a href="#services" className="ts-nav-link" onClick={() => setMenuOpen(false)}>
               What We Build
             </a>
@@ -137,9 +138,9 @@ export default function TurboSystems() {
       <section className="ts-hero">
         <div className="ts-hero-badge">⚡ AI SYSTEMS / BUSINESS AUTOMATION</div>
         <h1 className="ts-hero-title">
-          Increase Sales.
+          AI Systems &amp;
           <br />
-          <span className="ts-gradient-text">Increase Productivity.</span>
+          <span className="ts-gradient-text">Business Automation.</span>
         </h1>
         <p className="ts-hero-sub">
           We build intelligent systems that help businesses manage customers,
