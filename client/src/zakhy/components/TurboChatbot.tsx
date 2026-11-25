@@ -10,7 +10,7 @@ type Message = {
 
 type Step = "start" | "not-sure-creator" | "not-sure-problem" | "not-sure-goal";
 
-const INTAKE_BASE_URL = "https://turboresponsehq.ai/creator/start";
+const INTAKE_BASE_URL = import.meta.env.VITE_CREATOR_REBRAND_PREVIEW === "true" ? "/creator/start" : "https://turboresponsehq.ai/creator/start";
 
 const FAQS = [
   ["What does Zakhy do?", "Zakhy builds premium creator websites and practical systems around content, products, services, opportunities, and growth."],

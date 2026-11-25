@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { Link, useLocation } from "wouter";
+import { useLocation } from "wouter";
+import CreatorSiteHeader from "../../../zakhy/components/CreatorSiteHeader";
 import "../styles/creator.css";
 
 const revenueStreams = ["Performances", "Features", "Hosting / Appearances", "Merch", "Sponsorships", "Brand deals", "Events", "Content", "Memberships", "Digital products", "Services", "Affiliate income", "Other"];
@@ -53,6 +54,7 @@ export default function CreatorIntake() {
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
+    if (import.meta.env.VITE_CREATOR_REBRAND_PREVIEW === "true") { setError("Preview only: your information has not been sent or saved."); return; }
     setError("");
     if (!form.consent) return setError("Please confirm that we may review the information you shared.");
     setSubmitting(true);
@@ -87,9 +89,10 @@ export default function CreatorIntake() {
   </section></main>;
 
   return <main className="creator-intake-shell">
-    <header className="creator-intake-header"><Link href="/zakhybuildsai" className="creator-brand">ZAKHY <span>BUILDS AI</span></Link><Link href="/zakhybuildsai" className="creator-back">← Back</Link></header>
+    <CreatorSiteHeader active="Inquiries"/>
     <section className="creator-intake-heading"><p className="creator-eyebrow">CREATOR PROJECT INTAKE</p><h1>Build the business behind your brand.</h1><p>Tell us about your brand, audience, problems, revenue, opportunities, and current systems. Keep it real—we will use it to understand the most useful next step.</p></section>
     <form className="creator-form" onSubmit={submit}>
+      {import.meta.env.VITE_CREATOR_REBRAND_PREVIEW === "true" && <p className="creator-form-error" role="status">Design preview only — submissions are disabled.</p>}
       <input className="creator-honeypot" name="website" value={form.website} onChange={(event) => update("website", event.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true" />
       {error && <p className="creator-form-error" role="alert">{error}</p>}
       <section className="creator-form-card"><span>01</span><div><h2>Creator</h2><p>Who are we building with?</p><div className="creator-input-grid">

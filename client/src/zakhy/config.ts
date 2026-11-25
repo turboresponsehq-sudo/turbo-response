@@ -12,24 +12,25 @@ export type AutomationService = {
   automation: string;
 };
 
-/** Local-only content used by the visual landing-page demo. */
+/** Preview links use the isolated preview origin; production uses canonical URLs. */
+const siteOrigin=import.meta.env.VITE_CREATOR_REBRAND_PREVIEW==="true"?"":"https://turboresponsehq.ai";
+const creatorHome=siteOrigin+"/zakhybuildsai";
 export const zakhyDemoSite = {
-  creatorIntakeUrl: "https://turboresponsehq.ai/creator/start",
-  productionHomeUrl: "https://turboresponsehq.ai/zakhybuildsai",
+  creatorIntakeUrl: siteOrigin+"/creator/start",
+  productionHomeUrl: creatorHome,
   demoBaseUrl: "https://turboresponsehq.ai/zakhybuildsai",
-  portfolioUrl: "https://turboresponsehq.ai/zakhybuildsai/portfolio",
+  portfolioUrl: creatorHome+"/portfolio",
   brand: {
     name: "ZAKHY",
     descriptor: "BUILDS AI",
     legalName: "Zakhy Builds AI",
   },
   navigation: [
-    { label: "Home", href: "https://turboresponsehq.ai/zakhybuildsai" },
-    { label: "Services", href: "https://turboresponsehq.ai/zakhybuildsai/services" },
-    { label: "Automation Services", href: "https://turboresponsehq.ai/zakhybuildsai/automation-services" },
-    { label: "Portfolio", href: "https://turboresponsehq.ai/zakhybuildsai/portfolio" },
-    { label: "One-on-One AI", href: "https://turboresponsehq.ai/zakhybuildsai/learn-ai" },
-    { label: "Inquiries", href: "https://turboresponsehq.ai/creator/start" },
+    {label:"Home",href:creatorHome},
+    {label:"Solutions",href:creatorHome+"#ca-solutions"},
+    {label:"Pricing",href:creatorHome+"/services#marketplace"},
+    {label:"Projects",href:creatorHome+"/portfolio"},
+    {label:"About",href:creatorHome+"#ca-about"},
   ] satisfies NavigationItem[],
   services: [
     { number: "01", icon: "website", title: "Creator Websites", build: "Branded sites and landing pages for your work.", problem: "Scattered links make your brand harder to follow.", automation: "Visitor → Page → Click → Inquiry" },

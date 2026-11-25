@@ -308,7 +308,7 @@ function App() {
   });
 
   const [location] = useLocation();
-  const isCreatorChatPath = (import.meta.env.VITE_CREATOR_REBRAND_PREVIEW === "true" && location === "/") || location.startsWith("/admin/zakhy") || location === "/admin/creator/portal-preview" || /^(\/zakhy\/connect|\/zakhybuildsai|\/ralo|\/ms-pop-it|\/spillo|\/miami|\/atlanta|\/crunk-fit)(\/|$)/.test(location);
+  const isCreatorChatPath = (import.meta.env.VITE_CREATOR_REBRAND_PREVIEW === "true" && (location === "/" || location.replace(/\/$/, "") === "/creator/start")) || location.startsWith("/admin/zakhy") || location === "/admin/creator/portal-preview" || /^(\/zakhy\/connect|\/zakhybuildsai|\/ralo|\/ms-pop-it|\/spillo|\/miami|\/atlanta|\/crunk-fit)(\/|$)/.test(location);
 
   return (
     <ErrorBoundary>

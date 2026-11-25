@@ -1,26 +1,13 @@
-import { useState } from "react";
-import { ArrowUpRight, Brand, MenuIcon, ServiceIcon } from "../components/Brand";
+import { ArrowUpRight, ServiceIcon } from "../components/Brand";
+import CreatorSiteHeader from "../components/CreatorSiteHeader";
 import { zakhyDemoSite } from "../config";
 
 export default function AutomationServicesPage() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const openBooking = () => { setMenuOpen(false); window.top?.location.assign(zakhyDemoSite.creatorIntakeUrl); };
+  const openBooking = () => { window.top?.location.assign(zakhyDemoSite.creatorIntakeUrl); };
 
   return (
     <main className="automation-page">
-      <header className="site-header automation-header" id="home">
-        <div className="nav-shell">
-          <a href={zakhyDemoSite.productionHomeUrl} target="_top" rel="noreferrer"><Brand /></a>
-          <nav id="automation-navigation" className={`desktop-nav ${menuOpen ? "desktop-nav--open" : ""}`} aria-label="Main navigation">
-            {zakhyDemoSite.navigation.map((item) => <a key={item.href} href={item.href} target="_top" rel="noreferrer" onClick={() => setMenuOpen(false)}>{item.label}</a>)}
-            <button className="mobile-book-link" type="button" onClick={openBooking}>Inquiries <ArrowUpRight /></button>
-          </nav>
-          <div className="nav-actions">
-            <button className="nav-book" type="button" onClick={openBooking}>Inquiries <ArrowUpRight /></button>
-            <button className="menu-toggle" type="button" onClick={() => setMenuOpen((value) => !value)} aria-expanded={menuOpen} aria-controls="automation-navigation" aria-label="Toggle navigation"><MenuIcon open={menuOpen} /></button>
-          </div>
-        </div>
-      </header>
+      <CreatorSiteHeader active="Solutions"/>
 
       <section className="automation-hero" aria-labelledby="automation-title">
         <div className="page-shell">
