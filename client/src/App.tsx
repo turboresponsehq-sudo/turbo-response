@@ -10,10 +10,8 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AdminAuthProvider } from "./contexts/AdminAuthContext";
 import { setupAxiosInterceptor } from "./lib/axiosInterceptor";
-import Home from "./pages/Home";
 import TurboSystems from "./pages/TurboSystems";
 import AdminDashboard from "./pages/AdminDashboard";
-import IntakeForm from "./pages/IntakeForm";
 import Payment from "./pages/Payment";
 import AdminLogin from "./pages/AdminLogin";
 import ClientContract from "./pages/ClientContract";
@@ -21,32 +19,24 @@ import ServiceAgreement from "./pages/ServiceAgreement";
 import Disclaimer from "./pages/Disclaimer";
 import TermsOfService from "./pages/TermsOfService";
 
-import FloatingChatWidget from "./components/FloatingChatWidget";
 import AdminConsumerCases from "./pages/AdminConsumerCases";
 import AdminConsumerCaseDetail from "./pages/AdminConsumerCaseDetail";
 import AdminBrainUpload from "./pages/AdminBrainUpload";
 import CaseUploadCenter from "./pages/CaseUploadCenter";
 import ConsumerConfirmation from "./pages/ConsumerConfirmation";
-import TurboHQ from "./pages/TurboHQ";
-import Services from "./pages/Services";
-import Contact from "./pages/Contact";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 import ClientLogin from "./pages/ClientLogin";
 import ClientPortal from "./pages/ClientPortal";
 import PaymentPage from "./pages/PaymentPage";
 import SignContract from "./pages/SignContract";
-import TurboIntakeForm from "./pages/TurboIntakeForm";
-import OffenseIntakeForm from "./pages/OffenseIntakeForm";
 import AdminCasesList from "./pages/AdminCasesList";
 import AdminCasesDetail from "./pages/AdminCaseDetail";
 
-import ConsumerSolutions from "./pages/ConsumerSolutions";
 import BlackFuture from "./pages/BlackFuture";
 import AdminKnowledgeBase from "./pages/AdminKnowledgeBase";
 import AdminKnowledgeBaseImport from "./pages/AdminKnowledgeBaseImport";
 import AdminCommandCenter from "./pages/AdminCommandCenter";
-import CaseBrief from "./pages/CaseBrief";
 import CreatorIntake from "./features/creator/pages/CreatorIntake";
 import CreatorLeadsAdmin from "./features/creator/pages/CreatorLeadsAdmin";
 import CreatorOperationsDashboard from "./features/creator/pages/CreatorOperationsDashboard";
@@ -171,6 +161,34 @@ function OAuthBrain() {
   );
 }
 
+// Retired consumer marketing and new-case entry points. Original page sources
+// remain in Git; existing case/client/admin routes and backend are unchanged.
+function RetiredPublicPage() {
+  useEffect(() => {
+    const previous = document.title;
+    document.title = "Turbo Response — Page Archived";
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
+    const oldRobots = meta?.content;
+    if (meta) meta.content = "noindex, nofollow";
+    return () => {
+      document.title = previous;
+      if (meta && oldRobots !== undefined) meta.content = oldRobots;
+    };
+  }, []);
+  return (
+    <main className="min-h-screen bg-slate-950 px-6 py-24 text-center text-white">
+      <div className="mx-auto max-w-xl space-y-6">
+        <h1 className="text-3xl font-bold">This page has been archived.</h1>
+        <p className="text-slate-300">Explore our current business services or access an existing client account.</p>
+        <div className="flex flex-wrap justify-center gap-4">
+          <a className="rounded-lg bg-sky-700 px-5 py-3 font-semibold" href="/">Business services</a>
+          <a className="rounded-lg border border-slate-500 px-5 py-3" href="/client/login">Existing client access</a>
+        </div>
+      </div>
+    </main>
+  );
+}
+
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -179,32 +197,32 @@ function Router() {
       {/* Small-business Turbo Response relaunch: reuse the existing Turbo Systems page. */}
       <Route path={"/"} component={TurboSystems} />
       <Route path="/turbo-systems" component={TurboSystems} />
-      {/* Existing consumer case pages are preserved without appearing on the homepage. */}
-      <Route path="/legacy-home" component={Home} />
-      <Route path="/legacy-services" component={Services} />
+      {/* Retired public pages: no new case solicitation; source retained. */}
+      <Route path="/legacy-home" component={RetiredPublicPage} />
+      <Route path="/legacy-services" component={RetiredPublicPage} />
 
-      <Route path="/consumer-solutions" component={ConsumerSolutions} />
+      <Route path="/consumer-solutions" component={RetiredPublicPage} />
       <Route path="/black-future" component={BlackFuture} />
       {/* Case Documentation Brief landing page */}
-      <Route path="/case-brief" component={CaseBrief} />
+      <Route path="/case-brief" component={RetiredPublicPage} />
       <Route path="/services" component={TurboSystems} />
-      <Route path="/contact" component={Contact} />
+      <Route path="/contact" component={() => <LegacyZakhyRedirect to="/#contact" />} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       {/* Defense Intake - Consumer */}
-      <Route path="/intake-defense" component={IntakeForm} />
+      <Route path="/intake-defense" component={RetiredPublicPage} />
       {/* Redirect legacy route */}
-      <Route path="/intake" component={IntakeForm} />
+      <Route path="/intake" component={RetiredPublicPage} />
       <Route path="/consumer/confirmation" component={ConsumerConfirmation} />
       
       {/* Payment route - NOT part of consumer intake flow, used for business audit workflow */}
       <Route path="/payment" component={Payment} />
-      <Route path="/turbo" component={TurboHQ} />
+      <Route path="/turbo" component={RetiredPublicPage} />
       
       {/* Offense Intake - Consumer */}
-      <Route path="/intake-offense" component={OffenseIntakeForm} />
+      <Route path="/intake-offense" component={RetiredPublicPage} />
       
-      {/* Business Build Intake */}
-      <Route path="/turbo-intake" component={TurboIntakeForm} />
+      {/* Former intake URL now leads to business email consultation, never the offense API. */}
+      <Route path="/turbo-intake" component={() => <LegacyZakhyRedirect to="/#contact" />} />
 
       {/* Isolated Zakhy Builds AI homepage hub; the approved demo remains the visual source of truth. */}
       <Route path="/zakhybuildsai" component={ZakhyBuildsAIHub} />
@@ -313,9 +331,6 @@ function App() {
     console.warn('[App] Axios interceptor detected 401');
   });
 
-  const [location] = useLocation();
-  const isCreatorChatPath = location.startsWith("/admin/zakhy") || location === "/admin/creator/portal-preview" || /^(\/zakhy\/connect|\/zakhybuildsai|\/ralo|\/ms-pop-it|\/spillo|\/miami|\/atlanta|\/crunk-fit)(\/|$)/.test(location);
-
   return (
     <ErrorBoundary>
       <AdminAuthProvider>
@@ -325,7 +340,6 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <Router />
-            {!isCreatorChatPath && <FloatingChatWidget />}
           </TooltipProvider>
         </ThemeProvider>
       </AdminAuthProvider>

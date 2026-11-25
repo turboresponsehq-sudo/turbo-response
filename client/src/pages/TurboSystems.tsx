@@ -3,12 +3,66 @@ import { Link } from "wouter";
 import "./TurboSystems.css";
 
 const services = [
-  { icon: "📥", title: "Customer Intake & Lead Capture", description: "Collect customer inquiries through a branded form, organize contact details, and route each lead to the right next step.", tags: ["Forms", "Lead Tracking", "Routing"] },
-  { icon: "💬", title: "Automated Follow-Ups", description: "Reduce missed opportunities with timely appointment reminders, response workflows, and customer follow-up sequences.", tags: ["Email", "Reminders", "Scheduling"] },
-  { icon: "🗂️", title: "CRM & Client Management", description: "Bring leads, appointments, client files, and task statuses into one organized view for your team.", tags: ["CRM", "Client Portals", "Tasks"] },
-  { icon: "🤖", title: "AI Assistants & Business Workflows", description: "Use AI to help triage requests, summarize information, draft responses, and support repeatable business processes with human oversight.", tags: ["AI Assistants", "Documents", "Review"] },
-  { icon: "📊", title: "Business Intelligence Dashboards", description: "See the information that matters: inquiry volume, workflow bottlenecks, customer activity, and other available business metrics.", tags: ["Dashboards", "Reporting", "Data"] },
-  { icon: "🔗", title: "Custom Integrations & Automation", description: "Connect the tools your business already uses, such as forms, calendars, email, and customer-management systems.", tags: ["Integrations", "APIs", "Workflows"] },
+  {
+    "icon": "🤖",
+    "title": "AI Agents & Assistants",
+    "description": "Custom AI phone receptionists, website assistants and knowledge-based agents designed to answer questions, capture inquiries and support your team.",
+    "tags": [
+      "Voice AI",
+      "Chatbots",
+      "Knowledge Bases"
+    ]
+  },
+  {
+    "icon": "⚙️",
+    "title": "Business Automation",
+    "description": "Design workflows for routine tasks, customer follow-ups, internal notifications and handoffs, with human review where needed.",
+    "tags": [
+      "Workflows",
+      "Follow-Ups",
+      "Tasks"
+    ]
+  },
+  {
+    "icon": "📊",
+    "title": "Business Intelligence",
+    "description": "Turn business information into useful insights through assessments, automated research, reporting and operational analytics.",
+    "tags": [
+      "AI Assessments",
+      "Research",
+      "Reporting"
+    ]
+  },
+  {
+    "icon": "📥",
+    "title": "Sales & Customer Management",
+    "description": "Build systems to capture inquiries, organize customer records, track opportunities and support a more consistent sales process.",
+    "tags": [
+      "Lead Capture",
+      "CRM",
+      "Sales Pipelines"
+    ]
+  },
+  {
+    "icon": "🏗️",
+    "title": "Custom Business Platforms",
+    "description": "Develop professional websites, client portals, business dashboards and management tools tailored to how your organization operates.",
+    "tags": [
+      "Websites",
+      "Portals",
+      "Dashboards"
+    ]
+  },
+  {
+    "icon": "🔗",
+    "title": "System Integration",
+    "description": "Connect existing business tools, databases, email and communication systems so information can move between them more efficiently.",
+    "tags": [
+      "APIs",
+      "Data",
+      "Integrations"
+    ]
+  }
 ];
 
 const proofPoints = [
@@ -26,17 +80,17 @@ const systemFlow = [
 ];
 
 const infraStack = [
-  { label: "Customer intake", detail: "Forms, contact capture, qualification, and organized leads" },
-  { label: "Business workflows", detail: "Follow-up sequences, assignments, reminders, and process routing" },
-  { label: "Operational dashboards", detail: "Relevant metrics and workflow status in one place" },
-  { label: "Custom integrations", detail: "Connect existing systems without forcing a new software stack" },
+  { label: "Intelligence pipelines", detail: "Research, classification, structured reports and operational signals" },
+  { label: "AI knowledge systems", detail: "Business documents, knowledge retrieval and AI assistance" },
+  { label: "Business operations", detail: "Customer records, tasks, workspaces and dashboards" },
+  { label: "Connected infrastructure", detail: "APIs, databases, access controls and monitored workflows" },
 ];
 
 export default function TurboSystems() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    document.title = "Turbo Response — AI Systems for Small Businesses";
+    document.title = "Turbo Response — AI Systems & Business Automation";
   }, []);
 
   return (
@@ -81,16 +135,16 @@ export default function TurboSystems() {
 
       {/* ── SECTION 1: HERO ── */}
       <section className="ts-hero">
-        <div className="ts-hero-badge">⚡ TURBO SYSTEMS / SMALL BUSINESS AUTOMATION</div>
+        <div className="ts-hero-badge">⚡ AI SYSTEMS / BUSINESS AUTOMATION</div>
         <h1 className="ts-hero-title">
-          Make Your Business
+          Increase Sales.
           <br />
-          <span className="ts-gradient-text">Run Smarter With AI</span>
+          <span className="ts-gradient-text">Increase Productivity.</span>
         </h1>
         <p className="ts-hero-sub">
-          Turbo Response helps small businesses organize customer inquiries,
-          automate routine follow-ups, connect existing tools, and streamline
-          day-to-day operations with practical AI systems.
+          We build intelligent systems that help businesses manage customers,
+          automate operations, and grow more efficiently. Practical AI,
+          connected tools, and custom technology built around your business.
         </p>
         <div className="ts-hero-actions">
           <a href="#contact" className="ts-btn-primary">
@@ -120,11 +174,11 @@ export default function TurboSystems() {
         <div className="ts-container">
           <div className="ts-section-header">
             <span className="ts-section-tag">What We Build</span>
-            <h2 className="ts-section-title">Small Business AI & Automation Services</h2>
+            <h2 className="ts-section-title">AI & Business Automation Services</h2>
             <p className="ts-section-sub">
-              From capturing new leads to organizing customer information and repetitive
-              administrative work, we help local businesses create simpler processes.
-              Every project is scoped to the tools and budget of the business.
+              From customer acquisition to day-to-day operations, we design systems
+              around measurable business goals. Capabilities, integrations and delivery
+              are scoped and tested for each engagement.
             </p>
           </div>
 
@@ -199,15 +253,15 @@ export default function TurboSystems() {
         <div className="ts-container">
           <div className="ts-infra-inner">
             <div className="ts-infra-left">
-              <span className="ts-section-tag">Infrastructure / Proof</span>
+              <span className="ts-section-tag">Our Technology</span>
               <h2 className="ts-infra-title">
                 Better operations start<br />
                 <span className="ts-gradient-text">with connected systems.</span>
               </h2>
               <p className="ts-infra-body">
-                We can combine intake, dashboards, AI assistance, and automated
-                workflows into one practical system. We build around the needs of
-                your business instead of selling a one-size-fits-all package.
+                Turbo Systems is our underlying technology foundation. We draw on existing
+                intelligence pipelines, customer management, AI knowledge systems and
+                workflow infrastructure to design practical solutions around your business.
               </p>
             </div>
             <div className="ts-infra-right">
@@ -268,7 +322,7 @@ export default function TurboSystems() {
               </a>
             </div>
             <p className="ts-cta-note">
-              No sales pitch. No commitment. Just a clear picture of what's possible.
+              Every engagement begins with a review of your business needs and a clearly defined scope.
             </p>
           </div>
         </div>
@@ -281,7 +335,7 @@ export default function TurboSystems() {
             <div className="ts-footer-brand">
               <span className="ts-logo-icon">⚡</span>
               <span>
-                Turbo Systems is the small-business automation practice of{" "}
+                Turbo Systems is the technology foundation of{" "}
                 <Link href="/" className="ts-footer-link">
                   Turbo Response HQ
                 </Link>
@@ -292,6 +346,7 @@ export default function TurboSystems() {
               <a href="#services" className="ts-footer-link">Services</a>
               <a href="#how-it-works" className="ts-footer-link">Our Process</a>
               <a href="#contact" className="ts-footer-link">Contact</a>
+              <Link href="/privacy-policy" className="ts-footer-link">Privacy</Link>
             </div>
           </div>
         </div>

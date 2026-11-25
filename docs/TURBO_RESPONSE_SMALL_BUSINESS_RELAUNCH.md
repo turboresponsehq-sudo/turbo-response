@@ -20,3 +20,10 @@ Reuse the existing Turbo Systems front-end as the public-facing small-business o
 
 ## Original source reused
 client/src/pages/TurboSystems.tsx and TurboSystems.css.
+
+## Professional positioning and public archive
+- Original Turbo Systems design/CSS retained. Public copy now emphasizes increasing sales and productivity; six offerings: AI agents and assistants, business automation, business intelligence, sales/customer management, custom platforms and system integration.
+- Retired public consumer marketing and new-case intake routes render a neutral archive notice. Their original component files remain in Git. Former business intake and contact routes redirect to the email consultation section. Existing client login, case, payment, agreement, admin, Creator and Amani routes remain registered.
+- Removed the unverified shared floating chatbot from the app shell; Creator-specific chat components are unchanged. Default search and social metadata now reflect the business brand.
+- No new intake endpoint or production service changes. Business audit, voice, CRM and other integrations require isolated acceptance testing before activation. Preview is static; a passing build is not a runtime verification of backend functionality.
+- Before production authorization: confirm existing-client navigation, review privacy/terms, ensure server-side noindex/retirement behavior for legacy routes, verify business-only intake and mobile/browser appearance; review main-branch deployment impact.

@@ -61,7 +61,7 @@ export default function ConsumerConfirmation() {
 
           {/* Message */}
           <p className="text-lg text-gray-300 text-center mb-8">
-            If you already submitted your case, please check your email for confirmation. If not, you can start a new case below.
+            If you already submitted your case, please check your email for confirmation or access your existing client account.
           </p>
 
           {/* Action Buttons */}
@@ -73,10 +73,10 @@ export default function ConsumerConfirmation() {
               Return to Home
             </button>
             <button
-              onClick={() => setLocation("/intake")}
+              onClick={() => setLocation("/client/login")}
               className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-400 hover:from-blue-600 hover:to-blue-500 text-white font-semibold rounded-lg shadow-lg transition-all duration-200"
             >
-              Start New Case
+              Existing Client Access
             </button>
           </div>
 
