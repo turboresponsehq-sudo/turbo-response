@@ -11,7 +11,6 @@ import {
   type ZakhyCardDraft,
 } from "../zakhy-card-storage";
 import "./zakhy-digital-card.css";
-import "../creator-visual-rebrand.css";
 
 const initialDraft: ZakhyCardDraft = {
   name: "",
@@ -74,7 +73,6 @@ export default function ZakhyDigitalCard() {
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (import.meta.env.VITE_CREATOR_REBRAND_PREVIEW === "true") { setMessage("Design preview only. Your connection has not been saved."); return; }
     if (!draft.name.trim() || !draft.email.trim()) {
       setMessage("Name and email are required so the contact can be matched safely.");
       return;
@@ -89,10 +87,10 @@ export default function ZakhyDigitalCard() {
   }
 
   return (
-    <main className="zakhy-card-shell ca-card-theme">
+    <main className="zakhy-card-shell">
       <div className="zakhy-card-noise" />
       <header className="zakhy-card-nav">
-        <a className="zakhy-card-mark" href="/zakhybuildsai">CREATOR<span>AUTOMATIONS</span></a>
+        <a className="zakhy-card-mark" href="/zakhybuildsai">ZAKHY<span>BUILDS AI</span></a>
         <span className="zakhy-card-source">ZAKHY CARD / V1</span>
       </header>
 
@@ -105,10 +103,10 @@ export default function ZakhyDigitalCard() {
           <div className="zakhy-card-avatar"><img src="/zakhy-assets/zakhy-card-avatar-current.jpg" alt="Zakhy — Creator Automations" /></div>
         </div>
         <div className="zakhy-card-copy">
-          <p className="zakhy-card-kicker">CULTURE · BUSINESS · TECHNOLOGY</p>
+          <p className="zakhy-card-kicker">CREATOR OPERATING SYSTEMS</p>
           <h1>Zakhy</h1>
-          <p className="zakhy-card-title">I build creative technology for businesses.</p>
-          <p className="zakhy-card-description">Websites, social media systems, workflows and AI automation for creators, entrepreneurs and businesses.</p>
+          <p className="zakhy-card-title">I automate systems for creators.</p>
+          <p className="zakhy-card-description">Websites, workflows, follow-up, and digital business systems for artists, entrepreneurs, and creator-led brands.</p>
           <div className="zakhy-card-location"><MapPin size={15} /> Atlanta, GA</div>
           <div className="zakhy-card-actions">
             <button className="zakhy-card-button zakhy-card-button-primary" onClick={() => document.getElementById("connect")?.scrollIntoView({ behavior: "smooth" })}><Send size={16} /> Connect With Me</button>
@@ -119,7 +117,6 @@ export default function ZakhyDigitalCard() {
 
       <section id="connect" className="zakhy-connect-section">
         <div className="zakhy-connect-intro"><p className="zakhy-card-kicker">QUICK CONNECTION</p><h2>Connect With Me</h2><p>Tap a couple choices, share your basic information, and we’re connected.</p></div>
-        {import.meta.env.VITE_CREATOR_REBRAND_PREVIEW === "true" && <p className="zakhy-connect-message" role="status">Design preview — use fictional information. Connections are not saved.</p>}
         <form className="zakhy-connect-form" onSubmit={submit}>
           <fieldset className="zakhy-choice-group zakhy-connect-full"><legend>1. Who are you?</legend><div className="zakhy-choice-grid">{identityOptions.map((option) => <button key={option} type="button" className={draft.identityCategory === option ? "selected" : ""} onClick={() => update("identityCategory", option)}>{option}</button>)}</div></fieldset>
           <fieldset className="zakhy-choice-group zakhy-connect-full"><legend>2. What are you interested in?</legend><div className="zakhy-choice-grid">{interestOptions.map((option) => <button key={option} type="button" className={draft.interestCategories.includes(option) ? "selected" : ""} onClick={() => toggleInterest(option)}>{option}</button>)}</div><small>Choose all that apply.</small></fieldset>
@@ -136,7 +133,7 @@ export default function ZakhyDigitalCard() {
         <div className="zakhy-share-copy"><p className="zakhy-card-kicker">SHARE THE CARD</p><p>Simple branded QR for sharing the permanent Zakhy card link.</p></div>
         {qrDataUrl && <div className="zakhy-share-qr"><img src={qrDataUrl} alt="Branded QR code for the Zakhy digital card" /></div>}
       </section>
-      <footer className="zakhy-card-footer"><span>© {new Date().getFullYear()} CREATOR AUTOMATIONS</span><span>BUILT FOR REAL CONNECTIONS</span></footer>
+      <footer className="zakhy-card-footer"><span>© {new Date().getFullYear()} ZAKHY BUILDS AI</span><span>BUILT FOR REAL CONNECTIONS</span></footer>
     </main>
   );
 }

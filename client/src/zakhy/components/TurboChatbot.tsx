@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import "../creator-visual-rebrand.css";
 import { ArrowUpRight, Bot, ChevronLeft, MessageCircle, X } from "lucide-react";
 
 type Message = {
@@ -11,23 +10,23 @@ type Message = {
 
 type Step = "start" | "not-sure-creator" | "not-sure-problem" | "not-sure-goal";
 
-const INTAKE_BASE_URL = import.meta.env.VITE_CREATOR_REBRAND_PREVIEW === "true" ? "/creator/start" : "https://turboresponsehq.ai/creator/start";
+const INTAKE_BASE_URL = "https://turboresponsehq.ai/creator/start";
 
 const FAQS = [
-  ["What does Creator Automations do?", "Creator Automations builds websites, digital experiences and practical AI systems for creators, brands and businesses."],
-  ["What is business automation?", "We help automate inquiries, customer follow-ups, bookings, lead capture and repeatable business workflows."],
-  ["How much does a website cost?", "Website pricing depends on the package and scope. See our Services page for current offers."],
-  ["How much does automation cost?", "Custom automation is consultation-based; we confirm the scope before quoting."],
-  ["Who do you work with?", "We work with creators, entrepreneurs, service companies, retailers and other businesses."],
+  ["What does Zakhy do?", "Zakhy builds premium creator websites and practical systems around content, products, services, opportunities, and growth."],
+  ["What is Turbo Automations?", "Turbo Automations helps automate inquiries, follow-ups, bookings, fan capture, and other repetitive creator workflows."],
+  ["How much does a website cost?", "Creator Website projects currently start at $1,500."],
+  ["How much does automation cost?", "Turbo Automations currently starts at $2,500."],
+  ["Who do you work with?", "Zakhy works with rappers, artists, influencers, podcasters, fitness creators, and other creators."],
   ["What can you automate?", "Inquiries, bookings, follow-ups, fan capture, launches, promotions, and other repeatable workflows."],
-  ["How do I get started?", "Answer a few questions in the Project Intake and the team will review the best next step."],
+  ["How do I get started?", "Answer a few questions in the Creator Intake and the team will review the best next step."],
 ] as const;
 
 const choiceLabels = [
   "Build my website",
-  "Business Automation",
-  "Improve my brand or marketing",
-  "Organize my business",
+  "Turbo Automations",
+  "Improve my creator brand",
+  "Organize my creator business",
   "I’m not sure yet",
 ] as const;
 
@@ -50,7 +49,7 @@ export default function TurboChatbot({ source = "zakhy_turbo_chatbot" }: { sourc
 
   const activeChoices = useMemo(() => {
     if (step === "start") return choiceLabels;
-    if (step === "not-sure-creator") return ["Artist / creator", "Retail / hospitality", "Professional / service business", "Other business or organization"] as const;
+    if (step === "not-sure-creator") return ["Artist / rapper", "Influencer / podcaster", "Fitness / lifestyle creator", "Other creator"] as const;
     if (step === "not-sure-problem") return ["I need a stronger brand", "I lose inquiries and follow-ups", "I need better offers or sales", "I need help organizing everything"] as const;
     return ["Launch my website", "Automate repetitive work", "Get more bookings or opportunities", "I’m still figuring it out"] as const;
   }, [step]);
@@ -64,32 +63,32 @@ export default function TurboChatbot({ source = "zakhy_turbo_chatbot" }: { sourc
       if (choice === "Build my website") {
         append([
           visitorMessage(choice),
-          botMessage("Creator Automations creates websites built around your business, brand, products, services and goals.", { bullets: ["Explore the current website packages or request a scoped project."] }),
+          botMessage("Zakhy creates premium creator websites built around your brand, content, products, services, and opportunities.", { bullets: ["Starting point: Creator Website — $1,500"] }),
         ]);
         return;
       }
-      if (choice === "Business Automation") {
+      if (choice === "Turbo Automations") {
         append([
           visitorMessage(choice),
-          botMessage("Business automation helps connect inquiries, follow-ups, bookings, customer capture and other repetitive workflows.", { bullets: ["Custom automation: request a consultation."] }),
+          botMessage("Turbo Automations helps automate repetitive parts of your creator business — inquiries, follow-ups, bookings, fan capture, and other workflows.", { bullets: ["Starting point: Turbo Automations — $2,500"] }),
         ]);
         return;
       }
-      if (choice === "Improve my brand or marketing") {
+      if (choice === "Improve my creator brand") {
         append([
           visitorMessage(choice),
-          botMessage("We help businesses build stronger brands, content systems and digital platforms.", { bullets: ["Creator Website", "Branding / digital presence work", "Intake consultation"] }),
+          botMessage("Zakhy helps creators build stronger brands and digital platforms around their content, products, services, and opportunities.", { bullets: ["Creator Website", "Branding / digital presence work", "Intake consultation"] }),
         ]);
         return;
       }
-      if (choice === "Organize my business") {
+      if (choice === "Organize my creator business") {
         append([
           visitorMessage(choice),
-          botMessage("We can help centralize inquiries, customer relationships, bookings, sales opportunities and follow-up workflows.", { bullets: ["Custom business systems are scoped individually."] }),
+          botMessage("Zakhy can help centralize inquiries, bookings, features, collaborations, brand deals, products, fan opportunities, and follow-up workflows.", { bullets: ["Larger Creator Business Systems are custom / future scope."] }),
         ]);
         return;
       }
-      append([visitorMessage(choice), botMessage("Let’s narrow it down with three quick questions. What type of business or creative work do you do?")]);
+      append([visitorMessage(choice), botMessage("Let’s narrow it down with three quick questions. What kind of creator are you?")]);
       setStep("not-sure-creator");
       return;
     }
@@ -106,7 +105,7 @@ export default function TurboChatbot({ source = "zakhy_turbo_chatbot" }: { sourc
     }
     append([
       visitorMessage(choice),
-      botMessage("Based on what you shared, the best next step is a website, business automation, or a custom consultation. The intake will help the team point you to the right fit.", { cta: "Continue to Project Intake" }),
+      botMessage("Based on what you shared, the best next step is a Creator Website, Turbo Automations, or a custom consultation. The intake will help the team point you to the right fit.", { cta: "Continue to Creator Intake" }),
     ]);
     setStep("start");
   }
@@ -117,13 +116,13 @@ export default function TurboChatbot({ source = "zakhy_turbo_chatbot" }: { sourc
   }
 
   return (
-    <div className="turbo-chatbot ca-chat-theme" aria-live="polite">
+    <div className="turbo-chatbot" aria-live="polite">
       {open && (
         <section className="turbo-panel" aria-label="Turbo chatbot">
           <header className="turbo-panel__header">
             <div className="turbo-panel__identity">
               <span className="turbo-avatar"><Bot size={18} strokeWidth={2.4} /></span>
-              <div><strong>Turbo</strong><span>Business & creative systems guide</span></div>
+              <div><strong>Turbo</strong><span>Creator business guide</span></div>
             </div>
             <button className="turbo-icon-button" onClick={() => setOpen(false)} aria-label="Close Turbo"><X size={19} /></button>
           </header>
@@ -147,7 +146,7 @@ export default function TurboChatbot({ source = "zakhy_turbo_chatbot" }: { sourc
           </div>
           <footer className="turbo-panel__footer">
             {step !== "start" && <button className="turbo-reset" onClick={reset}><ChevronLeft size={14} /> Start over</button>}
-            <a href={intakeUrl} className="turbo-intake-link">Open Project Intake <ArrowUpRight size={14} /></a>
+            <a href={intakeUrl} className="turbo-intake-link">Open Creator Intake <ArrowUpRight size={14} /></a>
           </footer>
         </section>
       )}

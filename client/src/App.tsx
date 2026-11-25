@@ -266,7 +266,6 @@ function Router() {
       {/* Admin workflow routes - restored to specification */}
       <Route path="/admin/command-center" component={AdminCommandCenter} />
       <Route path="/admin/zakhy/add-contact" component={ProtectedAddNetworkContact} />
-      {import.meta.env.VITE_CREATOR_REBRAND_PREVIEW === "true" && <Route path="/preview/contact-design" component={() => <AddNetworkContactPage designPreview />} />}
       <Route path="/admin/zakhy/network/:id" component={ProtectedNetworkContactDetail} />
       <Route path="/admin/zakhy/network" component={ProtectedMyNetwork} />
       <Route path="/admin/zakhy/connections" component={ProtectedDataConnections} />
@@ -309,7 +308,7 @@ function App() {
   });
 
   const [location] = useLocation();
-  const isCreatorChatPath = location.replace(/\/$/, "") === "/creator/start" || (import.meta.env.VITE_CREATOR_REBRAND_PREVIEW === "true" && (location === "/" || location === "/preview/contact-design")) || location.startsWith("/admin/zakhy") || location === "/admin/creator/portal-preview" || /^(\/zakhy\/connect|\/zakhybuildsai|\/ralo|\/ms-pop-it|\/spillo|\/miami|\/atlanta|\/crunk-fit)(\/|$)/.test(location);
+  const isCreatorChatPath = (import.meta.env.VITE_CREATOR_REBRAND_PREVIEW === "true" && location === "/") || location.startsWith("/admin/zakhy") || location === "/admin/creator/portal-preview" || /^(\/zakhy\/connect|\/zakhybuildsai|\/ralo|\/ms-pop-it|\/spillo|\/miami|\/atlanta|\/crunk-fit)(\/|$)/.test(location);
 
   return (
     <ErrorBoundary>
