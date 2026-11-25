@@ -18,3 +18,8 @@ Build with VITE_CREATOR_REBRAND_PREVIEW=true pnpm run build:frontend then node s
 ## Additional pass
 - Digital networking card /zakhy/connect now matches the warm dark identity, preserving existing portrait, vCard and QR destinations, and existing production local-contact storage behavior. Preview blocks saving and explicitly labels demo.
 - Existing client project links in the portfolio continue to open their established URLs rather than unbuilt static preview paths. Suppressed legacy consumer chat on /creator/start; Creator home chat retains its original guided behavior.
+
+## Desktop hero and commercial narrative revision
+- Reference-based composition: one-line wordmark, centered hero, a wide diffused amber-to-rose curved light field (SVG blur + grain), a single prominent inquiry CTA, restrained capability row and a brand identity strip in place of fictional client logos/metrics.
+- New headline: Create the narrative. Grow the business. Positioning: For the creators of the future. Supporting copy ties media, digital platforms and AI systems to customers, sales and productivity. Section copy explains commercial outcomes, not just technical features.
+- Only homepage presentation and shared stylesheet additions; no service pricing, routes, API, CRM or database changes. Desktop reference match and mobile rendering need visual verification.
