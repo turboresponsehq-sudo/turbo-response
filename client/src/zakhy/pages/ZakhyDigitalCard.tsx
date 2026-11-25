@@ -11,6 +11,7 @@ import {
   type ZakhyCardDraft,
 } from "../zakhy-card-storage";
 import "./zakhy-digital-card.css";
+import "../creator-brand-refresh.css";
 
 const initialDraft: ZakhyCardDraft = {
   name: "",
@@ -90,7 +91,7 @@ export default function ZakhyDigitalCard() {
     <main className="zakhy-card-shell">
       <div className="zakhy-card-noise" />
       <header className="zakhy-card-nav">
-        <a className="zakhy-card-mark" href="/zakhybuildsai">ZAKHY<span>BUILDS AI</span></a>
+        <a className="zakhy-card-mark" href="/zakhybuildsai">CREATOR<span>AUTOMATIONS</span></a>
         <span className="zakhy-card-source">ZAKHY CARD / V1</span>
       </header>
 
@@ -103,10 +104,10 @@ export default function ZakhyDigitalCard() {
           <div className="zakhy-card-avatar"><img src="/zakhy-assets/zakhy-card-avatar-current.jpg" alt="Zakhy — Creator Automations" /></div>
         </div>
         <div className="zakhy-card-copy">
-          <p className="zakhy-card-kicker">CREATOR OPERATING SYSTEMS</p>
+          <p className="zakhy-card-kicker">CULTURE · BUSINESS · TECHNOLOGY</p>
           <h1>Zakhy</h1>
-          <p className="zakhy-card-title">I automate systems for creators.</p>
-          <p className="zakhy-card-description">Websites, workflows, follow-up, and digital business systems for artists, entrepreneurs, and creator-led brands.</p>
+          <p className="zakhy-card-title">I build creative technology for businesses.</p>
+          <p className="zakhy-card-description">Websites, social media systems, workflows and AI automation for creators, entrepreneurs and businesses.</p>
           <div className="zakhy-card-location"><MapPin size={15} /> Atlanta, GA</div>
           <div className="zakhy-card-actions">
             <button className="zakhy-card-button zakhy-card-button-primary" onClick={() => document.getElementById("connect")?.scrollIntoView({ behavior: "smooth" })}><Send size={16} /> Connect With Me</button>

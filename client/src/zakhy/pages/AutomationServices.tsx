@@ -26,8 +26,8 @@ export default function AutomationServicesPage() {
         <div className="page-shell">
           <p className="eyebrow">AI. AUTOMATION. GROWTH.</p>
           <h1 id="automation-title">AUTOMATION<br /><em>SERVICES.</em></h1>
-          <p className="automation-intro">AI-powered systems that centralize, organize, and automate the business behind your creator brand.</p>
-          <div className="automation-hero-rule"><span>CREATOR WEBSITES</span><i>+</i><span>FANS</span><i>+</i><span>BOOKINGS</span><i>+</i><span>REVENUE</span><b>→ ONE SYSTEM</b></div>
+          <p className="automation-intro">AI-powered systems that centralize, organize, and automate the business behind your brand.</p>
+          <div className="automation-hero-rule"><span>DIGITAL PLATFORMS</span><i>+</i><span>CUSTOMERS</span><i>+</i><span>BOOKINGS</span><i>+</i><span>REVENUE</span><b>→ ONE SYSTEM</b></div>
         </div>
       </section>
 
@@ -57,7 +57,7 @@ export default function AutomationServicesPage() {
       <section className="automation-cta" id="inquiries">
         <div className="page-shell automation-cta-inner">
           <div><p className="eyebrow eyebrow--light">READY TO CENTRALIZE?</p><h2>BUILD YOUR<br /><em>SYSTEM.</em></h2></div>
-          <div className="contact-side"><p>Start with the system your creator business needs now. Add more as you grow.</p><button type="button" className="button button--white" onClick={openBooking}>MAKE AN INQUIRY <ArrowUpRight /></button></div>
+          <div className="contact-side"><p>Start with the system your business needs now. Add more as you grow.</p><button type="button" className="button button--white" onClick={openBooking}>MAKE AN INQUIRY <ArrowUpRight /></button></div>
         </div>
       </section>
     </main>

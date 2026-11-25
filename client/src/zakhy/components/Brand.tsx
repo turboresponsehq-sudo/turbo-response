@@ -6,9 +6,9 @@ type BrandProps = {
 
 export function Brand({ light = false }: BrandProps) {
   return (
-    <a className={`brand ${light ? "brand--light" : ""}`} href="#home" aria-label="Zakhy Builds AI home">
-      <span className="brand__name">ZAKHY</span>
-      <span className="brand__descriptor">BUILDS AI</span>
+    <a className={`brand ${light ? "brand--light" : ""}`} href="#home" aria-label="Creator Automations home">
+      <span className="brand__name">CREATOR</span>
+      <span className="brand__descriptor">AUTOMATIONS</span>
     </a>
   );
 }
