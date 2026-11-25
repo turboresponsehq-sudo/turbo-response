@@ -19,6 +19,7 @@ import ServiceAgreement from "./pages/ServiceAgreement";
 import Disclaimer from "./pages/Disclaimer";
 import TermsOfService from "./pages/TermsOfService";
 
+import FloatingChatWidget from "./components/FloatingChatWidget";
 import AdminConsumerCases from "./pages/AdminConsumerCases";
 import AdminConsumerCaseDetail from "./pages/AdminConsumerCaseDetail";
 import AdminBrainUpload from "./pages/AdminBrainUpload";
@@ -331,6 +332,10 @@ function App() {
     console.warn('[App] Axios interceptor detected 401');
   });
 
+  const [location] = useLocation();
+  const isCreatorChatPath = location.startsWith("/admin/zakhy") || location === "/admin/creator/portal-preview" || /^(\/zakhy\/connect|\/zakhybuildsai|\/ralo|\/ms-pop-it|\/spillo|\/miami|\/atlanta|\/crunk-fit)(\/|$)/.test(location);
+  const preserveExistingChat = /^(\/creator|\/client|\/admin|\/sign-contract|\/pay)(\/|$)/.test(location) && !isCreatorChatPath;
+
   return (
     <ErrorBoundary>
       <AdminAuthProvider>
@@ -340,6 +345,7 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <Router />
+            {preserveExistingChat && <FloatingChatWidget />}
           </TooltipProvider>
         </ThemeProvider>
       </AdminAuthProvider>
