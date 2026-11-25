@@ -48,8 +48,8 @@ function CheckGroup({ label, items, selected, onChange }: {
 export default function CreatorIntake() {
   const [, setLocation] = useLocation();
   const [form, setForm] = useState<FormData>(() => ({...initialForm, packageInterest: serviceMap[new URLSearchParams(window.location.search).get("service") || ""] || "Not sure yet"}));
-  const isBusiness = businessTypes.includes(form.creatorType);
-  const selectedType = Boolean(form.creatorType);
+  // Business-first discovery is visible before a client type is selected.
+  const isBusiness = !form.creatorType || businessTypes.includes(form.creatorType) || form.creatorType === "Other";
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -61,7 +61,11 @@ export default function CreatorIntake() {
   const update = (field: keyof FormData, value: string | boolean | string[]) => setForm((current) => ({ ...current, [field]: value }));
 
   function changeType(value: string) {
-    setForm(current => ({ ...current, creatorType: value, revenueStreams: [], additionalMonetization: "", audienceLocation: "", priorityPlatforms: "", audienceSize: "", collectsFanContacts: "", opportunityFocus: [], finalQuestion: "", brandStyle: "" }));
+    setForm(current => {
+      const wasBusiness = !current.creatorType || businessTypes.includes(current.creatorType) || current.creatorType === "Other";
+      const nextBusiness = !value || businessTypes.includes(value) || value === "Other";
+      return wasBusiness === nextBusiness ? { ...current, creatorType: value } : { ...current, creatorType: value, revenueStreams: [], additionalMonetization: "", audienceLocation: "", priorityPlatforms: "", audienceSize: "", collectsFanContacts: "", opportunityFocus: [], finalQuestion: "", brandStyle: "" };
+    });
   }
 
   async function submit(event: React.FormEvent) {
@@ -103,29 +107,28 @@ export default function CreatorIntake() {
 
   return <main className="creator-intake-shell">
     <CreatorSiteHeader active="Inquiries"/>
-    <section className="creator-intake-heading"><p className="creator-eyebrow">CREATOR AUTOMATIONS / PROJECT INQUIRY</p><h1>Let’s build what your business needs.</h1><p>Tell us who you are and what you want to accomplish. We’ll tailor the questions to your business or creator needs, from branding and marketing to AI, sales and operations.</p></section>
+    <section className="creator-intake-heading"><p className="creator-eyebrow">CREATOR AUTOMATIONS / PROJECT INQUIRY</p><h1>Build a smarter business.</h1><p>Tell us how your business operates today, where you need support and what results you want. Whether you need AI automation, sales systems, analytics, a digital platform or a marketing campaign, this is your starting point.</p></section>
     <form className="creator-form" onSubmit={submit}>
       {import.meta.env.VITE_CREATOR_REBRAND_PREVIEW === "true" && <p className="creator-form-error" role="status">Design preview only — submissions are disabled.</p>}
       <input className="creator-honeypot" name="website" value={form.website} onChange={(event) => update("website", event.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true" />
       {error && <p className="creator-form-error" role="alert">{error}</p>}
-      <section className="creator-form-card"><span>01</span><div><h2>About you</h2><p>Who are we building with?</p><div className="creator-input-grid">
+      <section className="creator-form-card"><span>01</span><div><h2>Business information</h2><p>Tell us about your company or organization and the best person to contact.</p><div className="creator-input-grid">
         <label>Business / organization / brand name <input required maxLength={255} value={form.brandName} onChange={(event) => update("brandName", event.target.value)} placeholder="Your business or brand name" /></label>
         <label>Contact name <input required value={form.fullName} onChange={(event) => update("fullName", event.target.value)} placeholder="Your full name" /></label>
         <label>Email <input required type="email" value={form.email} onChange={(event) => update("email", event.target.value)} placeholder="you@email.com" /></label>
         <label>Phone <input type="tel" value={form.phone} onChange={(event) => update("phone", event.target.value)} placeholder="(000) 000-0000" /></label>
-        <label className="creator-full">What best describes you? <select required value={form.creatorType} onChange={(event) => changeType(event.target.value)}><option value="">Choose your type</option><optgroup label="Businesses & organizations">{businessTypes.map(value => <option key={value}>{value}</option>)}</optgroup><optgroup label="Creators & personal brands">{creatorTypes.map(value => <option key={value}>{value}</option>)}</optgroup></select></label><label className="creator-full">What do you need help with? <select value={form.packageInterest} onChange={event => update("packageInterest", event.target.value)}>{packageOptions.map(value => <option key={value}>{value}</option>)}</select></label>
-        <label>Website (if any) <input type="url" value={form.websiteUrl} onChange={(event) => update("websiteUrl", event.target.value)} placeholder="https://" /></label>
-        <label className="creator-full">Social links <textarea value={form.socialLinks} onChange={(event) => update("socialLinks", event.target.value)} placeholder="One full URL per line (Instagram, TikTok, YouTube, etc.)" rows={3} /></label>
+        <label className="creator-full">What best describes you? <select required value={form.creatorType} onChange={(event) => changeType(event.target.value)}><option value="">Select business or organization type</option><optgroup label="Businesses & organizations">{businessTypes.map(value => <option key={value}>{value}</option>)}</optgroup><optgroup label="Independent creators & personal brands">{creatorTypes.map(value => <option key={value}>{value}</option>)}</optgroup></select></label><label className="creator-full">What do you need help with? <select value={form.packageInterest} onChange={event => update("packageInterest", event.target.value)}>{packageOptions.map(value => <option key={value}>{value}</option>)}</select></label>
+        <label>Company website (optional) <input type="url" value={form.websiteUrl} onChange={(event) => update("websiteUrl", event.target.value)} placeholder="https://" /></label>
+        <label className="creator-full">Social media or company profile links (optional) <textarea value={form.socialLinks} onChange={(event) => update("socialLinks", event.target.value)} placeholder="One full URL per line (Instagram, TikTok, YouTube, etc.)" rows={3} /></label>
       </div></div></section>
 
-      {selectedType && <>
-      <section className="creator-form-card"><span>02</span><div><h2>Goals & challenges</h2><p>What result do you want, and what is in the way?</p><div className="creator-input-grid">
-        <label className="creator-full">{isBusiness ? "What would you like to improve in your business?" : "What do you want your brand or business to accomplish over the next 6–12 months?"} <textarea required minLength={8} maxLength={4000} value={form.goals} onChange={(event) => update("goals", event.target.value)} rows={4} /></label>
-        <label className="creator-full">What are the biggest problems in your business right now? <textarea required minLength={8} maxLength={4000} value={form.challenges} onChange={(event) => update("challenges", event.target.value)} rows={4} /></label>
-        <label className="creator-full">{isBusiness ? "Which repetitive tasks or workflows take the most time? What would you like to automate?" : "What do you wish happened automatically instead of being handled manually?"} <textarea maxLength={4000} value={form.automationWish} onChange={(event) => update("automationWish", event.target.value)} rows={3} /></label>
+      <section className="creator-form-card"><span>02</span><div><h2>Business goals & automation needs</h2><p>Tell us what you want to improve and where manual work is slowing you down.</p><div className="creator-input-grid">
+        <label className="creator-full">{isBusiness ? "What is your biggest business goal right now?" : "What do you want your brand or business to accomplish over the next 6–12 months?"} <textarea required minLength={8} maxLength={4000} value={form.goals} onChange={(event) => update("goals", event.target.value)} rows={4} /></label>
+        <label className="creator-full">What business problems, bottlenecks or missed opportunities are you experiencing? <textarea required minLength={8} maxLength={4000} value={form.challenges} onChange={(event) => update("challenges", event.target.value)} rows={4} /></label>
+        <label className="creator-full">{isBusiness ? "Which tasks are still handled manually? What would you like to automate?" : "What do you wish happened automatically instead of being handled manually?"} <textarea placeholder="Customer inquiries, appointment reminders, data entry, reporting, invoices, follow-ups..." maxLength={4000} value={form.automationWish} onChange={(event) => update("automationWish", event.target.value)} rows={3} /></label>
       </div></div></section>
 
-      {isBusiness ? (<section className="creator-form-card"><span>03</span><div><h2>Customers, sales & operations</h2><p>Help us understand how your business works today.</p>
+      {isBusiness ? (<section className="creator-form-card"><span>03</span><div><h2>Sales, customers & daily operations</h2><p>Help us understand your existing customer journey and how work gets done.</p>
         <CheckGroup label="How does your business generate revenue or funding?" items={businessRevenue} selected={form.revenueStreams} onChange={value => update("revenueStreams",value)} />
         <div className="creator-input-grid">
           <label className="creator-full">How do customers find you, and how do you handle inquiries, follow-ups and sales today? <textarea maxLength={2000} rows={3} value={form.additionalMonetization} onChange={event => update("additionalMonetization",event.target.value)} placeholder="Referrals, social media, phone calls, manual spreadsheets, CRM, etc." /></label>
@@ -144,23 +147,22 @@ export default function CreatorIntake() {
         </div>
       </div></section>)}
 
-      <section className="creator-form-card"><span>04</span><div><h2>Current tools & assets</h2><p>What is already in place?</p>
-        <CheckGroup label="Do you already have?" items={brandAssets} selected={form.brandAssets} onChange={(value) => update("brandAssets", value)} />
-        {(!isBusiness || form.packageInterest !== "AI & Business Systems") && <div className="creator-input-grid"><label className="creator-full">What style or message should your brand communicate? <textarea value={form.brandStyle} onChange={(event) => update("brandStyle", event.target.value)} placeholder="Audience, message, visual direction..." rows={3} /></label></div>}
-        <CheckGroup label="Do you currently have these business systems?" items={businessSystems} selected={form.businessSystems} onChange={(value) => update("businessSystems", value)} />
+      <section className="creator-form-card"><span>04</span><div><h2>Business software & systems</h2><p>Identify the tools you already use and what needs to work together.</p>
+        <CheckGroup label="Which systems do you already use?" items={businessSystems} selected={form.businessSystems} onChange={(value) => update("businessSystems", value)} />
+        {(!isBusiness || form.packageInterest === "Media & Marketing" || form.packageInterest === "Digital Platforms" || form.packageInterest === "Multiple services") && <CheckGroup label="What brand or digital assets do you already have?" items={brandAssets} selected={form.brandAssets} onChange={(value) => update("brandAssets", value)} />}
+        {(!isBusiness || form.packageInterest === "Media & Marketing" || form.packageInterest === "Digital Platforms" || form.packageInterest === "Multiple services") && <div className="creator-input-grid"><label className="creator-full">What style or message should your brand communicate? <textarea value={form.brandStyle} onChange={(event) => update("brandStyle", event.target.value)} placeholder="Audience, message, visual direction..." rows={3} /></label></div>}
       </div></section>
 
       <section className="creator-form-card"><span>05</span><div><h2>Project priorities</h2><p>Set the immediate focus, budget and next step.</p>
-        <CheckGroup label={isBusiness ? "Which areas need improvement?" : "Which opportunities matter most?"} items={isBusiness ? businessFocus : opportunityFocus} selected={form.opportunityFocus} onChange={(value) => update("opportunityFocus", value)} />
+        <CheckGroup label={isBusiness ? "Which business functions would you like us to improve?" : "Which opportunities matter most?"} items={isBusiness ? businessFocus : opportunityFocus} selected={form.opportunityFocus} onChange={(value) => update("opportunityFocus", value)} />
         <div className="creator-input-grid"><label className="creator-full">What is the #1 problem you want Creator Automations to solve first? <textarea required minLength={8} maxLength={2000} value={form.projectPriority} onChange={(event) => update("projectPriority", event.target.value)} rows={3} /></label>
           <label>Budget range <select value={form.budgetRange} onChange={(event) => update("budgetRange", event.target.value)}><option value="">Select one</option>{["Under $1,000", "$1,000–$2,500", "$2,500–$5,000", "$5,000–$10,000", "$10,000+"].map((value) => <option key={value}>{value}</option>)}</select></label>
-          <label className="creator-full">{isBusiness ? "What would a successful solution look like? Include desired results, timeline or important integrations." : "What would make your business easier to run and help you generate more revenue?"} <textarea maxLength={4000} value={form.finalQuestion} onChange={(event) => update("finalQuestion", event.target.value)} rows={4} /></label>
+          <label className="creator-full">{isBusiness ? "What results would make this project successful? Include any desired timeline, key metrics or software integrations." : "What would make your business easier to run and help you generate more revenue?"} <textarea maxLength={4000} value={form.finalQuestion} onChange={(event) => update("finalQuestion", event.target.value)} rows={4} /></label>
         </div>
       </div></section>
 
-      </>}
       <label className="creator-consent"><input type="checkbox" checked={form.consent} onChange={(event) => update("consent", event.target.checked)} /> <span>I agree that Creator Automations may review this information to respond to my project request.</span></label>
-      <div className="creator-submit-row"><p>No payment, account, or obligation. This is a project discovery request.</p><button className="creator-button" disabled={submitting || !selectedType}>{submitting ? "Sending request..." : "Start my project →"}</button></div>
+      <div className="creator-submit-row"><p>No payment or obligation. We will review your business needs before recommending a solution.</p><button className="creator-button" disabled={submitting}>{submitting ? "Sending request..." : "Start my project →"}</button></div>
     </form>
   </main>;
 }
