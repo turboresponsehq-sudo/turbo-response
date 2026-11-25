@@ -4,99 +4,93 @@ import "./TurboSystems.css";
 
 const services = [
   {
-    icon: "⚡",
-    title: "Automated Intelligence Pipelines",
-    description:
-      "Daily scanning, classification, and delivery of actionable intelligence from regulatory bodies, market signals, and custom data sources — fully automated, zero manual work.",
-    tags: ["GitHub Actions", "Node.js", "SendGrid", "RSS/API"],
+    "icon": "🤖",
+    "title": "AI Agents & Assistants",
+    "description": "Custom AI phone receptionists, website assistants and knowledge-based agents designed to answer questions, capture inquiries and support your team.",
+    "tags": [
+      "Voice AI",
+      "Chatbots",
+      "Knowledge Bases"
+    ]
   },
   {
-    icon: "🤖",
-    title: "AI Agent Deployment",
-    description:
-      "Custom Manus-powered agents that execute multi-step workflows: intake processing, document generation, case routing, client communication, and more.",
-    tags: ["Manus AI", "tRPC", "React", "Express"],
+    "icon": "⚙️",
+    "title": "Business Automation",
+    "description": "Design workflows for routine tasks, customer follow-ups, internal notifications and handoffs, with human review where needed.",
+    "tags": [
+      "Workflows",
+      "Follow-Ups",
+      "Tasks"
+    ]
   },
   {
-    icon: "🏗️",
-    title: "Production Infrastructure Builds",
-    description:
-      "Full-stack systems built to production standards: authentication, database schema, API layer, client portals, admin dashboards, and CI/CD pipelines.",
-    tags: ["Render", "MySQL/TiDB", "Drizzle ORM", "Vite"],
+    "icon": "📊",
+    "title": "Business Intelligence",
+    "description": "Turn business information into useful insights through assessments, automated research, reporting and operational analytics.",
+    "tags": [
+      "AI Assessments",
+      "Research",
+      "Reporting"
+    ]
   },
   {
-    icon: "📊",
-    title: "Business Intelligence Systems",
-    description:
-      "End-to-end BI pipelines that scan sources, classify priority, generate structured reports, create tasks, and deliver insights on schedule — every day.",
-    tags: ["P0/P1/P2 Triage", "Auto-task Creation", "Email Delivery"],
+    "icon": "📥",
+    "title": "Sales & Customer Management",
+    "description": "Build systems to capture inquiries, organize customer records, track opportunities and support a more consistent sales process.",
+    "tags": [
+      "Lead Capture",
+      "CRM",
+      "Sales Pipelines"
+    ]
   },
   {
-    icon: "🔒",
-    title: "Incident Response & Stability Protocols",
-    description:
-      "Production stability frameworks: drift guards, proof-first deploy standards, version beacons, smoke tests, and structured incident response templates.",
-    tags: ["/api/version", "Drift Guard", "SEV1 Protocol"],
+    "icon": "🏗️",
+    "title": "Custom Business Platforms",
+    "description": "Develop professional websites, client portals, business dashboards and management tools tailored to how your organization operates.",
+    "tags": [
+      "Websites",
+      "Portals",
+      "Dashboards"
+    ]
   },
   {
-    icon: "🔗",
-    title: "System Integration & Automation",
-    description:
-      "Connect your existing tools — CRMs, payment processors, document systems, notification channels — into a unified automated workflow with no manual handoffs.",
-    tags: ["Stripe", "SendGrid", "S3", "Notion", "Google Calendar"],
-  },
+    "icon": "🔗",
+    "title": "System Integration",
+    "description": "Connect existing business tools, databases, email and communication systems so information can move between them more efficiently.",
+    "tags": [
+      "APIs",
+      "Data",
+      "Integrations"
+    ]
+  }
 ];
 
 const proofPoints = [
-  { stat: "0", label: "Manual steps", detail: "in the daily intel pipeline" },
-  { stat: "6", label: "Hours", detail: "to pivot a full intelligence domain" },
-  { stat: "100%", label: "Free infra", detail: "via GitHub Actions automation" },
-  { stat: "<5min", label: "Deploy time", detail: "with proof-first CI/CD" },
+  { stat: "AI", label: "Practical tools", detail: "Focused on everyday work" },
+  { stat: "CRM", label: "Customer visibility", detail: "Leads and follow-up organized" },
+  { stat: "OPS", label: "Connected workflows", detail: "Less repetitive admin" },
+  { stat: "DATA", label: "Clearer insights", detail: "Make use of business records" },
 ];
 
 const systemFlow = [
-  {
-    step: "01",
-    icon: "📡",
-    title: "Data Ingestion",
-    description:
-      "Ingested from federal databases, APIs, RSS feeds, and internal systems — on schedule or event-driven.",
-  },
-  {
-    step: "02",
-    icon: "🧠",
-    title: "AI Classification",
-    description:
-      "Signals ranked P0/P1/P2, structured, and routed to the appropriate workflow automatically.",
-  },
-  {
-    step: "03",
-    icon: "⚙️",
-    title: "Workflow Execution",
-    description:
-      "Agents generate documents, create tasks, send notifications, and trigger downstream actions.",
-  },
-  {
-    step: "04",
-    icon: "📤",
-    title: "Output Delivery",
-    description:
-      "Reports emailed, tasks created, dashboards updated, clients notified — zero human intervention.",
-  },
+  { step: "01", icon: "📝", title: "Understand Your Workflow", description: "Identify repetitive tasks, missed follow-ups, and information scattered across apps." },
+  { step: "02", icon: "🔗", title: "Connect Your Tools", description: "Bring together the data, systems, and processes your business already uses." },
+  { step: "03", icon: "⚙️", title: "Automate Practical Steps", description: "Route inquiries, create tasks, send appropriate reminders, and keep people involved where needed." },
+  { step: "04", icon: "📈", title: "Track & Improve", description: "Use dashboards and periodic reviews to see what's working and refine the process." },
 ];
 
 const infraStack = [
-  { label: "Daily intel pipeline", detail: "Scans 6 federal sources, classifies P0/P1/P2, delivers at 6am ET" },
-  { label: "Production stability", detail: "Drift guards, version beacons, smoke tests, incident templates" },
-  { label: "Client portal", detail: "Payment gate, document management, real-time messaging" },
-  { label: "CI/CD pipeline", detail: "Auto-deploy, proof-first deploys, zero manual steps" },
+  { label: "Intelligence pipelines", detail: "Research, classification, structured reports and operational signals" },
+  { label: "AI knowledge systems", detail: "Business documents, knowledge retrieval and AI assistance" },
+  { label: "Business operations", detail: "Customer records, tasks, workspaces and dashboards" },
+  { label: "Connected infrastructure", detail: "APIs, databases, access controls and monitored workflows" },
 ];
 
 export default function TurboSystems() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    document.title = "Turbo Systems ⚡ AI Infrastructure — Turbo Response HQ";
+    document.title = "Turbo Response — AI & Business Automation Services";
   }, []);
 
   return (
@@ -115,7 +109,7 @@ export default function TurboSystems() {
           <Link href="/" className="ts-logo">
             <span className="ts-logo-icon">⚡</span>
             <span className="ts-logo-text">
-              TURBO <span className="ts-logo-accent">SYSTEMS</span>
+              TURBO <span className="ts-logo-accent">RESPONSE</span>
             </span>
           </Link>
           <button
@@ -126,16 +120,14 @@ export default function TurboSystems() {
             <span /><span /><span />
           </button>
           <nav className={`ts-nav-links${menuOpen ? " ts-mobile-open" : ""}`}>
-            <Link href="/" className="ts-nav-link" onClick={() => setMenuOpen(false)}>
-              ← Back to Turbo Response
-            </Link>
+            <Link href="/" className="ts-nav-link" onClick={() => setMenuOpen(false)}>Home</Link>
             <a href="#services" className="ts-nav-link" onClick={() => setMenuOpen(false)}>
               What We Build
             </a>
             <a href="#how-it-works" className="ts-nav-link" onClick={() => setMenuOpen(false)}>
               How It Works
             </a>
-            <a href="#contact" className="ts-nav-cta" onClick={() => setMenuOpen(false)}>
+            <a href={window.location.hostname === "turbo-response-smallbiz-preview.onrender.com" ? "/?page=business-inquiry" : "/business-inquiry"} className="ts-nav-cta" onClick={() => setMenuOpen(false)}>
               Build With Us
             </a>
           </nav>
@@ -144,23 +136,23 @@ export default function TurboSystems() {
 
       {/* ── SECTION 1: HERO ── */}
       <section className="ts-hero">
-        <div className="ts-hero-badge">⚡ AI Infrastructure Platform</div>
+        <div className="ts-hero-badge">⚡ AI SYSTEMS / BUSINESS AUTOMATION</div>
         <h1 className="ts-hero-title">
-          Build Systems That
+          AI Systems &amp;
           <br />
-          <span className="ts-gradient-text">Run Without You</span>
+          <span className="ts-gradient-text">Business Automation.</span>
         </h1>
         <p className="ts-hero-sub">
-          Turbo Systems designs and deploys automated business infrastructure —
-          intelligence pipelines, AI agents, and production-grade systems that
-          execute without manual intervention.
+          We build intelligent systems that help businesses manage customers,
+          automate operations, and grow more efficiently. Practical AI,
+          connected tools, and custom technology built around your business.
         </p>
         <div className="ts-hero-actions">
-          <a href="#contact" className="ts-btn-primary">
-            Book a Strategy Call
+          <a href={window.location.hostname === "turbo-response-smallbiz-preview.onrender.com" ? "/?page=business-inquiry" : "/business-inquiry"} className="ts-btn-primary">
+            Discuss Your Business
           </a>
           <a href="#services" className="ts-btn-ghost">
-            What We Build →
+            Explore Services →
           </a>
         </div>
 
@@ -183,11 +175,11 @@ export default function TurboSystems() {
         <div className="ts-container">
           <div className="ts-section-header">
             <span className="ts-section-tag">What We Build</span>
-            <h2 className="ts-section-title">AI Infrastructure Services</h2>
+            <h2 className="ts-section-title">AI & Business Automation Services</h2>
             <p className="ts-section-sub">
-              We design and deploy production-grade systems — intelligence pipelines,
-              AI agents, and automated workflows — built to run without you.
-              Every build is version-controlled, monitored, and shipped with stability protocols.
+              From customer acquisition to day-to-day operations, we design systems
+              around measurable business goals. Capabilities, integrations and delivery
+              are scoped and tested for each engagement.
             </p>
           </div>
 
@@ -195,18 +187,18 @@ export default function TurboSystems() {
           <div className="ts-pillars">
             <div className="ts-pillar">
               <span className="ts-pillar-icon">🧠</span>
-              <h4>Intelligence Layer</h4>
-              <p>AI pipelines that classify, prioritize, and act on real-world data streams</p>
+              <h4>Business Intelligence</h4>
+              <p>Find useful insights in the customer and operations data you already collect</p>
             </div>
             <div className="ts-pillar">
               <span className="ts-pillar-icon">⚙️</span>
-              <h4>Automation Engine</h4>
-              <p>Multi-agent workflows that execute tasks, generate outputs, and trigger actions</p>
+              <h4>Workflow Automation</h4>
+              <p>Make intake, follow-up, and task handoffs more consistent with less manual work</p>
             </div>
             <div className="ts-pillar">
               <span className="ts-pillar-icon">🏗️</span>
-              <h4>Production Infrastructure</h4>
-              <p>Deployed systems with CI/CD, monitoring, drift guards, and incident protocols</p>
+              <h4>Connected Systems</h4>
+              <p>Link the forms, calendars, email, and customer tools your team relies on</p>
             </div>
           </div>
 
@@ -237,7 +229,7 @@ export default function TurboSystems() {
             <span className="ts-section-tag">How It Works</span>
             <h2 className="ts-section-title">Data → AI → Execution → Output</h2>
             <p className="ts-section-sub">
-              Every Turbo Systems build follows the same production-proven flow.
+              We start with the problem, then connect tools and build a workflow your team can actually use.
             </p>
           </div>
 
@@ -262,16 +254,15 @@ export default function TurboSystems() {
         <div className="ts-container">
           <div className="ts-infra-inner">
             <div className="ts-infra-left">
-              <span className="ts-section-tag">Infrastructure / Proof</span>
+              <span className="ts-section-tag">Our Technology</span>
               <h2 className="ts-infra-title">
-                This site runs on<br />
-                <span className="ts-gradient-text">Turbo Systems infrastructure.</span>
+                Better operations start<br />
+                <span className="ts-gradient-text">with connected systems.</span>
               </h2>
               <p className="ts-infra-body">
-                The platform you're on right now — client portals, admin dashboards,
-                automated intelligence delivery, payment processing, and production
-                stability monitoring — was built using the same methodology we apply
-                to every client engagement.
+                Turbo Systems is our underlying technology foundation. We draw on existing
+                intelligence pipelines, customer management, AI knowledge systems and
+                workflow infrastructure to design practical solutions around your business.
               </p>
             </div>
             <div className="ts-infra-right">
@@ -300,11 +291,11 @@ export default function TurboSystems() {
               <div className="ts-founder-avatar">DC</div>
               <div className="ts-founder-meta">
                 <div className="ts-founder-name">Demarcus Collins</div>
-                <div className="ts-founder-role">Founder · Turbo Response &amp; Turbo Systems</div>
+                <div className="ts-founder-role">Founder · Turbo Response</div>
                 <div className="ts-founder-tags">
-                  <span className="ts-tag">Google Developer</span>
-                  <span className="ts-tag">Manus AI Builder</span>
-                  <span className="ts-tag">Production Systems</span>
+                  <span className="ts-tag">AI Systems</span>
+                  <span className="ts-tag">Business Automation</span>
+                  <span className="ts-tag">Workflow Design</span>
                 </div>
               </div>
             </div>
@@ -313,26 +304,26 @@ export default function TurboSystems() {
 
             <span className="ts-section-tag">Build With Us</span>
             <h2 className="ts-cta-title">
-              Let's Design Your<br />
-              <span className="ts-gradient-text">AI Infrastructure</span>
+              Let's Simplify Your<br />
+              <span className="ts-gradient-text">Business Operations</span>
             </h2>
             <p className="ts-cta-sub">
-              Book a 30-minute strategy call. We'll map your highest-value automation
-              targets and define a build plan — before any commitment.
+              Tell us what slows your business down. We'll discuss where a
+              practical AI workflow or connected system could help.
             </p>
             <div className="ts-cta-actions">
               <a
-                href="mailto:turboresponsehq@gmail.com?subject=Turbo Systems - Strategy Call Request"
+                href={window.location.hostname === "turbo-response-smallbiz-preview.onrender.com" ? "/?page=business-inquiry" : "/business-inquiry"}
                 className="ts-btn-primary ts-btn-large"
               >
-                Book a Strategy Call
+                Start Your Business Inquiry
               </a>
-              <Link href="/intake-offense" className="ts-btn-ghost">
-                Submit a Project Brief →
-              </Link>
+              <a href={window.location.hostname === "turbo-response-smallbiz-preview.onrender.com" ? "/?page=business-inquiry" : "/business-inquiry"} className="ts-btn-ghost">
+                Describe Your Workflow →
+              </a>
             </div>
             <p className="ts-cta-note">
-              No sales pitch. No commitment. Just a clear picture of what's possible.
+              Every engagement begins with a review of your business needs and a clearly defined scope.
             </p>
           </div>
         </div>
@@ -345,7 +336,7 @@ export default function TurboSystems() {
             <div className="ts-footer-brand">
               <span className="ts-logo-icon">⚡</span>
               <span>
-                Turbo Systems is the AI infrastructure layer of{" "}
+                Turbo Systems is the technology foundation of{" "}
                 <Link href="/" className="ts-footer-link">
                   Turbo Response HQ
                 </Link>
@@ -353,9 +344,10 @@ export default function TurboSystems() {
             </div>
             <div className="ts-footer-links">
               <Link href="/" className="ts-footer-link">Home</Link>
-              <Link href="/services" className="ts-footer-link">Services</Link>
-              <Link href="/pricing" className="ts-footer-link">Pricing</Link>
-              <Link href="/intake-offense" className="ts-footer-link">Submit Brief</Link>
+              <a href="#services" className="ts-footer-link">Services</a>
+              <a href="#how-it-works" className="ts-footer-link">Our Process</a>
+              <a href={window.location.hostname === "turbo-response-smallbiz-preview.onrender.com" ? "/?page=business-inquiry" : "/business-inquiry"} className="ts-footer-link">Contact</a>
+              <Link href="/privacy-policy" className="ts-footer-link">Privacy</Link>
             </div>
           </div>
         </div>

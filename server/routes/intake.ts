@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { businessInquirySchema, toBusinessLead } from "../../shared/businessInquiry";
 import { notifyOwner } from "../_core/notification";
 import { saveIntakeLead } from "../intakeLeadsDb";
 import { syncContactToHubSpot } from "../hubspotSync";
@@ -6,6 +7,27 @@ import { sendOwnerNotification } from "../services/auditEmailService";
 import { createCase } from "../db";
 
 const router = Router();
+
+// Business-only inquiries reuse the lead repository, never consumer case creation.
+const businessAttempts = new Map<string, {count:number;expires:number}>();
+router.post("/business-inquiry", async (req,res) => {
+ const now=Date.now();
+ businessAttempts.forEach((value, key) => { if (value.expires <= now) businessAttempts.delete(key); });
+ const ip=req.ip||req.socket.remoteAddress||"unknown";
+ const attempt=businessAttempts.get(ip);
+ if((attempt&&attempt.count>=10)||(!attempt&&businessAttempts.size>=5000)) return res.status(429).json({success:false,error:"Too many requests. Please try again later."});
+ businessAttempts.set(ip,{count:(attempt?.count||0)+1,expires:attempt?.expires||now+600000});
+ const parsed=businessInquirySchema.safeParse(req.body);
+ if(!parsed.success)return res.status(400).json({success:false,error:"Please review the required inquiry fields."});
+ try{
+  const leadId=await saveIntakeLead(toBusinessLead(parsed.data));
+  return res.status(201).json({success:true,leadId});
+ }catch{
+  console.error("[BusinessInquiry] Lead persistence failed");
+  return res.status(503).json({success:false,error:"Your inquiry could not be saved. Please try again."});
+ }
+});
+
 
 /**
  * POST /api/turbo-intake  (legacy — kept for backwards compat)

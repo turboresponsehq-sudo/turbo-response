@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { protectedProcedure, router } from "../_core/trpc";
+import { protectedProcedure, adminProcedure, router } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
 import {
   getAllLeads,
@@ -82,7 +82,7 @@ export const adminRouter = router({
   /**
    * Get all intake form leads (from intake_leads table)
    */
-  getIntakeLeads: protectedProcedure
+  getIntakeLeads: adminProcedure
     .input(z.object({ limit: z.number().optional() }).optional())
     .query(async ({ input }) => {
       return await getAllIntakeLeads(input?.limit || 100);
@@ -100,7 +100,7 @@ export const adminRouter = router({
   /**
    * Update intake lead status and optional admin notes
    */
-  updateIntakeLeadStatus: protectedProcedure
+  updateIntakeLeadStatus: adminProcedure
     .input(
       z.object({
         id: z.number(),

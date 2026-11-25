@@ -78,6 +78,14 @@ export function serveStatic(app: Express) {
     // consumer-site or founder metadata. Keep invite tokens out of OG URLs.
     const isCreatorPortalRoute = requestPath === "/creator/portal" || requestPath.startsWith("/creator/portal/");
 
+    const retiredPublicRoutes = new Set(["/legacy-home", "/legacy-services", "/consumer-solutions", "/case-brief", "/intake-defense", "/intake", "/intake-offense", "/turbo"]);
+    if (retiredPublicRoutes.has(requestPath.replace(/\/$/, ""))) {
+      const archivedPage = fs.readFileSync(indexPath, "utf8")
+        .replace(/<meta name="robots" content="[^"]*"\s*\/?\s*>/i, '<meta name="robots" content="noindex, nofollow" />');
+      res.status(200).set({ "Content-Type": "text/html", "X-Robots-Tag": "noindex, nofollow" }).send(archivedPage);
+      return;
+    }
+
     if (!isZakhyRoute && !isCreatorPortalRoute) {
       res.sendFile(indexPath);
       return;

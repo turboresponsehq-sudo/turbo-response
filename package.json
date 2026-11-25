@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "NODE_ENV=development tsx watch server/_core/index.ts",
     "build": "bash build.sh",
-    "build:frontend": "rm -rf dist-frontend && vite build",
+    "build:frontend": "rm -rf dist-frontend && vite build && node scripts/write-static-business-routes.mjs",
     "build:backend": "rm -rf dist && esbuild server/_core/index.ts --bundle --platform=node --packages=external --format=cjs --outfile=dist/server.js && cp -r drizzle/migrations dist/migrations 2>/dev/null || mkdir -p dist/migrations || true",
     "build:full": "bash build.sh",
     "start": "node dist/server.js",
