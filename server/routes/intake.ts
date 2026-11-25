@@ -12,7 +12,7 @@ const router = Router();
 const businessAttempts = new Map<string, {count:number;expires:number}>();
 router.post("/business-inquiry", async (req,res) => {
  const now=Date.now();
- for(const [key,value] of businessAttempts) if(value.expires<=now) businessAttempts.delete(key);
+ businessAttempts.forEach((value, key) => { if (value.expires <= now) businessAttempts.delete(key); });
  const ip=req.ip||req.socket.remoteAddress||"unknown";
  const attempt=businessAttempts.get(ip);
  if((attempt&&attempt.count>=10)||(!attempt&&businessAttempts.size>=5000)) return res.status(429).json({success:false,error:"Too many requests. Please try again later."});

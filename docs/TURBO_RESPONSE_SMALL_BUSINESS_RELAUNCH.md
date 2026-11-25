@@ -38,3 +38,7 @@ client/src/pages/TurboSystems.tsx and TurboSystems.css.
 - Original TurboIntakeForm source archived unchanged; BusinessIntakeForm reuses its CSS/layout with business-only fields. /business-inquiry, /contact and /turbo-intake render the new form. Homepage and service CTAs link to it.
 - POST /api/business-inquiry validates, rate-limits and saves to existing intake_leads with source turbo-business-inquiry. No consumer case creation, AI report, email, HubSpot sync or file upload. Existing operational event processing is reused. Owner-only intake read/update and Command Center details.
 - Static preview explicitly simulates submission locally and sends nothing. Real persistence requires authorized backend deployment and isolated end-to-end testing. No production changes.
+
+## Static preview route fix
+- Frontend-only build emits route entry files for business inquiry, contact, turbo-intake, services and Turbo Systems, so direct requests can resolve without a static-host rewrite. Preview CTAs also use the guaranteed root entry with ?page=business-inquiry; production uses /business-inquiry. Preview remains non-persistent.
+- Replaced Map iteration in inquiry throttling with forEach to satisfy the existing TypeScript compiler target.

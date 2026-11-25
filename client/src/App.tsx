@@ -192,13 +192,22 @@ function RetiredPublicPage() {
   );
 }
 
+function BusinessHomeEntry() {
+  // Static preview root is always served, even without a host rewrite rule.
+  const isPreview = window.location.hostname === "turbo-response-smallbiz-preview.onrender.com";
+  if (isPreview && new URLSearchParams(window.location.search).get("page") === "business-inquiry") {
+    return <BusinessIntakeForm />;
+  }
+  return <BusinessHome />;
+}
+
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <RoleScopedAdminBoundary>
       <Switch>
       {/* Flagship homepage restores original cinematic design; services remain separate. */}
-      <Route path={"/"} component={BusinessHome} />
+      <Route path={"/"} component={BusinessHomeEntry} />
       <Route path="/turbo-systems" component={TurboSystems} />
       {/* Retired public pages: no new case solicitation; source retained. */}
       <Route path="/legacy-home" component={RetiredPublicPage} />
