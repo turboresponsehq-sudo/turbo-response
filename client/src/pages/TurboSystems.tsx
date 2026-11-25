@@ -127,7 +127,7 @@ export default function TurboSystems() {
             <a href="#how-it-works" className="ts-nav-link" onClick={() => setMenuOpen(false)}>
               How It Works
             </a>
-            <a href="#contact" className="ts-nav-cta" onClick={() => setMenuOpen(false)}>
+            <a href="/business-inquiry" className="ts-nav-cta" onClick={() => setMenuOpen(false)}>
               Build With Us
             </a>
           </nav>
@@ -148,7 +148,7 @@ export default function TurboSystems() {
           connected tools, and custom technology built around your business.
         </p>
         <div className="ts-hero-actions">
-          <a href="#contact" className="ts-btn-primary">
+          <a href="/business-inquiry" className="ts-btn-primary">
             Discuss Your Business
           </a>
           <a href="#services" className="ts-btn-ghost">
@@ -313,12 +313,12 @@ export default function TurboSystems() {
             </p>
             <div className="ts-cta-actions">
               <a
-                href="mailto:turboresponsehq@gmail.com?subject=Turbo%20Response%20Small%20Business%20AI%20Consultation"
+                href="/business-inquiry"
                 className="ts-btn-primary ts-btn-large"
               >
-                Email Us About Your Business
+                Start Your Business Inquiry
               </a>
-              <a href="mailto:turboresponsehq@gmail.com?subject=Small%20Business%20Workflow%20Review" className="ts-btn-ghost">
+              <a href="/business-inquiry" className="ts-btn-ghost">
                 Describe Your Workflow →
               </a>
             </div>
@@ -346,7 +346,7 @@ export default function TurboSystems() {
               <Link href="/" className="ts-footer-link">Home</Link>
               <a href="#services" className="ts-footer-link">Services</a>
               <a href="#how-it-works" className="ts-footer-link">Our Process</a>
-              <a href="#contact" className="ts-footer-link">Contact</a>
+              <a href="/business-inquiry" className="ts-footer-link">Contact</a>
               <Link href="/privacy-policy" className="ts-footer-link">Privacy</Link>
             </div>
           </div>

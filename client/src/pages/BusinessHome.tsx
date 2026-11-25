@@ -32,7 +32,7 @@ export default function BusinessHome() {
             <Link href="/services" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Services</Link>
             <Link href="/turbo-systems" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Turbo Systems</Link>
             <a href="#capabilities" className="hp-nav-link" onClick={() => setMenuOpen(false)}>Capabilities</a>
-            <a href="#contact" className="hp-nav-cta" onClick={() => setMenuOpen(false)}>Discuss Your Business →</a>
+            <a href="/business-inquiry" className="hp-nav-cta" onClick={() => setMenuOpen(false)}>Discuss Your Business →</a>
           </nav>
         </div>
       </header>
@@ -91,7 +91,7 @@ export default function BusinessHome() {
             <p className="hp-hero-tagline">Increase sales. Increase productivity.</p>
 
             <div className="hp-hero-btns">
-              <a href="#contact" className="hp-btn hp-btn-primary hp-btn-lg">
+              <a href="/business-inquiry" className="hp-btn hp-btn-primary hp-btn-lg">
                 Discuss Your Business →
               </a>
               <Link href="/services" className="hp-btn hp-btn-ghost hp-btn-lg">
@@ -268,7 +268,7 @@ export default function BusinessHome() {
           <p className="hp-gateway-sub">
             Tell us what slows your business down or where you want to grow. We’ll review your needs and scope the AI systems, workflows and integrations that can help.
           </p>
-          <a href="mailto:turboresponsehq@gmail.com?subject=Turbo%20Response%20Business%20Consultation" className="hp-btn hp-btn-primary hp-btn-xl">
+          <a href="/business-inquiry" className="hp-btn hp-btn-primary hp-btn-xl">
             Request a Consultation →
           </a>
           <p className="hp-gateway-url">turboresponsehq.ai</p>
@@ -286,7 +286,7 @@ export default function BusinessHome() {
           <nav className="hp-footer-links">
             <Link href="/services" className="hp-footer-link">Services</Link>
             <Link href="/turbo-systems" className="hp-footer-link">Turbo Systems</Link>
-            <a href="#contact" className="hp-footer-link">Contact</a>
+            <a href="/business-inquiry" className="hp-footer-link">Contact</a>
             <Link href="/privacy-policy" className="hp-footer-link">Privacy Policy</Link>
             <Link href="/terms-of-service" className="hp-footer-link">Terms of Service</Link>
           </nav>

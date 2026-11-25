@@ -12,6 +12,7 @@ import { AdminAuthProvider } from "./contexts/AdminAuthContext";
 import { setupAxiosInterceptor } from "./lib/axiosInterceptor";
 import TurboSystems from "./pages/TurboSystems";
 import BusinessHome from "./pages/BusinessHome";
+import BusinessIntakeForm from "./pages/BusinessIntakeForm";
 import AdminDashboard from "./pages/AdminDashboard";
 import Payment from "./pages/Payment";
 import AdminLogin from "./pages/AdminLogin";
@@ -208,7 +209,8 @@ function Router() {
       {/* Case Documentation Brief landing page */}
       <Route path="/case-brief" component={RetiredPublicPage} />
       <Route path="/services" component={TurboSystems} />
-      <Route path="/contact" component={() => <LegacyZakhyRedirect to="/#contact" />} />
+      <Route path="/contact" component={BusinessIntakeForm} />
+      <Route path="/business-inquiry" component={BusinessIntakeForm} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       {/* Defense Intake - Consumer */}
       <Route path="/intake-defense" component={RetiredPublicPage} />
@@ -224,7 +226,7 @@ function Router() {
       <Route path="/intake-offense" component={RetiredPublicPage} />
       
       {/* Former intake URL now leads to business email consultation, never the offense API. */}
-      <Route path="/turbo-intake" component={() => <LegacyZakhyRedirect to="/#contact" />} />
+      <Route path="/turbo-intake" component={BusinessIntakeForm} />
 
       {/* Isolated Zakhy Builds AI homepage hub; the approved demo remains the visual source of truth. */}
       <Route path="/zakhybuildsai" component={ZakhyBuildsAIHub} />

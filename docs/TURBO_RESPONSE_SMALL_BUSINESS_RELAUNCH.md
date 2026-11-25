@@ -33,3 +33,8 @@ client/src/pages/TurboSystems.tsx and TurboSystems.css.
 - Homepage headline: The Future of Business. Outcome: Increase sales. Increase productivity. Three capability pillars: Capture More Business, Automate the Way You Work, Make Better Business Decisions.
 - /services and /turbo-systems keep the professional service catalog; homepage / is separate. Removed old unsupported portfolio counts from the public homepage. Inquiry CTA remains email-based; no old case API connected.
 - New scoped CSS addresses mobile width and reduced-motion preference. Verify actual hero image loads from original external CDN, desktop/mobile appearance and link behavior before production launch.
+
+## Business inquiry recovery
+- Original TurboIntakeForm source archived unchanged; BusinessIntakeForm reuses its CSS/layout with business-only fields. /business-inquiry, /contact and /turbo-intake render the new form. Homepage and service CTAs link to it.
+- POST /api/business-inquiry validates, rate-limits and saves to existing intake_leads with source turbo-business-inquiry. No consumer case creation, AI report, email, HubSpot sync or file upload. Existing operational event processing is reused. Owner-only intake read/update and Command Center details.
+- Static preview explicitly simulates submission locally and sends nothing. Real persistence requires authorized backend deployment and isolated end-to-end testing. No production changes.
