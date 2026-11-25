@@ -13,18 +13,18 @@ type Step = "start" | "not-sure-creator" | "not-sure-problem" | "not-sure-goal";
 const INTAKE_BASE_URL = import.meta.env.VITE_CREATOR_REBRAND_PREVIEW === "true" ? "/creator/start" : "https://turboresponsehq.ai/creator/start";
 
 const FAQS = [
-  ["What does Creator Automations do?", "We are a creative technology agency that builds AI-powered business systems, digital platforms and media solutions for small businesses, entrepreneurs and creators."],
+  ["What does Creator Automations do?", "Creator Automations is a creative technology agency at the intersection of culture, business and artificial intelligence. We connect branding, messaging, media, marketing campaigns and digital platforms with AI-powered operations, sales and analytics."],
   ["What are your prices?", "Our featured packages are $199 for 25 branded graphics, $249 for a three-page template-based starter website, and from $1,499 for a scoped AI and business automation implementation. Other packages are available; final scope is confirmed before work begins."],
   ["What can you automate?", "Lead capture, customer follow-ups, bookings, CRM workflows, reporting and repetitive operational tasks, depending on your existing systems and requirements."],
   ["Can you help with sales and analytics?", "We build systems that help capture and organize leads, streamline follow-ups and track business performance through useful dashboards and reports. Results depend on your business and implementation."],
-  ["Who do you work with?", "Small businesses, entrepreneurs, creators and organizations looking to improve marketing, sales, operations or digital infrastructure."],
+  ["Who do you work with?", "Small businesses, entrepreneurs, creators and organizations looking to strengthen their brand, reach their audience, improve sales or automate operations."],
   ["How do I get started?", "Tell us about your business and the problem you want to solve through our project inquiry form. We review your needs and confirm scope and pricing before work begins."],
 ] as const;
 
 const choiceLabels = [
   "Automate my business",
   "Build a digital platform",
-  "Media & marketing",
+  "Branding, media & marketing",
   "Improve sales & analytics",
   "I’m not sure yet",
 ] as const;
@@ -42,7 +42,7 @@ export default function TurboChatbot({ source = "zakhy_turbo_chatbot" }: { sourc
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<Step>("start");
   const [messages, setMessages] = useState<Message[]>([
-    botMessage("Welcome to Creator Automations. We help small businesses and creators attract customers, automate operations and grow with technology."),
+    botMessage("Welcome to Creator Automations. We bring culture, business and technology together to help you build your brand, connect with customers and operate smarter."),
     botMessage("What do you need help with?"),
   ]);
 
@@ -71,11 +71,11 @@ export default function TurboChatbot({ source = "zakhy_turbo_chatbot" }: { sourc
         return;
       }
       if (choice === "Build a digital platform") {
-        append([visitorMessage(choice), botMessage("We build digital experiences that give customers a clear way to discover your business and take action.", { bullets: ["Three-page template-based starter website: $249", "Customer-provided content and one revision", "Custom platforms and integrations quoted separately"], cta: "Discuss your digital platform" })]);
+        append([visitorMessage(choice), botMessage("We build digital platforms that reflect your brand, communicate your message and give customers a clear way to discover your business and take action.", { bullets: ["Three-page template-based starter website: $249", "Customer-provided content and one revision", "Custom platforms and integrations quoted separately"], cta: "Discuss your digital platform" })]);
         return;
       }
-      if (choice === "Media & marketing") {
-        append([visitorMessage(choice), botMessage("We help businesses communicate their value, reach the right audience and strengthen their digital presence.", { bullets: ["Featured premium content pack: $199 for 25 branded graphics", "Social media optimization and brand development available separately"], cta: "Discuss your marketing project" })]);
+      if (choice === "Branding, media & marketing") {
+        append([visitorMessage(choice), botMessage("We help businesses understand their audience, develop their message and bring it to life through branding, creative direction, social media and marketing campaigns.", { bullets: ["Featured premium content pack: $199 for 25 branded graphics", "Social media optimization, brand development and campaign work scoped separately"], cta: "Discuss your marketing project" })]);
         return;
       }
       if (choice === "Improve sales & analytics") {
@@ -106,7 +106,7 @@ export default function TurboChatbot({ source = "zakhy_turbo_chatbot" }: { sourc
 
   function reset() {
     setStep("start");
-    setMessages([botMessage("Welcome to Creator Automations. We help small businesses and creators attract customers, automate operations and grow with technology."), botMessage("What do you need help with?")]);
+    setMessages([botMessage("Welcome to Creator Automations. We bring culture, business and technology together to help you build your brand, connect with customers and operate smarter."), botMessage("What do you need help with?")]);
   }
 
   return (
