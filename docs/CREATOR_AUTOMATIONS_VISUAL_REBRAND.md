@@ -14,3 +14,7 @@ Keep the existing application, routes, API endpoints, CRM, PostgreSQL, authentic
 
 ## Preview
 Build with VITE_CREATOR_REBRAND_PREVIEW=true pnpm run build:frontend then node scripts/write-creator-rebrand-preview-routes.mjs. This build is design-only, not a live CRM. Public project demos may still point to existing production client pages; do not submit real information in preview. Keep existing production URLs. No domain, merge, production deployment or paid API requests authorized. Visual and functional QA pending.
+
+## Additional pass
+- Digital networking card /zakhy/connect now matches the warm dark identity, preserving existing portrait, vCard and QR destinations, and existing production local-contact storage behavior. Preview blocks saving and explicitly labels demo.
+- Existing client project links in the portfolio continue to open their established URLs rather than unbuilt static preview paths. Suppressed legacy consumer chat on /creator/start; Creator home chat retains its original guided behavior.

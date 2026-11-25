@@ -4,12 +4,12 @@ import { zakhyDemoSite } from "../config";
 import "./portfolio-gallery.css";
 
 const projects = [
-  { name: "Ralo", type: "Recording Artist / FAMGOON", href: `${zakhyDemoSite.productionHomeUrl}/portfolio/ralo`, image: "/zakhy-assets/ralo-famgoon-updated_541acd26.png", position: "center" },
-  { name: "MS POP IT", type: "Recording Artist", href: `${zakhyDemoSite.productionHomeUrl}/portfolio/ms-pop-it`, image: "/zakhy-assets/ms-pop-it-portfolio-thumbnail_7b95c943.jpg", position: "center 30%" },
-  { name: "Miami Trips & Restaurants", type: "Travel, Food & Podcast", href: `${zakhyDemoSite.productionHomeUrl}/portfolio/miami-trips-restaurants`, image: "/zakhy-assets/miami-home-approved-exact-reference_8b1ed63e.png", position: "center" },
+  { name: "Ralo", type: "Recording Artist / FAMGOON", href: `https://turboresponsehq.ai/zakhybuildsai/portfolio/ralo`, image: "/zakhy-assets/ralo-famgoon-updated_541acd26.png", position: "center" },
+  { name: "MS POP IT", type: "Recording Artist", href: `https://turboresponsehq.ai/zakhybuildsai/portfolio/ms-pop-it`, image: "/zakhy-assets/ms-pop-it-portfolio-thumbnail_7b95c943.jpg", position: "center 30%" },
+  { name: "Miami Trips & Restaurants", type: "Travel, Food & Podcast", href: `https://turboresponsehq.ai/zakhybuildsai/portfolio/miami-trips-restaurants`, image: "/zakhy-assets/miami-home-approved-exact-reference_8b1ed63e.png", position: "center" },
   { name: "The Story of Atlanta", type: "Culture & Media Platform", href: `${zakhyDemoSite.productionHomeUrl}/portfolio/story-of-atlanta`, image: "/zakhy-assets/atlanta-hero-city-car_2bf63a50.jpg", position: "center 42%" },
-  { name: "Spillo — Spill Season", type: "Recording Artist & Podcast", href: `${zakhyDemoSite.productionHomeUrl}/portfolio/spillo`, image: "/zakhy-assets/spillo-hero-artist_a25123a3.jpg", position: "center 24%" },
-  { name: "CRUNK FIT", type: "Fitness, Wellness & Lifestyle", href: `${zakhyDemoSite.productionHomeUrl}/portfolio/crunk-fit`, image: "/zakhy-assets/crunk-fit-hero_2df060d3.jpg", position: "62% 24%" },
+  { name: "Spillo — Spill Season", type: "Recording Artist & Podcast", href: `https://turboresponsehq.ai/zakhybuildsai/portfolio/spillo`, image: "/zakhy-assets/spillo-hero-artist_a25123a3.jpg", position: "center 24%" },
+  { name: "CRUNK FIT", type: "Fitness, Wellness & Lifestyle", href: `https://turboresponsehq.ai/zakhybuildsai/portfolio/crunk-fit`, image: "/zakhy-assets/crunk-fit-hero_2df060d3.jpg", position: "62% 24%" },
   { name: "Amani Mansur", type: "Marketing, Culture & Opportunity", href: "https://amanimansur.info", image: "/zakhy-assets/amani-mansur-portfolio.png", position: "center top" },
   { name: "Allah Souja", type: "Fitness, Coaching & Lifestyle", href: "https://zakhydemo-mpd8k29q.manus.space/allah-souja", image: "/zakhy-assets/allah-souja-portfolio.png", position: "center top" },
 ] as const;
