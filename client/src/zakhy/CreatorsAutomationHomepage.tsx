@@ -1,177 +1,61 @@
-import { useEffect, useState } from "react";
-import { zakhyDemoSite } from "./config";
-import TurboChatbot, { turboChatbotStyles } from "./components/TurboChatbot";
+import {useEffect,useState} from "react";
+import {zakhyDemoSite} from "./config";
+import TurboChatbot,{turboChatbotStyles} from "./components/TurboChatbot";
 import EntryServicesSection from "./components/EntryServicesSection";
 import "./creators-automation-home.css";
+import "./creator-brand-refresh.css";
 
-const desktopImage = "/zakhy-assets/creators-automation-desktop.png";
-const mobileImage = "/zakhy-assets/creators-automation-mobile.png";
-
-const businessProof = [
-  { label: <>Creators<br />served</>, value: "500+" },
-  { label: <>Revenue<br />generated</>, value: "$10M+" },
-  { label: <>Automations<br />deployed</>, value: "1,000+" },
-  { label: <>Industries<br />supported</>, value: "20+" },
+const desktopImage="/zakhy-assets/creators-automation-desktop.png";
+const mobileImage="/zakhy-assets/creators-automation-mobile.png";
+const pillars=[
+ {num:"01",title:"Digital Experiences",desc:"Websites, landing pages and customer-facing platforms that make your next opportunity easy to capture.",path:"/services"},
+ {num:"02",title:"AI & Business Automation",desc:"Connect your tools, organize inquiries and reduce repetitive work with systems built around your business.",path:"/automation-services"},
+ {num:"03",title:"Content & Social Media",desc:"Creative content, stronger profiles and digital campaigns that turn attention into meaningful opportunities.",path:"/services"},
+ {num:"04",title:"Customer & Business Systems",desc:"Lead capture, CRM, client portals and dashboards designed to help you stay organized and grow.",path:"/automation-services"}
 ];
-
-const servicePillars = [
-  {
-    number: "01",
-    title: "Creator Websites",
-    description: "A premium home for your brand, offers, releases, bookings, products, and audience — built to make the next move clear.",
-    cta: "Explore brand systems",
-    href: zakhyDemoSite.portfolioUrl,
-  },
-  {
-    number: "02",
-    title: "Creator Automations",
-    description: "Turn inquiries, bookings, follow-up, approvals, and everyday operations into a system that keeps moving while you create.",
-    cta: "Explore automations",
-    href: `${zakhyDemoSite.productionHomeUrl}/automation-services`,
-  },
-  {
-    number: "03",
-    title: "Audience Intelligence",
-    description: "See what is working across your audience, content, traffic, and offers so your next decision is based on signal — not guesswork.",
-    cta: "Start a conversation",
-    href: zakhyDemoSite.creatorIntakeUrl,
-  },
+const work=[
+ {name:"The Story of Atlanta",type:"Culture & media platform",image:"/zakhy-assets/atlanta-hero-city-car_2bf63a50.jpg",path:"/portfolio/story-of-atlanta"},
+ {name:"Miami Trips & Restaurants",type:"Hospitality & media concept",image:"/zakhy-assets/miami-home-approved-exact-reference_8b1ed63e.png",path:"/portfolio/miami-trips-restaurants"},
+ {name:"CRUNK FIT",type:"Fitness & lifestyle concept",image:"/zakhy-assets/crunk-fit-hero_2df060d4.jpg".replace("2df060d4","2df060d3"),path:"/portfolio/crunk-fit"}
 ];
-
-function SiteLink({ href, children }: { href: string; children: React.ReactNode }) {
-  return <a href={href} target="_top" rel="noreferrer">{children}</a>;
+export default function CreatorsAutomationHomepage(){
+ const [open,setOpen]=useState(false);
+ const home=zakhyDemoSite.productionHomeUrl;
+ const intake=zakhyDemoSite.creatorIntakeUrl;
+ const nav=[["Work",home+"/portfolio"],["Services",home+"/services"],["AI Systems",home+"/automation-services"],["Learn AI",home+"/learn-ai"],["Contact",intake]];
+ useEffect(()=>{const previous=document.title;document.title="Creator Automations — Creative technology for modern business";return()=>{document.title=previous;};},[]);
+ return <>
+ <style>{turboChatbotStyles}</style>
+ <main className="ca-refresh">
+  <section className="ca-hero">
+   <div className="ca-atmosphere" aria-hidden="true"/><div className="ca-grain" aria-hidden="true"/>
+   <header className="ca-nav">
+    <a className="ca-wordmark" href={home}><span className="ca-mark" aria-hidden="true"><i/><i/></span><span>Creator<br/>Automations</span></a>
+    <nav className={open?"ca-nav-links ca-nav-open":"ca-nav-links"} aria-label="Primary navigation">{nav.map(([label,url])=><a key={label} href={url} onClick={()=>setOpen(false)}>{label}</a>)}</nav>
+    <a className="ca-pill ca-header-cta" href={intake}>Start a project <span aria-hidden="true">↗</span></a>
+    <button type="button" className="ca-menu" aria-label={open?"Close navigation":"Open navigation"} aria-expanded={open} onClick={()=>setOpen(v=>!v)}>{open?"Close":"Menu"}</button>
+   </header>
+   <div className="ca-hero-inner">
+    <p className="ca-eyebrow"><span>✦</span> AI &nbsp;/&nbsp; Automation &nbsp;/&nbsp; Digital Experiences</p>
+    <h1>Creative technology for the<br className="ca-desktop-break"/> next generation of business.</h1>
+    <p className="ca-lead">We build AI systems, automation and digital experiences that help creators, brands and businesses increase sales and productivity.</p>
+    <div className="ca-actions"><a className="ca-pill" href={intake}>Build with us <span aria-hidden="true">↗</span></a><a className="ca-outline" href={home+"/portfolio"}>Explore our work <span aria-hidden="true">↗</span></a></div>
+   </div>
+   <div className="ca-capabilities" aria-label="Core capabilities">{["AI Systems","Digital Experiences","Social Media","Business Automation"].map((label,i)=><div key={label}><span>0{i+1}</span><strong>{label}</strong></div>)}</div>
+   <p className="ca-location">BUILT IN ATLANTA &nbsp; / &nbsp; CULTURE. BUSINESS. TECHNOLOGY.</p>
+  </section>
+  <section className="ca-section">
+   <div className="ca-section-heading"><div><p className="ca-kicker">WHAT WE DO</p><h2>Good ideas.<br/>Better systems.</h2></div><p>From a first impression to the work behind the scenes, we design practical technology that helps businesses move forward.</p></div>
+   <div className="ca-card-grid">{pillars.map(p=><a className="ca-service-card" key={p.num} href={home+p.path}><span>{p.num} <b>↗</b></span><h3>{p.title}</h3><p>{p.desc}</p></a>)}</div>
+  </section>
+  <section className="ca-section ca-work">
+   <div className="ca-section-heading"><div><p className="ca-kicker">SELECTED WORK & CONCEPTS</p><h2>Culture in motion.</h2></div><a className="ca-outline" href={home+"/portfolio"}>Full portfolio ↗</a></div>
+   <div className="ca-project-grid">{work.map(p=><a className="ca-project" key={p.name} href={"https://turboresponsehq.ai/zakhybuildsai"+p.path}><img src={p.image} alt={p.name+" preview"} loading="lazy"/><div><h3>{p.name}</h3><p>{p.type}</p><span>View project ↗</span></div></a>)}</div>
+  </section>
+  <EntryServicesSection/>
+  <section className="ca-final"><p className="ca-kicker">CREATE. AUTOMATE. GROW.</p><h2>Let's build what's next.</h2><p>Tell us about your business and the next thing you want to accomplish.</p><a className="ca-pill" href={intake}>Start a project ↗</a></section>
+  <footer className="ca-footer"><span>© {new Date().getFullYear()} Creator Automations</span><a href={home+"/links/"}>Quick links</a><a href={home+"/portfolio"}>Portfolio</a><a href="/privacy-policy">Privacy</a></footer>
+ </main><TurboChatbot source="zakhy_home"/>
+ </>;
 }
-
-export default function CreatorsAutomationHomepage() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const home = zakhyDemoSite.productionHomeUrl;
-  const intake = zakhyDemoSite.creatorIntakeUrl;
-  const services = `${home}/services`;
-  const portfolio = zakhyDemoSite.portfolioUrl;
-  const learnAi = `${home}/learn-ai`;
-
-  useEffect(() => {
-    const priorTitle = document.title;
-    document.title = "Creator Automations | Zakhy";
-    return () => { document.title = priorTitle; };
-  }, []);
-
-  return (
-    <>
-      <style>{turboChatbotStyles}</style>
-      <main className="creators-automation-home">
-      <div className="creators-reference-canvas">
-        <picture className="creators-artwork" aria-hidden="true">
-          <source media="(max-width: 700px)" srcSet={mobileImage} />
-          <img src={desktopImage} alt="" loading="eager" decoding="async" fetchPriority="high" />
-        </picture>
-
-        <div className="creators-copy-mask" aria-hidden="true" />
-        <header className="creators-site-header">
-          <SiteLink href={home}><span className="sr-only">Creator Automations home</span><span className="creators-wordmark">CREATOR<br /><b>AUTOMATIONS</b></span></SiteLink>
-          <nav className="creators-desktop-nav" aria-label="Primary navigation">
-            <SiteLink href={home}>Home</SiteLink>
-            <SiteLink href={services}>Services</SiteLink>
-            <SiteLink href={learnAi}>Learn AI</SiteLink>
-            <SiteLink href={portfolio}>Portfolio</SiteLink>
-            <SiteLink href={services}>Pricing</SiteLink>
-            <SiteLink href={intake}>Contact</SiteLink>
-          </nav>
-          <SiteLink href={intake}><span className="creators-header-cta">Book a call <span aria-hidden="true">↗</span></span></SiteLink>
-          <button className="creators-menu-trigger" type="button" aria-label="Open navigation menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}><i /><i /><i /></button>
-        </header>
-
-        <section className="creators-hero-copy" aria-labelledby="creators-home-title">
-          <p className="creators-kicker">BUILD <span>•</span> AUTOMATE <span>•</span> SCALE</p>
-          <h1 id="creators-home-title">CREATOR <em>AUTOMATIONS</em></h1>
-          <p className="creators-description">Build your brand. Automate your business.<br />Capture more revenue.</p>
-          <div className="creators-hero-actions">
-            <SiteLink href={intake}><span className="creators-primary-cta">Book a call <span aria-hidden="true">↗</span></span></SiteLink>
-            <SiteLink href={services}><span className="creators-secondary-cta">View services <span aria-hidden="true">↗</span></span></SiteLink>
-          </div>
-        </section>
-
-        <section className="creators-business-proof" aria-label="Creator Automations business proof">
-          {businessProof.map(({ label, value }) => (
-            <div className="creators-proof-stat" key={value}>
-              <span className="creators-proof-label">{label}</span>
-              <strong>{value}</strong>
-            </div>
-          ))}
-        </section>
-
-        <div className="creators-mobile-hero-nav" aria-label="Mobile quick navigation">
-          <SiteLink href={services}>Services</SiteLink>
-          <SiteLink href={portfolio}>Portfolio</SiteLink>
-        </div>
-      </div>
-
-      <section className="zakhy-intro-section" aria-labelledby="zakhy-what-we-do">
-        <div className="zakhy-section-kicker">CREATOR BUSINESS SYSTEMS</div>
-        <div className="zakhy-intro-grid">
-          <h2 id="zakhy-what-we-do">Your talent is the brand.<br /><span>Your system should match it.</span></h2>
-          <p>Zakhy helps artists, creators, and influencers build a business that looks premium, captures opportunities, and stays organized behind the scenes.</p>
-        </div>
-      </section>
-
-      <EntryServicesSection />
-
-      <section className="zakhy-services-section" aria-labelledby="zakhy-services-heading">
-        <div className="zakhy-section-heading">
-          <div>
-            <span className="zakhy-section-kicker">THE SYSTEM</span>
-            <h2 id="zakhy-services-heading">Built around the work<br />that grows your brand.</h2>
-          </div>
-          <p>Simple on the surface. Serious underneath.</p>
-        </div>
-        <div className="zakhy-service-grid">
-          {servicePillars.map((service) => (
-            <article className="zakhy-service-card" key={service.number}>
-              <span className="zakhy-service-number">{service.number}</span>
-              <h3>{service.title}</h3>
-              <p>{service.description}</p>
-              <SiteLink href={service.href}><span>{service.cta} <b aria-hidden="true">↗</b></span></SiteLink>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="zakhy-revenue-section" aria-labelledby="zakhy-revenue-heading">
-        <div className="zakhy-revenue-visual" aria-hidden="true">
-          <span>BRAND</span><i />
-          <span>ATTENTION</span><i />
-          <span>OPPORTUNITY</span><i />
-          <strong>REVENUE</strong>
-        </div>
-        <div className="zakhy-revenue-copy">
-          <span className="zakhy-section-kicker">MAKE MORE OF THE MOMENT</span>
-          <h2 id="zakhy-revenue-heading">Attention is valuable.<br /><span>A clear next step makes it work.</span></h2>
-          <p>When somebody finds you, the goal is not just a view. It is a booking, a sale, an inquiry, a subscriber, or the next relationship. Zakhy connects your content and audience to a system ready to capture that opportunity.</p>
-          <SiteLink href={intake}><span className="zakhy-revenue-cta">Start your project <b aria-hidden="true">↗</b></span></SiteLink>
-        </div>
-      </section>
-
-      <section className="zakhy-final-cta" aria-labelledby="zakhy-final-cta-heading">
-        <span className="zakhy-section-kicker">BUILT FOR THE NEXT LEVEL</span>
-        <h2 id="zakhy-final-cta-heading">Ready to run your brand<br />like a business?</h2>
-        <p>Tell Zakhy where you are and where you want to go.</p>
-        <SiteLink href={intake}><span>Start your project <b aria-hidden="true">↗</b></span></SiteLink>
-      </section>
-
-      {menuOpen && (
-        <div className="creators-mobile-drawer" role="dialog" aria-modal="true" aria-label="Navigation menu">
-          <button className="creators-drawer-close" type="button" aria-label="Close navigation menu" onClick={() => setMenuOpen(false)}>×</button>
-          <SiteLink href={home}>Home</SiteLink>
-          <SiteLink href={services}>Services</SiteLink>
-          <SiteLink href={learnAi}>Learn AI</SiteLink>
-          <SiteLink href={portfolio}>Portfolio</SiteLink>
-          <SiteLink href={intake}>Start your project</SiteLink>
-        </div>
-      )}
-      </main>
-      <TurboChatbot source="zakhy_home" />
-    </>
-  );
-}
-
-export { desktopImage, mobileImage };
+export {desktopImage,mobileImage};

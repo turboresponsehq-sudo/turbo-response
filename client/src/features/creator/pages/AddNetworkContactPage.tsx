@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { getAdminSessionAuthorizationHeader } from "@/lib/adminSession";
 import "../styles/creatorOperations.css";
+import "../../../zakhy/creator-brand-refresh.css";
 
 const digits = ["1","2","3","4","5","6","7","8","9","+","0"];
 type Category={id:number;name:string;slug:string};
@@ -61,7 +62,7 @@ export default function AddNetworkContactPage() {
       <header className="zcontact-topbar">
         <button type="button" onClick={() => setLocation("/admin/zakhy")} aria-label="Back to dashboard">←</button>
         <div>
-          <strong>ZAKHY</strong>
+          <strong>CREATOR AUTOMATIONS</strong>
           <span>My Network</span>
         </div>
         <span className="zcontact-bolt">⚡</span>
