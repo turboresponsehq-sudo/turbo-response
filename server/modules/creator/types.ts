@@ -9,6 +9,10 @@ export const CREATOR_TYPES = [
   "Comedian",
   "Athlete",
   "Other",
+  "Small business",
+  "Startup",
+  "Organization / nonprofit",
+  "Other business",
 ] as const;
 
 export const CREATOR_LEAD_STATUSES = [
@@ -32,6 +36,12 @@ const checkboxValues = [
   "Digital products",
   "Services",
   "Affiliate income",
+  "Product sales",
+  "Appointments / bookings",
+  "Subscriptions",
+  "Contracts / B2B sales",
+  "E-commerce",
+  "Donations / grants",
   "Other",
 ] as const;
 
@@ -56,6 +66,11 @@ const businessSystems = [
   "Payment system",
   "AI chatbot",
   "Automations",
+  "Accounting software",
+  "Inventory system",
+  "Spreadsheets",
+  "Project management",
+  "Customer support system",
 ] as const;
 
 const opportunities = [
@@ -69,6 +84,16 @@ const opportunities = [
   "Merch sales",
   "Music promotion",
   "Content growth",
+  "Lead generation",
+  "Sales conversion",
+  "Customer follow-up",
+  "Customer support",
+  "Scheduling",
+  "Internal workflows",
+  "Reporting / analytics",
+  "Marketing campaigns",
+  "Customer retention",
+  "Cost reduction",
 ] as const;
 
 const shortText = (max: number) => z.string().trim().max(max);
@@ -104,7 +129,7 @@ export const creatorLeadInputSchema = z.object({
     "$5,000–$10,000",
     "$10,000+",
   ]).optional(),
-  packageInterest: z.enum(["Creator Website", "Turbo Automations", "Full Creator Business System", "Not sure yet"]).optional(),
+  packageInterest: z.enum(["Creator Website", "Turbo Automations", "Full Creator Business System", "Media & Marketing", "Digital Platforms", "AI & Business Systems", "Multiple services", "Not sure yet"]).optional(),
   finalQuestion: longText(4000).optional().or(z.literal("")),
   consent: z.literal(true),
   source: shortText(100).optional(),
