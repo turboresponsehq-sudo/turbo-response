@@ -1,21 +1,20 @@
-import { useEffect, useState } from "react";
-import { ArrowUpRight, Brand, MenuIcon } from "../components/Brand";
-import { zakhyDemoSite } from "../config";
+import { useEffect } from "react";
+import { ArrowUpRight } from "../components/Brand";
+import CreatorSiteHeader from "../components/CreatorSiteHeader";
 import "./portfolio-gallery.css";
 
 const projects = [
-  { name: "Ralo", type: "Recording Artist / FAMGOON", href: `${zakhyDemoSite.productionHomeUrl}/portfolio/ralo`, image: "/zakhy-assets/ralo-famgoon-updated_541acd26.png", position: "center" },
-  { name: "MS POP IT", type: "Recording Artist", href: `${zakhyDemoSite.productionHomeUrl}/portfolio/ms-pop-it`, image: "/zakhy-assets/ms-pop-it-portfolio-thumbnail_7b95c943.jpg", position: "center 30%" },
-  { name: "Miami Trips & Restaurants", type: "Travel, Food & Podcast", href: `${zakhyDemoSite.productionHomeUrl}/portfolio/miami-trips-restaurants`, image: "/zakhy-assets/miami-home-approved-exact-reference_8b1ed63e.png", position: "center" },
-  { name: "The Story of Atlanta", type: "Culture & Media Platform", href: `${zakhyDemoSite.productionHomeUrl}/portfolio/story-of-atlanta`, image: "/zakhy-assets/atlanta-hero-city-car_2bf63a50.jpg", position: "center 42%" },
-  { name: "Spillo — Spill Season", type: "Recording Artist & Podcast", href: `${zakhyDemoSite.productionHomeUrl}/portfolio/spillo`, image: "/zakhy-assets/spillo-hero-artist_a25123a3.jpg", position: "center 24%" },
-  { name: "CRUNK FIT", type: "Fitness, Wellness & Lifestyle", href: `${zakhyDemoSite.productionHomeUrl}/portfolio/crunk-fit`, image: "/zakhy-assets/crunk-fit-hero_2df060d3.jpg", position: "62% 24%" },
+  { name: "Ralo", type: "Recording Artist / FAMGOON", href: `https://turboresponsehq.ai/zakhybuildsai/portfolio/ralo`, image: "/zakhy-assets/ralo-famgoon-updated_541acd26.png", position: "center" },
+  { name: "MS POP IT", type: "Recording Artist", href: `https://turboresponsehq.ai/zakhybuildsai/portfolio/ms-pop-it`, image: "/zakhy-assets/ms-pop-it-portfolio-thumbnail_7b95c943.jpg", position: "center 30%" },
+  { name: "Miami Trips & Restaurants", type: "Travel, Food & Podcast", href: `https://turboresponsehq.ai/zakhybuildsai/portfolio/miami-trips-restaurants`, image: "/zakhy-assets/miami-home-approved-exact-reference_8b1ed63e.png", position: "center" },
+  { name: "The Story of Atlanta", type: "Culture & Media Platform", href: `https://turboresponsehq.ai/zakhybuildsai/portfolio/story-of-atlanta`, image: "/zakhy-assets/atlanta-hero-city-car_2bf63a50.jpg", position: "center 42%" },
+  { name: "Spillo — Spill Season", type: "Recording Artist & Podcast", href: `https://turboresponsehq.ai/zakhybuildsai/portfolio/spillo`, image: "/zakhy-assets/spillo-hero-artist_a25123a3.jpg", position: "center 24%" },
+  { name: "CRUNK FIT", type: "Fitness, Wellness & Lifestyle", href: `https://turboresponsehq.ai/zakhybuildsai/portfolio/crunk-fit`, image: "/zakhy-assets/crunk-fit-hero_2df060d3.jpg", position: "62% 24%" },
   { name: "Amani Mansur", type: "Marketing, Culture & Opportunity", href: "https://amanimansur.info", image: "/zakhy-assets/amani-mansur-portfolio.png", position: "center top" },
   { name: "Allah Souja", type: "Fitness, Coaching & Lifestyle", href: "https://zakhydemo-mpd8k29q.manus.space/allah-souja", image: "/zakhy-assets/allah-souja-portfolio.png", position: "center top" },
 ] as const;
 
 export default function PortfolioPage() {
-  const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
     const documentRoot = document.documentElement;
     const pageBody = document.body;
@@ -50,12 +49,9 @@ export default function PortfolioPage() {
       pageBody.style.touchAction = priorBodyTouchAction;
     };
   }, []);
-  const openBooking = () => { setMenuOpen(false); window.top?.location.assign(zakhyDemoSite.creatorIntakeUrl); };
   return <main className="portfolio-gallery-page">
-    <header className="site-header portfolio-gallery-header">
-      <div className="nav-shell"><a href={zakhyDemoSite.productionHomeUrl} target="_top" rel="noreferrer"><Brand light /></a><nav id="portfolio-navigation" className={`desktop-nav portfolio-gallery-nav ${menuOpen ? "desktop-nav--open" : ""}`} aria-label="Main navigation">{zakhyDemoSite.navigation.map((item) => <a key={item.href} href={item.href} target="_top" rel="noreferrer" onClick={() => setMenuOpen(false)}>{item.label}</a>)}<button className="mobile-book-link" type="button" onClick={openBooking}>Inquiries <ArrowUpRight /></button></nav><div className="nav-actions"><button className="nav-book portfolio-gallery-book" type="button" onClick={openBooking}>Inquiries <ArrowUpRight /></button><button className="menu-toggle" type="button" onClick={() => setMenuOpen((value) => !value)} aria-expanded={menuOpen} aria-controls="portfolio-navigation" aria-label="Toggle navigation"><MenuIcon open={menuOpen} /></button></div></div>
-    </header>
+    <CreatorSiteHeader active="Projects"/>
     <section className="portfolio-gallery-hero"><div className="page-shell"><p className="portfolio-gallery-kicker">Zakhy Builds AI / Portfolio</p><h1>Selected <em>builds.</em></h1><p>Websites and creator-business concepts built by Zakhy Builds AI.</p></div></section>
-    <section className="portfolio-gallery-grid-section"><div className="page-shell"><div className="portfolio-gallery-grid">{projects.map((project, index) => <a className="portfolio-project-card" href={project.href} target="_top" rel="noreferrer" key={project.name}><div className="portfolio-project-thumb"><img src={project.image} alt={`${project.name} project preview`} width={1600} height={1000} loading={index < 3 ? "eager" : "lazy"} decoding="async" fetchPriority={index < 3 ? "high" : "low"} style={{ objectPosition: project.position }} /><span>0{index + 1}</span><b>View project <ArrowUpRight /></b></div><div className="portfolio-project-meta"><h2>{project.name}</h2><p>{project.type}</p><span>View project <ArrowUpRight /></span></div></a>)}</div></div></section>
+    <section className="portfolio-gallery-grid-section"><div className="page-shell"><div className="portfolio-gallery-grid">{projects.map((project, index) => <a className="portfolio-project-card" href={project.href} target="_blank" rel="noopener noreferrer" key={project.name}><div className="portfolio-project-thumb"><img src={project.image} alt={`${project.name} project preview`} width={1600} height={1000} loading={index < 3 ? "eager" : "lazy"} decoding="async" fetchPriority={index < 3 ? "high" : "low"} style={{ objectPosition: project.position }} /><span>0{index + 1}</span><b>View project <ArrowUpRight /></b></div><div className="portfolio-project-meta"><h2>{project.name}</h2><p>{project.type}</p><span>View project <ArrowUpRight /></span></div></a>)}</div></div></section>
   </main>;
 }
