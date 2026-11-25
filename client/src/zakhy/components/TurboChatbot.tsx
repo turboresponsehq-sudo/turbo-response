@@ -20,7 +20,7 @@ const FAQS = [
   ["How much does automation cost?", "Custom automation is consultation-based; we confirm the scope before quoting."],
   ["Who do you work with?", "We work with creators, entrepreneurs, service companies, retailers and other businesses."],
   ["What can you automate?", "Inquiries, bookings, follow-ups, fan capture, launches, promotions, and other repeatable workflows."],
-  ["How do I get started?", "Answer a few questions in the Creator Intake and the team will review the best next step."],
+  ["How do I get started?", "Answer a few questions in the Project Intake and the team will review the best next step."],
 ] as const;
 
 const choiceLabels = [
@@ -85,7 +85,7 @@ export default function TurboChatbot({ source = "zakhy_turbo_chatbot" }: { sourc
       if (choice === "Organize my business") {
         append([
           visitorMessage(choice),
-          botMessage("We can help centralize inquiries, customer relationships, bookings, sales opportunities and follow-up workflows.", { bullets: ["Larger Creator Business Systems are custom / future scope."] }),
+          botMessage("We can help centralize inquiries, customer relationships, bookings, sales opportunities and follow-up workflows.", { bullets: ["Custom business systems are scoped individually."] }),
         ]);
         return;
       }
@@ -106,7 +106,7 @@ export default function TurboChatbot({ source = "zakhy_turbo_chatbot" }: { sourc
     }
     append([
       visitorMessage(choice),
-      botMessage("Based on what you shared, the best next step is a Creator Website, Business Automation, or a custom consultation. The intake will help the team point you to the right fit.", { cta: "Continue to Project Intake" }),
+      botMessage("Based on what you shared, the best next step is a website, business automation, or a custom consultation. The intake will help the team point you to the right fit.", { cta: "Continue to Project Intake" }),
     ]);
     setStep("start");
   }

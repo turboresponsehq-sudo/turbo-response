@@ -7,7 +7,7 @@ import "../../../zakhy/creator-visual-rebrand.css";
 const digits = ["1","2","3","4","5","6","7","8","9","+","0"];
 type Category={id:number;name:string;slug:string};
 
-export default function AddNetworkContactPage() {
+export default function AddNetworkContactPage({ designPreview = false }: { designPreview?: boolean } = {}) {
   const [, setLocation] = useLocation();
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -19,10 +19,11 @@ export default function AddNetworkContactPage() {
   });
 
   useEffect(()=>{
+    if (designPreview) { setCategories([{id:1,name:"Business owner",slug:"business-owner"},{id:2,name:"Creative",slug:"creative"},{id:3,name:"Technology",slug:"technology"}]); return; }
     fetch("/api/creator/admin/network/categories",{headers:{...getAdminSessionAuthorizationHeader()}})
       .then(async r=>{const b=await r.json(); if(!r.ok) throw new Error(b.error||"Unable to load categories"); setCategories(b.categories||[]);})
       .catch(e=>setError(e.message));
-  },[]);
+  },[designPreview]);
 
   function update(field: keyof typeof form, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
@@ -34,6 +35,7 @@ export default function AddNetworkContactPage() {
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+    if (designPreview) { setError("Design preview only. No contact was saved."); return; }
     setSaving(true);
     setSaved(false);
     setError("");
@@ -60,9 +62,9 @@ export default function AddNetworkContactPage() {
   return (
     <main className="zcontact-page ca-contact-theme">
       <header className="zcontact-topbar">
-        <button type="button" onClick={() => setLocation("/admin/zakhy")} aria-label="Back to dashboard">←</button>
+        <button type="button" onClick={() => designPreview ? window.location.assign("/") : setLocation("/admin/zakhy")} aria-label="Back to dashboard">←</button>
         <div>
-          <strong>ZAKHY</strong>
+          <strong>CREATOR AUTOMATIONS</strong>
           <span>My Network</span>
         </div>
         <span className="zcontact-bolt">⚡</span>
@@ -75,6 +77,7 @@ export default function AddNetworkContactPage() {
           <span>Save who they are, where you met, and when to follow up.</span>
         </div>
 
+        {designPreview && <p role="status" className="zops-alert">Design preview only. Use fictional details. No CRM connection or contact saving.</p>}
         {saved && <div className="zcontact-success">✓ Contact saved. Ready for the next person.</div>}
         {error && <div className="zops-alert">{error}</div>}
 

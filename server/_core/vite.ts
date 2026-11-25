@@ -90,15 +90,15 @@ export function serveStatic(app: Express) {
         }
       : requestPath === "/zakhybuildsai"
       ? {
-          title: "ZAKHY — AI Systems for Creators",
-          description: "ZAKHY helps creators build stronger brands, automate their business, organize opportunities, and capture more revenue.",
+          title: "Creator Automations — Creative Technology for Modern Business",
+          description: "Creator Automations builds AI systems, automation and digital experiences for creators, brands and businesses.",
         }
       : requestPath === "/zakhybuildsai/services"
-        ? { title: "ZAKHY Services — Brands, Automation & Creator Systems", description: "Premium creator websites, automation systems, brand infrastructure, and revenue-focused digital operations." }
+        ? { title: "Creator Automations — Services &amp; Business Systems", description: "Premium creator websites, automation systems, brand infrastructure, and revenue-focused digital operations." }
         : requestPath === "/zakhybuildsai/automation-services"
-          ? { title: "Turbo Automations — ZAKHY", description: "Creator automations for bookings, lead capture, follow-up, audience operations, and business growth." }
+          ? { title: "Creator Automations — AI &amp; Automation", description: "Creator automations for bookings, lead capture, follow-up, audience operations, and business growth." }
           : requestPath === "/zakhybuildsai/portfolio"
-            ? { title: "ZAKHY Portfolio — Creator Brands & Platforms", description: "Explore creator websites, brands, and digital platforms built by ZAKHY." }
+            ? { title: "Creator Automations — Portfolio", description: "Explore creator websites, brands, and digital platforms built by ZAKHY." }
             : requestPath === "/zakhybuildsai/about"
               ? { title: "About ZAKHY — Creativity, Technology & Creator Business", description: "Learn how ZAKHY combines creativity, technology, and creator business systems." }
               : requestPath.includes("/spillo")
@@ -107,7 +107,7 @@ export function serveStatic(app: Express) {
                   ? { title: "Ralo — ZAKHY Portfolio", description: "Ralo creator brand and digital platform by ZAKHY." }
                   : requestPath.includes("/ms-pop-it")
                     ? { title: "MS POP IT — ZAKHY Portfolio", description: "MS POP IT creator brand and digital platform by ZAKHY." }
-                    : { title: "ZAKHY — AI Systems for Creators", description: "ZAKHY helps creators build stronger brands, automate their business, organize opportunities, and capture more revenue." };
+                    : { title: "Creator Automations — Creative Technology for Modern Business", description: "Creator Automations builds AI systems, automation and digital experiences for creators, brands and businesses." };
     const zakhyTitle = routeMetadata.title;
     const zakhyDescription = routeMetadata.description;
     const zakhyUrl = `https://turboresponsehq.ai${requestPath}`;
