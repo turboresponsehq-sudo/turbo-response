@@ -11,3 +11,6 @@ Owner requested removal of all homepage website previews, including blue/black i
 
 ## Navigation and three featured price points
 User clarified that all three prices should remain, only the $49 headline price should be replaced. Feature the existing $199 premium content package (25 graphics), $249 website starter and $1,499+ automation package; no changes to existing package prices or billing. Align Home, Solutions, Pricing, Projects, About and Build with us across the homepage, services, automation, portfolio and inquiry header. Preview core destinations remain same-origin and submissions are blocked; external project demos open separately. Static link-hub return and service links are rewritten in the preview build only. Other page body designs remain unchanged except services headline copy no longer leads with $49. Production not deployed. Full build and browser validation pending.
+
+## Chatbot brand alignment
+Updated existing guided FAQ widget to Creator Automations, black/red/white/gold styling, business-oriented prompts, corrected featured package prices ($199, $249 and from $1,499), project inquiry CTA and mobile scroll/reset behavior. Preserved component export, tracking source values and intake workflow. No backend, model or customer submission changes. Preview only until approved.
