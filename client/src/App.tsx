@@ -11,6 +11,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { AdminAuthProvider } from "./contexts/AdminAuthContext";
 import { setupAxiosInterceptor } from "./lib/axiosInterceptor";
 import Home from "./pages/Home";
+import TurboSystems from "./pages/TurboSystems";
 import AdminDashboard from "./pages/AdminDashboard";
 import IntakeForm from "./pages/IntakeForm";
 import Payment from "./pages/Payment";
@@ -175,13 +176,18 @@ function Router() {
   return (
     <RoleScopedAdminBoundary>
       <Switch>
-      <Route path={"/"} component={Home} />
+      {/* Small-business Turbo Response relaunch: reuse the existing Turbo Systems page. */}
+      <Route path={"/"} component={TurboSystems} />
+      <Route path="/turbo-systems" component={TurboSystems} />
+      {/* Existing consumer case pages are preserved without appearing on the homepage. */}
+      <Route path="/legacy-home" component={Home} />
+      <Route path="/legacy-services" component={Services} />
 
       <Route path="/consumer-solutions" component={ConsumerSolutions} />
       <Route path="/black-future" component={BlackFuture} />
       {/* Case Documentation Brief landing page */}
       <Route path="/case-brief" component={CaseBrief} />
-      <Route path="/services" component={Services} />
+      <Route path="/services" component={TurboSystems} />
       <Route path="/contact" component={Contact} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       {/* Defense Intake - Consumer */}
