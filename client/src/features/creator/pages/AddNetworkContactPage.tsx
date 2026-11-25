@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { getAdminSessionAuthorizationHeader } from "@/lib/adminSession";
 import "../styles/creatorOperations.css";
+import "../../../zakhy/creator-visual-rebrand.css";
 
 const digits = ["1","2","3","4","5","6","7","8","9","+","0"];
 type Category={id:number;name:string;slug:string};
@@ -57,7 +58,7 @@ export default function AddNetworkContactPage() {
   }
 
   return (
-    <main className="zcontact-page">
+    <main className="zcontact-page ca-contact-theme">
       <header className="zcontact-topbar">
         <button type="button" onClick={() => setLocation("/admin/zakhy")} aria-label="Back to dashboard">←</button>
         <div>
@@ -105,7 +106,7 @@ export default function AddNetworkContactPage() {
           </label>
 
           <label>Profession
-            <input required value={form.profession} onChange={(e)=>update("profession",e.target.value)} placeholder="Artist, owner, marketer..." />
+            <input required value={form.profession} onChange={(e)=>update("profession",e.target.value)} placeholder="Business owner, creator, developer..." />
           </label>
 
           <label>Company / Brand

@@ -26,7 +26,7 @@ export default function AutomationServicesPage() {
         <div className="page-shell">
           <p className="eyebrow">AI. AUTOMATION. GROWTH.</p>
           <h1 id="automation-title">AUTOMATION<br /><em>SERVICES.</em></h1>
-          <p className="automation-intro">AI-powered systems that centralize, organize, and automate the business behind your creator brand.</p>
+          <p className="automation-intro">AI-powered systems that connect customer relationships, workflows, content and business operations.</p>
           <div className="automation-hero-rule"><span>CREATOR WEBSITES</span><i>+</i><span>FANS</span><i>+</i><span>BOOKINGS</span><i>+</i><span>REVENUE</span><b>→ ONE SYSTEM</b></div>
         </div>
       </section>
