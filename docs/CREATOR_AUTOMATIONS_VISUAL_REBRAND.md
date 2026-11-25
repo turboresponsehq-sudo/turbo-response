@@ -23,3 +23,8 @@ Build with VITE_CREATOR_REBRAND_PREVIEW=true pnpm run build:frontend then node s
 - Reference-based composition: one-line wordmark, centered hero, a wide diffused amber-to-rose curved light field (SVG blur + grain), a single prominent inquiry CTA, restrained capability row and a brand identity strip in place of fictional client logos/metrics.
 - New headline: Create the narrative. Grow the business. Positioning: For the creators of the future. Supporting copy ties media, digital platforms and AI systems to customers, sales and productivity. Section copy explains commercial outcomes, not just technical features.
 - Only homepage presentation and shared stylesheet additions; no service pricing, routes, API, CRM or database changes. Desktop reference match and mobile rendering need visual verification.
+
+## Next Era flagship homepage
+- Used Black Future's source-level design principles (cinematic image, oversized editorial headline, animated grid and orbital depth) and project sources as references. Existing repository Atlanta skyline and portfolio assets were verified in the tree; no third-party image requests or new paid assets.
+- New hero: The future belongs to those who create. Brand statement: Create / Influence / Innovate / Grow. Portfolio is moved directly beneath hero; visual capability sections connect media, platforms, intelligent systems and bottom-line outcomes.
+- Separate scoped CSS, original routes and existing Turbo guided chat, entry packages, lead intake, admin tools and backend preserved. Project links point to existing production demos. No new revenue claims or endorsements. Mobile/desktop visual QA and CI required before merge.
